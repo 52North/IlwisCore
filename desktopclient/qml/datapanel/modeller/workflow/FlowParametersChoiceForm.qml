@@ -103,6 +103,21 @@ Rectangle {
         }
     }
     Button{
+        text : qsTr("Cancel")
+        height : 20
+        width : 60
+        anchors.right: applyButton.left
+        anchors.rightMargin: 5
+        anchors.top : applyButton.top
+        onClicked: {
+            flowParameterForm.state = "invisible"
+            wfCanvas.canvasValid = false
+        }
+
+    }
+
+    Button{
+        id : applyButton
         text : qsTr("Apply")
         height : 20
         width : 60

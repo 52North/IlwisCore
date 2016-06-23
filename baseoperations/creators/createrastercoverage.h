@@ -25,8 +25,10 @@ private:
     IGeoReference _grf;
     std::vector<QString> _stackValueStrings;
     std::vector<double> _stackValueNumbers;
+    std::vector<Range *> _ranges;
     std::vector<IRasterCoverage> _bands;
     bool _autoresample = false;
+    IRasterCoverage _outputRaster;
 
     bool parseStackDefintion(const QString &stackDef);
     bool parseStackDefintionNumericCase(const QString &stackDef);

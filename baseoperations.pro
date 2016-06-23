@@ -62,7 +62,8 @@ HEADERS += \
     baseoperations/conditions/junction.h \
     baseoperations/conditions/numbercondition.h \
     baseoperations/data/aggregatetable.h \
-    baseoperations/data/selectionbase.h
+    baseoperations/data/selectionbase.h \
+    baseoperations/data/setattributetabel.h
     baseoperations/data/setattributetabel.h
 
 SOURCES += \
@@ -112,7 +113,8 @@ SOURCES += \
     baseoperations/conditions/junction.cpp \
     baseoperations/conditions/numbercondition.cpp \
     baseoperations/data/aggregatetable.cpp \
-    baseoperations/data/selectionbase.cpp
+    baseoperations/data/selectionbase.cpp \
+    baseoperations/data/setattributetabel.cpp
     baseoperations/data/setattributetabel.cpp
 
 

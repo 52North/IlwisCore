@@ -103,7 +103,7 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     if ( _catalogs.find(location) != _catalogs.end())
         return true;
 
-    Resource resource = name2Resource(location.toString());
+    Resource resource = name2Resource(location.toString(),itCATALOG);
     if ( !resource.isValid() || !hasType(resource.extendedType(), itCATALOG)){
         resource = Resource(location, itCATALOG);
     }
@@ -446,9 +446,10 @@ Resource MasterCatalog::name2Resource(const QString &name, IlwisTypes tp) const
         while ( db.next()){ // external reference finding
             isExternalRef = false;
             bool ok;
-            auto propertyid = db.value(0).toLongLong(&ok);
+            QVariant v = db.value(0);
+            auto propertyid = v.toLongLong(&ok);
             if (!ok) {
-                kernel()->issues()->log(QString(TR("Invalid catalog property, mastercatalog corrupted : %1?").arg(name)),IssueObject::itWarning);
+                continue;
             }
             auto type = id2type(propertyid);
             if ( type & tp)

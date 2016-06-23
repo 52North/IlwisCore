@@ -23,13 +23,19 @@ Rectangle {
 
         onPressed: {
             operationItem.deselectAll()
-            isSelected = true;
             selectedAttach = attachItem
-            var newpoint = mapToItem(wfCanvas, 4, 4) // center of rectangle
-            wfCanvas.workingLineBegin = Qt.point(newpoint.x, newpoint.y)
+            isSelected = true;
         }
         onReleased: {
-            attachFlow(operationItem, attachItem)
+            var pnt = wfCanvas.workingLineBegin
+            if ( pnt.x !== -1 && pnt.y !== -1){
+                attachFlow(operationItem, attachItem)
+                wfCanvas.workingLineBegin = Qt.point(-1,-1)
+            }else {
+                var newpoint = mapToItem(wfCanvas, 4, 4) // center of rectangle
+                wfCanvas.workingLineBegin = Qt.point(newpoint.x, newpoint.y)
+            }
+
         }
     }
 }

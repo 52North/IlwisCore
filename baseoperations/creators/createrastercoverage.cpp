@@ -34,17 +34,10 @@ bool CreateRasterCoverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
-    IRasterCoverage raster;
-    raster.prepare();
-    raster->georeference(_grf);
-    raster->size( Size<>(_grf->size().xsize(), _grf->size().ysize(), std::max(_stackValueNumbers.size(), _stackValueStrings.size())));
-    if ( _stackDomain->ilwisType() == itNUMERICDOMAIN)
-        raster->setDataDefintions(_domain, _stackValueNumbers , _stackDomain);
-    else
-         raster->setDataDefintions(_domain, _stackValueStrings, _stackDomain);
 
-    initialize(raster->size().linearSize());
-    PixelIterator pout(raster);
+
+    initialize(_outputRaster->size().linearSize());
+    PixelIterator pout(_outputRaster);
     for(auto& band : _bands){
         PixelIterator pin(band);
         for(double value : band){
@@ -57,8 +50,8 @@ bool CreateRasterCoverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
 
     QVariant value;
-    value.setValue<IRasterCoverage>(raster);
-    ctx->setOutput(symTable,value,raster->name(),itRASTER,raster->resource());
+    value.setValue<IRasterCoverage>(_outputRaster);
+    ctx->setOutput(symTable,value,_outputRaster->name(),itRASTER,_outputRaster->resource());
 
     return true;
 }
@@ -192,12 +185,7 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
         }
         return sPREPARED;
     };
-    QString dom = _expression.input<QString>(1);
-    _domain.prepare(dom);
-    if ( !_domain.isValid()){
-        kernel()->issues()->log(QString(TR("%1 is and invalid domain")).arg(dom));
-        return sPREPAREFAILED;
-    }
+
     QString grf = _expression.input<QString>(0);
     _grf.prepare(grf);
     if ( !_grf.isValid()){
@@ -214,11 +202,24 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
             IRasterCoverage raster(band);
             if ( raster.isValid() && ( raster->georeference()->isCompatible(_grf) || _autoresample)){
                 _bands.push_back(raster);
+                _ranges.push_back(raster->datadef().range()->clone());
             }else{
                 kernel()->issues()->log(QString(TR("%1 is and invalid band; raster can not be build")).arg(raster->name()));
                 return sPREPAREFAILED;
             }
         }
+    }
+    QString dom = _expression.input<QString>(1);
+    if ( dom == "as bands"){
+        if (_bands.size() > 0)
+            dom = _bands[0]->datadef().domain()->resource().url().toString();
+        else
+            dom = "value";
+    }
+    _domain.prepare(dom);
+    if ( !_domain.isValid()){
+        kernel()->issues()->log(QString(TR("%1 is and invalid domain")).arg(dom));
+        return sPREPAREFAILED;
     }
 
 
@@ -239,6 +240,15 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
             }
         }
     }
+
+
+    _outputRaster.prepare();
+    _outputRaster->georeference(_grf);
+    _outputRaster->size( Size<>(_grf->size().xsize(), _grf->size().ysize(), std::max(_stackValueNumbers.size(), _stackValueStrings.size())));
+    if ( _stackDomain->ilwisType() == itNUMERICDOMAIN)
+        _outputRaster->setDataDefintions(_domain, _stackValueNumbers , _stackDomain);
+    else
+         _outputRaster->setDataDefintions(_domain, _stackValueStrings, _stackDomain);
 
     return sPREPARED;
 }

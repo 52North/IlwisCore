@@ -133,6 +133,8 @@ void createCatalog(const IRasterCoverage& raster){
     Resource resCatalog = raster->resource();
     resCatalog.newId();
     resCatalog.name(raster->name());
+    resCatalog.createTime(Time::now());
+    resCatalog.modifiedTime(Time::now());
     resCatalog.setIlwisType(itCATALOG);
     resCatalog.setExtendedType(resCatalog.extendedType() | itRASTER);
     mastercatalog()->addItems({resCatalog});
@@ -140,10 +142,12 @@ void createCatalog(const IRasterCoverage& raster){
     for(int band=0; band < raster->size().zsize(); ++band){
         Resource resBand = raster->resource();
         resBand.newId();
+        resBand.createTime(Time::now());
+        resBand.modifiedTime(Time::now());
         QUrl newUrl = resBand.url().toString();
         QString newName = resBand.name() + "_" + QString::number(band);
         resBand.setUrl(newUrl.toString() + "/" + newName);
-        resBand.addProperty("rasterband",band);
+        resBand.code("band="+QString::number(band));
         bands.push_back(resBand);
     }
     mastercatalog()->addItems(bands);

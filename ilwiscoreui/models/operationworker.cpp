@@ -1,20 +1,27 @@
 #include <QCoreApplication>
+#include <QThread>
 #include "operationworker.h"
 #include "raster.h"
 #include "table.h"
 #include "commandhandler.h"
 #include "operation.h"
+#include "catalog.h"
 #include "ilwiscontext.h"
 
 using namespace Ilwis;
 
 OperationWorker::OperationWorker(const OperationExpression &opExpr) :_expression(opExpr)
 {
-
 }
 
 void OperationWorker::process(){
     try {
+        QThread *thread = QThread::currentThread();
+        QVariant var = thread->property("workingcatalog");
+        if ( var.isValid()){
+            ICatalog cat = var.value<ICatalog>();
+            kernel()->setTLS("workingcatalog", new QVariant(var));
+        }
         Operation op(_expression);
         SymbolTable tbl;
         ExecutionContext ctx;

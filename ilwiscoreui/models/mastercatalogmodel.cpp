@@ -459,7 +459,6 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
     if ( inpath == "" || inpath == sUNDEF )
         return 0;
 
-    CatalogView cview;
     QUrl location(inpath);
     _currentUrl = inpath;
     if ( inpath.indexOf("ilwis://internalcatalog/workspaces") == 0){
@@ -472,11 +471,10 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
         }
     }else {
         bool canBeAnimated = false;
-        Resource collection = mastercatalog()->name2Resource(inpath,itRASTER);
-        if ( collection.isValid()){
-            canBeAnimated = hasType(collection.extendedType(), itCATALOG)        ;
+        Resource res = mastercatalog()->name2Resource(inpath,itCATALOG);
+        if ( res.isValid()){
+            canBeAnimated = hasType(res.extendedType(), itCATALOG)        ;
         }
-        Resource res(location, itCATALOGVIEW ) ;
         if ( filter != "container=ilwis://mastercatalog")
             res.addProperty("filter",filter);
         res.addProperty("canbeanimated",canBeAnimated);
