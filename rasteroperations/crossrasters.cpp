@@ -11,6 +11,7 @@
 #include "identifierrange.h"
 #include "symboltable.h"
 #include "ilwisoperation.h"
+#include "tranquilizer.h"
 #include "crossrasters.h"
 
 using namespace Ilwis;
@@ -69,6 +70,8 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
     PixelIterator iterIn2(_inputRaster2, box);
     PixelIterator iterOut(_outputRaster, box);
     quint32 idcount = 0;
+    initialize(_outputRaster->size().linearSize());
+    quint32 count = 0;
     double pixarea = _inputRaster1->georeference()->pixelSize();
     std::map<quint64, Combo> combos;
     std::for_each(iterIn1, iterIn1.end(), [&](double& v1){
@@ -91,11 +94,14 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
                 *iterOut = (*(iterCombos)).second._id;
             }
         }
+        updateTranquilizer(++count,100);
         ++iterIn2;
         ++iterOut;
     });
     quint32 record = 0;
     NamedIdentifierRange *idrange = new NamedIdentifierRange();
+    count = 0;
+    trq()->prepare(_metadata->name(),TR("Updating table"), combos.size());
     for(auto element : combos) {
         quint64 combo = element.first;
         quint32 v2 = combo / SHIFTER;
@@ -113,6 +119,7 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
             _outputTable->setCell(5,record,QVariant(record)); // coverage key
             ++record;
         }
+        updateTranquilizer(count++,10);
     }
     _crossDomain->range(idrange);
 
@@ -123,8 +130,10 @@ bool CrossRasters::crossNoRaster( const BoundingBox& box){
     PixelIterator iterIn1(_inputRaster1, box);
     PixelIterator iterIn2(_inputRaster2, box);
     std::map<quint64, quint64> combos;
+    quint32 count = 0;
     double pixarea = _inputRaster1->georeference()->pixelSize();
     pixarea *= pixarea;
+    initialize(_outputRaster->size().linearSize());
     std::for_each(iterIn1, iterIn1.end(), [&](double& v1){
         double v2 = *iterIn2;
         checkUndef(v1,v2);
@@ -135,9 +144,12 @@ bool CrossRasters::crossNoRaster( const BoundingBox& box){
         else
             (*(iterCombos)).second++;
         ++iterIn2;
+         updateTranquilizer(count++,10);
     });
     quint32 record = 0;
     NamedIdentifierRange *idrange = new NamedIdentifierRange();
+    count = 0;
+    trq()->prepare(_metadata->name(),TR("Updating table"), combos.size());
     for(auto element : combos) {
         quint64 combo = element.first;
         quint32 v2 = combo / SHIFTER;
@@ -152,6 +164,7 @@ bool CrossRasters::crossNoRaster( const BoundingBox& box){
             _outputTable->setCell(4,record,QVariant(element.second * pixarea))  ;
             ++record;
         }
+        updateTranquilizer(count++,10);
     }
     _crossDomain->range(idrange);
 
