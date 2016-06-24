@@ -214,6 +214,15 @@ quint64 CeilCoverage::createMetadata() {
     mastercatalog()->addItems({resource});
     return resource.id();
 }
+
+NumericRange *CeilCoverage::constructRangeFrom(const SPNumericRange &range)
+{
+    NumericRange *newrange = range->clone()->as<NumericRange>();
+    newrange->resolution(1);
+    return newrange;
+}
+
+
 //----------------------------------------------------------
 REGISTER_OPERATION(FloorCoverage)
 FloorCoverage::FloorCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", std::floor<int>)
@@ -227,6 +236,13 @@ quint64 FloorCoverage::createMetadata() {
 
     mastercatalog()->addItems({resource});
     return resource.id();
+}
+
+NumericRange *FloorCoverage::constructRangeFrom(const SPNumericRange &range)
+{
+    NumericRange *newrange = range->clone()->as<NumericRange>();
+    newrange->resolution(1);
+    return newrange;
 }
 //----------------------------------------------------------
 double sign(double v) {
