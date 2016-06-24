@@ -720,12 +720,15 @@ QString IlwisObjectModel::value2string(const QVariant &value, const QString &att
                     return value.toString();
 
                 QVariant impliedValue = coldef.datadef().domain()->impliedValue(value);
-                if (coldef.datadef().domain()->valueType() == itNUMERICDOMAIN && coldef.datadef().range().dynamicCast<NumericRange>()->resolution() == 0) {
-                    //return coldef.datadef().range()->ensure(value).toString();
-                    return QString::number(impliedValue.toDouble(), 'f', 3);
-                } else {
-                    return impliedValue.toString();
+                if (coldef.datadef().domain()->valueType() == itNUMERICDOMAIN ) {
+                    double resolution = coldef.datadef().range().dynamicCast<NumericRange>()->resolution();
+                    if ( resolution == 0)
+                        return QString::number(impliedValue.toDouble(), 'f', 3);
+                    if ( resolution == 1){
+                        return QString::number(impliedValue.toLongLong());
+                    }
                 }
+                return impliedValue.toString();
             }
             if ( value.toDouble() == rUNDEF)
                 return sUNDEF;
@@ -748,12 +751,18 @@ QString IlwisObjectModel::value2string(const QVariant &value, const QString &att
                  auto clr = ColorRangeBase::toColor(value, ColorRangeBase::cmRGBA);
                 return ColorRangeBase::toString(clr,ColorRangeBase::cmRGBA)    ;
              }
+             double resolution = raster->datadef().range().dynamicCast<NumericRange>()->resolution();
+             if ( resolution == 0)
+                 return QString::number(value.toDouble(), 'f', 5);
+             if ( resolution == 1){
+                 return QString::number(value.toLongLong());
+             }
         }
     }
     if ( value.toDouble() == rUNDEF)
         return sUNDEF;
     //IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
-    //return raster->datadef().range()->ensure(value).toString();
+
     return QString::number(value.toDouble(), 'f', 3);
 
 }
