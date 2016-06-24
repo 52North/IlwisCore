@@ -359,7 +359,11 @@ void WorkflowModel::store(const QStringList &coordinates)
 
 void WorkflowModel::createMetadata()
 {
-    _workflow->createMetadata();
+    try {
+        _workflow->createMetadata();
+    } catch (const ErrorObject& err){
+
+    }
 }
 
 QVariantMap WorkflowModel::addCondition(int containerId, int operationId)
