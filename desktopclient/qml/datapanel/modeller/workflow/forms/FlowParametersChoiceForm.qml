@@ -149,6 +149,18 @@ WorkflowChoiceForm {
         }
     }
     Button{
+        text : qsTr("Cancel")
+        height : 20
+        width : 60
+        anchors.right: applyButton.left
+        anchors.rightMargin: 5
+        anchors.top : applyButton.top
+        onClicked: {
+            refresh()
+        }
+    }
+    Button{
+        id : applyButton
         text : qsTr("Apply")
         height : 20
         width : 60
