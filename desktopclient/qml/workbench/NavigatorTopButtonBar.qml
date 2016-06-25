@@ -18,7 +18,7 @@ Item {
             anchors.margins: 3
             Controls.ActionButtonV{
                 id : addCatalog
-                width : 115
+                width : 115* Global.uiScale
                 height : buttonBar.height - 3
                 iconsource: "../images/newcatalogCS1.png"
                 buttontext :  qsTr("New Catalog Left")
@@ -27,7 +27,7 @@ Item {
             }
             Controls.ActionButtonV{
                 id : addCatalog2
-                width : 115
+                width : 115* Global.uiScale
                 height : buttonBar.height - 3
                 iconsource: "../images/newcatalogCS1.png"
                 buttontext :  qsTr("New Catalog Right")

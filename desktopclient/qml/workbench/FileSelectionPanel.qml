@@ -89,7 +89,7 @@ Rectangle {
         id : drivelist
         anchors.top :folderlist.top
         width: parent.width
-        height : 20
+        height : 20 * Global.uiScale
         model: mastercatalog.driveList()
         Layout.fillWidth: true
         onActivated: {
@@ -104,14 +104,14 @@ Rectangle {
     Rectangle {
         id : pathView
         width: parent.width
-        height : 20
+        height : 20 * Global.uiScale
         anchors.top : drivelist.bottom
         anchors.topMargin: 1
         color : Global.mainbackgroundcolor
         ComboBox {
             id : pathText
             width : parent.width - 26
-            height : 18
+            height : 18 * Global.uiScale
             editable: true
             model: pathModel
             anchors.verticalCenter: parent.verticalCenter
@@ -131,8 +131,8 @@ Rectangle {
             }
         }
         Button {
-            width : 20
-            height : 18
+            width : 20 * Global.uiScale
+            height : 18 * Global.uiScale
             anchors.right: parent.right
             anchors.rightMargin: 4
             anchors.verticalCenter: parent.verticalCenter
