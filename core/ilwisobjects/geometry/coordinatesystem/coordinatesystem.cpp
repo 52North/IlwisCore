@@ -18,8 +18,8 @@ CoordinateSystem::CoordinateSystem(const Resource& resource) : IlwisObject(resou
 
 Envelope CoordinateSystem::convertEnvelope(const ICoordinateSystem &sourceCs, const Envelope &envelope) const
 {
-    double rDX = envelope.xlength()/10.0;
-    double rDY = envelope.ylength()/10.0;
+    double rDX = (envelope.xlength() - 1.0)/10.0; // -1.0 as temporary workaround for Envelope.xlength() returning one too many.
+    double rDY = (envelope.ylength() - 1.0)/10.0;
     int iX, iY;
     Coordinate cXY;
     Envelope env;
