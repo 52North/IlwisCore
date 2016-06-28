@@ -26,7 +26,7 @@ public:
     double flattening() const;
     double excentricity() const;
     double excentricity2() const;
-    QString setEllipsoid(double a, double f, bool setCodeToo=true);
+    void setEllipsoid(double a, double invf);
     QString authority() const;
     void setAuthority(const QString &auth);
     QString toProj4() const;
@@ -46,12 +46,12 @@ public:
 
     static const IEllipsoid wgs84ellipsoid;
 
-    QString fromInternal(const QSqlRecord &rec);
+    void fromInternal(const QSqlRecord &rec);
     IlwisObject* clone();
 
 private:
     void copyTo(IlwisObject *e);
-    Ellipsoid(double a, double f);
+    Ellipsoid(double a, double invf);
 
     double _flattening;
     double _majorAxis;

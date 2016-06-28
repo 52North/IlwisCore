@@ -19,35 +19,23 @@ std::map<QString, QString> Ellipsoid::_ellcode2Name;
 
 Ellipsoid::Ellipsoid() : IlwisObject()
 {
-    name("Sphere");
     setEllipsoid(6371007.1809185,0);
-    if ( _ellcode2Name.size() == 0){
-        InternalDatabaseConnection db;
-        QString query = "Select code, name from ellipsoid";
-        db.exec(query);
-        while(db.next()){
-            QString code = db.value(0).toString();
-            QString nme = db.value(1).toString();
-            _ellcode2Name[code] = nme;
-        }
-    }
 }
 
-Ellipsoid::Ellipsoid(const Resource& resource) : IlwisObject(resource) {
-}
-
-Ellipsoid::Ellipsoid(double a, double f) : IlwisObject()
+Ellipsoid::Ellipsoid(const Resource& resource) : IlwisObject(resource)
 {
-    name("WGS84");
-    setEllipsoid(a,f);
+}
 
+Ellipsoid::Ellipsoid(double a, double invf) : IlwisObject()
+{
+    setEllipsoid(a, invf);
 }
 
 Ellipsoid::~Ellipsoid() {
 }
 
-bool Ellipsoid::isSpherical() const{
-     return false;
+bool Ellipsoid::isSpherical() const {
+     return _flattening == 0;
 }
 
 bool Ellipsoid::isEqual(const IEllipsoid& ellips) const{
@@ -238,11 +226,7 @@ double Ellipsoid::excentricity2() const
     return _excentricity * _excentricity;
 }
 
-QString Ellipsoid::setEllipsoid( double a, double invf, bool setCodeToo){
-    _flattening = invf == 0 ? 0 :1.0/invf; // invf = 0 for spheres
-
-    QString newName = "User defined";
-
+void Ellipsoid::setEllipsoid( double a, double invf){
     InternalDatabaseConnection db;
     QString query = "Select * from ellipsoid";
     if ( db.exec(query) ){
@@ -250,31 +234,32 @@ QString Ellipsoid::setEllipsoid( double a, double invf, bool setCodeToo){
              QSqlRecord rec = db.record();
              double maxis = rec.field("majoraxis").value().toDouble();
              double invflat = rec.field("invflattening").value().toDouble();
-             if ( std::abs(maxis - a) < 0.01 && std::abs(invflat - _flattening) < 0.01){
-                 return fromInternal(rec);
+             if ( std::abs(maxis - a) < 0.01 && std::abs(invflat - invf) < 0.0000001){
+                 fromInternal(rec);
+                 return;
              }
         }
     }
+    _flattening = (invf <= 1) ? 0 : 1.0/invf; // invf = 0 for spheres
     _majorAxis = a;
-    _minoraxis = a * (1.0 - _flattening);
+    _minoraxis = _majorAxis * (1.0 - _flattening);
     _excentricity = sqrt( 1.0 - (_minoraxis * _minoraxis) / (_majorAxis * _majorAxis));
 
-    if(setCodeToo)
-        code(toProj4());
-
-    return newName;
+    QString newName = (invf == 0) ? "Sphere" : "User Defined";
+    name(newName);
+    code(newName);
 }
 
-QString Ellipsoid::fromInternal(const QSqlRecord& rec ){
+void Ellipsoid::fromInternal(const QSqlRecord& rec ){
     IlwisObject::fromInternal(rec);
+    name(rec.field("name").value().toString()); // override the one from IlwisObject::fromInternal()
     setWKTName(rec.field("wkt").value().toString());
     setAuthority(rec.field("authority").value().toString());
-    _flattening = rec.field("invflattening").value().toDouble();
+    double invf = rec.field("invflattening").value().toDouble();;
+    _flattening = (invf <= 1) ? 0 : 1.0/invf; // invf = 0 for spheres
     _majorAxis = rec.field("majoraxis").value().toDouble();
-    double invf = _flattening == 0 ? 0 : 1.0 / _flattening;
-    _minoraxis = _majorAxis * (1.0 - invf);
+    _minoraxis = _majorAxis * (1.0 - _flattening);
     _excentricity = sqrt( 1.0 - (_minoraxis * _minoraxis) / (_majorAxis * _majorAxis));
-    return name();
 }
 
 IlwisObject *Ellipsoid::clone()
@@ -341,6 +326,17 @@ void Ellipsoid::setWKTName(const QString &wkt)
 
 QString Ellipsoid::ellipsoidCode2Name(const QString &code)
 {
+    if ( _ellcode2Name.size() == 0){
+        InternalDatabaseConnection db;
+        QString query = "Select code, name from ellipsoid";
+        db.exec(query);
+        while(db.next()){
+            QString code = db.value(0).toString();
+            QString nme = db.value(1).toString();
+            _ellcode2Name[code] = nme;
+        }
+    }
+
     auto iter = _ellcode2Name.find(code);
     if ( iter != _ellcode2Name.end())
          return iter->second;
