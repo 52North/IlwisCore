@@ -267,20 +267,29 @@ bool ConventionalCoordinateSystem::prepare(const QString &parms)
             if (!ok) return ERROR2(ERR_INVALID_PROPERTY_FOR_2, "ellipsoid", name());
 
             double f = (a - b) / a;
-            QString newName = _ellipsoid->setEllipsoid(a, f);
-            _ellipsoid->name(newName);
-        }
+            _ellipsoid->setEllipsoid(a, f);
+        } else
+            _ellipsoid->setEllipsoid(6378137.0, 298.257223563);
     }
     if ( proj4.hasDatum()) {
         _datum.reset(new GeodeticDatum());
         if ( proj4["dx"] != sUNDEF) {
-            _datum->set7TransformationParameters(proj4["dx"].toDouble(),
-                                                 proj4["dy"].toDouble(),
-                                                 proj4["dz"].toDouble(),
-                                                 proj4["rx"].toDouble(),
-                                                 proj4["ry"].toDouble(),
-                                                 proj4["rz"].toDouble(),
-                                                 proj4["dscale"].toDouble());
+            if (proj4["rx"] != sUNDEF) { // 7 parameter version
+                _datum->set7TransformationParameters(proj4["dx"].toDouble(),
+                                                     proj4["dy"].toDouble(),
+                                                     proj4["dz"].toDouble(),
+                                                     proj4["rx"].toDouble(),
+                                                     proj4["ry"].toDouble(),
+                                                     proj4["rz"].toDouble(),
+                                                     proj4["dscale"].toDouble());
+            } else { // 3 parameter version
+                _datum->set3TransformationParameters(proj4["dx"].toDouble(),
+                                                     proj4["dy"].toDouble(),
+                                                     proj4["dz"].toDouble(),
+                                                     _ellipsoid->name());
+            }
+        } else if ( proj4["datum"] != sUNDEF) {
+            _datum->fromCode(proj4["datum"]);
         }
     }
     QString code = proj4["proj"];
