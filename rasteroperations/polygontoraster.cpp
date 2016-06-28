@@ -67,14 +67,9 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
     long xsize =_inputgrf->size().xsize();
     long ysize =_inputgrf->size().ysize();
     initialize(ysize);
-    long mmax = -1, mmin = 10000000;
-    int correction = 0;
-    QString valueColumn = FEATUREVALUECOLUMN;
+    double mmax = -1e308, mmin = 1e308;
+    QString valueColumn = _inputfeatures->attributeDefinitions().columnIndex(FEATUREVALUECOLUMN) != iUNDEF ? FEATUREVALUECOLUMN : COVERAGEKEYCOLUMN;
 
-    if (_getsAttributeTable){
-        correction = 1;
-        valueColumn = COVERAGEKEYCOLUMN;
-    }
     for (long y = 0; y < ysize; ++y) {
          pix.y = y;
             // detect the polygon-borders (pixels with value -1), line-by-line
@@ -90,7 +85,7 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
         for (int i = 1; i < borders.size(); ++i) {
              long middle = (borders[i-1] + borders[i] )/ 2;
-             int value;
+             double value;
              Pixel position (middle + 0.5, y + 0.5); // take the polygon-value from the middle between two borders
              Coordinate crd = _inputgrf->pixel2Coord(position);
 
@@ -100,7 +95,7 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
                 QVariant attribute =  vmap[valueColumn];
                 value = attribute.toInt();
              }else{
-                value = 0;
+                value = rUNDEF;
              }
              mmax = Ilwis::max(mmax, value);
              mmin = Ilwis::min(mmin, value);
@@ -112,13 +107,8 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
         }
         updateTranquilizer(y,1);
     }
-    if ( !_getsAttributeTable){
-        NumericRange *rng = new NumericRange(mmin, mmax, 1);
-        _outputraster->datadefRef().range(rng);
-        _outputraster->datadefRef(0).range(rng->clone());
-    }else {
-        _outputraster->setAttributes(_inputfeatures->attributeTable().as<AttributeTable>()->toTable(_outputraster->name()));
-    }
+    _outputraster->setAttributes(_inputfeatures->attributeTable().as<AttributeTable>()->toTable(_outputraster->name()));
+
     QVariant value;
     value.setValue<IRasterCoverage>(_outputraster);
     ctx->setOutput(symTable,value,_outputraster->name(), itRASTER, _outputraster->resource() );
@@ -151,11 +141,11 @@ Ilwis::OperationImplementation::State PolygonToRaster::prepare(ExecutionContext 
     _needCoordinateTransformation = _inputgrf->coordinateSystem() != _inputfeatures->coordinateSystem();
     _getsAttributeTable =  _inputfeatures->attributeDefinitions().columnCount() > 1;
     IDomain dom;
-    if ( _getsAttributeTable) {
-        dom = _inputfeatures->attributeDefinitions().columndefinition(COVERAGEKEYCOLUMN).datadef().domain();
-    }else{
-        dom = _inputfeatures->attributeDefinitions().columndefinition(FEATUREVALUECOLUMN).datadef().domain();
-    }
+     dom = _inputfeatures->attributeDefinitions().columndefinition(FEATUREVALUECOLUMN).datadef().domain();
+     if ( !dom.isValid()){
+         dom = _inputfeatures->attributeDefinitions().columndefinition(COVERAGEKEYCOLUMN).datadef().domain();
+     }
+
     _outputraster.prepare();
     if (outputName != sUNDEF)
          _outputraster->name(outputName);
