@@ -36,9 +36,9 @@
 #include "coloritem.h"
 #include "resource.h"
 #include "intervalrange.h"
+#include "ellipsoid.h"
 #include "geodeticdatum.h"
 #include "internalilwisobjectfactory.h"
-#include "ellipsoid.h"
 #include "projection.h"
 #include "projectionimplementation.h"
 #include "projectionfactory.h"
@@ -689,9 +689,14 @@ GeodeticDatum *InternalIlwisObjectFactory::createDatum(const Resource& resource,
         datum->setAuthority(rec.field("authority").value().toString());
         datum->setArea(rec.field("area").value().toString());
         datum->code(rec.field("code").value().toString());
+        QString ellips = rec.field("code").value().toString();
+        IEllipsoid ell;
+        QString ellres = QString("code=ellipsoid:%1").arg(ellips);
+        ell.prepare(ellres);
         datum->set3TransformationParameters(rec.field("dx").value().toDouble(),
                                             rec.field("dy").value().toDouble(),
-                                            rec.field("dz").value().toDouble());
+                                            rec.field("dz").value().toDouble(),
+                                            ell);
 
         return datum;
     }

@@ -2,10 +2,10 @@
 #include "ilwisdata.h"
 #include "geometries.h"
 #include "projection.h"
+#include "ellipsoid.h"
 #include "geodeticdatum.h"
 #include "coordinatesystem.h"
 #include "conventionalcoordinatesystem.h"
-#include "ellipsoid.h"
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
@@ -52,7 +52,7 @@ bool Ilwis::BaseOperations::CreateProjectedCoordinateSystem::execute(ExecutionCo
             csy->envelope(_envelope);
         }
         if ( _datumShifts.size() != 0){
-            csy->setDatum(new GeodeticDatum(_datumShifts));
+            csy->setDatum(new GeodeticDatum(_datumShifts, _ellipsoid));
         }
     }
     if ( csyTemp.isValid()){
