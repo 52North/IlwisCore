@@ -80,7 +80,7 @@ WorkBenchShifter {
     }
     NavigatorTopButtonBar{
         id : buttonBar
-        height : 50
+        height : 50 * Global.uiScale
         anchors.top : functionBarHeader.bottom
         anchors.topMargin: 3
         width : functionBarHeader.width
@@ -97,7 +97,7 @@ WorkBenchShifter {
             id : createCatalogForm
             width : parent.width - 10
             state : "maximized"
-            height : parent.height / 2
+            height : parent.height  / 2
             x : parent.x + 5
             beginfolder: startfolder
         }

@@ -348,7 +348,7 @@ Rectangle {
 
     function attachFlow(target, attachRect){
         //If not connected to itself
-        if ( wfCanvas.operationsList[wfCanvas.currentIndex] !== target){
+        if ( wfCanvas.operationsList[wfCanvas.currentOperationIndex] !== target){
             if ( allParmsDefined(target.itemid))
                 return
 
@@ -359,8 +359,7 @@ Rectangle {
                 var fromIndex = 0
                 var toIndex = 0
                 var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
-
-                wfCanvas.operationsList[wfCanvas.currentIndex].setFlow(target, attachRect, flowPoints)
+                wfCanvas.operationsList[wfCanvas.currentOperationIndex].setFlow(target, attachRect, flowPoints)
             }
 
             wfCanvas.canvasValid = false

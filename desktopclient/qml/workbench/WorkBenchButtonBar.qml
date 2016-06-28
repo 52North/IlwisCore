@@ -11,7 +11,7 @@ Rectangle {
     id : buttonB
     y : 0
     height : parent.height
-    width : 80
+    width : 80 * Global.uiScale
     color : Global.alternatecolor2
     Layout.maximumWidth : 140
 

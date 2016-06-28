@@ -313,6 +313,10 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
     }
 
     ColumnDefinition def1 = _baseTable->columndefinition(_primaryKeyColumn);
+    if ( !def1.isValid()){
+        kernel()->issues()->log(TR("Could not find column in input data:") + _primaryKeyColumn);
+        return sPREPAREFAILED;
+    }
     _foreignKeyColumn = _expression.parm(3).value();
     QString outName = _expression.parm(0, false).value();
     if (baseName != outName) {

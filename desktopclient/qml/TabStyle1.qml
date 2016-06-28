@@ -7,8 +7,8 @@ import "Global.js" as Global
 TabViewStyle {
     property string selectColor : Global.headerdark
     property string nonselectColor : Global.headerlight
-    property int tabHeight : 22
-    property int minimumWidth : 100
+    property int tabHeight : 22 * Global.uiScale
+    property int minimumWidth : 100 * Global.uiScale
 
     frameOverlap: 1
     tab: Rectangle {
@@ -23,6 +23,7 @@ TabViewStyle {
             anchors.centerIn: parent
             text: styleData.title
             color: styleData.selected ? "white" : "black"
+            font.pointSize: 10 * Global.uiScale
         }
     }
     frame: Rectangle { color: "white"; border.width: 1 ; border.color: "lightgrey" }

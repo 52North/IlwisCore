@@ -2,6 +2,7 @@ import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
+import "../Global.js" as Global
 
 Button{
     property string iconsource
@@ -14,13 +15,14 @@ Button{
         id : buttonIcon
         anchors.horizontalCenter: parent.horizontalCenter
         source: iconsource
-        y : 5 ;width : 25; height : 25
+        y : 5 ;width : 25* Global.uiScale; height : 25* Global.uiScale
         fillMode: Image.PreserveAspectFit
     }
     Text {
         anchors.top: buttonIcon.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         text : buttontext
+        font.pointSize: 9 * Global.uiScale
     }
 
     style : ButtonStyle{

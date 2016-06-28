@@ -123,6 +123,7 @@ public:
     CeilCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
+    NumericRange *constructRangeFrom(const SPNumericRange &range);
 
     NEW_OPERATION(CeilCoverage);
 };
@@ -136,6 +137,7 @@ public:
     static quint64 createMetadata();
 
     NEW_OPERATION(FloorCoverage);
+    NumericRange *constructRangeFrom(const SPNumericRange &range);
 };
 
 class SignCoverage : public UnaryMathRasterAndNumber

@@ -25,8 +25,8 @@ ApplicationWindow {
         rootwindow.close()
     }
 
-    property int maxPull : 500
-    property int defaultFunctionBarWidth : Math.min(bigthing.width * 0.25,390)
+    property int maxPull : 500* Global.uiScale
+    property int defaultFunctionBarWidth : Math.min(bigthing.width * 0.25 * Global.uiScale,390 * Global.uiScale)
     property int activeCatalog: 0
 
     function newCatalog(filter, outputtype, url, side){

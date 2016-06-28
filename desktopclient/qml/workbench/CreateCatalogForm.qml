@@ -6,6 +6,7 @@ import Qt.labs.folderlistmodel 2.1
 import MasterCatalogModel 1.0
 import ".." as Base
 import "../controls" as Controls
+import "../Global.js" as Global
 
 Item {
     height : 0

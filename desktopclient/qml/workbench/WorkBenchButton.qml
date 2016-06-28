@@ -25,6 +25,8 @@ ToolButton{
         anchors.centerIn: parent
         source: "../images/" + iconname
         fillMode: Image.PreserveAspectFit
+        width : 45
+        height: 45
     }
     Text {
         id : textLabel
@@ -35,6 +37,7 @@ ToolButton{
         horizontalAlignment: Text.AlignHCenter
         visible : true
         font.weight: Font.DemiBold
+        font.pointSize: 10 * Global.uiScale
 
     }
 

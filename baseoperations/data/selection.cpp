@@ -43,11 +43,11 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
 
     std::vector<QString> selectionBands = bands(inputRaster);
-    if ( selectionBands.size() == 0) // use all
-        selectionBands = inputRaster->stackDefinition().indexes();
+    initialize(outputRaster->size().linearSize() * selectionBands.size());
 
     PixelIterator iterOut(outputRaster);
-
+    int count = 0;
+    bool numeric = outputRaster->datadef().domain()->ilwisType() == itNUMERICDOMAIN;
     for(QString band : selectionBands){
         PixelIterator iterIn = inputRaster->band(band, _box);
 
@@ -81,6 +81,7 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
             ++iterIn;
             ++iterOut;
+            updateTranquilizer(++count, 100);
         }
         // if there is an attribute table we must copy the correct attributes and records
         if ( keyColumn != iUNDEF && _attTable.isValid()){
@@ -92,6 +93,8 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
             }
         }
     }
+    if ( numeric)
+        outputRaster->statistics(ContainerStatistics<double>::pBASIC);
 
     outputRaster->setAttributes(_attTable);
     QVariant value;
@@ -129,11 +132,11 @@ Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext 
     parseSelector(selector, inputRaster);
 
     std::vector<QString> selectionBands = bands(inputRaster);
-    int numbands = selectionBands.size() == 0 ? iUNDEF : selectionBands.size();
-    _box = boundingBox(_inputObj.as<RasterCoverage>());
-    bool useOldGrf = numbands == iUNDEF;
+     _box = boundingBox(_inputObj.as<RasterCoverage>());
+    bool useOldGrf ;
     if ( _box.isNull()){
         _box = inputRaster->size();
+        useOldGrf = true;
     } else
         useOldGrf = false;
 
@@ -164,7 +167,8 @@ Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext 
      }
      if ( selectedAttributes == 1 && _inputAttributeTable.isValid()){
         QStringList names = attributeNames();
-        outputRaster->datadefRef().domain(_inputAttributeTable->columndefinition(names[0]).datadef().domain());
+        //outputRaster->datadefRef().domain(_inputAttributeTable->columndefinition(names[0]).datadef().domain());
+        outputRaster->setDataDefintions(_inputAttributeTable->columndefinition(names[0]).datadef().domain(), selectionBands, inputRaster->stackDefinition().domain());
      }
 
 
@@ -181,6 +185,7 @@ Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext 
          outputRaster->georeference(grf);
          outputRaster->envelope(envelope);
     }
+
 
     return sPREPARED;
 }
