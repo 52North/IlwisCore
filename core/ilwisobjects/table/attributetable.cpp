@@ -8,6 +8,8 @@
 #include "featureiterator.h"
 #include "feature.h"
 #include "table.h"
+#include "basetable.h"
+#include "flattable.h"
 #include "attributetable.h"
 #include "logicalexpressionparser.h"
 #include "tableselector.h"
@@ -75,7 +77,11 @@ const Record &AttributeTable::record(quint32 n) const
 
 ITable AttributeTable::toTable(const QString &nm) const
 {
-    QString  url = "ilwis://internalcatalog/" + (nm != sUNDEF ? name() : nm);
+    QString  url;
+    if ( nm.indexOf(ANONYMOUS_PREFIX)!= 0){
+        url = "ilwis://internalcatalog/" + Identity::newAnonymousName();
+    }else
+        url = "ilwis://internalcatalog/" + (nm != sUNDEF ? name() : nm);
     ITable tbl;
     tbl.prepare(url);
     for(int i=0; i < columnCount(); ++i){
