@@ -133,7 +133,7 @@ bool CrossRasters::crossNoRaster( const BoundingBox& box){
     quint32 count = 0;
     double pixarea = _inputRaster1->georeference()->pixelSize();
     pixarea *= pixarea;
-    initialize(_outputRaster->size().linearSize());
+    initialize(_inputRaster1->size().linearSize());
     std::for_each(iterIn1, iterIn1.end(), [&](double& v1){
         double v2 = *iterIn2;
         checkUndef(v1,v2);
