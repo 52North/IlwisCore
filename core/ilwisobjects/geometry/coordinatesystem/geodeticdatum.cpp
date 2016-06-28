@@ -1,6 +1,7 @@
 #include <QSharedPointer>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include <QSqlField>
 #include <QSqlError>
 
 #include "kernel.h"
@@ -9,6 +10,7 @@
 #include "identity.h"
 #include "geometries.h"
 #include "ilwisdata.h"
+#include "ellipsoid.h"
 #include "geodeticdatum.h"
 
 using namespace Ilwis;
@@ -18,52 +20,88 @@ GeodeticDatum::GeodeticDatum(const QString& name) : Identity(name)
     _datumParams.resize(10);
     std::fill(_datumParams.begin(),_datumParams.end(), 0.0);
     _datumParams[dmSCALE] = 1;
+    _mode = dtMolodensky;
     _isValid = false;
 
 }
 
-GeodeticDatum::GeodeticDatum(std::vector<double> &datumParameters)
+GeodeticDatum::GeodeticDatum(std::vector<double> &datumParameters, const IEllipsoid &ellips)
 {
-    if ( datumParameters.size() == 3)    {
-        set3TransformationParameters(datumParameters[0], datumParameters[1], datumParameters[2]);
-    }
-    if ( datumParameters.size() == 7)    {
+    if ( datumParameters.size() == 3) {
+        set3TransformationParameters(datumParameters[0], datumParameters[1], datumParameters[2], ellips);
+    } else if ( datumParameters.size() == 7) {
         set7TransformationParameters(datumParameters[0], datumParameters[1], datumParameters[2],
                 datumParameters[3], datumParameters[4], datumParameters[5], datumParameters[6]);
-    }
-    if ( datumParameters.size() == 10)    {
+    } else if ( datumParameters.size() == 10) {
         set10TransformationParameters(datumParameters[0], datumParameters[1], datumParameters[2],
                 datumParameters[3], datumParameters[4], datumParameters[5],
                 datumParameters[6], Coordinate(datumParameters[7], datumParameters[8], datumParameters[9]));
     }
 }
 
-void GeodeticDatum::set3TransformationParameters(double x, double z, double y){
+void GeodeticDatum::set3TransformationParameters(const double x, const double y, const double z, const IEllipsoid & ellips) {
     _datumParams[dmDX] = x;
     _datumParams[dmDY] = y;
     _datumParams[dmDZ] = z;
+    _mode = dtMolodensky;
     code(QString("+towgs84=%1,%2,%3").arg(x).arg(y).arg(z));
-     _isValid = true;
+    getFromInternal(ellips->code()); // table datums.csv isn't yet complete; we can only do this for 3 parameter molodensky
+    _isValid = true;
 }
 
-void GeodeticDatum::set7TransformationParameters(double x, double z, double y, double rx, double ry, double rz, double scale){
-    set3TransformationParameters(x,y,z);
+void GeodeticDatum::set7TransformationParameters(const double x, const double y, const double z, const double rx, const double ry, const double rz, const double scale) {
+    _datumParams[dmDX] = x;
+    _datumParams[dmDY] = y;
+    _datumParams[dmDZ] = z;
     _datumParams[dmRX] = rx;
     _datumParams[dmRY] = ry;
     _datumParams[dmRZ] = rz;
     _datumParams[dmSCALE] = scale;
-   code(QString("%1,%2,%3,%4,%5").arg(code()).arg(rx).arg(ry).arg(rz).arg(scale));
-
-
+    _mode = dtBursaWolf;
+    code(QString("%1,%2,%3,%4,%5").arg(code()).arg(rx).arg(ry).arg(rz).arg(scale));
+    _isValid = true;
 }
 
-void GeodeticDatum::set10TransformationParameters(double x, double z, double y, double rx, double ry, double rz, double scale, Coordinate center){
-    set7TransformationParameters(x,y,z,rx,ry,rz,scale);
+void GeodeticDatum::set10TransformationParameters(const double x, const double y, const double z, const double rx, const double ry, const double rz, const double scale, const Coordinate & center) {
+    _datumParams[dmDX] = x;
+    _datumParams[dmDY] = y;
+    _datumParams[dmDZ] = z;
+    _datumParams[dmRX] = rx;
+    _datumParams[dmRY] = ry;
+    _datumParams[dmRZ] = rz;
+    _datumParams[dmSCALE] = scale;
     _datumParams[dmCENTERXR] = center.x;
     _datumParams[dmCENTERXR] = center.y;
     _datumParams[dmCENTERXR] = center.z;
+    _mode = dtBadekas;
     code(QString("%1,%2,%3,%4").arg(code()).arg( center.x).arg( center.y).arg( center.z));
+    _isValid = true;
+}
 
+void GeodeticDatum::getFromInternal(const QString &ellips) {
+    InternalDatabaseConnection db;
+    QString query = "Select * from datum";
+    if ( db.exec(query) ){
+        while( db.next()){
+             QSqlRecord rec = db.record();
+             double dx = rec.field("dx").value().toDouble();
+             double dy = rec.field("dy").value().toDouble();
+             double dz = rec.field("dz").value().toDouble();
+             QString ellipsoid = rec.field("ellipsoid").value().toString();
+             // the combination of ellips-name, dx, dy and dz uniquely identifies the datum by name and area
+             if ( ellipsoid.toLower() == ellips.toLower() && std::abs(_datumParams[dmDX] - dx) < 0.01 && std::abs(_datumParams[dmDY] - dy) < 0.01 && std::abs(_datumParams[dmDZ] - dz) < 0.01) {
+                 _datumParams[dmDX] = dx;
+                 _datumParams[dmDY] = dy;
+                 _datumParams[dmDZ] = dz;
+                 code(rec.field("code").value().toString());
+                 name(rec.field("name").value().toString());
+                 setArea(rec.field("area").value().toString());
+                 setWktName(rec.field("wkt").value().toString());
+                 setAuthority(rec.field("authority").value().toString());
+                 return;
+             }
+        }
+    }
 }
 
 GeodeticDatum *GeodeticDatum::clone() const
@@ -75,6 +113,7 @@ GeodeticDatum *GeodeticDatum::clone() const
     datum->_area = _area;
     datum->_authority = _authority;
     datum->_datumParams = _datumParams;
+    datum->_mode = _mode;
     datum->_isValid = _isValid;
     datum->_wkt = _wkt;
 
@@ -95,26 +134,29 @@ bool GeodeticDatum::isValid() const
         ++count;
     }
     return ok && name() != sUNDEF;
+}
 
+GeodeticDatum::DatumTransformation GeodeticDatum::getTransformationMode() const {
+    return _mode;
 }
 
 void GeodeticDatum::fromCode(const QString &gcode)
 {
     InternalDatabaseConnection stmt;
-    QString query = QString("Select * from datum where code='%1'").arg(gcode);
+    QString query = QString("Select * from datum where code='%1' or code='%2'").arg(gcode).arg('D' + gcode); // temporary workaround (only working for wgs84) because file datums.csv does not have datumnames that match the ones in epsg.pcs
 
     if (stmt.exec(query)) {
         if ( stmt.next()) {
             QString area = stmt.value(stmt.record().indexOf("area")).toString();
             QString geocode = stmt.value(stmt.record().indexOf("code")).toString();
+            QString ellipsoid = stmt.value(stmt.record().indexOf("ellipsoid")).toString();
             double dx = stmt.value(stmt.record().indexOf("dx")).toDouble();
             double dy = stmt.value(stmt.record().indexOf("dy")).toDouble();
             double dz = stmt.value(stmt.record().indexOf("dz")).toDouble();
             setArea(area);
             code(geocode);
             setWktName(stmt.value(stmt.record().indexOf("wkt")).toString());
-            set3TransformationParameters(dx, dy, dz);
-
+            set3TransformationParameters(dx, dy, dz, ellipsoid);
         } else {
             kernel()->issues()->log(TR("No datum for this code %1").arg(gcode));
         }
