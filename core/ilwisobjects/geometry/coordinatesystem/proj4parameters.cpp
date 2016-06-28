@@ -38,7 +38,12 @@ Proj4Parameters::Proj4Parameters( const QString& p) : _hasDatum(false)
 
 void Proj4Parameters::parseShifts(const QString& shifts) {
     QStringList parts = shifts.split(",");
-    if ( parts.size() == 7) {
+    if ( parts.size() == 3) {
+        _hasDatum = true;
+        _keyvalues["dx"] = parts[0];
+        _keyvalues["dy"] = parts[1];
+        _keyvalues["dz"] = parts[2];
+    } else if ( parts.size() == 7) {
         _hasDatum = true;
         _keyvalues["dx"] = parts[0];
         _keyvalues["dy"] = parts[1];
