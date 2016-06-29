@@ -325,6 +325,8 @@ void CatalogModel::gatherItems() {
         _allItems.push_back( new ResourceModel(resource, this));
         hasParent &= (previousContainer.isValid() ? resource.container() == previousContainer : true);
         previousContainer = resource.container();
+        if ( previousContainer.toString() == "ilwis://")
+            hasParent = false;
     }
     if ( hasParent)
         _allItems.push_front(new ResourceModel(Resource(previousContainer.toString() + "/..", itCATALOG), this));
