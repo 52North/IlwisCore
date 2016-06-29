@@ -20,12 +20,10 @@ ToolBar{
             icon  :"entiremap20.png"
             id : entireMap
             action : entireClicked
-        }
-
-        MapExtentButton{
-            id : refreshButton
-            icon : "refresh20.png"
-            action : refreshClicked
+            onClicked: {
+                zoominButton.checked = false
+                panButton.checked = false
+            }
         }
 
         MapExtentButton{
@@ -36,6 +34,8 @@ ToolBar{
             checked: false
             onClicked: {
                 checked = !checked
+                zoominButton.checked = false
+
             }
         }
 
@@ -47,6 +47,7 @@ ToolBar{
             checked: false
             onClicked: {
                 checked = !checked
+                panButton.checked = false
             }
         }
         MapExtentButton{

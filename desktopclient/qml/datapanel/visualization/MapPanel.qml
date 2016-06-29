@@ -47,23 +47,25 @@ Item {
     }
 
     Action {
-        id : panningClicked
+        id : zoomClicked
         onTriggered : {
             if ( manager){
-                manager.panningMode = !manager.panningMode
+                manager.zoomInMode = !manager.zoomInMode
+                manager.panningMode = false
             }
         }
     }
 
     Action {
-        id : zoomClicked
+        id : panningClicked
         onTriggered : {
             if ( manager){
-                manager.zoomInMode = !manager.zoomInMode
-
+                manager.panningMode = !manager.panningMode
+                manager.zoomInMode = false
             }
         }
     }
+
 
     Action {
         id : entireClicked
