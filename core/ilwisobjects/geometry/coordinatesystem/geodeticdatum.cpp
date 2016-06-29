@@ -156,7 +156,9 @@ void GeodeticDatum::fromCode(const QString &gcode)
             setArea(area);
             code(geocode);
             setWktName(stmt.value(stmt.record().indexOf("wkt")).toString());
-            set3TransformationParameters(dx, dy, dz, ellipsoid);
+            IEllipsoid ellips;
+            ellips.prepare("code=ellipsoid:" + ellipsoid);
+            set3TransformationParameters(dx, dy, dz, ellips);
         } else {
             kernel()->issues()->log(TR("No datum for this code %1").arg(gcode));
         }

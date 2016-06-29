@@ -68,23 +68,16 @@ bool ConventionalCoordinateSystem::isEqual(const IlwisObject *obj) const
     if ( !csy->isValid())
         return false;
 
-    if ( ellipsoid().isValid() && ellipsoid()->isEqual(csy->ellipsoid())) {
-        if ( csy->projection().isValid() && projection().isValid()){ //  special case; in general datums will be checked first
-            if (csy->projection()->code() == "longlat" && projection()->code() == "longlat")
-                return true;
-        }
-        if ( datum() && csy->datum()) {
-            if  (datum()->code() == csy->datum()->code())
-                    return true;
-        } else {
-            if ( csy->projection().isValid() && projection().isValid()) {
-                return csy->projection()->isEqual(projection().ptr());
-            }
-        }
+    bool equal = true;
+    if ( csy->projection().isValid() && projection().isValid()) {
+        equal = (csy->projection()->code() == "longlat" && projection()->code() == "longlat") || csy->projection()->isEqual(projection().ptr());
     }
-
-
-    return false;
+    if ( datum() && csy->datum()) {
+        equal &= (datum()->code() == csy->datum()->code());
+    } else if (ellipsoid().isValid() && csy->ellipsoid().isValid()) {
+        equal &= ellipsoid()->isEqual(csy->ellipsoid());
+    }
+    return equal;
 }
 
 bool ConventionalCoordinateSystem::isUnknown() const
