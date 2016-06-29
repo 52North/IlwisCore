@@ -530,7 +530,7 @@ void ResourceModel::setUrl(const QUrl &url, bool asRaw)
 
 QString ResourceModel::keywords() const
 {
-    QString kw =   getProperty("keyword");
+    QString kw = _item["keyword"].toString();
     if ( kw == sUNDEF)
         return "";
     return kw;
@@ -541,7 +541,7 @@ void ResourceModel::keywords(const QString &pkeys)
     QString keys = pkeys;
     QString keywrds = keywords();
     if ( keywrds == ""){
-        setProperty("keyword", keys);
+        _item.addProperty("keyword", keys);
         keywrds = keys;
     }else {
         QStringList parts1 = keywrds.split(",");
@@ -551,7 +551,9 @@ void ResourceModel::keywords(const QString &pkeys)
                 keywrds += key    ;
             }
         }
-        setProperty("keyword", keywrds)   ;
+        _item.addProperty("keyword", keywrds)   ;
     }
+
     mastercatalog()->changeResource(itemRef().id(), "keyword",keywrds,true);
+    emit keywordsChanged();
 }

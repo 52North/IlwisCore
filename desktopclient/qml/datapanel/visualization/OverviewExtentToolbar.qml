@@ -25,6 +25,7 @@ Rectangle {
 
                 zoominButton1.checked = zoominButton1.checked ? false : true
                 metatdata.manager.zoomInMode = zoominButton1.checked
+                panButton1.checked = false
             }
         }
     }
@@ -39,6 +40,18 @@ Rectangle {
         }
     }
 
+    Action {
+        id : panningClicked
+        onTriggered : {
+            if ( manager){
+                panButton1.checked = !panButton1.checked
+                zoominButton1.checked = false
+                manager.panningMode = !manager.panningMode
+                manager.zoomInMode = false
+            }
+        }
+    }
+
     Column{
         spacing : 2
         width : parent.width
@@ -46,9 +59,10 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         Controls.MapExtentButton{
             id : panButton1
-            icon : "pan20.png"
-            onClicked: {
-            }
+            checkable: true
+            checked: false
+            icon : checked ? "pan20A.png" : "pan20.png"
+            action : panningClicked
         }
 
         Controls.MapExtentButton{

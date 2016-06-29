@@ -67,6 +67,14 @@ Controls.DropableItem{
             width : parent.width
             regexvalidator: /^\d*(\.\d*)?$/
         }
+        Text {
+            text : qsTr("Coordinate Envelope");
+            height : Global.rowHeight
+            width : parent.width
+            font.bold: true
+            visible: pixsz.content != ""
+
+        }
 
         Controls.CoordinateSystemBounds{
             id : csyBounds
@@ -88,8 +96,10 @@ Controls.DropableItem{
             centered : cbcorners.checked, pixelsize : pixsz.content,
             description :objectcommon.description}
         var createdId = objectcreator.createObject(createinfo)
-        if ( createdId !== "?" && editorList.depth > 1)
+        if ( createdId !== "?" && editorList.depth > 1){
+            console.debug("aaaaaaa")
             editorList.currentItem.setValue("georeference", createdId)
+        }
         return true
     }
 

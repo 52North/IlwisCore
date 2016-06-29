@@ -86,7 +86,7 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
     }
 
     if ( loc.indexOf("ilwis://factory") == 0 ||
-         loc.indexOf("ilwis://system") == 0 || // there is no need to scan the system dirs as they are added in the beginning
+        // loc.indexOf("ilwis://system") == 0 || // there is no need to scan the system dirs as they are added in the beginning
          loc.isEmpty())
         return true;
     QUrl location(loc);
