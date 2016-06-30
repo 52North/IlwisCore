@@ -590,7 +590,7 @@ private:
     bool moveXY(int delta);
     bool moveXZ(int delta);
     bool move2NextSelection(int delta);
-    void cleanUp4PolyBoundaries(const std::vector<Ilwis::Pixel> &selectionPix);
+    void cleanUp4PolyBoundaries(const std::vector<Ilwis::Pixel> &selectionPix, geos::geom::Geometry *selection);
     bool move2NextBlock();
 };
 

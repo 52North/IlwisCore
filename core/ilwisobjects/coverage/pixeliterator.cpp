@@ -1,13 +1,17 @@
 #include "raster.h"
+#include "geos/geom/PrecisionModel.h"
+#include "geos/algorithm/locate/SimplePointInAreaLocator.h"
+#include "geos/geom/Point.h"
 #ifdef Q_OS_WIN
 #include "geos/geom/Envelope.inl"
+//#include "geos/geom/PrecisionModel.inl" // already included in featurecoverage.cpp
 #endif
+#include "geos/geom/GeometryFactory.h"
 #include "tranquilizer.h"
 #include "table.h"
 #include "pixeliterator.h"
 #include "bresenham.h"
 #include "vertexiterator.h"
-
 
 using namespace Ilwis;
 
@@ -60,7 +64,7 @@ PixelIterator::PixelIterator(const IRasterCoverage& raster, geos::geom::Geometry
     _selectionPixels.resize(_raster->size().ysize());
     // we use  a vector of sets to store the final cleaned selection as sets are both ordered and have no duplicates,
     if ( selection->getGeometryTypeId() == geos::geom::GEOS_POLYGON || selection->getGeometryTypeId() == geos::geom::GEOS_POLYGON)
-        cleanUp4PolyBoundaries(selectionPix);
+        cleanUp4PolyBoundaries(selectionPix, selection);
     else{
         for(int i = 0; i < selectionPix.size(); ++i){
             _selectionPixels[selectionPix[i].y].push_back(selectionPix[i].x) ;
@@ -454,8 +458,12 @@ bool PixelIterator::move2NextSelection(int delta)
         _x = _endx + 1; // put x beyond the edge of the box so moveXY will trigger a y shift
         if(!moveYZ(delta))
             return false;
-
-        if ( _y >= _selectionPixels.size() || _selectionPixels[_y].size() == 0 )
+        while (_y < _selectionPixels.size() && _selectionPixels[_y].size() == 0) { // search for the next non-empty row
+            _x = _endx + 1; // put x beyond the edge of the box so moveXY will trigger a y shift
+            if(!moveYZ(delta))
+                return false;
+        }
+        if ( _y >= _selectionPixels.size())
             return false;
         int xnew = _selectionPixels[_y][0];
         _linearposition += xnew - _box.min_corner().x;
@@ -477,42 +485,52 @@ bool PixelIterator::move2NextSelection(int delta)
     return true;
 }
 
-void PixelIterator::cleanUp4PolyBoundaries(const std::vector<Pixel>& selectionPix)
+void PixelIterator::cleanUp4PolyBoundaries(const std::vector<Pixel>& selectionPix, geos::geom::Geometry* selection)
 {
-    std::vector<std::set<qint32>> preselection(_selectionPixels.size());
+    std::vector<std::set<qint32>> boundaries(_selectionPixels.size());
     for(const Pixel& pixel : selectionPix){
         if ( (pixel.y >= 0) && (pixel.y < _selectionPixels.size())){
-            preselection[pixel.y].insert(pixel.x);
+            boundaries[pixel.y].insert(pixel.x);
         }
     }
     int y = 0;
     int ystart = iUNDEF;
     // getting rid of all unneeded pixels. adjacent pixels are not needed as you can't rasterize between them
-    for(const auto &vec : preselection){
-        std::set<qint32> cleaned;
-        if ( vec.size() > 2){
-            qint32 xold = iUNDEF;
-            for(auto x : vec){
-                if ( std::abs(x - xold) != 1) { // we have had a jump, so add the x to the list
-                     cleaned.insert(x);
+    geos::geom::PrecisionModel *precisionModel = new geos::geom::PrecisionModel(geos::geom::PrecisionModel::FLOATING);
+    geos::geom::GeometryFactory *geometryFactory = new geos::geom::GeometryFactory(precisionModel,-1);
+
+    for(std::set<qint32> &borders : boundaries){
+        borders.insert(_box.min_corner().x);
+        borders.insert(_box.max_corner().x);
+        std::vector<qint32> cleaned;
+        qint32 xposprev = iUNDEF;
+        for (qint32 xpos : borders) {
+            if (xposprev != iUNDEF) {
+                qint32 middle = (xposprev + xpos) / 2;
+                Pixel position (middle + 0.5, y + 0.5); // inspect relationship with the given geometry in the middle between two borders
+                Coordinate crd = _raster->georeference()->pixel2Coord(position);
+                geos::geom::Point *pnt = geometryFactory->createPoint(crd);
+                if (selection->contains(pnt)) {
+                    if ((cleaned.size() > 0) && (cleaned[cleaned.size() - 1]) == xposprev) {
+                        cleaned[cleaned.size() - 1] = xpos;
+                    } else {
+                        cleaned.push_back(xposprev);
+                        cleaned.push_back(xpos);
+                    }
                 }
-                xold = x;
+                delete pnt;
             }
-            if ( cleaned.size() %2 == 1) // always size musat be even , can be  missed because of one long line of pixels
-                cleaned.insert(xold);
-        }else
-            cleaned = vec;
-        if ( cleaned.size() != 0 && ystart == iUNDEF){
-            ystart = y;
+            xposprev = xpos;
         }
         _selectionPixels[y].resize(cleaned.size());
         std::copy(cleaned.begin(), cleaned.end(), _selectionPixels[y].begin() ); //copy pixels to output vector
-        //TODO this is a stop gap to remove line with uneven number of points; must make a more general solution in the future
-        if ( _selectionPixels[y].size() % 2 == 1){
-            _selectionPixels[y].erase(_selectionPixels[y].begin() + _selectionPixels[y].size() / 2);
+        if (ystart == iUNDEF && cleaned.size() != 0) {
+            ystart = y;
         }
         ++y;
     }
+    delete geometryFactory;
+    delete precisionModel;
     if ( ystart != iUNDEF){
         _y = ystart;
         _x =  _selectionPixels[_y][0] - 1;
