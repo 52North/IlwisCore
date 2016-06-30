@@ -32,7 +32,6 @@ PixelIterator::PixelIterator() :
 
 }
 
-
 PixelIterator::PixelIterator(const IRasterCoverage& raster, geos::geom::Geometry* selection) :
     _raster(raster),
     _localOffset(0),
@@ -66,9 +65,11 @@ PixelIterator::PixelIterator(const IRasterCoverage& raster, geos::geom::Geometry
         for(int i = 0; i < selectionPix.size(); ++i){
             _selectionPixels[selectionPix[i].y].push_back(selectionPix[i].x) ;
         }
+        _x = selectionPix[0].x;
+        _y = selectionPix[0].y;
     }
-
     _selectionIndex = 0;
+    initPosition();
 }
 
 PixelIterator::PixelIterator(const IRasterCoverage &raster, const BoundingBox& box, Flow flow) :
@@ -81,7 +82,6 @@ PixelIterator::PixelIterator(const IRasterCoverage &raster, const BoundingBox& b
 {
     init();
 }
-
 
 PixelIterator::PixelIterator(PixelIterator&& iter) :
     _raster(std::move(iter._raster)),
@@ -105,15 +105,12 @@ PixelIterator::PixelIterator(PixelIterator&& iter) :
     _selectionPixels(iter._selectionPixels),
     _selectionIndex(iter._selectionIndex),
     _insideSelection (iter._insideSelection)
-
-
 {
 }
 
 PixelIterator::PixelIterator(const PixelIterator& iter)  {
     copy(iter);
 }
-
 
 void PixelIterator::copy(const PixelIterator &iter) {
     _raster = iter._raster;
@@ -193,8 +190,6 @@ bool PixelIterator::moveXY(int delta){
     _linearposition = _x + _y * _grid->size().xsize() + _z * _grid->size().xsize() * _grid->size().ysize();
     return true;
 }
-
-
 
 bool PixelIterator::moveXZ(int delta)
 {
@@ -308,7 +303,6 @@ bool PixelIterator::moveYZ(int delta){
     }
     return true;
 }
-
 
 Pixel PixelIterator::position() const
 {
