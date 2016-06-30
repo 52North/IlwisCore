@@ -710,6 +710,7 @@ void MasterCatalogModel::setWorkingCatalog(const QString &path)
     if ( path != ""){
         context()->setWorkingCatalog(ICatalog(path));
         _currentUrl = path;
+        mastercatalog()->addContainer(QUrl(path));
     }
 }
 
@@ -752,6 +753,7 @@ QString MasterCatalogModel::currentUrl() const
 void MasterCatalogModel::setCurrentUrl(const QString &url)
 {
     _currentUrl = url;
+    mastercatalog()->addContainer(QUrl(url));
 }
 
 CatalogModel *MasterCatalogModel::currentCatalog() const
@@ -786,6 +788,7 @@ void MasterCatalogModel::setCurrentCatalog(CatalogModel *cat)
     ICatalog catalog(cat->url());
     if ( catalog.isValid()){
         context()->setWorkingCatalog(catalog);
+        mastercatalog()->addContainer(cat->url());
     }
 }
 
