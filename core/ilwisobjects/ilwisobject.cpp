@@ -401,6 +401,11 @@ const QScopedPointer<ConnectorInterface> &IlwisObject::constConnector(int mode) 
     return _connector;
 }
 
+void IlwisObject::resetOutputConnector()
+{
+    _outConnector.reset(0);
+}
+
 bool operator==(const IlwisObject& obj1, const IlwisObject& obj2) {
     return obj1.id() == obj2.id();
 }

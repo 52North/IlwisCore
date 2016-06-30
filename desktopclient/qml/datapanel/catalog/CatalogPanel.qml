@@ -140,6 +140,7 @@ Item {
         orientation: Qt.Vertical
         height : parent.height - infobar.height
         anchors.top : infobar.bottom
+        id : catalogSplit
 
         CatalogViews {
             id : catalogView
