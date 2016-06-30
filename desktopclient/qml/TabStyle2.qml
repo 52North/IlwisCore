@@ -14,7 +14,7 @@ TabViewStyle {
 
     property string selectColor : "steelblue"
     property string nonselectColor : "lightsteelblue"
-    property int tabHeight : 35
+    property int tabHeight : 35 * Global.uiScale
 
 
     tab: Rectangle {
@@ -24,7 +24,7 @@ TabViewStyle {
         color: tabmodel && tabmodel.selected ? "black" : nonselectColor
         border.color:  Global.edgecolor
 
-        implicitWidth: Math.max(label.width + 4, 140)
+        implicitWidth: Global.uiScale *140
         implicitHeight: tabHeight
         radius: 5
 
@@ -33,21 +33,21 @@ TabViewStyle {
             id : label
             width : parent.width - closeButton.width - expandButton.width
             height : tabHeight - 2
-            y : 1
-            x : 6
+            y : 1  * Global.uiScale
+            x : 6 *  Global.uiScale
             Column {
                 anchors.fill: parent
                 Text {
                     width : parent.width
-                    height : 14
+                    height : 14 * Global.uiScale
                     text: tabmodel ? "[ " + tabmodel.id + " ]": "?"
                     color: tabmodel && tabmodel.selected ? "white" : "black"
-                    font.pointSize: 8
+                    font.pointSize: 8 * Global.uiScale
                 }
 
                 Text {
                     width : parent.width
-                    height : 20
+                    height : 20 * Global.uiScale
                     text: tabmodel ? tabmodel.displayName : "?"
                     color: tabmodel && tabmodel.selected ? "white" : "black"
                     elide: Text.ElideMiddle
@@ -75,8 +75,8 @@ TabViewStyle {
             y : 2
             anchors.right : parent.right
             anchors.rightMargin: 2
-            width : 18
-            height : 18
+            width : 18 * Global.uiScale
+            height : width
             opacity : 0.5
             onClicked: {
                datapanesplit.closeTab(side == 1, styleData.index)
@@ -98,8 +98,8 @@ TabViewStyle {
             y : 2
             anchors.right : closeButton.left
             anchors.leftMargin: 2
-            width : 18
-            height : 18
+            width : 18 * Global.uiScale
+            height : width
             opacity : canSeparate(index) ? 0.7 : 0;
             enabled : canSeparate(index)
             onClicked: expandToWindow(side,index)

@@ -10,7 +10,7 @@ TabView {
     id : catalogPanels
     width : parent.width
 
-    style: Base.TabStyle1{ minimumWidth: 60}
+    style: Base.TabStyle1{ minimumWidth: 60* Global.uiScale}
 
     Tab{
         title : qsTr("Grid")
@@ -49,11 +49,11 @@ TabView {
     states: [
     State {
              name : "sized"
-             PropertyChanges { target: catalogPanels; height : parent.height - Global.actionBarHeight}
+             PropertyChanges { target: catalogPanels; height : parent.height - Global.actionBarMaxHeight}
          },
          State {
              name : "maxed"
-             PropertyChanges { target: catalogPanels; height : parent.height - 25}
+             PropertyChanges { target: catalogPanels; height : parent.height - Global.actionBarMinHeight}
          }
     ]
     transitions: [

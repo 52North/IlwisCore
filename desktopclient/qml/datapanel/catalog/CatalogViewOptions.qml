@@ -33,28 +33,28 @@ Item {
     }
     Rectangle {
         id : leftContainer
-        width : 260
+        width : 260 * Global.uiScale
         height : parent.height
-        y : 4
+        y : 4 * Global.uiScale
         border.width: 1
         border.color : Global.edgecolor
         color :   Global.actionItemColor
 
 
         Column {
-            y: 5
-            x : 5
+            y: 5 * Global.uiScale
+            x : 5 * Global.uiScale
             id : buttonRow
             width : parent.width
-            height : parent.height - 5
+            height : parent.height - 5 * Global.uiScale
             spacing : 6
-            property int buttonWidth : 220
+            property int buttonWidth : 220 * Global.uiScale
 
             Controls.WideButton{
                 image : "../images/openmult20.png"
                 label : qsTr("Open selected coverages\nin seperate panels")
                 width : buttonRow.buttonWidth
-                height : 40
+                height : 40* Global.uiScale
                 onClicked: {
                     var ids = mastercatalog.selectedIds()
                     var idlist = ids.split("|")
@@ -68,19 +68,19 @@ Item {
                 image : "../images/opensingle20.png"
                 label : qsTr("Open selected coverages\nin selected panel")
                 width : buttonRow.buttonWidth
-                height : 40
+                height : 40 * Global.uiScale
             }
             Controls.WideButton{
                 image : "../images/openfloat20.png"
                 label : qsTr("Open selected coverages\nin floating panels")
                 width : buttonRow.buttonWidth
-                height : 40
+                height : 40* Global.uiScale
             }
             GroupBox {
                 id : keyChanges
                 title : qsTr("Keywords Selected Objects")
                 height : Global.rowHeight * 4
-                width : 220
+                width : 220* Global.uiScale
                 function changeKeywords(text){
                     if (text !== "")     {
                         var list = mastercatalog.selectedData
@@ -95,19 +95,19 @@ Item {
 
                 Column {
                     anchors.fill: parent
-                    anchors.margins: 3
-                    spacing : 2
+                    anchors.margins: 3* Global.uiScale
+                    spacing : 2* Global.uiScale
                     Row {
                         height : Global.rowHeight
-                        width : buttonRow.buttonWidth - 20
+                        width : buttonRow.buttonWidth - 20* Global.uiScale
                         TextField{
                             id : keywords
-                            width :parent.width - 50
+                            width :parent.width - 50* Global.uiScale
                             height : parent.height
                         }
                         Button {
                             height : parent.height
-                            width : 50
+                            width : 50* Global.uiScale
                             text : qsTr("Add")
                             onClicked:{
                                 keyChanges.changeKeywords(keywords.text)
@@ -116,15 +116,15 @@ Item {
                     }
                     Row {
                         height : Global.rowHeight
-                        width : buttonRow.buttonWidth - 20
+                        width : buttonRow.buttonWidth - 20* Global.uiScale
                         TextField{
                             id : rem
-                            width :parent.width - 50
+                            width :parent.width - 50* Global.uiScale
                             height : parent.height
                         }
                         Button {
                             height : parent.height
-                            width : 50
+                            width : 50* Global.uiScale
                             text : qsTr("Remove")
                             onClicked:{
                                 if (rem.text == "")
@@ -164,17 +164,17 @@ Item {
         }
     }
     Column {
-        width : 240
+        width : 240* Global.uiScale
         anchors.left: leftContainer.right
         height : parent.height -5
-        spacing : 6
-        y : 5
+        spacing : 6* Global.uiScale
+        y : 5* Global.uiScale
         Controls.WideButton{
             image : "../images/mapview.png"
             label : qsTr("Generate previews\nof selected coverages")
             width : parent.width - 3
-            height : 40
-            x : 8
+            height : 40* Global.uiScale
+            x : 8* Global.uiScale
             onClicked: {
 
                 frame.makeResourceList()
@@ -226,7 +226,7 @@ Item {
             anchors.leftMargin: 10
             anchors.right: parent.right
             anchors.rightMargin: 10
-            height : 150
+            height : 150* Global.uiScale
             border .width: 1
             border.color: "lightgrey"
 
@@ -237,7 +237,7 @@ Item {
             ProgressBar{
                 id : progress
                 height : frame.height
-                width : 15
+                width : 15* Global.uiScale
                 anchors.left: frame.right
                 anchors.top : frame.top
                 orientation: Qt.Vertical

@@ -118,14 +118,14 @@ Item {
         Layers{
 
             width : parent.width
-            height : parent.height - Global.actionBarHeight
+            height : parent.height - Global.actionBarMaxHeight
             id : layers
             states: [
                 State { name: "visible"
 
                     PropertyChanges {
                         target: layers
-                        height : parent.height -  Global.actionBarHeight
+                        height : parent.height -  Global.actionBarMaxHeight
                     }
                 },
                 State {
