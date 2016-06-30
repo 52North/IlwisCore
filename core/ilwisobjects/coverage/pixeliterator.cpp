@@ -45,6 +45,10 @@ PixelIterator::PixelIterator(const IRasterCoverage& raster, geos::geom::Geometry
     Coordinate crdMin = Coordinate(env->getMinX(), env->getMinY());
     Coordinate crdMax = Coordinate(env->getMaxX(), env->getMaxY());
     _box = raster->georeference()->coord2Pixel(Box<Coordinate>(crdMin, crdMax));
+    _box.min_corner().x = std::max(_box.min_corner().x, 0);
+    _box.min_corner().y = std::max(_box.min_corner().y, 0);
+    _box.max_corner().x = std::min(_box.max_corner().x, (int)(raster->size().xsize() - 1));
+    _box.max_corner().y = std::min(_box.max_corner().y, (int)(raster->size().ysize() - 1));
     init();
     Bresenham algo(_raster->georeference());
     VertexIterator iter(selection);
