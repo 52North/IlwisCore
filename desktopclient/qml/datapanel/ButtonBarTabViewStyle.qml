@@ -7,7 +7,7 @@ import "../Global.js" as Global
 TabViewStyle {
     property string selectColor : "#B0C4DE"
     property string nonselectColor : "white"
-    property int tabHeight : 23
+    property int tabHeight : 23 * Global.uiScale
 
 
     frameOverlap: 1
@@ -21,6 +21,7 @@ TabViewStyle {
             id: text
             anchors.centerIn: parent
             text: styleData.title
+            font.pointSize: 9 * Global.uiScale
             anchors.verticalCenter: parent.verticalCenter
         }
         MouseArea  {

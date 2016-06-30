@@ -15,9 +15,10 @@ var selectedTabColor = "#B0C4DE"
 var actionItemColor =  "#f2f0e9"
 var alternateSelectedTabColor = "#87CEFA"
 var notSelectedTabColor = "white"
-var rowHeight = 20
-var actionBarHeight = 260
 var uiScale = 1.0
+var rowHeight = 20 * uiScale
+var actionBarMaxHeight = 260  * uiScale
+var actionBarMinHeight = 25  * uiScale
 
 function isNumber(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);

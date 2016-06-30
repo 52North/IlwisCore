@@ -7,18 +7,18 @@ import ".." as DataPanel
 
 TabView {
     id : catalogoptions
-    height : 25
+    height : Global.actionBarMinHeight
     width : parent.width
     tabPosition: Qt.BottomEdge
     property string side
-    Layout.minimumHeight: 25
+    Layout.minimumHeight: Global.actionBarMinHeight
     style: DataPanel.ButtonBarTabViewStyle{}
 
     function tabClicked(index){
         if ( currentIndex === index){
             var tab = getTab(currentIndex)
             if ( tab){
-                if ( tab.height <= 60){
+                if ( tab.height <= 60 * Global.uiScale){
                     catalogView.state = "sized"
                 }
                 else{

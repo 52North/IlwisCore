@@ -143,7 +143,7 @@ Item {
 
         CatalogViews {
             id : catalogView
-            height : parent.height - 25
+            height : parent.height - Global.actionBarMinHeight
         }
         CatalogActions{
             id : cbuttonBar

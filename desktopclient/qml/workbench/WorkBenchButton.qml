@@ -25,8 +25,8 @@ ToolButton{
         anchors.centerIn: parent
         source: "../images/" + iconname
         fillMode: Image.PreserveAspectFit
-        width : 45
-        height: 45
+        width : 40
+        height: width
     }
     Text {
         id : textLabel

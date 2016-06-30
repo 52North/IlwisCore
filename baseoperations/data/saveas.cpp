@@ -44,7 +44,8 @@ Ilwis::OperationImplementation::State SaveAs::prepare(ExecutionContext *, const 
 {
 
     QString objectname = _expression.parm(0).value();
-    if (!_inputObject.prepare(objectname)) {
+    objectname.remove("\"");
+    if (!_inputObject.prepare(objectname,{"mustexist",true})) {
         ERROR2(ERR_COULD_NOT_LOAD_2,objectname,"");
         return sPREPAREFAILED;
     }
