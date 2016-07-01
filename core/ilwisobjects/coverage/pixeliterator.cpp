@@ -63,7 +63,7 @@ PixelIterator::PixelIterator(const IRasterCoverage& raster, geos::geom::Geometry
     }
     _selectionPixels.resize(_raster->size().ysize());
     // we use  a vector of sets to store the final cleaned selection as sets are both ordered and have no duplicates,
-    if ( selection->getGeometryTypeId() == geos::geom::GEOS_POLYGON || selection->getGeometryTypeId() == geos::geom::GEOS_POLYGON)
+    if ( selection->getGeometryTypeId() == geos::geom::GEOS_POLYGON || selection->getGeometryTypeId() == geos::geom::GEOS_MULTIPOLYGON)
         cleanUp4PolyBoundaries(selectionPix, selection);
     else{
         for(int i = 0; i < selectionPix.size(); ++i){
@@ -72,8 +72,9 @@ PixelIterator::PixelIterator(const IRasterCoverage& raster, geos::geom::Geometry
         _x = selectionPix[0].x;
         _y = selectionPix[0].y;
     }
-    _selectionIndex = 0;
     initPosition();
+    _selectionIndex = 1;
+    _insideSelection = true;
 }
 
 PixelIterator::PixelIterator(const IRasterCoverage &raster, const BoundingBox& box, Flow flow) :
@@ -506,8 +507,8 @@ void PixelIterator::cleanUp4PolyBoundaries(const std::vector<Pixel>& selectionPi
         qint32 xposprev = iUNDEF;
         for (qint32 xpos : borders) {
             if (xposprev != iUNDEF) {
-                qint32 middle = (xposprev + xpos) / 2;
-                Pixel position (middle + 0.5, y + 0.5); // inspect relationship with the given geometry in the middle between two borders
+                double middle = (xposprev + xpos) / 2.0;
+                Pixeld position (middle + 0.5, y + 0.5); // inspect relationship with the given geometry in the middle between two borders
                 Coordinate crd = _raster->georeference()->pixel2Coord(position);
                 geos::geom::Point *pnt = geometryFactory->createPoint(crd);
                 if (selection->contains(pnt)) {
@@ -533,6 +534,6 @@ void PixelIterator::cleanUp4PolyBoundaries(const std::vector<Pixel>& selectionPi
     delete precisionModel;
     if ( ystart != iUNDEF){
         _y = ystart;
-        _x =  _selectionPixels[_y][0] - 1;
+        _x =  _selectionPixels[_y][0];
     }
 }
