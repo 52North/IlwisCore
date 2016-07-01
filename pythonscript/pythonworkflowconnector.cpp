@@ -137,7 +137,7 @@ void PythonWorkflowConnector::parseInputNodeArguments(Workflow *workflow, const 
                 SPAssignedInputData inputData = workflow->getAssignedInputData({inputNode, i});
                 if (inputs.contains(inputData)) {
                     // shared over multiple operations
-                    arguments.insert(i, inputs.value(inputData));
+                    arguments.replace(i, inputs.value(inputData));
                 } else {
                     QString argument;
                     if (inputData->value.size() > 0) {
@@ -148,7 +148,7 @@ void PythonWorkflowConnector::parseInputNodeArguments(Workflow *workflow, const 
                         inputParamIndex++;
                     }
                     inputs.insert(inputData, argument);
-                    arguments.insert(i, argument);
+                    arguments.replace(i, argument);
                 }
             }
         }
@@ -158,7 +158,7 @@ void PythonWorkflowConnector::parseInputNodeArguments(Workflow *workflow, const 
         std::vector<SPOperationParameter> parameters = meta->getInputParameters();
         if (inputParamIndex < _expression.parameterCount()) {
             for (int i = 0 ; i < optionals.size() ; i++) {
-                quint16 optionalIndex = requireds.size();
+                quint16 optionalIndex = requireds.size() + i;
                 if ( !workflow->hasInputAssignment(inputNode, optionalIndex)) {
                     continue; // implicit or non-existent input
                 } else {
@@ -167,7 +167,7 @@ void PythonWorkflowConnector::parseInputNodeArguments(Workflow *workflow, const 
                     QString namedOptional = "%1";/*parameter->term() + "=%1"*/ // TODO named optionals
                     if (inputs.contains(inputData)) {
                         // shared over multiple operations
-                        arguments.insert(optionalIndex, namedOptional.arg(inputs.value(inputData)));
+                        arguments.replace(optionalIndex, namedOptional.arg(inputs.value(inputData)));
                     } else {
                         QString argument;
                         if (inputData->value.size() > 0) {
@@ -178,7 +178,7 @@ void PythonWorkflowConnector::parseInputNodeArguments(Workflow *workflow, const 
                             inputParamIndex++;
                         }
                         inputs.insert(inputData, argument);
-                        arguments.insert(optionalIndex, namedOptional.arg(argument));
+                        arguments.replace(optionalIndex, namedOptional.arg(argument));
                     }
                 }
             }
@@ -230,10 +230,13 @@ bool PythonWorkflowConnector::reverseFollowScriptPath(Workflow *workflow, const 
     }
 
     QStringList arguments;
+    for (int i = 0 ; i < meta->inputParameterCount() ; i++) {
+        arguments.push_back(""); // initialize empty arguments
+    }
 
     for (InputAssignment assignment : workflow->getConstantInputAssignments(v)) {
         SPAssignedInputData input = workflow->getAssignedInputData(assignment);
-        arguments.insert(assignment.second, input->value);
+        arguments.replace(assignment.second, input->value);
     }
 
     if(!doInputEdges(ei, ei_end,workflow,v,arguments, script))
@@ -243,7 +246,7 @@ bool PythonWorkflowConnector::reverseFollowScriptPath(Workflow *workflow, const 
     for (int i = 0 ; i < externalInputs.size() ; i++) {
         QString externalInput = externalInputs.at(i);
         if ( !externalInput.isEmpty()) {
-            arguments.insert(i, externalInput);
+            arguments.replace(i, externalInput);
         }
     }
     if (! _nodeExecutionContext.contains(v)){
@@ -341,7 +344,7 @@ bool PythonWorkflowConnector::doInputEdges(InEdgeIterator& ei,
             quint16 inIdx = edgeProperties._inputParameterIndex;
             quint16 outIdx = edgeProperties._outputParameterIndex;
             QString resultName = localNames[outIdx];
-            arguments.insert(inIdx, resultName);
+            arguments.replace(inIdx, resultName);
 
             if ( !edgeProperties.temporary) {
                 QString outputName = edgeProperties.outputName.isEmpty()
