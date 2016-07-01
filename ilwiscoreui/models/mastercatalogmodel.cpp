@@ -474,7 +474,9 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
         Resource res = mastercatalog()->name2Resource(inpath,itCATALOG);
         if ( res.isValid()){
             canBeAnimated = hasType(res.extendedType(), itCATALOG)        ;
-        }
+        }else
+            res = Resource(inpath, itCATALOG);
+
         if ( filter != "container=ilwis://mastercatalog")
             res.addProperty("filter",filter);
         res.addProperty("canbeanimated",canBeAnimated);

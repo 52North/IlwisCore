@@ -19,8 +19,8 @@ Item {
     height : parent.height
 
     onTabmodelChanged: {
-        if ( cbuttonBar && tabmodel)
-            cbuttonBar.side = tabmodel.side
+        if ( actionBar && tabmodel)
+            actionBar.side = tabmodel.side
     }
 
     signal catalogChanged()
@@ -140,13 +140,14 @@ Item {
         orientation: Qt.Vertical
         height : parent.height - infobar.height
         anchors.top : infobar.bottom
+        id : catalogSplit
 
         CatalogViews {
             id : catalogView
             height : parent.height - Global.actionBarMinHeight
         }
         CatalogActions{
-            id : cbuttonBar
+            id : actionBar
         }
 
     }

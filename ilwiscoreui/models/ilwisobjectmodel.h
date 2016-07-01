@@ -59,6 +59,7 @@ public:
     Q_INVOKABLE OperationModel *operation(const QString& id);
     Q_INVOKABLE CatalogModel *catalog(const QString& id);
     Q_INVOKABLE void unload();
+    Q_INVOKABLE QString copy(const QString& newUrl, const QString& format, const QString& provider);
 
 
     bool isValid() const;

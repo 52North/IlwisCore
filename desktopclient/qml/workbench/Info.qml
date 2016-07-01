@@ -99,7 +99,14 @@ WorkBenchShifter {
                         height: 100
                         labelText: qsTr("Developers")
                         labelWidth: 100
-                        content: "Martin Schouwenburg,\nHenning Bredel,\nBas Retsios,\nHeinrich Kiessling,\nJohannes Kolbe"
+                        content: "Martin Schouwenburg(lead),\nHenning Bredel,\nBas Retsios,\nHeinrich Kiessling,\nJohannes Kolbe\nJoão Bonina"
+                    }
+                    Controls.TextAreaLabelPair{
+                        width : parent.width
+                        height: 60
+                        labelText: qsTr("Documentation")
+                        labelWidth: 100
+                        content: "Jamshid Farifteh"
                     }
                 }
             }

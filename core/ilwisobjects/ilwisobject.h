@@ -385,6 +385,7 @@ public:
     double pseudoUndef() const;
     virtual void setPseudoUndef(double v);
     const QScopedPointer<ConnectorInterface> &constConnector(int mode=cmINPUT | cmOUTPUT) const;
+    void resetOutputConnector();
 
 protected:
    QScopedPointer<ConnectorInterface>& connector(int mode=cmINPUT | cmOUTPUT);

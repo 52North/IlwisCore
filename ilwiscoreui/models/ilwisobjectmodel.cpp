@@ -702,6 +702,26 @@ void IlwisObjectModel::unload()
     }
 }
 
+QString IlwisObjectModel::copy(const QString &newUrl, const QString &format, const QString &provider)
+{
+    try {
+    if ( _ilwisobject.isValid()){
+        quint64 id = mastercatalog()->name2id(newUrl, _ilwisobject->ilwisType());
+        if ( id == i64UNDEF){
+            _ilwisobject->connectTo(newUrl,format, provider, IlwisObject::cmOUTPUT);
+            _ilwisobject->store();
+            // original object must forget about its copy
+            _ilwisobject->resetOutputConnector();
+        }else{
+            return "exists";
+        }
+    }
+    return "ok";
+    } catch(const ErrorObject& ){}
+
+    return "error";
+}
+
 bool IlwisObjectModel::isValid() const
 {
     return _ilwisobject.isValid();
