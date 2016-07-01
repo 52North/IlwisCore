@@ -346,12 +346,21 @@ qint64 UIContextModel::addMapPanel(const QString& filter, const QString& side, c
     return -1;
 }
 
-QStringList UIContextModel::formatList(const QString& query, const QString& ilwtp) const
+QStringList UIContextModel::formatList(const QString& query, const QString& selectParm) const
 {
+    if ( selectParm == "provider"){
+        std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpCONNECTOR, query);
+        QStringList formatList;
+        for(auto &format : formats)    {
+            formatList.append(format.second.property(Ilwis::DataFormat::fpCONNECTOR).toString());
+        }
+        return formatList;
+    }
+
     bool ok;
-    IlwisTypes ilwtype = ilwtp.toULongLong(&ok);
+    IlwisTypes ilwtype = selectParm.toULongLong(&ok);
     if (!ok){
-        ilwtype = IlwisObject::name2Type(ilwtp);
+        ilwtype = IlwisObject::name2Type(selectParm);
         if (ilwtype == itUNKNOWN)
             return QStringList();
     }

@@ -14,11 +14,23 @@ TabView {
     Layout.minimumHeight: Global.actionBarMinHeight
     style: DataPanel.ButtonBarTabViewStyle{}
 
+    function getFormatString(requestedType) {
+        getTab(2).active = true
+        return getTab(2).item.getFormatString(requestedType)
+    }
+
+    function useDropFormat() {
+        getTab(2).active = true
+        return getTab(2).item.useDropFormat
+    }
+
+
+
     function tabClicked(index){
         if ( currentIndex === index){
             var tab = getTab(currentIndex)
             if ( tab){
-                if ( tab.height <= 60 * Global.uiScale){
+                if ( catalogView.state == "maxed"){
                     catalogView.state = "sized"
                 }
                 else{

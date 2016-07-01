@@ -8,14 +8,20 @@ import "../.." as Base
 import "../../Global.js" as Global
 
 DropArea {
-    id : dropArea
+    id : catalogViewsArea
     width : parent.width
+    state : "maxed"
 
     onDropped: {
-        var obj = mastercatalog.id2object(drag.source.ilwisobjectid, dropArea)
-        var formatstrings = obj.externalFormat.split(":")
+        var formatstrings
+        var obj = mastercatalog.id2object(drag.source.ilwisobjectid, catalogViewsArea)
+        console.debug(actionBar.useDropFormat())
+        if ( actionBar.useDropFormat())
+            formatstrings = actionBar.getFormatString(drag.source.type)
+        if (!formatstrings)
+            formatstrings = obj.externalFormat.split(":")
         var newUrl = currentCatalog.url + "/" + obj.name
-        obj.copy(newUrl, formatstrings[1].trim(), formatstrings[0].trim());
+        //obj.copy(newUrl, formatstrings[1].trim(), formatstrings[0].trim());
         currentCatalog.refresh()
     }
     TabView {
@@ -64,17 +70,17 @@ DropArea {
     states: [
     State {
              name : "sized"
-             PropertyChanges { target: catalogPanels; height : parent.height - Global.actionBarMaxHeight}
+             PropertyChanges { target: catalogViewsArea; height : parent.height - Global.actionBarMaxHeight}
          },
          State {
              name : "maxed"
-             PropertyChanges { target: catalogPanels; height : parent.height - Global.actionBarMinHeight}
+             PropertyChanges { target: catalogViewsArea; height : parent.height - Global.actionBarMinHeight}
          }
     ]
     transitions: [
         Transition {
             ParallelAnimation {
-                NumberAnimation { target : dropArea; properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
+                NumberAnimation { target : catalogViewsArea; properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
             }
         }
     ]

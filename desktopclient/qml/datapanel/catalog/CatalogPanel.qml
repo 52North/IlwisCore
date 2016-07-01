@@ -19,8 +19,8 @@ Item {
     height : parent.height
 
     onTabmodelChanged: {
-        if ( cbuttonBar && tabmodel)
-            cbuttonBar.side = tabmodel.side
+        if ( actionBar && tabmodel)
+            actionBar.side = tabmodel.side
     }
 
     signal catalogChanged()
@@ -147,7 +147,7 @@ Item {
             height : parent.height - Global.actionBarMinHeight
         }
         CatalogActions{
-            id : cbuttonBar
+            id : actionBar
         }
 
     }
