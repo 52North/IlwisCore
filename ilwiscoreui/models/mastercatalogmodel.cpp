@@ -60,7 +60,7 @@ CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QUrl& 
     res.addProperty("filter",query);
     res.setDescription(descr);
     auto cm = new CatalogModel(res, CatalogModel::getCatalogType(res, CatalogModel::ctBOOKMARK));
-    cm->scanContainer(threading);
+    cm->scanContainer(threading,false);
     return cm;
 }
 
@@ -222,7 +222,7 @@ void MasterCatalogModel::scanBookmarks()
                     model = new OperationCatalogModel(this);
                 }else
                     model = new CatalogModel(res, CatalogModel::getCatalogType(res, CatalogModel::ctBOOKMARK));
-                model->scanContainer(false);
+                model->scanContainer(false, false);
                 _bookmarks.push_back(model);
 
             }else{
@@ -498,7 +498,7 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
             }
         }
 
-        model->scanContainer(true);
+        model->scanContainer(true, false);
         emit currentCatalogChanged();
         return model;
 
@@ -883,7 +883,7 @@ CatalogWorker::~CatalogWorker(){
 void CatalogWorker::process(){
     try {
         for(auto iter = _models.begin(); iter != _models.end(); ++iter){
-            (*iter)->scanContainer(false);
+            (*iter)->scanContainer(false, false);
             emit updateBookmarks();
         }
         if (!uicontext()->abort()){
