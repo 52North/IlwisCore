@@ -6,11 +6,11 @@ ComboxLabelPair {
     property string query : "(datatype & %1)!=0 and (readwrite='rc' or readwrite='rcu')"
 
     function selectedFormatString() {
-        var expr = "query = name='" + comboText + "'";
-        var result = uicontext.formatList(query, "provider")
+        var expr = "name='" + comboText + "'";
+        var result = uicontext.formatList(expr, "format")
         if ( result.length > 0)
-            return requestedType + ":" + result[0]
-        return null
+            return result[0]
+        return ""
 
     }
 
