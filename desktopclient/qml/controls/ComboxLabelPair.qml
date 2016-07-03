@@ -17,6 +17,14 @@ Item {
     property alias currentIndex : textid.currentIndex
     height : 20
 
+    signal indexChanged()
+
+    function select(name){
+        var index = textid.find(name.trim())
+        console.debug(index, "|",name, textid.model)
+        textid.currentIndex = index
+    }
+
     Text {
         id : label
         height : parent.height
@@ -34,6 +42,10 @@ Item {
         model : itemModel
         editable : textEditable
         textRole: role
+
+        onCurrentIndexChanged: {
+            indexChanged()
+        }
     }
 }
 

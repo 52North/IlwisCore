@@ -13,16 +13,31 @@ DropArea {
     state : "maxed"
 
     onDropped: {
-        var formatstrings
-        var obj = mastercatalog.id2object(drag.source.ilwisobjectid, catalogViewsArea)
-        console.debug(actionBar.useDropFormat())
-        if ( actionBar.useDropFormat())
-            formatstrings = actionBar.getFormatString(drag.source.type)
-        if (!formatstrings)
-            formatstrings = obj.externalFormat.split(":")
-        var newUrl = currentCatalog.url + "/" + obj.name
-        //obj.copy(newUrl, formatstrings[1].trim(), formatstrings[0].trim());
-        currentCatalog.refresh()
+        var formatstrings = ""
+        var idstring = drag.source.ids
+        if ( idstring === "?" || idstring === "")
+            idstring = drag.source.ilwisobjectid
+
+
+        var ids = idstring.split("|")
+        for(var i=0; i < ids.length; ++i ){
+
+            var obj = mastercatalog.id2object(ids[i], catalogViewsArea)
+            if (obj) {
+                if ( actionBar.useDropFormat())
+                    formatstrings = actionBar.getFormatString(drag.source.type)
+                if (formatstrings === "")
+                    formatstrings = obj.externalFormat
+                if ( formatstrings){
+                    var parts = formatstrings.split(":")
+                    var newUrl = currentCatalog.url + "/" + obj.name
+                    obj.copy(newUrl, parts[1].trim(), parts[0].trim());
+                }
+            }
+            console.debug(i)
+        }
+        console.debug("run")
+        currentCatalog.scanContainer(false,true)
     }
     TabView {
         id : catalogPanels

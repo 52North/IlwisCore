@@ -1,6 +1,7 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
+import PreferencesModel 1.0
 import QtQuick.Controls.Styles 1.1
 import "../../controls" as Controls
 import "../../Global.js" as Global
@@ -13,8 +14,21 @@ Column {
 
     function getFormatString(requestedType){
         if ( requestedType === "rastercoverage"){
-            console.debug(rasters.comboText)
+            return rasters.selectedFormatString()
         }
+        if ( requestedType === "rastercoverage"){
+            return features.selectedFormatString()
+        }
+        if ( requestedType === "table"){
+            return table.selectedFormatString()
+        }
+        if ( requestedType === "coordinatesystem"){
+            return csy.selectedFormatString()
+        }
+        if ( requestedType === "domain"){
+            return dom.selectedFormatString()
+        }
+        return ""
     }
 
     Controls.FormatsComboBox{
@@ -25,9 +39,23 @@ Column {
         labelText: qsTr("Raster coverage")
         labelWidth: 120
 
+        Component.onCompleted: {
+            var name = preferences.preferedDataFormat("rastercoverage")
+            if ( name !== "?")
+                rasters.select(name)
+
+        }
+        Connections {
+            target: rasters
+            onIndexChanged :{
+                preferences.setPreferedDataFormat("rastercoverage",rasters.comboText)
+            }
+        }
+
     }
 
     Controls.FormatsComboBox{
+        id : features
         width : parent.width
         height : 20
         ilwisType: uicontext.typeName2typeId("featurecoverage");
@@ -37,6 +65,7 @@ Column {
     }
 
     Controls.FormatsComboBox{
+        id : table
         width : parent.width
         height : 20
         ilwisType: uicontext.typeName2typeId("table");
@@ -45,6 +74,7 @@ Column {
 
     }
     Controls.FormatsComboBox{
+        id : csy
         width : parent.width
         height : 20
         ilwisType: uicontext.typeName2typeId("coordinatesystem");
@@ -54,6 +84,7 @@ Column {
     }
 
     Controls.FormatsComboBox{
+        id : dom
         width : parent.width
         height : 20
         ilwisType: uicontext.typeName2typeId("domain");
