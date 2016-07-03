@@ -55,7 +55,7 @@ public:
      * @param location the url to the container
      * @return true if the adding of the container was succesfull
      */
-    bool addContainer(const QUrl &location);
+    bool addContainer(const QUrl &location, bool forceScan=false);
 
     /**
      * Adds a list of Resources to the MasterCatalog

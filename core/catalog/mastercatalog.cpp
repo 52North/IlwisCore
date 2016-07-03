@@ -61,7 +61,7 @@ bool MasterCatalog::prepare()
 }
 
 
-bool MasterCatalog::addContainer(const QUrl &inlocation)
+bool MasterCatalog::addContainer(const QUrl &inlocation, bool forceScan)
 {
     //Locker<std::recursive_mutex> lock(_guard);
     if ( !inlocation.isValid()) // it is valid to try this with an empty url; just wont do anything
@@ -100,8 +100,10 @@ bool MasterCatalog::addContainer(const QUrl &inlocation)
             options.addOption(QPair<QString, QVariant>(item.first, item.second));
         });
     }
-    if ( _catalogs.find(location) != _catalogs.end())
-        return true;
+    if ( !forceScan){
+        if ( _catalogs.find(location) != _catalogs.end())
+            return true;
+    }
 
     Resource resource = name2Resource(location.toString(),itCATALOG);
     if ( !resource.isValid() || !hasType(resource.extendedType(), itCATALOG)){
