@@ -3,9 +3,57 @@
 #include <QDesktopServices>
 #include "ilwisconfiguration.h"
 #include "ilwiscontext.h"
+#include "dataformat.h"
 #include "preferencesmodel.h"
 
 using namespace Ilwis;
+
+QString PreferencesModel::preferedDataFormat(const QString &type)
+{
+    IlwisTypes ilwtype;
+    ilwtype = IlwisObject::name2Type(type);
+    if (ilwtype == itUNKNOWN)
+        return QString();
+    if ( hasType(ilwtype,itFEATURE )){
+        ilwtype = itFEATURE;
+    }
+    QString formatCode = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/default-conversion-format-" + type,QString(sUNDEF));
+    if ( formatCode == sUNDEF){
+        // we default to ilwis3 formats if nothing is defined
+        switch (ilwtype){
+        case itRASTER:
+            formatCode = "map";break;
+        case itPOINT:
+        case itLINE:
+        case itPOLYGON:
+        case itFEATURE:
+            formatCode = "vectormap";break;
+        case itTABLE:
+            formatCode =  "table";break;
+        case itDOMAIN:
+            formatCode = "domain";break;
+        case itCOORDSYSTEM:
+            formatCode =  "coordystem";break;
+        case itGEOREF:
+            formatCode =  "georef"; break;
+        default:
+            formatCode = sUNDEF;
+        }
+    }
+    QString expr = QString("(datatype & %1)!=0 and (readwrite='rc' or readwrite='rcu')").arg(ilwtype);
+    std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpNAME, expr);
+    for(auto &format : formats)    {
+        if ( formatCode == format.second.property(Ilwis::DataFormat::fpCODE).toString())
+            return format.second.property(Ilwis::DataFormat::fpNAME).toString();
+    }
+    return sUNDEF;
+}
+
+void PreferencesModel::setPreferedDataFormat(const QString &type, const QString &name)
+{
+    if ( name != "" && name != sUNDEF)
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/default-conversion-format-" + type,name);
+}
 
 PreferencesModel::PreferencesModel(QObject *parent) : QObject(parent)
 {
