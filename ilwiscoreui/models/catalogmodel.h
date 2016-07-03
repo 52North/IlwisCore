@@ -45,7 +45,7 @@ public:
     Q_INVOKABLE void addActiveFilter(const QString& filterName);
     Q_INVOKABLE void removeActiveFilter(const QString& filterName);
     Q_INVOKABLE virtual void refresh();
-    Q_INVOKABLE void scanContainer(bool threaded);
+    Q_INVOKABLE void scanContainer(bool threaded, bool forceScan);
 
     bool isScanned() const;
     bool initNode() const;
@@ -114,7 +114,7 @@ class CatalogWorker2 : public QObject {
     Q_OBJECT
 
 public:
-    CatalogWorker2(const QUrl& url);
+    CatalogWorker2(const QUrl& url, const QUrl& workingcatalog, bool forceScan);
 
 public slots:
     void process();
@@ -127,6 +127,8 @@ signals:
 
 private:
     QUrl _container;
+    QUrl _workingCatalog;
+    bool _scan;
 };
 //}
 //}

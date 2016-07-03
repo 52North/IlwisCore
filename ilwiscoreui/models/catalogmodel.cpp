@@ -80,7 +80,7 @@ CatalogModel::CatalogModel(quint64 id, QObject *parent) : ResourceModel(masterca
 
 }
 
-void CatalogModel::scanContainer(bool threading)
+void CatalogModel::scanContainer(bool threading, bool forceScan)
 {
     bool inmainThread = QThread::currentThread() == QCoreApplication::instance()->thread();
     bool useThread = threading && inmainThread;
@@ -88,7 +88,7 @@ void CatalogModel::scanContainer(bool threading)
         if ( !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(resource().url().toString()))){
             QUrl url = resource().url();
             QThread* thread = new QThread;
-            CatalogWorker2* worker = new CatalogWorker2(url);
+            CatalogWorker2* worker = new CatalogWorker2(url, context()->workingCatalog()->resource().url(), forceScan);
             worker->moveToThread(thread);
             thread->connect(thread, &QThread::started, worker, &CatalogWorker2::process);
             thread->connect(worker, &CatalogWorker2::finished, thread, &QThread::quit);
@@ -98,7 +98,7 @@ void CatalogModel::scanContainer(bool threading)
             thread->start();
         }
     }else
-        mastercatalog()->addContainer(resource().url());
+        mastercatalog()->addContainer(resource().url(), forceScan);
 
 }
 
@@ -401,13 +401,17 @@ int CatalogModel::getCatalogType(const Resource& res, int predefineds){
     return bits;
 }
 //-------------------------------------------------
-CatalogWorker2::CatalogWorker2(const QUrl& url) : _container(url)
+CatalogWorker2::CatalogWorker2(const QUrl& url, const QUrl &workingcatalog, bool forceScan) : _container(url), _workingCatalog(workingcatalog), _scan(forceScan)
 {
 }
 
 void CatalogWorker2::process(){
     try {
-        mastercatalog()->addContainer(_container);
+        ICatalog catalog(_workingCatalog.toString());
+        if ( catalog.isValid())
+            context()->setWorkingCatalog(catalog);
+
+        mastercatalog()->addContainer(_container, _scan);
         emit updateContainer();
         emit finished();
     } catch(const ErrorObject& ){
