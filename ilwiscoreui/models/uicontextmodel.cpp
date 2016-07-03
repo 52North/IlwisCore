@@ -348,11 +348,12 @@ qint64 UIContextModel::addMapPanel(const QString& filter, const QString& side, c
 
 QStringList UIContextModel::formatList(const QString& query, const QString& selectParm) const
 {
-    if ( selectParm == "provider"){
+    if ( selectParm == "format"){
         std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpCONNECTOR, query);
         QStringList formatList;
         for(auto &format : formats)    {
-            formatList.append(format.second.property(Ilwis::DataFormat::fpCONNECTOR).toString());
+            QString formatstring = format.second.property(Ilwis::DataFormat::fpCONNECTOR).toString() + ":" + format.second.property(Ilwis::DataFormat::fpCODE).toString();
+            formatList.append(formatstring);
         }
         return formatList;
     }
