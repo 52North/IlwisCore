@@ -124,10 +124,17 @@ QString Catalog::resolve(const QString &nm, IlwisTypes tp) const
                 query = QString("select propertyvalue from catalogitemproperties,mastercatalog \
                                 where mastercatalog.resource='%1' and mastercatalog.itemid=catalogitemproperties.itemid\
                         and (mastercatalog.extendedtype & %2) != 0").arg(resolvedName).arg(tp);
-                        results.exec(query);
-                        if ( results.next()){ // if it is in the extended type than it is ok
-                        return resolvedName;
-            }
+                results.exec(query);
+                if ( results.next()){ // if it is in the extended type than it is ok
+                    return resolvedName;
+                } else {
+                    QString query = QString("select resource from mastercatalog where name = '%1' and (type & %2) != 0 and container='ilwis://internalcatalog'").arg(name).arg(tp);
+                    results.exec(query);
+                    if ( results.next()) {
+                        QSqlRecord rec = results.record();
+                        return rec.value(0).toString();
+                    }
+                }
             }
         }
         return sUNDEF;
