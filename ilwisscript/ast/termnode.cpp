@@ -218,7 +218,7 @@ bool TermNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 
 QString TermNode::getName(const NodeValue& var) const {
     QString name = var.toString();
-    if (name != sUNDEF)
+    if (name.length() > 0 && name != sUNDEF)
         return name;
 //    QString typeName = var.typeName();
 //    if ( typeName == "Ilwis::IRasterCoverage") {
