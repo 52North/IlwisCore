@@ -125,15 +125,13 @@ bool ProjectionImplementationProj4::prepare(const QString &parms)
                                                      { "lon_0",Projection::pvCENTRALMERIDIAN}, { "x_0",Projection::pvFALSEEASTING}, { "y_0",Projection::pvFALSENORTHING}, { "zone",Projection::pvZONE}, { "south",Projection::pvNORTH}, { "k_0",Projection::pvSCALE}};
         auto assign = [&](const QString& proj4Name)->void
         {
-            if (proj4Name == "south") {
+            QString sv = proj4[proj4Name];
+            if ( sv != sUNDEF) {
                 Projection::ProjectionParamValue v = alias[proj4Name];
-                setParameter(v, "No");
-            } else {
-                QString sv = proj4[proj4Name];
-                if ( sv != sUNDEF) {
-                    Projection::ProjectionParamValue v = alias[proj4Name];
+                if (proj4Name == "south")
+                    setParameter(v, "No");
+                else
                     setParameter(v, sv.toDouble());
-                }
             }
         };
         QString proj = proj4["proj"];
@@ -168,6 +166,7 @@ bool ProjectionImplementationProj4::prepare(const QString &parms)
         for(auto iter= alias.begin(); iter != alias.end(); ++iter) {
             assign(iter->first);
         }
+        _targetDef = _targetDef.trimmed();
         if ( _pjBase){
             pj_free(_pjBase);
             _pjBase = 0;
@@ -183,6 +182,7 @@ bool ProjectionImplementationProj4::prepare(const QString &parms)
         if ( _coordinateSystem->datum() && _coordinateSystem->datum()->isValid()) {
             _targetDef += " " + _coordinateSystem->datum()->code();
         }
+        _targetDef = _targetDef.trimmed();
         if ( _pjBase) {
             pj_free(_pjBase);
             _pjBase = 0;
