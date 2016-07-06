@@ -80,7 +80,7 @@ quint64 Gridding::createMetadata()
     resource.addProperty("description",TR("generates a new featurecoverage(polygons) were the polygons form a rectangular grid"));
     resource.addProperty("inparameters","6");
     resource.addProperty("pin_1_type", itCOORDSYSTEM);
-    resource.addProperty("pin_1_name", TR("coordinate-syste,"));
+    resource.addProperty("pin_1_name", TR("coordinate-system"));
     resource.addProperty("pin_1_desc",TR("The coordinate system of the to be created polygon coverage"));
     resource.addProperty("pin_2_type", itCOORDINATE);
     resource.addProperty("pin_2_name", TR("top corner"));
