@@ -46,6 +46,7 @@ public:
     IlwisObject *clone();
 private:
     void copyTo(IlwisObject *obj);
+    QString extractProjection(const Proj4Parameters & proj4) const;
 
     IEllipsoid _ellipsoid;
     IProjection _projection;

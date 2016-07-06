@@ -8,9 +8,9 @@
 #include "geodeticdatum.h"
 #include "projection.h"
 #include "coordinatesystem.h"
+#include "proj4parameters.h"
 #include "conventionalcoordinatesystem.h"
 #include "projectionimplementation.h"
-#include "proj4parameters.h"
 
 using namespace Ilwis;
 

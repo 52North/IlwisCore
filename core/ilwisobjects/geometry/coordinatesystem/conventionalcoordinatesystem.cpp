@@ -5,8 +5,8 @@
 #include "geodeticdatum.h"
 #include "projection.h"
 #include "coordinatesystem.h"
-#include "conventionalcoordinatesystem.h"
 #include "proj4parameters.h"
+#include "conventionalcoordinatesystem.h"
 
 using namespace Ilwis;
 
@@ -285,16 +285,18 @@ bool ConventionalCoordinateSystem::prepare(const QString &parms)
             _datum->fromCode(proj4["datum"]);
         }
     }
-    QString code = proj4["proj"];
+    QString code = extractProjection(proj4);
 
     if ( code == sUNDEF) {
         kernel()->issues()->log(TR(ERR_INVALID_PROPERTY_FOR_2).arg("projection name", name()));
         return false;
     }
-    code = "code=" + code;
+    code = "code=proj4: " + code;
     Resource prj = mastercatalog()->name2Resource(code, itPROJECTION);
-    if ( !prj.isValid()) {
-         return ERROR1(ERR_COULDNT_CREATE_OBJECT_FOR_1,"projection " + code );
+    if (!prj.isValid()) {
+        prj = Resource("ilwis://projection/" + code, itPROJECTION);
+        prj.code(proj4["proj"]); // set the code to the projection "CODE", as in projections.csv
+        mastercatalog()->addItems({prj});
     }
     IOOptions opt;
     opt << IOOptions::Option("proj4",parms.mid(6));
@@ -317,4 +319,22 @@ bool ConventionalCoordinateSystem::prepare(const QString &parms)
     return ok;
 }
 
-
+QString ConventionalCoordinateSystem::extractProjection(const Proj4Parameters & proj4) const
+{
+    QString proj = "";
+    // The elements that make the projection unique (the projection parameters). Excluding datum and ellipsoid.
+    std::vector<QString> elements = {"proj", "lat_0", "lat_1", "lat_2", "lon_0", "x_0", "y_0", "zone", "south", "k", "k_0", "h"}; // lon_1 ?
+    for (QString element : elements) { // fixed order
+        QString val = proj4[element];
+        if (val != sUNDEF) {
+            if (proj.length() > 0)
+                proj += " ";
+            proj += "+" + element;
+            if (val.length() > 0)
+                proj += "=" + val;
+        }
+    }
+    if (proj.length() == 0)
+        proj = sUNDEF;
+    return proj;
+}

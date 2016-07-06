@@ -5,6 +5,7 @@
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
 #include "coordinatesystem.h"
+#include "proj4parameters.h"
 #include "conventionalcoordinatesystem.h"
 #include "symboltable.h"
 #include "operationExpression.h"

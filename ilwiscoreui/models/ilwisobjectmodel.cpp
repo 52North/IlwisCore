@@ -3,6 +3,7 @@
 #include "projection.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"
+#include "proj4parameters.h"
 #include "conventionalcoordinatesystem.h"
 #include "featurecoverage.h"
 #include "feature.h"

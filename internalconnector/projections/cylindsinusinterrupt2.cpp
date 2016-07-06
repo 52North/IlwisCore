@@ -16,6 +16,7 @@
 #include "projectionimplementation.h"
 #include "box.h"
 #include "coordinatesystem.h"
+#include "proj4parameters.h"
 #include "conventionalcoordinatesystem.h"
 #include "projectionimplementationinternal.h"
 #include "proj4parameters.h"
