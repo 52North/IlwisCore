@@ -10,13 +10,10 @@ using namespace Ilwis;
 
 NumericDomain::NumericDomain()
 {
-    setStrict(false);
     range(new NumericRange(-1e300, 1e300));
-
 }
 
 NumericDomain::NumericDomain(const Resource& resource) : Domain(resource) {
-    setStrict(false);
     if ( hasType(resource.extendedType(), itINT8))
         range(new NumericRange(-127, 128,1));
     else if (hasType(resource.extendedType(), itUINT8)){
@@ -38,7 +35,6 @@ NumericDomain::NumericDomain(const Resource& resource) : Domain(resource) {
     }else {
         range(new NumericRange(-1e300, 1e300));
     }
-
 }
 
 NumericDomain::NumericDomain(NumericRange *r)
