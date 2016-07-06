@@ -88,8 +88,8 @@ Ilwis::OperationImplementation::State IfFeature::prepare(ExecutionContext *ctx, 
 
 quint64 IfFeature::createMetadata()
 {
-    OperationResource operation({"ilwis://operations/iff"});
-    operation.setLongName("iff");
+    OperationResource operation({"ilwis://operations/iffeature"});
+    operation.setLongName("iffeature");
     operation.setSyntax("iffeature(featurecoverage,outputchoicetrue, outputchoicefalse)");
     operation.setDescription(TR("constructs a new coverage based on a boolean selection described by the boolean map. The true pixels are taken from the first input map, the false pixels from the second map"));
     operation.setInParameterCount({3});
