@@ -55,6 +55,7 @@
 #include "palettecolorlookup.h"
 #include "representation.h"
 #include "boundsonlycoordinatesystem.h"
+#include "proj4parameters.h"
 #include "conventionalcoordinatesystem.h"
 #include "operationmetadata.h"
 #include "internalprojectionconnector.h"
@@ -586,7 +587,7 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resou
     QString projParms = code;
     if ( code.left(6) == "proj4:"){
         projParms = code.mid(6);
-    }else if(!isUnknown){
+    }else if(!isUnknown && code.left(5) == "epsg:"){
         QString query = QString("select * from projectedcsy where code='%1'").arg(code);
         InternalDatabaseConnection db;
         if ( db.exec(query)) {
