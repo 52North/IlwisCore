@@ -160,7 +160,7 @@ QVariant Feature::cell(quint32 colIndex, bool asRaw) const
             return cellValue;
         if ( !asRaw) {
             ColumnDefinition attributedef = _parentFCoverage->attributeDefinitions(_level).columndefinition(colIndex);
-            return attributedef.datadef().domain<>()->impliedValue(cellValue);
+            return attributedef.datadef().range<>() ? attributedef.datadef().range<>()->impliedValue(cellValue) : attributedef.datadef().domain<>()->impliedValue(cellValue);
         }
     }
     return QVariant();
