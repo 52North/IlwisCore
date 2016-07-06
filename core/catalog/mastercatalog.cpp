@@ -510,7 +510,7 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         auto code = name.right(name.size() - 5);
         return QString("ilwis://system/projectedcsy?code=%1").arg(code);
 
-    } else if ( name.left(6) == "code=proj4:") {
+    } else if ( name.left(11) == "code=proj4:") {
         auto code = name.right(name.size() - 5);
         return QString("ilwis://projection/code=%1").arg(code);
     } else if ( name.left(12) == "code=domain:") {
