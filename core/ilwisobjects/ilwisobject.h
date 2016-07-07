@@ -321,6 +321,7 @@ public:
     virtual bool isInternalObject() const;
     bool isRemote() const;
     void remove();
+    virtual void unload();
     virtual bool canUse(const IlwisObject *obj, bool strict=false) const;
     virtual bool isCompatibleWith( const IlwisObject* obj, bool strict=false) const;
 

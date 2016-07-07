@@ -77,10 +77,21 @@ void IlwisObject::connectTo(const QUrl& outurl, const QString& format, const QSt
     if ( url != QUrl()) {
         QString currenturl = res.url().toString();
         // we dont replace the normalized urls for internal objects if the url is pointing to the (disk based) cache
-        if ( !(currenturl.indexOf("ilwis://internalcatalog") == 0 && !outurl.isValid()))
+        if ( !(currenturl.indexOf(INTERNAL_CATALOG) == 0 && !outurl.isValid())){
             res.setUrl(url);
+
+        }
         if ( url.scheme() != "ilwis") // raw urls can never go to an ilwis scheme
             res.setUrl(url,true);
+        else {
+            // if we are going to the internalcatalog ensure that the physical path is good
+            if ( url.toString().indexOf(INTERNAL_CATALOG) == 0){
+                QString rawUrl = context()->persistentInternalCatalog().toString() + "/" + res.name();
+                res.setUrl(rawUrl, true);
+            }
+        }
+
+
     }
     const Ilwis::ConnectorFactory *factory = kernel()->factory<Ilwis::ConnectorFactory>("ilwis::ConnectorFactory");
     if ( !factory)
@@ -519,6 +530,11 @@ void IlwisObject::remove()
     if (!connector().isNull()){
         connector()->removeDataSource();
     }
+}
+
+void IlwisObject::unload()
+{
+
 }
 
 bool IlwisObject::store(const IOOptions &options)
