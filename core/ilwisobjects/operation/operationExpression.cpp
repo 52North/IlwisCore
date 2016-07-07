@@ -721,7 +721,7 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
                 }
             }
             //overrule the user if he wants to store things in the internalcatalog, then the format is by defintion stream
-            if ( context()->workingCatalog()->resource().url() == INTERNAL_OBJECT)
+            if ( context()->workingCatalog()->resource().url() == INTERNAL_CATALOG_URL)
                 formatName == "Memory";
             if ( formatName != "Memory"){ // special case
                 if ( format == "") {
@@ -752,6 +752,10 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
                     format = "{format(stream,\"coordinatesystem\")}";
                 }else if (hasType(outputtype, itGEOREF)){
                     format = "{format(stream,\"georeference\")}";
+                }
+                if ( formatName == "Memory"){
+                    if ( output.indexOf(".ilwis")== -1)
+                        output += ".ilwis";
                 }
 
                 output = output + format;
