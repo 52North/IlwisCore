@@ -141,7 +141,7 @@ void IlwisContext::init(const QString &ilwisDir)
         }
     }
 
-    mastercatalog()->addContainer(QUrl("ilwis://internalcatalog"));
+    mastercatalog()->addContainer(INTERNAL_CATALOG_URL);
     mastercatalog()->addContainer(persistentInternalCatalog());
     mastercatalog()->addContainer(QUrl("ilwis://operations"));
 
