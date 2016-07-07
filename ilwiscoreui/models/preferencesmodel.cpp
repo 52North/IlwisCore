@@ -17,30 +17,31 @@ QString PreferencesModel::preferedDataFormat(const QString &type)
     if ( hasType(ilwtype,itFEATURE )){
         ilwtype = itFEATURE;
     }
+    QString expr = QString("(datatype & %1)!=0 and (readwrite='rc' or readwrite='rcu')").arg(ilwtype);
     QString formatCode = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/default-conversion-format-" + type,QString(sUNDEF));
     if ( formatCode == sUNDEF){
-        // we default to ilwis3 formats if nothing is defined
-        switch (ilwtype){
+           switch (ilwtype){
         case itRASTER:
-            formatCode = "map";break;
+            formatCode = "rastercoverage";break;
         case itPOINT:
         case itLINE:
         case itPOLYGON:
         case itFEATURE:
-            formatCode = "vectormap";break;
+            formatCode = "featurecoverage";break;
         case itTABLE:
             formatCode =  "table";break;
         case itDOMAIN:
             formatCode = "domain";break;
         case itCOORDSYSTEM:
-            formatCode =  "coordystem";break;
+            formatCode =  "coordinatesystem";break;
         case itGEOREF:
-            formatCode =  "georef"; break;
+            formatCode =  "georeference"; break;
         default:
             formatCode = sUNDEF;
         }
+        expr += " and connector='stream'";
     }
-    QString expr = QString("(datatype & %1)!=0 and (readwrite='rc' or readwrite='rcu')").arg(ilwtype);
+
     std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpNAME, expr);
     for(auto &format : formats)    {
         if ( formatCode == format.second.property(Ilwis::DataFormat::fpCODE).toString())
