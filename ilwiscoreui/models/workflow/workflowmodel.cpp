@@ -474,7 +474,7 @@ QString WorkflowModel::generateScript(const QString &type, const QString& parame
             QUrl url = _workflow->resource().url(true);
             QFileInfo inf(url.toLocalFile());
            // QUrl newName = QUrl::fromLocalFile(inf.path() + "/" + inf.baseName() + ".py");
-            QUrl newName = "ilwis://internalcatalog/" + inf.baseName() + ".ilwis";
+            QUrl newName = INTERNAL_CATALOG + "/" + inf.baseName() + ".ilwis";
             _workflow->connectTo(newName,"inmemoryworkflow","python",IlwisObject::cmOUTPUT);
             QVariant value;
             value.setValue(_expression);
