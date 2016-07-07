@@ -12,6 +12,7 @@ DropArea {
     width : parent.width
     state : "maxed"
 
+
     onDropped: {
         var formatstrings = ""
         var idstring = drag.source.ids
@@ -24,7 +25,9 @@ DropArea {
 
             var obj = mastercatalog.id2object(ids[i], catalogViewsArea)
             if (obj) {
-                if ( actionBar.useDropFormat())
+                if ( currentCatalog.url == "ilwis://internalcatalog")
+                    formatstrings = "stream:" + obj.typeName;
+                else if ( actionBar.useDropFormat())
                     formatstrings = actionBar.getFormatString(drag.source.type)
                 if (formatstrings === "")
                     formatstrings = obj.externalFormat
@@ -34,9 +37,8 @@ DropArea {
                     obj.copy(newUrl, parts[1].trim(), parts[0].trim());
                 }
             }
-            console.debug(i)
+            console.debug(formatstrings)
         }
-        console.debug("run")
         currentCatalog.scanContainer(false,true)
     }
     TabView {
