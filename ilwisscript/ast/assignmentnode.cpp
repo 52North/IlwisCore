@@ -109,7 +109,7 @@ void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& s
                     url = context()->workingCatalog()->resource().url().toString() + "/" + result;
                 }else {
                     url = context()->persistentInternalCatalog().toString() + "/" + result;
-                    normalizedUrl = "ilwis://internalcatalog/" + result;
+                    normalizedUrl = INTERNAL_CATALOG + "/" + result;
                 }
             object->name(name);
             // we reuse an existing connector if it is of the same provider; it will than inherit/use properties of the "old" connector
