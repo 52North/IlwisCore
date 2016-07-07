@@ -26,7 +26,7 @@ CatalogExplorer *InternalCatalogExplorer::create(const Resource& resource, const
 
 }
 
-//InternalCatalogExplorer::InternalCatalogExplorer(const Resource& resource, bool load ) :CatalogConnector(Resource(QUrl("ilwis://internalcatalog"),itCATALOG), load)
+//InternalCatalogExplorer::InternalCatalogExplorer(const Resource& resource, bool load ) :CatalogConnector(Resource(INTERNAL_CATALOG_URL,itCATALOG), load)
 InternalCatalogExplorer::InternalCatalogExplorer(const Resource& resource, const IOOptions &options) :CatalogExplorer(resource, options)
 {
 }
