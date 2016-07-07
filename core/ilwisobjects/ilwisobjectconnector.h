@@ -28,7 +28,8 @@ public:
     bool hasProperty(const QString &key) const;
     QVariant getProperty(const QString& ) const;
     const Resource &sourceRef() const;
-    virtual bool dataIsLoaded() const;
+    bool dataIsLoaded() const;
+    void unload();
 
 protected:
     template<class T> T setObject(const QString& propeprty, const QUrl& defaultName) {

@@ -72,6 +72,11 @@ bool IlwisObjectConnector::dataIsLoaded() const
     return _binaryIsLoaded;
 }
 
+void IlwisObjectConnector::unload()
+{
+
+}
+
 IOOptions IlwisObjectConnector::ioOptions() const
 {
     return _options;
