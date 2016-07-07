@@ -38,7 +38,7 @@ std::vector<QUrl> FolderCatalogExplorer::loadFolders(const Resource& source, con
 {
     QStringList fileList;
 
-     QUrl location = source.url();
+     QUrl location = source.url(true);
      if ( location.toString() == "file://") { // root will only contain drives (folders)
          QFileInfoList drives = QDir::drives();
          QStringList dirs;
@@ -67,7 +67,7 @@ std::vector<QUrl> FolderCatalogExplorer::loadFolders(const Resource& source, con
          QStringList files = folder.entryList(namefilter);
          files.append(dirlist);
 
-         QString sourceUrl = source.url().toString();
+         QString sourceUrl = source.url(true).toString();
 
          for(QString file : files) {
              QString fullfile = sourceUrl + slash + file;
