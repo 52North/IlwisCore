@@ -35,7 +35,7 @@ void CatalogViewManager::updateCatalogViews(const UrlSet &containers)
         QString location = url.toString();
         if ( location.indexOf("ilwis://operations") == 0)
             typesNeeded |= CatalogModel::ctOPERATION;
-        if ( location.indexOf("ilwis://internalcatalog") == 0)
+        if ( location.indexOf(INTERNAL_CATALOG) == 0)
             typesNeeded |= CatalogModel::ctDATA;
         if ( url.scheme() == "file"){
             typesNeeded |= CatalogModel::ctDATA;
