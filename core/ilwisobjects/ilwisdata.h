@@ -96,15 +96,16 @@ public:
 
     T *operator->() {
         T* p =  static_cast<T *>(_implementation.get());
-        if (!p)
-            throw ErrorObject(TR("Using uninitialized ilwis object"));
+        if (!p){
+            throw ErrorObject(TR("Using uninitialized ilwis object: ") + class2ilwisobjectName() );
+        }
         return p;
     }
 
     T *operator->() const{
         T* p =  static_cast<T *>(_implementation.get());
         if (!p)
-            throw ErrorObject(TR("Using uninitialized ilwis object"));
+            throw ErrorObject(TR("Using uninitialized ilwis object: ")  + class2ilwisobjectName());
         return p;
     }
 
@@ -141,7 +142,6 @@ public:
     bool prepare() {
         removeCurrent();
         auto type = kernel()->demangle(typeid(T).name());
-
         IlwisTypes tp = IlwisObject::name2Type(type);
         Resource res;
         res.prepare();
@@ -150,7 +150,7 @@ public:
         if ( tp != itUNKNOWN)
             res.setExtendedType(tp);
         QString name = QString("%1%2").arg(ANONYMOUS_PREFIX).arg(res.id());
-        QUrl url(QString("ilwis://internalcatalog/%1").arg(name));
+        QUrl url(QString(INTERNAL_CATALOG + "/%1").arg(name));
         res.name(name);
         res.setUrl(url);
         res.setUrl(url, true);
@@ -159,8 +159,7 @@ public:
     }
 
     bool prepare(const QString& name,const IOOptions& options=IOOptions()){
-        auto type = kernel()->demangle(typeid(T).name());
-        IlwisTypes tp = IlwisObject::name2Type(type);
+        IlwisTypes tp = class2name();
         return prepare(name, tp, options);
     }
 
@@ -173,6 +172,21 @@ public:
      \param connectorType the connector that should handle this resource. If none is given ("default"), the system will figure it out by it self
      \return bool bool succes of the creation process. Any issues can be found in the issuelogger
     */
+    IlwisTypes class2name() const
+    {
+        auto type = kernel()->demangle(typeid(T).name());
+        IlwisTypes objecttp = IlwisObject::name2Type(type);
+
+        return objecttp;
+    }
+
+    QString class2ilwisobjectName() const
+    {
+        IlwisTypes objecttp = class2name();
+
+        return IlwisObject::type2Name(objecttp);
+    }
+
     bool prepare(const QString& nme, IlwisTypes tp,const IOOptions& options=IOOptions()){
         QString name = Resource::quoted2string(nme);
         // see if it is an internal object (ANONYMOUS_, or ILWISOBJECT_)
@@ -186,8 +200,7 @@ public:
                 }
 
         }
-        auto type = kernel()->demangle(typeid(T).name());
-        IlwisTypes objecttp = IlwisObject::name2Type(type);
+        IlwisTypes objecttp = class2name();
         if ( tp == itANY) {
             tp = objecttp;
         }else {
@@ -243,8 +256,7 @@ public:
             Resource resource = mastercatalog()->id2Resource(id);
             if (!resource.isValid())
                 resource = resource1;
-            auto type = kernel()->demangle(typeid(T).name());
-            IlwisTypes objecttp = IlwisObject::name2Type(type);
+            IlwisTypes objecttp = class2name();
             if ( objecttp == itANY || !hasType(objecttp, resource.ilwisType())){
                 kernel()->issues()->log(TR("Requested object type doesnt match object type found in the master catalog; Is the requested resource correct?"));
                 return false;
