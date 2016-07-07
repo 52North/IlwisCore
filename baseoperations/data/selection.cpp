@@ -161,7 +161,7 @@ Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext 
          _outputObj->name(outputName);
 
      if ( selectedAttributes > 1) {
-         QString url = "ilwis://internalcatalog/" + outputName;
+         QString url = INTERNAL_CATALOG + "/" + outputName;
          Resource resource(url, itFLATTABLE);
          _attTable.prepare(resource);
      }
@@ -173,7 +173,7 @@ Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext 
 
 
      if ( (copylist & itGEOREF) == 0) {
-         Resource resource(QUrl("ilwis://internalcatalog/" + outputRaster->name() + "_grf_" + QString::number(outputRaster->id())),itGEOREF);
+         Resource resource(QUrl(INTERNAL_CATALOG + "/" + outputRaster->name() + "_grf_" + QString::number(outputRaster->id())),itGEOREF);
          resource.addProperty("size", IVARIANT(_box.size()));
          auto envelope = inputRaster->georeference()->pixel2Coord(_box);
          resource.addProperty("envelope", IVARIANT(envelope));
