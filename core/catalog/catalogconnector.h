@@ -59,6 +59,7 @@ public:
 
     bool loadMetaData(IlwisObject *obj, const IOOptions &options = IOOptions());
     bool loadData(IlwisObject *obj, const IOOptions &options = IOOptions());
+    void unload();
 
     virtual QFileInfo toLocalFile(const Resource &datasource) const;
     virtual QFileInfo toLocalFile(const QUrl &url) const;
