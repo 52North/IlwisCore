@@ -77,7 +77,7 @@ void MasterCatalogModel::addDefaultFilters(){
     _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/representations","Representations"));
     _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/projections","Projections"));
     _defaultFilters.append(new CatalogFilterModel(this,"ilwis://system/ellipsoids","Ellipsoids"));
-    _defaultFilters.append(new CatalogFilterModel(this,"ilwis://internalcatalog","Temporary Catalog"));
+    _defaultFilters.append(new CatalogFilterModel(this,INTERNAL_CATALOG,"Temporary Catalog"));
     _defaultFilters.append(new CatalogFilterModel(this,"","-- Most recently used --------------------------",""));
 
     _defaultFilters.append(new CatalogFilterModel(this,"","-- Master Catalog-------------------------------",""));
@@ -821,7 +821,7 @@ void MasterCatalogModel::prepare()
     factory->registerTranquilizerType(rmDESKTOP, Ilwis::Geodrawer::DesktopTranquilizer::create);
 
     _bookmarks.push_back(addBookmark(TR("Temporary Catalog"),
-               QUrl("ilwis://internalcatalog"),
+               INTERNAL_CATALOG_URL,
                TR("All objects that are memory-based only and don't have a representation in a permanent storage"),
                "type=" + QString::number(itANY) + " and container='ilwis://internalcatalog'",false));
      _bookmarks.push_back(addBookmark(TR("System Catalog"),
@@ -874,7 +874,7 @@ bool MasterCatalogModel::exists(const QString &url, const QString &objecttype)
 //--------------------
 CatalogWorker::CatalogWorker(QList<CatalogModel *> &models, ICatalog cat) : _models(models)
 {
-    context()->setWorkingCatalog(cat);
+   _workingCatalog = cat->resource().url();
 }
 
 CatalogWorker::~CatalogWorker(){
@@ -882,6 +882,10 @@ CatalogWorker::~CatalogWorker(){
 
 void CatalogWorker::process(){
     try {
+        ICatalog catalog(_workingCatalog.toString());
+        if ( catalog.isValid())
+            context()->setWorkingCatalog(catalog);
+
         for(auto iter = _models.begin(); iter != _models.end(); ++iter){
             (*iter)->scanContainer(false, false);
             emit updateBookmarks();
