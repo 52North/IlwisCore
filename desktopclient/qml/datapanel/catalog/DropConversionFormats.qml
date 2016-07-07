@@ -16,7 +16,7 @@ Column {
         if ( requestedType === "rastercoverage"){
             return rasters.selectedFormatString()
         }
-        if ( requestedType === "rastercoverage"){
+        if ( requestedType === "featurecoverage"){
             return features.selectedFormatString()
         }
         if ( requestedType === "table"){
@@ -62,6 +62,19 @@ Column {
         labelText: qsTr("Feature coverage")
         labelWidth: 120
 
+        Component.onCompleted: {
+            var name = preferences.preferedDataFormat("featurecoverage")
+            if ( name !== "?")
+                features.select(name)
+
+        }
+        Connections {
+            target: rasters
+            onIndexChanged :{
+                preferences.setPreferedDataFormat("featurecoverage",features.comboText)
+            }
+        }
+
     }
 
     Controls.FormatsComboBox{
@@ -72,6 +85,19 @@ Column {
         labelText: qsTr("Table")
         labelWidth: 120
 
+        Component.onCompleted: {
+            var name = preferences.preferedDataFormat("table")
+            if ( name !== "?")
+                table.select(name)
+
+        }
+        Connections {
+            target: rasters
+            onIndexChanged :{
+                preferences.setPreferedDataFormat("table",table.comboText)
+            }
+        }
+
     }
     Controls.FormatsComboBox{
         id : csy
@@ -80,6 +106,19 @@ Column {
         ilwisType: uicontext.typeName2typeId("coordinatesystem");
         labelText: qsTr("CoordinateSystem")
         labelWidth: 120
+
+        Component.onCompleted: {
+            var name = preferences.preferedDataFormat("coordinatesystem")
+            if ( name !== "?")
+                csy.select(name)
+
+        }
+        Connections {
+            target: rasters
+            onIndexChanged :{
+                preferences.setPreferedDataFormat("coordinatesystem",csy.comboText)
+            }
+        }
 
     }
 
@@ -91,6 +130,18 @@ Column {
         labelText: qsTr("Domain")
         labelWidth: 120
 
+        Component.onCompleted: {
+            var name = preferences.preferedDataFormat("domain")
+            if ( name !== "?")
+                dom.select(name)
+
+        }
+        Connections {
+            target: rasters
+            onIndexChanged :{
+                preferences.setPreferedDataFormat("domain",dom.comboText)
+            }
+        }
     }
 
 }
