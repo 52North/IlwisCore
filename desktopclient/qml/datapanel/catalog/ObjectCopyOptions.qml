@@ -19,6 +19,7 @@ Item {
         border.width: 1
         border.color: Global.edgecolor
         color :  Global.actionItemColor
+        enabled: currentCatalog.url != "ilwis://internalcatalog" && currentCatalog.url.indexOf("ilwis://system") == -1
 
         Column {
             anchors.fill: parent
@@ -31,7 +32,6 @@ Item {
                 height : Global.rowHeight
                 width : 120
                 text: qsTr("Convert on drop")
-
             }
 
             Text {
