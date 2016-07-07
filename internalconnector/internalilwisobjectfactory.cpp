@@ -608,8 +608,7 @@ IlwisObject *InternalIlwisObjectFactory::createCsyFromCode(const Resource& resou
         csy->setDescription(TR("Unknown coordinate system"));
     }else {
         csy = createFromResource<ConventionalCoordinateSystem>(resource, options);
-        csy->name(resource.name());
-        csy->code(resource.code());
+        csy->setDescription(resource.name());
         csy->prepare("proj4=" + projParms);
     }
 
