@@ -226,7 +226,7 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
 
     IFlatTable newTable;
     if ( outputName != sUNDEF)
-        newTable.prepare(QString("ilwis://internalcatalog/%1").arg(outputName));
+        newTable.prepare(QString(INTERNAL_CATALOG + "/%1").arg(outputName));
     else
         newTable.prepare();
 
