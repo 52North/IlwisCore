@@ -172,6 +172,14 @@ QString IlwisObjectModel::projectionInfo() const
     return "";
 }
 
+bool IlwisObjectModel::isAnonymous() const
+{
+    if (_ilwisobject.isValid()){
+        return _ilwisobject->isAnonymous();
+    }
+    return false;
+}
+
 void IlwisObjectModel::resetAttributeModel(const QString& attributeName){
 
     auto setAttributeModel = [&](int i, const ColumnDefinition& coldef, const QString& attributeName){
@@ -697,9 +705,8 @@ CatalogModel *IlwisObjectModel::catalog(const QString &id)
 
 void IlwisObjectModel::unload()
 {
-    if ( _ilwisobject.isValid() && hasType(_ilwisobject->ilwisType(), itRASTER) ){
-        IRasterCoverage raster= _ilwisobject.as<RasterCoverage>();
-        raster->unloadBinary();
+    if ( _ilwisobject.isValid()){
+        _ilwisobject->unload();
     }
 }
 
@@ -709,7 +716,7 @@ QString IlwisObjectModel::copy(const QString &newUrl, const QString &format, con
     if ( _ilwisobject.isValid()){
         quint64 id = mastercatalog()->name2id(newUrl, _ilwisobject->ilwisType());
         if ( id == i64UNDEF){
-            _ilwisobject->connectTo(newUrl,format, provider, IlwisObject::cmOUTPUT);
+            _ilwisobject->connectTo(newUrl,format.toLower(), provider.toLower(), IlwisObject::cmOUTPUT);
             _ilwisobject->store();
             // original object must forget about its copy
             _ilwisobject->resetOutputConnector();

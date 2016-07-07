@@ -20,6 +20,7 @@ class ILWISCOREUISHARED_EXPORT IlwisObjectModel : public ResourceModel
     Q_PROPERTY(QString modifiedDate READ modifiedDate CONSTANT)
     Q_PROPERTY(bool isReadonly READ readonly WRITE readonly NOTIFY readOnlyChanged)
     Q_PROPERTY(bool isSystemObject READ isSystemObject CONSTANT)
+    Q_PROPERTY(bool isAnonymous READ isAnonymous CONSTANT)
     Q_PROPERTY(QString externalFormat READ externalFormat CONSTANT)
     Q_PROPERTY(bool externalReadOnly READ externalReadOnly CONSTANT)
     Q_PROPERTY(bool isCoverage READ isCoverage CONSTANT)
@@ -45,6 +46,7 @@ public:
     bool isSystemObject() const;
     bool isCoverage() const;
     QString projectionInfo() const;
+    bool isAnonymous() const;
 
     QStringList test101();
     QQmlListProperty<AttributeModel> attributes();
