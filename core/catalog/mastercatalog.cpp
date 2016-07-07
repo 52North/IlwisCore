@@ -114,6 +114,8 @@ bool MasterCatalog::addContainer(const QUrl &inlocation, bool forceScan)
     if ( !catalog.isValid()){
         return false;
     }
+    if ( forceScan)
+        catalog->unload();
     catalog->scan();
 
     addItems({catalog->resource()});
@@ -143,6 +145,8 @@ ESPIlwisObject MasterCatalog::get(quint64 id) const
 
 bool MasterCatalog::contains(const QUrl& url, IlwisTypes type) const{
     Locker<std::recursive_mutex> lock(_guard);
+
+
     auto hash = Ilwis::qHash2(url, type);
     auto  iter = _knownHashes.find(hash);
     if ( iter != _knownHashes.end()) {
@@ -234,11 +238,15 @@ bool MasterCatalog::addItems(const std::vector<Resource>& items, bool silent)
             continue;
         if (resource.url().toString().indexOf(ANONYMOUS_PREFIX)!= -1)
             continue;
-        if ( mastercatalog()->contains(resource.id())){
+        if ( contains(resource.id())){
             if ( resource.hasChanged())
                 updateItems({resource}, silent);
             continue;
         }
+        if ( contains(resource.url(), resource.ilwisType())){
+            continue;
+        }
+
         _knownHashes.insert(Ilwis::qHash(resource));
         resource.store(queryItem, queryProperties);
         containers.insert(resource.container());
