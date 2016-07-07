@@ -86,14 +86,14 @@ Ilwis::OperationImplementation::State RasterToPoint::prepare(ExecutionContext *c
         ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
         return sPREPAREFAILED;
     }
-    Resource resource = outputName != sUNDEF ? Resource("ilwis://internalcatalog/" + outputName, itFLATTABLE) : Resource(itFLATTABLE);
+    Resource resource = outputName != sUNDEF ? Resource(INTERNAL_CATALOG + "/" + outputName, itFLATTABLE) : Resource(itFLATTABLE);
     _attTable.prepare(resource);
     IDomain covdom;
     if (!covdom.prepare("count")){
        return sPREPAREFAILED;
     }
     _inputgrf = _inputraster->georeference();
-    _outputfeatures.prepare(QString("ilwis://internalcatalog/%1").arg(outputName));
+    _outputfeatures.prepare(QString(INTERNAL_CATALOG + "/%1").arg(outputName));
     _csy = _inputgrf->coordinateSystem();
     _outputfeatures->coordinateSystem(_csy);
     Envelope env = _inputraster->georeference()->envelope();

@@ -113,7 +113,7 @@ Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContex
      if ( outputName != sUNDEF)
          _outputObj->name(outputName);
 
-     QString url = "ilwis://internalcatalog/" + outputName;
+     QString url = INTERNAL_CATALOG + "/" + outputName;
      Resource resource(url, itFLATTABLE);
      _attTable.prepare(resource);
 

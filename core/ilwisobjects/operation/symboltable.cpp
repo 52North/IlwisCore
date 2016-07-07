@@ -107,7 +107,7 @@ void SymbolTable::unloadRasters()
         if ( sym._type == itRASTER) {
             IRasterCoverage raster = sym._var.value<IRasterCoverage>();
             if ( raster.isValid())
-                raster->unloadBinary();
+                raster->unload();
         }
     }
 }

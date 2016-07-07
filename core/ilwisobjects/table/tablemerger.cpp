@@ -134,7 +134,7 @@ ITable TableMerger::mergeMetadataTables(const ITable& tbl1, const ITable& tbl2) 
     }
 
     IFlatTable newTable;
-    newTable.prepare(QString("ilwis://internalcatalog/%1_%2").arg(tbl1->name(), tbl2->name()));
+    newTable.prepare(QString(INTERNAL_CATALOG + "/%1_%2").arg(tbl1->name(), tbl2->name()));
     newTable->recordCount(records);
     for(const ColumnDefinition& def : newdefs) {
         newTable->addColumn(def);

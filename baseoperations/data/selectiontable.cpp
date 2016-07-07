@@ -80,7 +80,7 @@ Ilwis::OperationImplementation::State SelectionTable::prepare(ExecutionContext *
     QString selectionExpression = _expression.parm(1).value();
     QString outName = _expression.parm(0, false).value();
     if(!outName.contains(QRegExp("\\\\|/")) && !outName.contains("code=")) {
-        _outputTable.prepare(QString("ilwis://internalcatalog/%1").arg(outName), _inputTable->ilwisType());
+        _outputTable.prepare(QString(INTERNAL_CATALOG + "/%1").arg(outName), _inputTable->ilwisType());
         _outputTable->name(outName);
 
     }else {

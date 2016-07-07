@@ -68,7 +68,7 @@ OperationImplementation::State UnaryMathTable::prepare(ExecutionContext *,const 
     QString outName = _expression.parm(0, false).value();
     if ( outName != sUNDEF) {
         if(!_outputTable.prepare(outName)) {// output table doesnt need to exists
-            _outputTable.prepare(QString("ilwis://internalcatalog/%1").arg(outName), _inputTable->ilwisType());
+            _outputTable.prepare(QString(INTERNAL_CATALOG + "/%1").arg(outName), _inputTable->ilwisType());
             _outputTable->name(outName);
         }
     } else

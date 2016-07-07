@@ -28,7 +28,7 @@ Representation::Representation(const Resource &resource) : IlwisObject(resource)
 IlwisData<Representation> Representation::copyWith(const IDomain &dom) const
 {
     IRepresentation rpr;
-    QString rprurl = "ilwis://internalcatalog/" + dom->name();
+    QString rprurl = INTERNAL_CATALOG + "/" + dom->name();
     quint64 id = i64UNDEF;
     int count = 0;
     while((id = mastercatalog()->name2id(rprurl, itREPRESENTATION))!= i64UNDEF){
