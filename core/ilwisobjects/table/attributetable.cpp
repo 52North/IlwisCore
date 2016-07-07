@@ -79,9 +79,9 @@ ITable AttributeTable::toTable(const QString &nm) const
 {
     QString  url;
     if ( nm.indexOf(ANONYMOUS_PREFIX)!= 0){
-        url = "ilwis://internalcatalog/" + Identity::newAnonymousName();
+        url = INTERNAL_CATALOG + "/" + Identity::newAnonymousName();
     }else
-        url = "ilwis://internalcatalog/" + (nm != sUNDEF ? name() : nm);
+        url = INTERNAL_CATALOG + "/" + (nm != sUNDEF ? name() : nm);
     ITable tbl;
     tbl.prepare(url);
     for(int i=0; i < columnCount(); ++i){

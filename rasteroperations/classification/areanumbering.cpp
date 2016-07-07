@@ -116,7 +116,7 @@ Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *,
     }
 
     IDomain dom;
-    QString domname = QString("ilwis://internalcatalog/%1").arg(outputBaseName);
+    QString domname = QString(INTERNAL_CATALOG + "/%1").arg(outputBaseName);
     Resource resource(QUrl(domname), itITEMDOMAIN );
     resource.setExtendedType(itNAMEDITEM);
     if (!dom.prepare(resource))
