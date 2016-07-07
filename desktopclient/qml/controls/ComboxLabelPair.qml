@@ -20,8 +20,14 @@ Item {
     signal indexChanged()
 
     function select(name){
-        var index = textid.find(name.trim())
-        console.debug(index, "|",name, textid.model)
+        var index = -1
+        for(var i=0; i < textid.model.length; ++i){
+            if ( textid.model[i] === name)    {
+                index = i
+                break
+            }
+        }
+
         textid.currentIndex = index
     }
 
