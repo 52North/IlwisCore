@@ -268,7 +268,7 @@ IlwisTypes InternalModule::ilwisType(const QString &name) {
 
     QString objectlocation = name;
     if ( !name.contains(QRegExp("\\\\|/")))    {
-        objectlocation = "ilwis://internalcatalog/" + name;
+        objectlocation = INTERNAL_CATALOG + "/" + name;
     }
     Resource res = mastercatalog()->name2Resource(objectlocation);
     return res.ilwisType();
