@@ -85,7 +85,7 @@ void CatalogModel::scanContainer(bool threading, bool forceScan)
     bool inmainThread = QThread::currentThread() == QCoreApplication::instance()->thread();
     bool useThread = threading && inmainThread;
     if ( useThread){
-        if ( !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(resource().url().toString()))){
+        if ( forceScan || !mastercatalog()->knownCatalogContent(OSHelper::neutralizeFileName(resource().url().toString()))){
             QUrl url = resource().url();
             QThread* thread = new QThread;
             CatalogWorker2* worker = new CatalogWorker2(url, context()->workingCatalog()->resource().url(), forceScan);
@@ -393,7 +393,7 @@ int CatalogModel::getCatalogType(const Resource& res, int predefineds){
             locationTypePart(res)|
             (res.url().toString() == "ilwis://operations" ? CatalogModel::ctOPERATION : CatalogModel::ctDATA);
     if ( res.url().scheme() == "ilwis"){
-        if ( res.url().toString() == "ilwis://internalcatalog")
+        if ( res.url().toString() == INTERNAL_CATALOG)
             bits |= CatalogModel::ctMUTABLE;
         else
             bits |= CatalogModel::ctFIXED;
