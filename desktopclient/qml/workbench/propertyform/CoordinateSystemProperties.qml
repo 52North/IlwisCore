@@ -26,7 +26,7 @@ Rectangle {
         filterImage: "../images/csy20.png"
         filterType: "coordinatesystem"
         width : parent.width
-        content: coordinateSystemName
+        content: isAnonymous ? "internal" : coordinateSystemName
         readOnly: !propertyForm.editable
         y : 5
     }
