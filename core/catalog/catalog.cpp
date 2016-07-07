@@ -172,6 +172,13 @@ IlwisObject *Catalog::clone()
     return catalog;
 }
 
+void Catalog::unload()
+{
+    if ( !connector().isNull()){
+        connector()->unload();
+    }
+}
+
 bool Catalog::isSpatialDataLocation(const QUrl &url)
 {
     QString loc = url.toString();
