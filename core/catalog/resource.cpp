@@ -93,7 +93,7 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
                 scode = resourceName.mid(index+1);
             }
             code(scode);
-            _normalizedUrl = QUrl("ilwis://internalcatalog/" + this->name());
+            _normalizedUrl = QUrl(INTERNAL_CATALOG + "/" + this->name());
             if ( scode == "csy:unknown")
                 name("unknown coordinate system", false);
             if ( scode == "grf:unspecified")
@@ -101,7 +101,7 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
         }else {
             if( isNew){
                 if(!resourceName.contains(QRegExp("\\\\|/")) && !resourceName.contains("code=")){
-                    QUrl urltxt(QString("ilwis://internalcatalog/%1").arg(resourceName));
+                    QUrl urltxt(QString(INTERNAL_CATALOG + "/%1").arg(resourceName));
                     ICatalog workingCatalog = context()->workingCatalog();
                     if ( workingCatalog.isValid()){
                         QUrl url =  workingCatalog->filesystemLocation();
@@ -123,12 +123,12 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
         checkUrl(tp);
     }
     _createTime = Time::now();
-    if ( _container ==  INTERNAL_OBJECT ||
+    if ( _container ==  INTERNAL_CATALOG_URL ||
          (_container.toString() == "ilwis://operations" && tp == itWORKFLOW)){
         QString path = context()->persistentInternalCatalog().toString();
         _rawContainer = QUrl(path);
         _rawUrl = QUrl(path + "/" + name());
-    }else
+    }else if ( !_rawUrl.isValid())
         _rawUrl = _normalizedUrl;// for the moment, can always overrule it
     changed(false);
 
@@ -173,7 +173,7 @@ Resource::Resource(quint64 tp, const QUrl &normalizedUrl, const QUrl& rawUrl) :
 
     checkUrl(tp);
     prepare();
-    if ( normalizedUrl == INTERNAL_OBJECT) {
+    if ( normalizedUrl == INTERNAL_CATALOG_URL) {
         QString resext = normalizedUrl.toString() + "/" + name();
         _normalizedUrl = QUrl(resext);
     }
@@ -253,7 +253,7 @@ void Resource::setDescription(const QString &desc)
     changed(true);
 }
 
-void Resource::name(const QString &nm, bool adaptNormalizedUrl)
+void Resource::name(const QString &nm, bool adaptNormalizedUrl,bool updateDatabase)
 {
     if ( name() == nm)
         return;
@@ -265,7 +265,8 @@ void Resource::name(const QString &nm, bool adaptNormalizedUrl)
     Identity::name(nm);
 
     if ( id() != iUNDEF && _modifiedTime != rUNDEF){ // if createtime is undefined we are creating a new resource so it will not be in the mastercatalog(yet), no update needed
-        mastercatalog()->changeResource(id(), "name",nm);
+        if ( updateDatabase)
+            mastercatalog()->changeResource(id(), "name",nm);
     }
     if ( !adaptNormalizedUrl || nm == sUNDEF)
         return;
@@ -330,13 +331,13 @@ QUrl Resource::url(bool asRaw) const
     return _normalizedUrl;
 }
 
-void Resource::setUrl(const QUrl &url, bool asRaw)
+void Resource::setUrl(const QUrl &url, bool asRaw, bool updateDatabase)
 {
     changed(true);
     if ( asRaw) {
         if ( url.scheme() == "ilwis"){
             // we dont want normalized paths to internal catalog in the raw url
-            if ( url.toString().indexOf(INTERNAL_OBJECT.toString())!= -1){
+            if ( url.toString().indexOf(INTERNAL_CATALOG_URL.toString())!= -1){
                 QString name = url.fileName();
                 _rawUrl = context()->persistentInternalCatalog().toString() + "/" + name;
             }else
@@ -353,7 +354,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
             QString localPath = localFile.absolutePath();
             QString localInternalPath = localInternal.absoluteFilePath();
             if ( OSHelper::neutralizeFileName(localPath,true) == OSHelper::neutralizeFileName(localInternalPath,true)){
-                _normalizedUrl = "ilwis://internalcatalog/" + localFile.fileName();
+                _normalizedUrl = INTERNAL_CATALOG + "/" + localFile.fileName();
             }else
                 _normalizedUrl = url;
         }else
@@ -364,7 +365,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
     if ( urlTxt.indexOf("ilwis://operations/") == 0) {
         int index1 = urlTxt.indexOf("=");
         QString sname = urlTxt.mid(19,index1-19);
-        name(sname, false);
+        name(sname, false, updateDatabase);
         int index2 = urlTxt.indexOf("/", index1);
         QString scode = urlTxt.mid(index1 + 1, index2 - index1);
         code(sname + "_" + scode );
@@ -376,7 +377,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
         if ( !url.hasFragment()) {
             if ( url.scheme() == "file" && inf.isAbsolute()){
                 if ( !isRoot(inf.absolutePath())){
-                    name(inf.fileName(), false);
+                    name(inf.fileName(), false, updateDatabase);
                     if ( !inf.isRoot())
                         addContainer(QUrl::fromLocalFile(inf.absolutePath()),asRaw);
                     else
@@ -390,7 +391,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
                 }else
                     index = path.lastIndexOf("/");
                 addContainer(path.left(index),asRaw);
-                name(path.mid(index + 1),false);
+                name(path.mid(index + 1),false, updateDatabase);
             }
         } else {
             QString fragment = url.fragment();
@@ -399,7 +400,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
             int index = fpath.toInt(&ok);
             if ( ok) { //TODO: other cases than indexes; no example yet so postponed till there is one
                 QString rname = QString("%1_%2").arg(inf.fileName()).arg(index);
-                name(rname, false);
+                name(rname, false, updateDatabase);
                 addContainer(QUrl(url.toString(QUrl::RemoveFragment)), asRaw);
             }
 
@@ -407,7 +408,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw)
 
     }
     else
-        name("root", false);
+        name("root", false,updateDatabase);
 }
 
 QUrlQuery Resource::urlQuery() const
@@ -453,12 +454,12 @@ void Resource::dimensions(const QString &dim)
 void Resource::addContainer(const QUrl& url, bool asRaw) {
     changed(true);
     if ( asRaw ){
-        if ( url != INTERNAL_OBJECT)
+        if ( url != INTERNAL_CATALOG_URL)
             _rawContainer = url;
         if ( !_container.isValid()){
             //the container must contain the normalized path so any real path to the internalcatalog is replaced by the normalized version
             if ( url == context()->persistentInternalCatalog())
-                _container = INTERNAL_OBJECT;
+                _container = INTERNAL_CATALOG_URL;
             else
                 _container = url;
         }
@@ -467,7 +468,7 @@ void Resource::addContainer(const QUrl& url, bool asRaw) {
         _container = url;
         if ( !_rawContainer.isValid()){
             // rawcontainer always have real paths to any references to the internal catalog must be replaced by their real path
-            if ( url == INTERNAL_OBJECT){
+            if ( url == INTERNAL_CATALOG_URL){
                 _rawContainer = context()->persistentInternalCatalog();
             }else
                 _rawContainer = url;
@@ -662,6 +663,29 @@ Resource Resource::copy(quint64 id) const
     return resource;
 }
 
+void Resource::setInternalCatalogPaths(IlwisTypes tp, const QString &txt)
+{
+
+    if ( hasType(tp,itCATALOG|itCATALOGVIEW)){
+        _rawUrl = context()->persistentInternalCatalog();
+        int index = _rawUrl.toString().lastIndexOf("/");
+        _rawContainer = _rawUrl.toString().left(index);
+        _container = "ilwis://";
+        _normalizedUrl = INTERNAL_CATALOG_URL;
+    }else {
+        int index = txt.lastIndexOf("/");
+        QString name = txt.mid(index + 1);
+        if ( (index = name.lastIndexOf(".")) != -1){
+            name = name.left(index);
+        }
+        name += ".ilwis";
+        _rawUrl = context()->persistentInternalCatalog().toString() + "/" + name;
+        _rawContainer = context()->persistentInternalCatalog();
+        _container = INTERNAL_CATALOG_URL;
+        _normalizedUrl = INTERNAL_CATALOG + "/" + name;
+    }
+}
+
 void Resource::stringAsUrl(const QString &txt, IlwisTypes tp, bool isNew)
 {
     if ( tp == itUNKNOWN)
@@ -673,6 +697,11 @@ void Resource::stringAsUrl(const QString &txt, IlwisTypes tp, bool isNew)
     int index = txt.lastIndexOf("/");
     if ( index != -1){ // name is by default the last part of the url
         name(txt.mid(index + 1));
+        QString internal = context()->persistentInternalCatalog().toString();
+        if ( txt == INTERNAL_CATALOG || txt.indexOf(OSHelper::neutralizeFileName(internal)) == 0){
+            setInternalCatalogPaths(tp, txt);
+            return;
+        }
         if ( txt.indexOf("http://") == 0){
             if ( txt.indexOf("?") != -1){
                 index = txt.indexOf("?");

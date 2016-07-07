@@ -8,7 +8,8 @@
 class QSqlRecord;
 class QSqlQuery;
 
-#define INTERNAL_OBJECT (QUrl("ilwis://internalcatalog"))
+#define INTERNAL_CATALOG QString("ilwis://internalcatalog")
+#define INTERNAL_CATALOG_URL (QUrl(INTERNAL_CATALOG))
 
 
 namespace Ilwis {
@@ -92,7 +93,7 @@ public:
      * @param url The url to the file you want to load in this resource
      */
     //TODO docu correct?
-    Resource(quint64 tp, const QUrl& url=INTERNAL_OBJECT, const QUrl& rawUrl=QUrl());
+    Resource(quint64 tp, const QUrl& url=INTERNAL_CATALOG_URL, const QUrl& rawUrl=QUrl());
 
     /**
      * Creates a new Resource from a Database record, this record should come from the mastercatalog
@@ -108,7 +109,7 @@ public:
      * @param nm the new name of this Resource
      * @param adaptUrl set to false if you do not want to change the file name
      */
-    void name(const QString& nm, bool adaptUrl=true);
+    void name(const QString& nm, bool adaptUrl=true, bool updateDatabase=true);
     QString name() const { return Identity::name(); }
     QString rawName() const;
 
@@ -157,7 +158,7 @@ public:
      * The url has to be valid though.
      * @param url The new url, must be valid
      */
-    void setUrl(const QUrl& url, bool asRaw=false);
+    void setUrl(const QUrl& url, bool asRaw=false, bool updateDatabase=true);
 
     /**
      * Gives access to the query when this Resource has been created with a url containing a query string. If there the url did
@@ -343,6 +344,7 @@ protected:
     void checkUrl(IlwisTypes tp);
 
 private:
+    void setInternalCatalogPaths(IlwisTypes tp, const QString &txt);
 };
 
 
