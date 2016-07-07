@@ -69,6 +69,8 @@ public:
     virtual bool isValid() const { return true;}
     virtual bool canUse(const Resource& ) const { return true; }
     virtual void removeDataSource() { return;}
+    virtual void unload() { return;}
+    virtual bool dataIsLoaded() const { return true; }
     /*!
      * \brief isReadOnly returns if a connector can write to a source.
      *
