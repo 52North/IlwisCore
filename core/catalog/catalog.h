@@ -116,6 +116,7 @@ public:
     QUrl filesystemLocation() const;
 
     IlwisObject *clone();
+    void unload();
 
     static const QString DEFAULT_WORKSPACE;
     static bool isSpatialDataLocation(const QUrl& url);
