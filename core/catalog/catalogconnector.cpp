@@ -124,6 +124,11 @@ bool CatalogConnector::loadData(IlwisObject *obj, const IOOptions &options){
     return loadDataSingleThread(obj,options);
 }
 
+void CatalogConnector::unload()
+{
+    _binaryIsLoaded = false;
+}
+
 bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &options){
     Catalog *cat = static_cast<Catalog *>(obj);
     kernel()->issues()->log(QString(TR("Scanning %1")).arg(sourceRef().url(true).toString()),IssueObject::itMessage);
