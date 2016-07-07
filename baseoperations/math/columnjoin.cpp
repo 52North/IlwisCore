@@ -325,7 +325,7 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
             ftable.prepare();
             _outputTable = ftable;
         } else if(!_outputTable.prepare(outName)) {// output table doesnt need to exists
-            _outputTable.prepare(QString("ilwis://internalcatalog/%1").arg(outName), _baseTable->ilwisType());
+            _outputTable.prepare(QString(INTERNAL_CATALOG + "/%1").arg(outName), _baseTable->ilwisType());
             _outputTable->name(outName);
         }
     } else{
