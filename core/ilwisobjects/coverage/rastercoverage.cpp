@@ -203,7 +203,7 @@ Size<> RasterCoverage::size() const
 
 }
 
-void RasterCoverage::unloadBinary() {
+void RasterCoverage::unload() {
     if (_grid != 0) {
         return _grid->unload();
     }

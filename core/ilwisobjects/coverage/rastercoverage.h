@@ -180,7 +180,7 @@ public:
     /*!
      * unload the grid, generally used to clear some memory
      */
-    void unloadBinary();
+    void unload();
 
     PixelIterator end() ;
     PixelIterator begin() ;
