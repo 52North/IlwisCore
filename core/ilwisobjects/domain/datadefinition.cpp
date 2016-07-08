@@ -98,8 +98,8 @@ DataDefinition DataDefinition::merge(const DataDefinition &def1, const DataDefin
         SPNumericRange nr1 = def1.range().dynamicCast<NumericRange>();
         SPNumericRange nr2 = def1.range().dynamicCast<NumericRange>();
         NumericRange *nrNew = NumericRange::merge(nr1, nr2);
-        if ( def1.domain()->name() == def1.domain()->name()) {
-            def =  DataDefinition(def1.domain(), nrNew);
+        if ( def1.domain()->name() == def2.domain()->name()) {
+            def = DataDefinition(def1.domain(), nrNew);
         } else {
             dm.prepare("value");
             def = DataDefinition(dm, nrNew);
@@ -111,7 +111,7 @@ DataDefinition DataDefinition::merge(const DataDefinition &def1, const DataDefin
         SPItemRange nr1 = def1.range().dynamicCast<ItemRange>();
         SPItemRange nr2 = def1.range().dynamicCast<ItemRange>();
         ItemRange *nrNew = ItemRange::merge(nr1, nr2);
-        if ( def1.domain()->name() == def1.domain()->name()) {
+        if ( def1.domain()->name() == def2.domain()->name()) {
             return DataDefinition(def1.domain(), nrNew);
         } else {
             dm.prepare("blavla");
