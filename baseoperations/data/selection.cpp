@@ -70,8 +70,13 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
                         ok = false;
                         continue;
                     }
-                    const Record& rec = _inputAttributeTable->record(pixValue);
-                    pixValue = rec.cell(extraAtrrib[0]).toDouble();
+                    // pixValue == ID; ID zero means undef, so subtract 1 to get correct record index.
+                    if (pixValue > 0) {
+                        const Record& rec = _inputAttributeTable->record(pixValue - 1);
+                        pixValue = rec.cell(extraAtrrib[0]).toDouble();
+                    }
+                    else
+                        pixValue = rUNDEF;
                 }
             }
             if ( ok){
