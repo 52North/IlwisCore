@@ -42,6 +42,7 @@ public:
    Q_INVOKABLE OperationModel *operation(const QString& id);
    Q_INVOKABLE WorkflowModel *createWorkFlow(const QString& filter);
    Q_INVOKABLE void refresh();
+   Q_INVOKABLE QVariantList resolveValidation(const QString& metaid, const QString &objectid, int sourceParameterIndex);
 
    void gatherItems();
 

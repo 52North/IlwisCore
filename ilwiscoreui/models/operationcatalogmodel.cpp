@@ -13,6 +13,7 @@
 #include "resource.h"
 #include "ilwisobject.h"
 #include "raster.h"
+#include "table.h"
 #include "mastercatalog.h"
 #include "catalogview.h"
 #include "resourcemodel.h"
@@ -58,6 +59,53 @@ void OperationCatalogModel::refresh()
 
     emit operationsChanged();
     emit operationsByKeyChanged();
+}
+
+QVariantList OperationCatalogModel::resolveValidation(const QString &metaid, const QString& objectid, int sourceParameterIndex)
+{
+   QVariantList result;
+    try {
+
+       Resource resource = mastercatalog()->id2Resource(metaid.toULongLong());\
+       IIlwisObject obj;
+       obj.prepare(objectid.toULongLong());
+       if ( obj.isValid() && resource.isValid()){
+           QStringList lst = resource["inparameters"].toString().split("|");
+           int maxParmCount = lst.last().toInt();
+           for(int i = 0; i < maxParmCount; ++i){
+               QString parmPrefix = "pin_" + QString::number(i+1) + "_";
+               if ( resource.hasProperty(parmPrefix + "validationcondition")){
+                   bool ok;
+                   int source = resource[parmPrefix + "validationsource"].toInt();
+                   if ( source == sourceParameterIndex){
+                       QString condition = resource[parmPrefix + "validationcondition"].toString();
+                       if ( condition != sUNDEF){
+                           if ( condition.indexOf("columns") == 0){
+                               ITable tbl ;
+                               if (hasType(obj->ilwisType(), itCOVERAGE)){
+                                   ICoverage coverage = obj.as<Coverage>();
+                                   tbl = coverage->attributeTable();
+                               }else if (hasType(obj->ilwisType(), itTABLE) ){
+                                   tbl = obj.as<Table>();
+                               }
+                               QVariantMap mp;
+                               mp["parameterIndex"] = i;
+                               QStringList names;
+                               for(int c=0; c < tbl->columnCount(); ++c){
+                                   names.append(tbl->columndefinition(c).name());
+                               }
+                               mp["result"] = names;
+                               result.append(mp);
+                           }
+                       }
+                   }
+               }
+           }
+       }
+       return result;
+   }catch(const ErrorObject& err){
+   }
+   return result;
 }
 
 quint64 OperationCatalogModel::operationId(quint32 index, bool byKey) const{
