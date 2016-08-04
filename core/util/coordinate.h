@@ -21,8 +21,8 @@ public:
     Coordinate(const QVector3D& crd);
     virtual ~Coordinate();
 
-    double undefined() const { return  rUNDEF; }
-    quint64 valuetype() const { return itDOUBLE;}
+    static double undefined() { return  rUNDEF; }
+    static quint64 valuetype() { return itDOUBLE;}
     Coordinate& operator=(const geos::geom::Coordinate&);
     bool isValid() const;
     bool is0() const;
