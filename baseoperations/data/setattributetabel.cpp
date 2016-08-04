@@ -84,6 +84,7 @@ quint64 SetAttributeTable::createMetadata()
     operation.addInParameter(0,itCOVERAGE , TR("coverage"),TR("For rasters the domain must be the same as the primary key, features are coupled either by index or by index number in the key column"));
     operation.addInParameter(0,itSTRING , TR("key column"),TR("Column that serves as primary key for connecting the table to the coverage"));
     operation.setOutParameterCount({0});
+    operation.setKeywords("coverage, selection");
 
     mastercatalog()->addItems({operation});
     return operation.id();
