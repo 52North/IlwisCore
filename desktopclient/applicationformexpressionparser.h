@@ -13,7 +13,7 @@ class ApplicationFormExpressionParser : public QObject
 {
     Q_OBJECT
 public:
-    enum FieldType{ ftTEXTEDIT=1, ftTEXTAREA=2, ftCOMBOBOX=4, ftCHECKBOX=8, ftRADIOBUTTON=16, ftDropList=32};
+    enum FieldType{ ftNONE=0,ftTEXTEDIT=1, ftTEXTAREA=2, ftCOMBOBOX=4, ftCHECKBOX=8, ftRADIOBUTTON=16, ftDropList=32};
     ApplicationFormExpressionParser();
 
     Q_INVOKABLE QString index2Form(quint64 metaid, bool showoutputformat = true, bool showEmptyOptionInList  = false, QStringList hiddenFields = QStringList(), QVariantList operationNames = QVariantList(), QStringList constantValues = QStringList());
@@ -36,7 +36,7 @@ private:
     void setParameter(const Ilwis::Resource &resource, bool &inChoiceList, std::vector<FormParameter> &parameters, QString &part, QStringList &choices, int &parmCount, bool isOptional, int optionGroup, const QString &defvalue) const;
     QString setInputIcons(const QString& iconField, const QString& iconField2, const std::vector<FormParameter>& parameters, int i, int& imagewidth) const;
     std::vector<ApplicationFormExpressionParser::FormParameter> getOutputParameters(const Ilwis::Resource &resource) const;
-    QString makeFormPart(int width, const std::vector<FormParameter>& parameters, bool input, QString& results, bool showEmptyOptionInList = false, QStringList hiddenFields = QStringList(), QVariantList operationNames = QVariantList(), QStringList constantValues = QStringList()) const;
+    QString makeFormPart(const QString &metaid, int width, const std::vector<FormParameter>& parameters, bool input, QString& results, bool showEmptyOptionInList = false, QStringList hiddenFields = QStringList(), QVariantList operationNames = QVariantList(), QStringList constantValues = QStringList()) const;
     QString iconName(IlwisTypes dataType) const;
     QString dropKeys(IlwisTypes type) const;
 

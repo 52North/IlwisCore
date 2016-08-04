@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "mastercatalog.h"
 #include "models/resourcemodel.h"
+#include "operationmetadata.h"
 #include "dataformat.h"
 #include "applicationformexpressionparser.h"
 
@@ -16,6 +17,13 @@ ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::
                                                                                              bool optional, int optionGroup, const QString& defvalue) const{
     FormParameter parm;
     QString prefix = QString("pin_%1_").arg(index + 1);
+    FieldType alternateUIType = ftNONE;
+    if ( resource.hasProperty((prefix + "validationcondition"))){
+        OperationResource::UIElement elem = (OperationResource::UIElement)resource[prefix + "altUIType"].toInt();
+        if ( elem == OperationResource::ueCOMBO){
+            alternateUIType = ftCOMBOBOX;
+        }
+    }
     parm._label = resource[prefix + "name"].toString();
     parm._dataType = resource[prefix + "type"].toULongLong();
     parm._isOptional = optional;
@@ -38,11 +46,12 @@ ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::
     else if ( parm._dataType == itBOOL){
         parm._fieldType = ftRADIOBUTTON;
         parm._choiceList = {"!yes", "no"};
-    }else if (resource["altUIType"] == "droplist"){
-        parm._fieldType = ftDropList;
     }
     else
         parm._fieldType = ftTEXTEDIT;
+    if ( alternateUIType != ftNONE){
+        parm._fieldType = alternateUIType;
+    }
     return parm;
 }
 
@@ -255,15 +264,15 @@ QString ApplicationFormExpressionParser::setInputIcons(const QString& iconField1
     return imagePart;
 }
 
-QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vector<FormParameter>& parameters, bool input, QString& results, bool showEmptyOptionInList, QStringList hiddenFields, QVariantList operationNames, QStringList constantValues) const{
+QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int width, const std::vector<FormParameter>& parameters, bool input, QString& results, bool showEmptyOptionInList, QStringList hiddenFields, QVariantList operationNames, QStringList constantValues) const{
     QString rowBodyText = "Rectangle{visible:%7;height : 30;width : parent.width;color : \"white\";%1Text { x:%5 + %6;maximumLineCount: 2;text: qsTr(\"%2\"); id:label_pin_%4; width : %3 - %5 - %6;wrapMode:Text.Wrap; }";
 
     QString textField = "DropArea{ x : %2; height : 20; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
-               onDropped : { pin_%1.text = drag.source.message }\
-            TextField{ id : pin_%1; text: \"%7\"; anchors.fill : parent optionalOutputMarker %8}}";
+               onDropped : { pin_%1.text = drag.source.message; addValidation(pin_%1,%1, drag.source.ilwisobjectid) }\
+            TextField{ id : pin_%1; objectName : \"pin_%1_\" + " + metaid + "; property string itemType : \"textfield\"; text: \"%7\"; anchors.fill : parent optionalOutputMarker %8}}";
     QString textArea = "DropArea{ x : %2; height : 55; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
            onDropped : { pin_%1.text = drag.source.message }\
-        TextArea{ id : pin_%1; text: \"%7\"; anchors.fill : parent optionalOutputMarker %8}}";
+        TextArea{ id : pin_%1; property string itemType : \"textarea\";text: \"%7\"; anchors.fill : parent optionalOutputMarker %8}}";
 
 
    // QString textArea = "TextArea{ id : pin_%1; x : %2 + %5; height : 55; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5 optionalOutputMarker}";
@@ -271,7 +280,7 @@ QString ApplicationFormExpressionParser::makeFormPart(int width, const std::vect
             "onClicked : {mastercatalog.currentCatalog.filterChanged(\"%2|exclusive\" , checked)}"
             "Image{anchors.centerIn : parent;width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}}";
     QString iconField2 = "Image{width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}";
-    QString comboField = "ComboBox{id : pin_%1; x : %2;width : parent.width - label_pin_%1.width - 5 - %3;model : %4;currentIndex: %5;";
+    QString comboField = "ComboBox{id : pin_%1; objectName : \"pin_%1_\" + " + metaid + "; property string itemType : \"combobox\";x : %2;width : parent.width - label_pin_%1.width - 5 - %3;model : %4;currentIndex: %5;";
     QString rowBodyChoiceHeader = "Row{ width : parent.width;Text { text: qsTr(\"%1\"); width : %2; } Column{ExclusiveGroup { id: exclusivegroup_pin_%3} %4}}";
     QString rowChoiceOption = "RadioButton{id:choice_pin_%1;text:qsTr(\"%2\");checked:%3;exclusiveGroup:exclusivegroup_pin_%4;property string value:qsTr(\"%5\")}";
     QString formRows;
@@ -467,7 +476,13 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showout
 
         std::vector<FormParameter> outparameters = getOutputParameters(resource);
         QString results;
-        QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import MasterCatalogModel 1.0;import \"../controls\" as Controls; Column { %1 x:5; width : Math.min(parent.width - 5,420); height : parent.height;spacing :10;";
+        QString mid = QString::number(metaid);
+        QString validation = "function addValidation(e, idx, u){var r = operations.resolveValidation(metaid, u,idx);";
+        validation += "if ( r){for(var k=0; k<r.length;k++){var p=r[k];var ue = \"pin_\" + p.parameterIndex + \"" + QString("_") + mid + "\"" ;
+        validation += "; var item = uicontext.getItem(ue,0); if ( item !== null) {item.model=p.result}}}}";
+        QString propertyMetaid = "property var metaid :" + mid + ";";
+        QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import UIContextModel 1.0;import MasterCatalogModel 1.0;import \"../controls\" as Controls;";
+        columnStart += "Column { " + validation + " " + propertyMetaid + "%1 x:5; width : Math.min(parent.width - 5,420); height : parent.height;spacing :10;";
         QString exclusiveGroup = "ExclusiveGroup { id : sourceFilterGroup; onCurrentChanged: {}}";
         columnStart += exclusiveGroup;
         int width = 0;
@@ -477,12 +492,12 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showout
         width *= 10;
         width = std::min(100, width);
 
-        QString inputpart = makeFormPart(width, parameters, true, results, showEmptyOptionInList, hiddenFields, operationNames, constantValues);
+        QString inputpart = makeFormPart(mid, width, parameters, true, results, showEmptyOptionInList, hiddenFields, operationNames, constantValues);
 
         QString outputPart;
         QString seperator;
         if ( showoutputformat){
-            outputPart = makeFormPart(width, outparameters, false, results, showEmptyOptionInList,QStringList(), operationNames);
+            outputPart = makeFormPart(mid, width, outparameters, false, results, showEmptyOptionInList,QStringList(), operationNames);
 
             if (results.size() > 0) results = ": " + results;
             results = "property var outputFormats;property string formresult" + results;
@@ -506,8 +521,8 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showout
         QString component = columnStart + inputpart + seperator + outputPart + "}";
 
 
-        // for debugging, check if the qml is ok; can be retrieved from teh log file
-        //    kernel()->issues()->log(component);
+       //  for debugging, check if the qml is ok; can be retrieved from teh log file
+       //     kernel()->issues()->log(component);
         return component;
     }catch(const ErrorObject&){
 
