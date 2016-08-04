@@ -378,18 +378,18 @@ void OperationResource::setOutParameterCount(const std::vector<quint32> &counts)
     addProperty("outparameters",lst);
 }
 
-void OperationResource::addInParameter(quint32 order, IlwisTypes type, const QString &nme, const QString &description, const QString& altUIType)
+void OperationResource::addInParameter(quint32 order, IlwisTypes type, const QString &nme, const QString &description, UIElement altUIType)
 {
     QString prefix = "pin_" + QString::number(order + 1) + "_";
     addProperty(prefix + "type", type);
     addProperty(prefix + "name", nme);
     addProperty(prefix + "desc", description);
     addProperty(prefix + "optional", false);
-    if ( altUIType != sUNDEF)
+    if ( altUIType != ueNONE)
         addProperty(prefix + "altUIType", altUIType);
 }
 
-void OperationResource::addOptionalInParameter(quint32 order, IlwisTypes type, const QString &name, const QString &description, const QString& altUIType)
+void OperationResource::addOptionalInParameter(quint32 order, IlwisTypes type, const QString &name, const QString &description, UIElement altUIType)
 {
     addInParameter(order, type, name, description, altUIType);
     QString prefix = "pin_" + QString::number(order + 1) + "_";
@@ -423,6 +423,13 @@ void OperationResource::setKeywords(const QString& words) {
         result += part.trimmed();
     }
     addProperty("keyword", result.toLower());
+}
+
+void OperationResource::addValidation(quint32 parent, quint32 child, const QString &validationCondition)
+{
+    QString prefix = "pin_" + QString::number(child + 1) + "_";
+    addProperty(prefix + "validationsource", parent);
+    addProperty(prefix + "validationcondition", validationCondition);
 }
 
 

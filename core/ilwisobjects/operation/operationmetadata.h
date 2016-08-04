@@ -9,6 +9,7 @@ namespace Ilwis {
 
 class KERNELSHARED_EXPORT OperationResource : public Resource{
 public:
+    enum UIElement{ueNONE=0, ueCOMBO=1, ueLIST=2};
     OperationResource(const QUrl& url, const QString& nmspace="ilwis");
     OperationResource(const QUrl& url, const IlwisTypes &type, const QString& nmspace="ilwis");
     void setLongName(const QString& longname);
@@ -16,11 +17,12 @@ public:
     void setInParameterNameFromSyntax(const QString& syntax);
     void setInParameterCount(const std::vector<quint32>& counts);
     void setOutParameterCount(const std::vector<quint32>& counts);
-    void addInParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF, const QString &altUIType=sUNDEF);
-    void addOptionalInParameter(quint32 order, IlwisTypes type,const QString& name=sUNDEF, const QString& description=sUNDEF,const QString& altUIType=sUNDEF);
+    void addInParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF, UIElement altUIType=ueNONE);
+    void addOptionalInParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF, UIElement altUIType=ueNONE);
     void addOutParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF);
     void addOptionalOutParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF);
     void setKeywords(const QString &words);
+    void addValidation(quint32 parent, quint32 child, const QString &validationCondition);
 };
 
 class KERNELSHARED_EXPORT OperationParameter : public Identity
