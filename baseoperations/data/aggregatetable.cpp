@@ -209,8 +209,9 @@ quint64 AggregateTable::createMetadata()
     operation.setDescription(TR("Aggregates a table based on a certain column and aggregates each column values"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itTABLE , TR("input table"),TR("input table"));
-    operation.addInParameter(1,itSTRING, TR("group column"), TR("Column which is used for the aggregation"));
+    operation.addInParameter(1,itSTRING, TR("group column"), TR("Column which is used for the aggregation"), OperationResource::ueCOMBO);
     operation.addInParameter(2,itSTRING, TR("aggreation method"), TR("method how the values are aggregated"));
+    operation.addValidation(0,1,"columns");
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itTABLE , TR("aggregated table"),TR("new table where the columns have been aggregated"));
     operation.setKeywords("table,aggregation,column");
