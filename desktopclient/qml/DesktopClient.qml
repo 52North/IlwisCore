@@ -15,8 +15,8 @@ import "controls" as Controls
 
 ApplicationWindow {
     id : bigthing
-    width: Screen.desktopAvailableWidth * 0.8
-    height : Screen.desktopAvailableHeight * 0.9
+    width: Screen.width * 0.8
+    height : Screen.height * 0.9
     color : "light grey"
     objectName: "mainwindow__mainui"
 
