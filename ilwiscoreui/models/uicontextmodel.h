@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QQmlContext>
+#include <QQuickItem>
 #include <Qt>
 #include <atomic>
 #include "iooptions.h"
@@ -62,6 +63,7 @@ public:
     Q_INVOKABLE QColor code2color(const QString& code) const;
     Q_INVOKABLE QString type2typeName(const QString& tp) const;
     Q_INVOKABLE QStringList formatList(const QString &query, const QString& ilwtype) const;
+    Q_INVOKABLE QObject *getItem(const QString &name, QObject *parent);
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
     QList<VisualAttributeEditor *> propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;
@@ -89,6 +91,7 @@ public:
     void initializeDataPane();
     qint64 addMapPanel(const QString &filter, const QString &side, const QString url);
     QStringList formatList() const;
+
 
 signals:
     void activeSplitChanged();

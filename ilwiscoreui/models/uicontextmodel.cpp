@@ -382,6 +382,17 @@ QStringList UIContextModel::formatList(const QString& query, const QString& sele
     return formatList;
 }
 
+QObject *UIContextModel::getItem(const QString& name,QObject *parent)
+{
+    QQuickItem *item = 0;
+    if ( parent == 0)
+        item = rootObject()->findChild<QQuickItem*>(name);
+    else
+        item = parent->findChild<QQuickItem *>(name);
+
+    return item;
+}
+
 QString UIContextModel::worldmapCommand(const QString& id) const
 {
     QString cmd = QString("adddrawer(%1,%2, \"itemid=%3\",featurecoverage)").arg(id).arg(_worldMap->resource().url().toString()).arg(_worldMap->id());
