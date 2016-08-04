@@ -14,6 +14,9 @@ DropArea {
 
 
     onDropped: {
+        if ( currentCatalog.url.indexOf("ilwis://system") != -1)
+            return
+
         var formatstrings = ""
         var idstring = drag.source.ids
         if ( idstring === "?" || idstring === "")
