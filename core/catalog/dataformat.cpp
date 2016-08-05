@@ -26,7 +26,7 @@ DataFormat::DataFormat(const QString &code, const QString connector)
 }
 
 DataFormat::DataFormat(const QString& connector, const QString &code, const QString &longname,
-                       const QString &extensions, const QString &access, IlwisTypes datatypes, const QString &description)
+                       const QString &extensions, const QString &access, IlwisTypes datatypes, const QString &description, const QString& parts)
 {
     _properties[fpCODE] = code;
     _properties[fpNAME] = longname;
@@ -35,6 +35,7 @@ DataFormat::DataFormat(const QString& connector, const QString &code, const QStr
     _properties[fpCONNECTOR] = connector;
     _properties[fpDATATYPE] = datatypes;
     _properties[fpREADWRITE] = access;
+    _properties[fpPARTS] = access;
     if (hasType(datatypes, itRASTER)){
         _properties[fpEXTENDEDTYPE] = itGEOREF | itDOMAIN | itCOORDSYSTEM;
     }
@@ -50,6 +51,7 @@ void DataFormat::setProps(InternalDatabaseConnection& db, const QString &code){
     _properties[fpDATATYPE] = set(db.value("datatype").toULongLong());
     _properties[fpREADWRITE] = set(db.value("readwrite").toString());
     _properties[fpEXTENDEDTYPE] = set(db.value("extendedtype").toULongLong());
+    _properties[fpPARTS] = set(db.value("parts").toString());
     _isValid = true;
 }
 
@@ -109,6 +111,8 @@ QVariantList DataFormat::getFormatProperties(FormatProperties prop, IlwisTypes t
             field = "readwrite"; break;
         case fpEXTENDEDTYPE:
             field = "extendedtype"; break;
+        case fpPARTS:
+            field = "parts"; break;
     }
 
     QString stmt = QString("select %1 from dataformats where (datatype & %2) != 0").arg(field).arg(types);
@@ -166,6 +170,7 @@ bool DataFormat::setFormatInfo(const QString& path, const QString connector) {
                         QString type = objv.value("type").toString(sUNDEF);
                         QString ext = objv.value("extension").toString(sUNDEF);
                         QString datatp = objv.value("datatypes").toString(sUNDEF);
+                        QString fileparts = objv.value("parts").toString(sUNDEF);
                         quint64 ilwtype = itUNKNOWN;
                         QStringList parts = datatp.split(",");
                         for(QString tp : parts)
@@ -177,7 +182,7 @@ bool DataFormat::setFormatInfo(const QString& path, const QString connector) {
                         for(QString tp : parts)
                             exttypes |= IlwisObject::name2Type(tp);
 
-                        QString parms = QString("'%1','%2','%3','%4','%5',%6,'%7','%8',%9").arg(code,name,desc, ext,type).arg(ilwtype).arg(connector).arg(rw).arg(exttypes);
+                        QString parms = QString("'%1','%2','%3','%4','%5',%6,'%7','%8',%9,'%10'").arg(code,name,desc, ext,type).arg(ilwtype).arg(connector).arg(rw).arg(exttypes).arg(fileparts);
                         QString stmt = QString("INSERT INTO dataformats VALUES(%1)").arg(parms);
                         bool ok = sqlPublic.exec(stmt);
                         if (!ok) {
@@ -212,14 +217,16 @@ bool DataFormat::store()
 {
     InternalDatabaseConnection sqlPublic;
     IlwisTypes extTypes = _properties[fpDATATYPE].toULongLong() == itRASTER ? itCOORDSYSTEM | itGEOREF | itDOMAIN : itUNKNOWN;
-    QString parms = QString("'%1','%2','%3','%4','file',%5,'%6','%7',%8").arg(_properties[fpCODE].toString(),
+    QString parms = QString("'%1','%2','%3','%4','file',%5,'%6','%7',%8,'%9'").arg(_properties[fpCODE].toString(),
                                                                             _properties[fpNAME].toString(),
                                                                             _properties[fpDESCRIPTION].toString(),
                                                                               _properties[fpEXTENSION].toString()).
                                                                             arg(_properties[fpDATATYPE].toULongLong()).
                                                                             arg(_properties[fpCONNECTOR].toString()).
                                                                             arg(_properties[fpREADWRITE].toString()).
-                                                                            arg(extTypes);
+                                                                            arg(extTypes).
+                                                                            arg(_properties[fpPARTS].toString());
+
     QString stmt = QString("INSERT INTO dataformats VALUES(%1)").arg(parms);
     bool ok = sqlPublic.exec(stmt);
     if (!ok) {
