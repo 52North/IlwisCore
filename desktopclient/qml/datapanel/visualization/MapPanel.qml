@@ -83,9 +83,13 @@ Item {
     Action {
         id : zoomOutClicked
         onTriggered : {
+            console.log("zoomOutClicked onTriggered 0")
             if ( manager){
+                console.log("zoomOutClicked onTriggered 1")
                 var envelope = layers.drawer().attributeOfDrawer("rootdrawer","zoomenvelope");
+                console.log("zoomOutClicked onTriggered 2")
                 Global.calcZoomOutEnvelope(envelope, layers, viewmanager)
+                console.log("zoomOutClicked onTriggered 3")
             }
         }
     }
