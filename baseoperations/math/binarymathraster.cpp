@@ -236,6 +236,8 @@ quint64 BinaryMathRaster::createMetadata()
     operation.addInParameter(1,itRASTER | itNUMBER, TR("raster or number"));
     operation.addInParameter(2,itSTRING , TR("operator"),TR("operator (add, substract,divide, multiply) applied to the other 2 input operators"));
     operation.setOutParameterCount({1});
+    operation.addValidation(0,0,"domain=numericdomain");
+    operation.addValidation(1,1,"domain=numericdomain");
     operation.addOutParameter(0,itRASTER, TR("raster coverage"));
     operation.setKeywords("raster, operation");
 
