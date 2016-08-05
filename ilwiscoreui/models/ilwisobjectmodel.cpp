@@ -91,10 +91,10 @@ QString IlwisObjectModel::externalFormat() const
 
 bool IlwisObjectModel::externalReadOnly() const
 {
-   if ( _ilwisobject.isValid()){
-       return _ilwisobject->outputConnectionReadonly();
-   }
-   return true;
+    if ( _ilwisobject.isValid()){
+        return _ilwisobject->outputConnectionReadonly();
+    }
+    return true;
 }
 
 bool IlwisObjectModel::isProjectedCoordinateSystem() const
@@ -143,8 +143,14 @@ QString IlwisObjectModel::projectionInfo() const
 {
     try {
         if ( isProjectedCoordinateSystem()){
-            IConventionalCoordinateSystem csy = hasType(_ilwisobject->ilwisType(), itCOVERAGE) ? _ilwisobject.as<Coverage>()->coordinateSystem().as<ConventionalCoordinateSystem>()
-                                                                                               : _ilwisobject.as<ConventionalCoordinateSystem>();
+            IConventionalCoordinateSystem csy;
+            if (hasType(_ilwisobject->ilwisType(), itCOVERAGE)){
+                csy = _ilwisobject.as<Coverage>()->coordinateSystem().as<ConventionalCoordinateSystem>();
+            }else if (hasType(_ilwisobject->ilwisType(), itCOORDSYSTEM)){
+                csy = _ilwisobject.as<ConventionalCoordinateSystem>();
+            }else if ( hasType(_ilwisobject->ilwisType(), itGEOREF)){
+                csy = _ilwisobject.as<GeoReference>()->coordinateSystem().as<ConventionalCoordinateSystem>();
+            }
             QString projection = Projection::projectionCode2Name(csy->projection()->code());
             QVariant var = csy->projection()->parameter(Projection::pvZONE);
             if ( var.isValid() && !var.toInt() == 1){
@@ -375,20 +381,20 @@ QString IlwisObjectModel::rangeDefinition(bool defaultRange, bool calc, const QS
             if ( objectype == itRASTER){
                 IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
                 if ( defaultRange){
-                  rangeString = raster->datadef().domain()->range()->toString();
+                    rangeString = raster->datadef().domain()->range()->toString();
                 }else{
                     if ( calc){
                         raster->loadData();
                         raster->statistics(NumericStatistics::pBASIC);
                     }
-                  rangeString = raster->datadef().range()->toString();
+                    rangeString = raster->datadef().range()->toString();
                 }
             } else if ( hasType( objectype , itFEATURE)){
                 IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
                 ColumnDefinition coldef = features->attributeDefinitions().columndefinition(COVERAGEKEYCOLUMN);
                 if ( coldef.isValid()){
                     if ( defaultRange)
-                      rangeString =  coldef.datadef().domain()->range()->toString();
+                        rangeString =  coldef.datadef().domain()->range()->toString();
                     else{
                         if ( calc){
                             features->loadData();
@@ -431,6 +437,121 @@ QString IlwisObjectModel::parentDomain() const {
     }
     return "not defined";
 }
+
+QStringList IlwisObjectModel::quickProps() const
+{
+    QStringList result;
+    try {
+
+        if ( hasType(_ilwisobject->ilwisType(), itRASTER)){
+            IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+            QString dom = QString("%1:%2").arg("domain").arg(raster->datadef().domain()->name());
+            IlwisTypes tp = raster->datadef().domain()->ilwisType();
+            QString domType =QString("%1:%2").arg("domain type").arg(TypeHelper::type2HumanReadable(tp));
+            QString grf = QString("%1:%2").arg("georeference").arg(raster->georeference()->name());
+            Size<> sz = raster->size();
+            QString size = QString("%1:%2 %3 %4").arg("raster size").arg(sz.xsize()).arg(sz.ysize()).arg(sz.zsize());
+            Envelope env = raster->envelope(true);
+            QString e = QString("%1 %2 %3 %4").arg(env.min_corner().x,0,'f', 2).arg(env.min_corner().y,0,'f', 2).arg(env.max_corner().x,0,'f', 2).arg(env.max_corner().y,0,'f', 2);
+            QString envelope = QString("envelope:" + e);
+
+
+            result.append(grf);
+            result.append(size);
+            result.append(envelope);
+            QString projInfo = projectionInfo();
+            result.append("projection:" + projInfo);
+            result.append(dom);
+            result.append(domType);
+            if ( raster->hasAttributes()){
+                ITable tbl = raster->attributeTable();
+                for(int i=0; i < tbl->columnCount(); ++i){
+                    result.append(QString("attributes %1: %2").arg(i).arg(tbl->columndefinition(i).name()));
+                }
+            }
+        }
+        if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
+            IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
+
+            QString pcount = QString("%1:%2").arg("polygon count").arg(getProperty("polygoncount"));
+            QString lcount = QString("%1:%2").arg("line count").arg(getProperty("linecount"));
+            QString pocount = QString("%1:%2").arg("point count").arg(getProperty("pointcount"));
+            QString fcount = QString("%1:%2").arg("feature count").arg(getProperty("featurecount"));
+
+            result.append(pcount);
+            result.append(lcount);
+            result.append(pocount);
+            result.append(fcount);
+            Envelope env = features->envelope(true);
+            QString e = QString("%1 %2 %3 %4").arg(env.min_corner().x,0,'f', 2).arg(env.min_corner().y,0,'f', 2).arg(env.max_corner().x,0,'f', 2).arg(env.max_corner().y,0,'f', 2);
+            QString envelope = QString("envelope:" + e);
+            result.append(envelope);
+            QString projInfo = projectionInfo();
+            result.append("projection:" + projInfo);
+
+            ITable tbl = features->attributeTable();
+            for(int i=0; i < tbl->columnCount(); ++i){
+                result.append(QString("attribute %1: %2").arg(i).arg(tbl->columndefinition(i).name()));
+            }
+
+
+        }
+        if ( hasType(_ilwisobject->ilwisType(), itTABLE)){
+            ITable tbl = _ilwisobject.as<Table>();
+            result.append("record count:" + QString::number(tbl->recordCount()));
+            result.append("column count:" + QString::number(tbl->columnCount()));
+            for(int i=0; i < tbl->columnCount(); ++i){
+                ColumnDefinition def = tbl->columndefinition(i);
+                IlwisTypes tp = def.datadef().domain()->ilwisType();
+                QString domType =QString("%1:%2").arg("domain type").arg(TypeHelper::type2HumanReadable(tp));
+                result.append(QString("column %1: %2 %3").arg(i).arg(def.name()).arg(domType));
+            }
+        }
+        if ( hasType(_ilwisobject->ilwisType(), itGEOREF)){
+            IGeoReference gr = _ilwisobject.as<RasterCoverage>();
+            Size<> sz = gr->size();
+            QString size = QString("%1:%2 %3 %4").arg("raster size").arg(sz.xsize()).arg(sz.ysize()).arg(sz.zsize());
+            Envelope env = gr->envelope();
+            QString pxSize = QString("pixel size:%1").arg(gr->pixelSize());
+            QString e = QString("%1 %2 %3 %4").arg(env.min_corner().x,0,'f', 2).arg(env.min_corner().y,0,'f', 2).arg(env.max_corner().x,0,'f', 2).arg(env.max_corner().y,0,'f', 2);
+            QString envelope = QString("envelope:" + e);
+
+            result.append(size);
+            result.append(pxSize);
+            result.append(envelope);
+            QString projInfo = projectionInfo();
+            result.append("projection:" + projInfo);
+        }
+        if ( hasType(_ilwisobject->ilwisType(), itDOMAIN)){
+            IDomain dom = _ilwisobject.as<Domain>();
+            IlwisTypes tp = dom->ilwisType();
+            QString domType =QString("%1:%2").arg("domain type").arg(TypeHelper::type2HumanReadable(tp));
+            QString vType = TypeHelper::type2HumanReadable(dom->valueType());
+            QString valueType = QString("value type:" + vType);
+            QString extra;
+            if ( hasType(tp, itITEMDOMAIN)){
+                extra = QString("item count:%1").arg(dom.as<ItemDomain<DomainItem>>()->count());
+            }else if(hasType(tp,itNUMERICDOMAIN)){
+                auto range = dom->range()->as<NumericRange>();
+                extra = QString("numeric range:" + range->toString());
+            }
+            result.append(domType);
+            result.append(valueType);
+            if ( extra != "")
+                result.append(extra);
+
+
+        }
+        return result;
+    }
+    catch(const ErrorObject& err){
+        result.append("error:" + err.message());
+    }
+
+
+    return result;
+}
+
 QString IlwisObjectModel::pixSizeString() const{
     if (hasType(_ilwisobject->ilwisType(), itRASTER | itGEOREF)){
         double pixsizex=rUNDEF, pixsizey=rUNDEF;
@@ -502,7 +623,7 @@ QString IlwisObjectModel::valueType() const {
     }
     return "";
 }
-QString IlwisObjectModel::getProperty(const QString &propertyname)
+QString IlwisObjectModel::getProperty(const QString &propertyname) const
 {
     try{
         QString property = ResourceModel::getProperty(propertyname);
@@ -544,52 +665,52 @@ QString IlwisObjectModel::getProperty(const QString &propertyname)
             }
         }
         if ( propertyname == "polygoncount"){
-             if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
+            if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
                 IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
                 return QString::number(features->featureCount(itPOLYGON));
-             }
+            }
         }
         if ( propertyname == "linecount"){
-             if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
+            if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
                 IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
                 return QString::number(features->featureCount(itLINE));
-             }
+            }
         }
         if ( propertyname == "pointcount"){
-             if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
+            if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
                 IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
                 return QString::number(features->featureCount(itPOINT));
-             }
+            }
         }
         if ( propertyname == "featurecount"){
-             if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
+            if ( hasType(_ilwisobject->ilwisType(), itFEATURE)){
                 IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
                 return QString::number(features->featureCount());
-             }
+            }
         }
         if ( propertyname == "majoraxis"){
-             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
+            if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
                 IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
                 return QString::number(ellipsoid->majorAxis());
-             }
+            }
         }
         if ( propertyname == "minoraxis"){
-             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
+            if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
                 IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
                 return QString::number(ellipsoid->minorAxis());
-             }
+            }
         }
         if ( propertyname == "flattening"){
-             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
+            if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
                 IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
                 return QString::number(ellipsoid->flattening());
-             }
+            }
         }
         if ( propertyname == "excentricity"){
-             if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
+            if ( hasType(_ilwisobject->ilwisType(), itELLIPSOID)){
                 IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
                 return QString::number(ellipsoid->excentricity());
-             }
+            }
         }
         if (propertyname == "proj4def"){
             IlwisTypes objectype = _ilwisobject->ilwisType();
@@ -637,12 +758,12 @@ bool IlwisObjectModel::canUse(const QString &id)
     if ( _ilwisobject.isValid()){
         bool ok;
         quint64 myid = id.toULongLong(&ok);
-            if ( ok){
-                IIlwisObject obj;
-                obj.prepare(myid);
-                if ( obj.isValid())
-                    return _ilwisobject->canUse(obj.ptr());
-            }
+        if ( ok){
+            IIlwisObject obj;
+            obj.prepare(myid);
+            if ( obj.isValid())
+                return _ilwisobject->canUse(obj.ptr());
+        }
     }
     return false;
 }
@@ -713,18 +834,18 @@ void IlwisObjectModel::unload()
 QString IlwisObjectModel::copy(const QString &newUrl, const QString &format, const QString &provider)
 {
     try {
-    if ( _ilwisobject.isValid()){
-        quint64 id = mastercatalog()->name2id(newUrl, _ilwisobject->ilwisType());
-        if ( id == i64UNDEF){
-            _ilwisobject->connectTo(newUrl,format.toLower(), provider.toLower(), IlwisObject::cmOUTPUT);
-            _ilwisobject->store();
-            // original object must forget about its copy
-            _ilwisobject->resetOutputConnector();
-        }else{
-            return "exists";
+        if ( _ilwisobject.isValid()){
+            quint64 id = mastercatalog()->name2id(newUrl, _ilwisobject->ilwisType());
+            if ( id == i64UNDEF){
+                _ilwisobject->connectTo(newUrl,format.toLower(), provider.toLower(), IlwisObject::cmOUTPUT);
+                _ilwisobject->store();
+                // original object must forget about its copy
+                _ilwisobject->resetOutputConnector();
+            }else{
+                return "exists";
+            }
         }
-    }
-    return "ok";
+        return "ok";
     } catch(const ErrorObject& ){}
 
     return "error";
@@ -743,24 +864,24 @@ IIlwisObject IlwisObjectModel::object() const
 QString IlwisObjectModel::value2string(const QVariant &value, const QString &attrName)
 {
     auto v2s = [](const ColumnDefinition& coldef, const QVariant& value)->QString {
-            if ( coldef.isValid()){
-                if ( coldef.datadef().domain()->ilwisType() == itTEXTDOMAIN)
-                    return value.toString();
+        if ( coldef.isValid()){
+            if ( coldef.datadef().domain()->ilwisType() == itTEXTDOMAIN)
+                return value.toString();
 
-                QVariant impliedValue = coldef.datadef().domain()->impliedValue(value);
-                if (coldef.datadef().domain()->valueType() == itNUMERICDOMAIN ) {
-                    double resolution = coldef.datadef().range().dynamicCast<NumericRange>()->resolution();
-                    if ( resolution == 0)
-                        return QString::number(impliedValue.toDouble(), 'f', 3);
-                    if ( resolution == 1){
-                        return QString::number(impliedValue.toLongLong());
-                    }
+            QVariant impliedValue = coldef.datadef().domain()->impliedValue(value);
+            if (coldef.datadef().domain()->valueType() == itNUMERICDOMAIN ) {
+                double resolution = coldef.datadef().range().dynamicCast<NumericRange>()->resolution();
+                if ( resolution == 0)
+                    return QString::number(impliedValue.toDouble(), 'f', 3);
+                if ( resolution == 1){
+                    return QString::number(impliedValue.toLongLong());
                 }
-                return impliedValue.toString();
             }
-            if ( value.toDouble() == rUNDEF)
-                return sUNDEF;
-            return value.toString();
+            return impliedValue.toString();
+        }
+        if ( value.toDouble() == rUNDEF)
+            return sUNDEF;
+        return value.toString();
     };
     if ( attrName != "") {
         IlwisTypes objectype = _ilwisobject->ilwisType();
@@ -770,21 +891,21 @@ QString IlwisObjectModel::value2string(const QVariant &value, const QString &att
             return v2s(coldef, value);
 
         }else if (hasType(objectype, itRASTER)){
-             IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
-             if ( raster->hasAttributes()){
+            IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+            if ( raster->hasAttributes()){
                 ColumnDefinition coldef = raster->attributeTable()->columndefinition(attrName);
                 return v2s(coldef, value);
-             }
-             if ( raster->datadef().domain()->ilwisType() == itCOLORDOMAIN){
-                 auto clr = ColorRangeBase::toColor(value, ColorRangeBase::cmRGBA);
+            }
+            if ( raster->datadef().domain()->ilwisType() == itCOLORDOMAIN){
+                auto clr = ColorRangeBase::toColor(value, ColorRangeBase::cmRGBA);
                 return ColorRangeBase::toString(clr,ColorRangeBase::cmRGBA)    ;
-             }
-             double resolution = raster->datadef().range().dynamicCast<NumericRange>()->resolution();
-             if ( resolution == 0)
-                 return QString::number(value.toDouble(), 'f', 5);
-             if ( resolution == 1){
-                 return QString::number(value.toLongLong());
-             }
+            }
+            double resolution = raster->datadef().range().dynamicCast<NumericRange>()->resolution();
+            if ( resolution == 0)
+                return QString::number(value.toDouble(), 'f', 5);
+            if ( resolution == 1){
+                return QString::number(value.toLongLong());
+            }
         }
     }
     if ( value.toDouble() == rUNDEF)
