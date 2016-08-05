@@ -479,7 +479,7 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showout
         QString mid = QString::number(metaid);
         QString validation = "function addValidation(e, idx, u){var r = operations.resolveValidation(metaid, u,idx);";
         validation += "if ( r){for(var k=0; k<r.length;k++){var p=r[k];var ue = \"pin_\" + p.parameterIndex + \"" + QString("_") + mid + "\"" ;
-        validation += "; var item = uicontext.getItem(ue,0); if ( item !== null) {item.model=p.result}}}}";
+        validation += "; var item = uicontext.getItem(ue,0); if ( item !== null) { if ( p.uielement==\"list\"){item.model=p.result}if(p.uielement==\"textfield\"){item.text=p.result}}}}}";
         QString propertyMetaid = "property var metaid :" + mid + ";";
         QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import UIContextModel 1.0;import MasterCatalogModel 1.0;import \"../controls\" as Controls;";
         columnStart += "Column { " + validation + " " + propertyMetaid + "%1 x:5; width : Math.min(parent.width - 5,420); height : parent.height;spacing :10;";
