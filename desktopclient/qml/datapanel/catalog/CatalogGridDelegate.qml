@@ -9,6 +9,7 @@ import CatalogModel 1.0
 import ResourceModel 1.0
 
 import "../../Global.js" as Global
+import "../../controls" as Controls
 
 Item {
     id: iconDelegate
@@ -25,6 +26,7 @@ Item {
          return iconP
 
      }
+
 
     Row {
         anchors.fill: parent
@@ -67,12 +69,21 @@ Item {
         property variant image
         drag.target: image
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+        hoverEnabled: true
         onClicked: {
             itemgrid.currentIndex = index;
             isSelected = !isSelected
             catalogViews.setSelected(id)
             if (catalogViews && catalogViews.tabmodel && !catalogViews.tabmodel.selected)
                 catalogViews.tabmodel.selectTab()
+        }
+        onPositionChanged: {
+            if ( floatingProps.item){
+                floatingProps.item.setObject(id)
+                var point = floatingProps.mapFromItem(mouseArea, mouseX, mouseY)
+                floatingProps.item.x = point.x
+                floatingProps.item.y =point.y
+            }
         }
 
         onDoubleClicked: {
@@ -85,13 +96,20 @@ Item {
             }
         }
         onReleased: {
-            image.Drag.drop()
-            image.parent = mouseArea
-            image.anchors.fill = mouseArea
-            image.destroy();
+            if ( image){
+                image.Drag.drop()
+                image.parent = mouseArea
+                image.anchors.fill = mouseArea
+                image.destroy();
+            }
+            if ( floatingProps.item){
+                floatingProps.source=""
+            }
         }
         onPressed: {
-           image = Qt.createQmlObject('import QtQuick 2.0; Image{
+            var key = uicontext.currentKey
+            if ( key !== Qt.Key_Alt){
+                image = Qt.createQmlObject('import QtQuick 2.0; Image{
                 id : image
                 width : 20; height : 20
                 source : iconSource(iconPath)
@@ -113,7 +131,14 @@ Item {
                     AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
                 }
             }', mouseArea, "dynamicImage");
-          }
+            }else {
+                floatingProps.source = "QuickProps.qml"
+                floatingProps.item.setObject(id)
+                var point = floatingProps.mapFromItem(mouseArea, mouseX, mouseY)
+                floatingProps.item.x = point.x
+                floatingProps.item.y =point.y
+            }
+        }
     }
 
 }

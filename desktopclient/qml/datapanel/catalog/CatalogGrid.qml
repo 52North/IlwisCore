@@ -27,6 +27,13 @@ FocusScope {
             GridView {
                 id : itemgrid
 
+                Loader {
+                    id : floatingProps
+                    width :270
+                    height : 150
+                    z : 100
+                }
+
                 model : setResources()
                 width : parent.width * Global.uiScale
                 height : parent.height * Global.uiScale
