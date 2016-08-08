@@ -175,7 +175,7 @@ Rectangle {
                         property int diskRadius : 76
                         property var radii : []
                         width : parent.width
-                        function getColor(mouseX, mouseY){
+                        function getColor(mouseX, mouseY, clicked){
                             var dx = mouseX - disk.width / 2
                             var dy = mouseY - (disk.height / 2)
                             var r = Math.sqrt(dx*dx + dy*dy)
@@ -186,7 +186,7 @@ Rectangle {
                             var nc = 6 * circle
                             var tan = dx != 0 ? dy / dx : 100000.0
                             var an = Math.atan(tan) * 180/ Math.PI
-                            var id = Math.floor(nc * (an + 360/(nc *2)) / 360.0 )
+                            var id = nc !== 0 ? Math.floor(nc * (an + 360/(nc *2)) / 360.0 ) : 0
                             if ( dx < 0 && dy >= 0){
                                 id = nc / 4 + (nc/4 + id)
                             } else if ( dx < 0 && dy < 0)
@@ -194,7 +194,8 @@ Rectangle {
                             else if ( dy < 0 && dx >= 0)
                                 id = 3*nc / 4 + (nc/4 + id)
                             id = id >= (nc-1) ? 0 : id
-                            //console.debug(r,nc)
+                            if ( clicked)
+                                console.debug(circle, id)
                             return colorPicker.color(diskselection.currentIndex, circle, id)
                         }
 
@@ -246,10 +247,10 @@ Rectangle {
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 onClicked: {
-                                    colorPicker.lastSelectedColor = disk.getColor(mouseX, mouseY)
+                                    colorPicker.lastSelectedColor = disk.getColor(mouseX, mouseY,true)
                                 }
                                 onPositionChanged: {
-                                    var clr = disk.getColor(mouseX, mouseY)
+                                    var clr = disk.getColor(mouseX, mouseY,false)
                                     colorInfo.text = clr.toString()
                                 }
                             }

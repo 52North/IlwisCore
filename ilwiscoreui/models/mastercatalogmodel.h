@@ -87,6 +87,8 @@ public:
 
 public slots:
     void updateBookmarks() ;
+    void keyPressed(int key);
+    void keyReleased(int key);
 
 private:
     QList<CatalogModel *> _bookmarks;
@@ -145,6 +147,7 @@ public:
 
 public slots:
     void process();
+
 
 
 signals:

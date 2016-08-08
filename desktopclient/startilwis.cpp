@@ -182,6 +182,8 @@ void StartIlwis::init() {
 
 
         _keys = new KeyFilter() ;
+        _mastercatalogmodel->connect(_keys, &KeyFilter::keyPressed, _mastercatalogmodel, &MasterCatalogModel::keyPressed);
+        _mastercatalogmodel->connect(_keys, &KeyFilter::keyReleased, _mastercatalogmodel, &MasterCatalogModel::keyReleased);
         QCoreApplication::instance()->installEventFilter(_keys);
     } catch(ErrorObject&){
 

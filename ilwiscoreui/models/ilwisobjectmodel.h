@@ -30,6 +30,7 @@ class ILWISCOREUISHARED_EXPORT IlwisObjectModel : public ResourceModel
     Q_PROPERTY(QQmlListProperty<AttributeModel> attributes READ attributes CONSTANT)
     Q_PROPERTY(QQmlListProperty<DomainItemModel> domainitems READ domainitems CONSTANT)
     Q_PROPERTY(QQmlListProperty<ProjectionParameterModel> projectionItems READ projectionItems CONSTANT)
+    Q_PROPERTY(QStringList quickProps READ quickProps CONSTANT)
 
 
 public:
@@ -55,7 +56,7 @@ public:
     QString valuetype() const;
     QString value2string(const QVariant& value, const QString& attrName="");
     Q_INVOKABLE QString rangeDefinition(bool defaultRange, bool calc, const QString &columnName);
-    Q_INVOKABLE QString getProperty(const QString& propertyname);
+    Q_INVOKABLE QString getProperty(const QString& propertyname) const;
     Q_INVOKABLE bool canUse(const QString& id);
     Q_INVOKABLE void setAttribute(const QString& attrname, const QString& value, const QString& extra="" );
     Q_INVOKABLE OperationModel *operation(const QString& id);
@@ -83,6 +84,7 @@ private:
     QString pixSizeString() const;
     QString centerPixelLocation() const;
     QString parentDomain() const;
+    QStringList quickProps() const;
 };
 
 #endif // ILWISOBJECTMODEL_H

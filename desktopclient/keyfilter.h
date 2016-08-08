@@ -11,7 +11,8 @@ public:
 
     bool eventFilter(QObject *object, QEvent *event);
 signals:
-
+    void keyPressed(int key);
+    void keyReleased(int key);
 public slots:
 
 };

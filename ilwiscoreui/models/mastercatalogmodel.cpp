@@ -871,6 +871,16 @@ bool MasterCatalogModel::exists(const QString &url, const QString &objecttype)
    return  id != i64UNDEF;
 }
 
+void MasterCatalogModel::keyPressed(int key)
+{
+}
+
+void MasterCatalogModel::keyReleased(int key)
+{
+    if ( _selectedObjects.size() > 0)    {
+    }
+}
+
 //--------------------
 CatalogWorker::CatalogWorker(QList<CatalogModel *> &models, ICatalog cat) : _models(models)
 {
@@ -903,6 +913,8 @@ void CatalogWorker::process(){
 
     emit finished();
 }
+
+
 
 void CatalogWorker::calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource& resource, std::vector<Resource>& updatedResources){
     try{

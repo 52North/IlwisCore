@@ -95,7 +95,27 @@ QVariantList OperationCatalogModel::resolveValidation(const QString &metaid, con
                                    names.append(tbl->columndefinition(c).name());
                                }
                                mp["result"] = names;
+                               mp["uielement"] = "list";
                                result.append(mp);
+                           }else if ( condition.indexOf("domain") == 0){
+                                if (hasType(obj->ilwisType(), itRASTER))    {
+                                    IRasterCoverage raster = obj.as<RasterCoverage>();
+                                    QStringList parts = condition.split("=");
+                                    QVariantMap mp;
+                                    if ( parts.size() == 2){
+                                        QString domainType = parts[1];
+                                        if ( domainType == "numericdomain"){
+                                            mp["parameterIndex"] = i;
+                                            mp["result"] = hasType(raster->datadef().domain()->ilwisType(), itNUMERICDOMAIN) ? obj->resource().url().toString() : "";
+                                            mp["uielement"] = "textfield";
+                                        }else if ( domainType == "itemdomain"){
+                                            mp["parameterIndex"] = i;
+                                            mp["result"] = hasType(raster->datadef().domain()->ilwisType(), itITEMDOMAIN) ? obj->resource().url().toString() : "";
+                                            mp["uielement"] = "textfield";
+                                        }
+                                    }
+                                    result.append(mp);
+                                }
                            }
                        }
                    }
