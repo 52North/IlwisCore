@@ -14,7 +14,7 @@ FocusScope {
     anchors.fill: parent
     Rectangle {
         anchors.fill :parent
-        color : tabmodel && tabmodel.side == "right" ? Global.alternatecolor3 : "white"
+        color : tabmodel && tabmodel.side == "right" ? Global.alternatecolor4 : "white"
 
         ScrollView {
             id : catalogGrid
