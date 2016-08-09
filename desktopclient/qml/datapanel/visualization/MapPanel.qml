@@ -70,6 +70,7 @@ Item {
     Action {
         id : entireClicked
         onTriggered : {
+            manager.zoomInMode = false
             layers.entireMap()
             viewmanager.entireMap()
         }
