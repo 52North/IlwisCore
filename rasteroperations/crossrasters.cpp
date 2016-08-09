@@ -74,6 +74,7 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
     quint32 count = 0;
     double pixarea = _inputRaster1->georeference()->pixelSize();
     std::map<quint64, Combo> combos;
+    std::vector<quint64> inCreationOrder;
     std::for_each(iterIn1, iterIn1.end(), [&](double& v1){
         double v2 = *iterIn2;
 
@@ -87,13 +88,16 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
                 combos[combo]._count = 1;
                 combos[combo]._id = idcount;
                 *iterOut = idcount;
+                inCreationOrder.push_back(combo);
                 ++idcount;
             }
             else{
                 (*(iterCombos)).second._count++;
                 *iterOut = (*(iterCombos)).second._id;
             }
-        }
+        }else
+            *iterOut = rUNDEF;
+
         updateTranquilizer(++count,100);
         ++iterIn2;
         ++iterOut;
@@ -102,10 +106,10 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
     NamedIdentifierRange *idrange = new NamedIdentifierRange();
     count = 0;
     trq()->prepare(_metadata->name(),TR("Updating table"), combos.size());
-    for(auto element : combos) {
-        quint64 combo = element.first;
-        quint32 v2 = combo / SHIFTER;
-        quint32 v1 = combo  - v2 * SHIFTER;
+    for(quint64 orderedCombo : inCreationOrder) {
+        auto element = combos[orderedCombo];
+        quint32 v2 = orderedCombo / SHIFTER;
+        quint32 v1 = orderedCombo  - v2 * SHIFTER;
 
         QString id = determineCrossId(v1,v2);
         if (id != ""){
@@ -113,9 +117,8 @@ bool CrossRasters::crossWithRaster(const  BoundingBox& box){
             _outputTable->setCell(0,record,QVariant(record));
             _outputTable->setCell(1,record,QVariant(v1));
             _outputTable->setCell(2,record,QVariant(v2));
-            Combo& cm = element.second;
-            _outputTable->setCell(3,record,QVariant(cm._count))          ;
-            _outputTable->setCell(4,record,QVariant(cm._count * pixarea)) ;
+            _outputTable->setCell(3,record,QVariant(element._count))          ;
+            _outputTable->setCell(4,record,QVariant(element._count * pixarea)) ;
             _outputTable->setCell(5,record,QVariant(record)); // coverage key
             ++record;
         }
