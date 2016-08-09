@@ -14,7 +14,7 @@ Rectangle {
         x : -imageHeight / 2
         height : imageHeight
         width : imageHeight
-        source : "../images/"+ handlePic
+        source : handlePic != "" ? "../images/"+ handlePic : ""
         MouseArea {
             anchors.fill: parent
             onClicked: {

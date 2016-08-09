@@ -207,8 +207,8 @@ Rectangle {
         handleDelegate: Controls.SplitHandle{
             imageHeight: 22
             offset : 25
-            handlePic: "splithandledark.png"
-            func : datapanesplit.changeWidth
+            handlePic: ""
+           // func : datapanesplit.changeWidth
         }
 
         DataTabView2 {
