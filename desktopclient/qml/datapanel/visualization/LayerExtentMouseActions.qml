@@ -26,7 +26,6 @@ MouseArea {
     }
 
     onPressed:  {
-        console.log("onPressed 0")
         if ( layerview.tabmodel){
             if (!layerview.tabmodel.selected)
                 layerview.tabmodel.selectTab()

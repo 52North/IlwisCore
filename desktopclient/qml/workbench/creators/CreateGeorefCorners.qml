@@ -102,7 +102,6 @@ Controls.DropableItem{
             maxx : csyBounds.maxx, maxy : csyBounds.maxy, csy : csypart.content,
             centered : cbcorners.checked, pixelsize : pixsz.content,
             description :objectcommon.description}
-        console.debug("a", csyBounds.minx, "b", csyBounds.miny, "c", csyBounds.maxx, "d", csyBounds.maxy)
         var createdId = objectcreator.createObject(createinfo)
         if ( createdId !== "?" && editorList.depth > 1){
             editorList.currentItem.setValue("georeference", createdId)

@@ -40,7 +40,6 @@ DropArea {
                     obj.copy(newUrl, parts[1].trim(), parts[0].trim());
                 }
             }
-            console.debug(formatstrings)
         }
         currentCatalog.scanContainer(false,true)
     }

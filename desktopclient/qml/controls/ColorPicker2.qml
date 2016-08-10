@@ -194,8 +194,6 @@ Rectangle {
                             else if ( dy < 0 && dx >= 0)
                                 id = 3*nc / 4 + (nc/4 + id)
                             id = id >= (nc-1) ? 0 : id
-                            if ( clicked)
-                                console.debug(circle, id)
                             return colorPicker.color(diskselection.currentIndex, circle, id)
                         }
 

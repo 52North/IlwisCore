@@ -620,7 +620,6 @@ Modeller.ModellerWorkArea {
        }
 
        function draw(force){
-           console.debug("drawing....")
            var p1 = transformedPoint(0,0);
            var p2 = transformedPoint(width, height);
            ctx.clearRect(p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);
