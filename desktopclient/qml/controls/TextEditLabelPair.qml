@@ -15,6 +15,7 @@ DropArea {
     property var regexvalidator
     property bool boldLabel : true
     property int editWidth : width - label.width
+    property string ilwisobjectid // not always set
     height : Global.rowHeight
     width : parent.width
 
@@ -60,6 +61,9 @@ DropArea {
     }
     onDropped : {
         content = drag.source.message
+        if ( 'ilwisobjectid' in drag.source){
+            ilwisobjectid = drag.source.ilwisobjectid
+        }
     }
 }
 
