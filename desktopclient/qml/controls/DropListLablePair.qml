@@ -33,7 +33,6 @@ Column {
                 }
             }
             onDropped: {
-                console.debug(drag.source.message)
                 items.push(drag.source.message)
                 list.model = items
             }
