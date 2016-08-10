@@ -47,8 +47,10 @@ Item {
                     Text {
                         text : modelData
                         height : 15
+                        width : grid.cellWidth - 2
                         font.pointSize: 8
                         font.italic: true
+                        elide : Text.ElideMiddle
                     }
                 }
             }
