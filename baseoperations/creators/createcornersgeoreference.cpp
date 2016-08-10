@@ -47,6 +47,9 @@ bool CreateCornersGeoreference::execute(ExecutionContext *ctx, SymbolTable &symT
     QString code= QString("code=georef:type=corners,csy=%1,envelope=%2 %3 %4 %5,gridsize=%6 %7").arg(_csy->resource().url().toString())
             .arg(_minx).arg(_miny).arg(_maxx).arg(_maxy)
             .arg(xsize).arg(ysize);
+    if ( _name != ""){
+        code += ",name=" + _name;
+    }
     IGeoReference georef;
     if(!georef.prepare(code)){
         kernel()->issues()->log(TR("Could not construct georeference based on the given parameters"));
@@ -109,6 +112,9 @@ Ilwis::OperationImplementation::State CreateCornersGeoreference::prepare(Executi
         return sPREPAREFAILED;
     }
     _description = _expression.input<QString>(7);
+    QString outputName = _expression.parm(0,false).value();
+    if ( outputName != sUNDEF)
+        _name = outputName;
     return sPREPARED;
 }
 

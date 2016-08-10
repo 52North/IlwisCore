@@ -29,6 +29,7 @@ private:
     QString _description;
     bool _centerOfPixels = false;
     ICoordinateSystem _csy;
+    QString _name;
 
 };
 }
