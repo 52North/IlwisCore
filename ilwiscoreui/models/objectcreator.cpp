@@ -174,8 +174,10 @@ QString ObjectCreator::createGeoreference(const QVariantMap &parms){
     Ilwis::ExecutionContext ctx;
     Ilwis::SymbolTable syms;
     if(Ilwis::commandhandler()->execute(expression,&ctx,syms) ) {
-        IGeoReference obj = syms.getSymbol(ctx._results[0])._var.value<IGeoReference>();
-        return QString::number(obj->id());
+        if ( ctx._results.size() > 0){
+            IGeoReference obj = syms.getSymbol(ctx._results[0])._var.value<IGeoReference>();
+            return QString::number(obj->id());
+        }
     }
     return sUNDEF;
 }
