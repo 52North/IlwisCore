@@ -39,7 +39,7 @@ Item {
             GridView{
                 id : grid
                 height :58
-                cellWidth: 70
+                cellWidth: 90
                 cellHeight: 15
                 width : parent.width
                 model : fromRange(rangeDefinition(useDefaultRange, false,""))
