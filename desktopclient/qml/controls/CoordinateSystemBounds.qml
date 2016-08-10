@@ -131,7 +131,7 @@ Item {
                     northsouth: false
                     isReadOnly: readOnly
                     onMetricChanged: {
-                        miny = metric
+                        maxx = metric
                     }
                 }
             }
