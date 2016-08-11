@@ -105,6 +105,9 @@ MouseArea {
             var envelope = drawer.attributeOfDrawer("selectiondrawer","envelope");
             console.log("2");
             linkedDrawer.addCommand("setviewextent("+ linkedDrawer.viewerId + "," + envelope + ")");
+            console.log(" setviewextent!!!!!!")
+
+
             console.log("3");
             if ( envelope !== "" && !hasPermanence){
                 console.log("4");
