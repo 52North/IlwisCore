@@ -229,8 +229,8 @@ quint64 BinaryMathRaster::createMetadata()
 {
 
     OperationResource operation({"ilwis://operations/binarymathraster"});
-    operation.setSyntax("binarymathraster(gridcoverage1,gridcoverage2|number,rasteroperation=!add|substract|divide|times|mod|power)");
-    operation.setDescription(TR("generates a new numrical rastercoverage/featurecoverage based on the operation, applied to all the pixels"));
+    operation.setSyntax("binarymathraster(gridcoverage1|number,gridcoverage2|number,rasteroperation=!add|substract|divide|times|mod|power)");
+    operation.setDescription(TR("Generates a new numerical rastercoverage/featurecoverage based on the operation, applied to all the pixels"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itRASTER | itNUMBER, TR("raster or number"));
     operation.addInParameter(1,itRASTER | itNUMBER, TR("raster or number"));

@@ -162,10 +162,9 @@ QString TypeHelper::type2name(IlwisTypes t)
     case  itPOINT:
         return "pointcoverage";
     case  itPOINT+itLINE:
-        return "featurecoverage";
     case  itPOINT+itPOLYGON:
-        return "featurecoverage";
     case  itPOLYGON+itLINE:
+    case  itPOINT+itLINE+itPOLYGON:
         return "featurecoverage";
     case  itNUMERICDOMAIN:
         return "numericdomain";
@@ -202,7 +201,8 @@ QString TypeHelper::type2name(IlwisTypes t)
         return "operationmetatadata";
     case itREPRESENTATION:
         return "representation";
-        // nonilwisobjects
+
+    // nonilwisobjects
     case itENVELOPE:
         return "envelope";
     case itBOOL:
@@ -290,11 +290,11 @@ QString TypeHelper::type2name(IlwisTypes t)
     case itLOCATION:
         return "location";
     case itMETRICCOORDINATE:
-        return "meiccoordinate";
+        return "metriccoordinate";
     case itLATLON:
         return "latlon";
     case itCOLUMN:
-        return "column"        ;
+        return "column";
     }
     return sUNDEF;
 
