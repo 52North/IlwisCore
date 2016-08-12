@@ -277,6 +277,7 @@ QQmlListProperty<AttributeModel> IlwisObjectModel::attributes()
 
 QQmlListProperty<DomainItemModel> IlwisObjectModel::domainitems()
 {
+    try{
     IlwisTypes objectype = _ilwisobject->ilwisType();
     if ( hasType( objectype, itDOMAIN)){
         IDomain domain = _ilwisobject.as<Domain>();
@@ -294,6 +295,8 @@ QQmlListProperty<DomainItemModel> IlwisObjectModel::domainitems()
             }
         }
     }
+    }catch(const ErrorObject& err){}
+
     return QQmlListProperty<DomainItemModel>();
 }
 
