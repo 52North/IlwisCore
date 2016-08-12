@@ -61,6 +61,64 @@ void OperationCatalogModel::refresh()
     emit operationsByKeyChanged();
 }
 
+void tableCase(const IIlwisObject &obj, const QString& condition, int parmIndex, QVariantList& result)
+{
+    ITable tbl ;
+    if (hasType(obj->ilwisType(), itCOVERAGE)){
+        ICoverage coverage = obj.as<Coverage>();
+        tbl = coverage->attributeTable();
+    }else if (hasType(obj->ilwisType(), itTABLE) ){
+        tbl = obj.as<Table>();
+    }
+    QVariantMap mp;
+    mp["parameterIndex"] = parmIndex;
+    QStringList names;
+    int index;
+    IlwisTypes domainType;
+    if ( (index = condition.indexOf(" with ")) != -1){
+        QString domainPart = condition.mid(index + 6);
+        QStringList parts = domainPart.split("=");
+        QVariantMap mp;
+        if ( parts.size() == 2){
+            domainType = IlwisObject::name2Type(parts[1]);
+      }
+    }
+    for(int c=0; c < tbl->columnCount(); ++c){
+        if ( domainType != itUNKNOWN){
+            DataDefinition def = tbl->columndefinition(c).datadef();
+            if ( hasType(def.domain()->ilwisType(), domainType))
+               names.append(tbl->columndefinition(c).name());
+        }else {
+            names.append(tbl->columndefinition(c).name());
+        }
+    }
+    mp["result"] = names;
+    mp["uielement"] = "list";
+    result.append(mp);
+}
+
+void domainCase(const IIlwisObject& obj, const QString& condition, int parmIndex,  QVariantList& result)
+{
+    if (hasType(obj->ilwisType(), itRASTER))    {
+        IRasterCoverage raster = obj.as<RasterCoverage>();
+        QStringList parts = condition.split("=");
+        QVariantMap mp;
+        if ( parts.size() == 2){
+            QString domainType = parts[1];
+            if ( domainType == "numericdomain"){
+                mp["parameterIndex"] = parmIndex;
+                mp["result"] = hasType(raster->datadef().domain()->ilwisType(), itNUMERICDOMAIN) ? obj->resource().url().toString() : "";
+                mp["uielement"] = "textfield";
+            }else if ( domainType == "itemdomain"){
+                mp["parameterIndex"] = parmIndex;
+                mp["result"] = hasType(raster->datadef().domain()->ilwisType(), itITEMDOMAIN) ? obj->resource().url().toString() : "";
+                mp["uielement"] = "textfield";
+            }
+        }
+        result.append(mp);
+    }
+}
+
 QVariantList OperationCatalogModel::resolveValidation(const QString &metaid, const QString& objectid, int sourceParameterIndex)
 {
    QVariantList result;
@@ -81,41 +139,9 @@ QVariantList OperationCatalogModel::resolveValidation(const QString &metaid, con
                        QString condition = resource[parmPrefix + "validationcondition"].toString();
                        if ( condition != sUNDEF){
                            if ( condition.indexOf("columns") == 0){
-                               ITable tbl ;
-                               if (hasType(obj->ilwisType(), itCOVERAGE)){
-                                   ICoverage coverage = obj.as<Coverage>();
-                                   tbl = coverage->attributeTable();
-                               }else if (hasType(obj->ilwisType(), itTABLE) ){
-                                   tbl = obj.as<Table>();
-                               }
-                               QVariantMap mp;
-                               mp["parameterIndex"] = i;
-                               QStringList names;
-                               for(int c=0; c < tbl->columnCount(); ++c){
-                                   names.append(tbl->columndefinition(c).name());
-                               }
-                               mp["result"] = names;
-                               mp["uielement"] = "list";
-                               result.append(mp);
+                               tableCase(obj, condition, i, result);
                            }else if ( condition.indexOf("domain") == 0){
-                                if (hasType(obj->ilwisType(), itRASTER))    {
-                                    IRasterCoverage raster = obj.as<RasterCoverage>();
-                                    QStringList parts = condition.split("=");
-                                    QVariantMap mp;
-                                    if ( parts.size() == 2){
-                                        QString domainType = parts[1];
-                                        if ( domainType == "numericdomain"){
-                                            mp["parameterIndex"] = i;
-                                            mp["result"] = hasType(raster->datadef().domain()->ilwisType(), itNUMERICDOMAIN) ? obj->resource().url().toString() : "";
-                                            mp["uielement"] = "textfield";
-                                        }else if ( domainType == "itemdomain"){
-                                            mp["parameterIndex"] = i;
-                                            mp["result"] = hasType(raster->datadef().domain()->ilwisType(), itITEMDOMAIN) ? obj->resource().url().toString() : "";
-                                            mp["uielement"] = "textfield";
-                                        }
-                                    }
-                                    result.append(mp);
-                                }
+                                domainCase(obj, condition, i, result);
                            }
                        }
                    }

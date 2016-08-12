@@ -11,7 +11,7 @@ import "../.." as Base
 
 Controls.DropableItem{
     id : dropItem
-    width : 290
+    width : 320
     height : 0
     x : 4
     clip:true

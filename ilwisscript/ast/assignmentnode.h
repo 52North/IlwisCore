@@ -20,7 +20,7 @@ public:
     void addOutputs(OutParametersNode *p);
     void setOutId(IDNode *idnode);
 private:
-    template<typename T1> bool copyObject(const Symbol& sym, QString& name,SymbolTable &symbols, bool useMerge=false) {
+    template<typename T1> bool copyObject(Symbol& sym, QString& name,SymbolTable &symbols, bool useMerge=false) {
         IlwisData<T1> source =  sym._var.value<IlwisData<T1>>();
         if (!source.isValid())
             return false;
@@ -49,7 +49,8 @@ private:
 
         QVariant var;
         var.setValue<IlwisData<T1>>(target);
-        symbols.addSymbol(name, 1000, target->ilwisType(), var);
+        sym = Symbol(1000,target->ilwisType(), var);
+        symbols.setSymbol(name, sym);
         if ( wasAnonymous)
             mastercatalog()->addItems({target->resource(IlwisObject::cmINPUT | IlwisObject::cmEXTENDED)});
 

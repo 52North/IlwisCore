@@ -26,20 +26,20 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
     _creators["thematicdomain" ] = new IlwisObjectCreatorModel("thematicdomain", TR("Thematic Domain"),itITEMDOMAIN | itTHEMATICITEM,"CreateThematicDom.qml", 520, this);
     _creators["nameidentifierdomain" ] = new IlwisObjectCreatorModel("nameidentifierdomain",TR("Identifier Domain"),itITEMDOMAIN | itIDENTIFIERITEM,"CreateIdentifierDomain.qml", 520, this);
     //_creators[ ] = new IlwisObjectCreatorModel(TR("Indexed Domain",itITEMDOMAIN | itINDEXEDITEM,"CreateNumDom.qml", 200, this);
-    _creators["intervaldomain" ] = new IlwisObjectCreatorModel("intervaldomain",TR("Interval Domain"),itITEMDOMAIN | itNUMERICITEM,"CreateIntervalDomain.qml", 550, this);
-    _creators["timedomain" ] = new IlwisObjectCreatorModel("timedomain",TR("Time Domain"),itTIME | itDOMAIN,"CreateNumDom.qml", 200, this);
-    _creators["timeintervaldomain" ] = new IlwisObjectCreatorModel("timeintervaldomain", TR("Time Interval Domain"),itTIMEITEM | itITEMDOMAIN,"CreateNumDom.qml", 200, this);
+    _creators["intervaldomain" ] = new IlwisObjectCreatorModel("intervaldomain",TR("Interval Domain"),itITEMDOMAIN | itNUMERICITEM,"CreateIntervalDomain.qml", 590, this);
+    _creators["timedomain" ] = new IlwisObjectCreatorModel("timedomain",TR("Time Domain"),itTIME | itDOMAIN,"UnderDevelopment.qml", 200, this);
+    _creators["timeintervaldomain" ] = new IlwisObjectCreatorModel("timeintervaldomain", TR("Time Interval Domain"),itTIMEITEM | itITEMDOMAIN,"UnderDevelopment.qml", 200, this);
 //    _creators[ ] = new IlwisObjectCreatorModel(TR("Color Domain",itCOLORDOMAIN,"CreateNumDom.qml", 200, this);
-    _creators["colorpalette" ] = new IlwisObjectCreatorModel("colorpalette", TR("Color Palette Domain"),itPALETTECOLOR | itITEMDOMAIN,"CreatePaletteDomain.qml", 560, this);
+    _creators["colorpalette" ] = new IlwisObjectCreatorModel("colorpalette", TR("Color Palette Domain"),itPALETTECOLOR | itITEMDOMAIN,"UnderDevelopment.qml", 560, this);
     _creators["cornersgeoreferences" ] = new IlwisObjectCreatorModel("cornersgeoreferences", TR("Corners Georeference"),itGEOREF,"CreateGeorefCorners.qml", 330, this);
     _creators["tiepointgeoreference" ] = new IlwisObjectCreatorModel("tiepointgeoreference",TR("Tiepoints Georeference"),itGEOREF | itLOCATION,"CreateGeorefTiepoints.qml", 280, this);
-    _creators["projectedcoordinatesystem" ] = new IlwisObjectCreatorModel("projectedcoordinatesystem", TR("Projected Coordinate System"),itCONVENTIONALCOORDSYSTEM,"CreateProjectedCoordinateSystem.qml", 500, this);
-    _creators["geographiccoordinatesystem" ] = new IlwisObjectCreatorModel("geographiccoordinatesystem", TR("Geographic (LatLon) Coordinate System"),itCONVENTIONALCOORDSYSTEM|itLOCATION,"CreateLatLonCoordinateSystem.qml", 290, this);
+    _creators["projectedcoordinatesystem" ] = new IlwisObjectCreatorModel("projectedcoordinatesystem", TR("Projected Coordinate System"),itCONVENTIONALCOORDSYSTEM,"CreateProjectedCoordinateSystem.qml", 530, this);
+    _creators["geographiccoordinatesystem" ] = new IlwisObjectCreatorModel("geographiccoordinatesystem", TR("Geographic (LatLon) Coordinate System"),itCONVENTIONALCOORDSYSTEM|itLOCATION,"CreateLatLonCoordinateSystem.qml", 320, this);
     _creators["boundsonlycoordinatesystem" ] = new IlwisObjectCreatorModel("boundsonlycoordinatesystem", TR("Bounds only Coordinate System"),itBOUNDSONLYCSY,"CreateNumDom.qml", 200, this);
     _creators["rastercoverage" ] = new IlwisObjectCreatorModel("rastercoverage", TR("Raster Coverage"),itRASTER,"CreateRasterCoverage.qml", 390, this);
-    _creators["featurecoverage" ] = new IlwisObjectCreatorModel("featurecoverage", TR("Feature Coverage"),itFEATURE,"CreateNumDom.qml", 200, this);
-    _creators["table" ] = new IlwisObjectCreatorModel("table", TR("Table"),itTABLE,"CreateNumDom.qml", 200, this);
-    _creators["representation" ] = new IlwisObjectCreatorModel("representation",TR("Representation"),itREPRESENTATION,"CreateNumDom.qml", 250, this);
+    _creators["featurecoverage" ] = new IlwisObjectCreatorModel("featurecoverage", TR("Feature Coverage"),itFEATURE,"UnderDevelopment.qml", 200, this);
+    _creators["table" ] = new IlwisObjectCreatorModel("table", TR("Table"),itTABLE,"UnderDevelopment.qml", 200, this);
+    _creators["representation" ] = new IlwisObjectCreatorModel("representation",TR("Representation"),itREPRESENTATION,"UnderDevelopment.qml", 250, this);
         _creators["domain" ] = new IlwisObjectCreatorModel("domain",TR("Domain"),itDOMAIN,"CreateDomain.qml", 250, this);
 }
 

@@ -101,10 +101,6 @@ MouseArea {
         if ( layerManager.zoomInMode && layerManager.hasSelectionDrawer){
             var envelope = drawer.attributeOfDrawer("selectiondrawer","envelope");
             linkedDrawer.addCommand("setviewextent("+ linkedDrawer.viewerId + "," + envelope + ")");
-            console.log(" setviewextent!!!!!!")
-
-
-            console.log("3");
             if ( envelope !== "" && !hasPermanence){
                 layerManager.hasSelectionDrawer = false
                 drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
