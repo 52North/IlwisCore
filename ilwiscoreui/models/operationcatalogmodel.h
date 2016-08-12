@@ -13,6 +13,8 @@ class OperationsByKeyModel;
 class WorkflowModel;
 namespace Ilwis {
 class IOOptions;
+class DataDefinition;
+typedef IlwisData<IlwisObject> IIlwisObject;
 }
 
 class ILWISCOREUISHARED_EXPORT OperationCatalogModel : public CatalogModel
