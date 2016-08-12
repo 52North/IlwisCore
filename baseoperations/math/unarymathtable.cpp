@@ -84,12 +84,13 @@ OperationImplementation::State UnaryMathTable::prepare(ExecutionContext *,const 
 
 Resource UnaryMathTable::populateMetadata(const QString& item, const QString& longname) {
     OperationResource operation(item);
-    operation.setSyntax(QString("%1(raster|number,columnname)").arg(item));
+    operation.setSyntax(QString("%1(table,columnname)").arg(item));
     operation.setDescription(TR("generates a new numerical column based on the operation, applied to all the input column values"));
     operation.setLongName(longname);
     operation.setInParameterCount({2});
     operation.addInParameter(0,itTABLE,"input table");
-    operation.addInParameter(1, itSTRING,TR("input column name"));
+    operation.addInParameter(1, itSTRING,TR("input column name"),TR("column numerical values"), OperationResource::ueCOMBO);
+    operation.addValidation(0,1,"columns with domain=numericdomain");
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itCOLUMN, "output column name");
 
