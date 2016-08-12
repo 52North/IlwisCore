@@ -466,6 +466,17 @@ void Resource::addContainer(const QUrl& url, bool asRaw) {
     }
     else{
         _container = url;
+        QUrl internalCatalog = context()->persistentInternalCatalog();
+        QFileInfo localInternal(internalCatalog.toLocalFile());
+        QString lf = url.toLocalFile();
+        if ( lf != "") {
+            QFileInfo localFile(url.toLocalFile());
+            QString localPath = localFile.absoluteFilePath();
+            QString localInternalPath = localInternal.absoluteFilePath();
+            if ( OSHelper::neutralizeFileName(localPath,true) == OSHelper::neutralizeFileName(localInternalPath,true)){
+                _container = INTERNAL_CATALOG_URL;
+            }
+        }
         if ( !_rawContainer.isValid()){
             // rawcontainer always have real paths to any references to the internal catalog must be replaced by their real path
             if ( url == INTERNAL_CATALOG_URL){
