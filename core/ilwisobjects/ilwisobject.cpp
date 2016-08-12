@@ -662,7 +662,7 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itCOVERAGE;
     if ( name.mid(0,10) == "ItemDomain") // contains template construct, so different comparison
         return  itITEMDOMAIN;
-    if ( name == "NumericDomain") // contains template construct, so different comparison
+    if ( name.compare( "NumericDomain",Qt::CaseInsensitive) == 0)
         return  itNUMERICDOMAIN;
     if ( name.compare( "TextDomain",Qt::CaseInsensitive) == 0)
         return  itTEXTDOMAIN;
