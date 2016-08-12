@@ -251,7 +251,7 @@ QString IntervalRange::toString() const
 
 void IntervalRange::store(QDataStream &stream)
 {
-    quint64 size = _items.size();
+    quint32 size = _items.size();
     stream << size;
     for(const auto& item : _items){
         stream << item->raw() << item->name() << item->description();
