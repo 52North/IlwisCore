@@ -99,41 +99,22 @@ MouseArea {
         }
     }
     onReleased: {
-        console.log("0");
         if ( layerManager.zoomInMode && layerManager.hasSelectionDrawer){
-            console.log("1");
             var envelope = drawer.attributeOfDrawer("selectiondrawer","envelope");
-            console.log("2");
             linkedDrawer.addCommand("setviewextent("+ linkedDrawer.viewerId + "," + envelope + ")");
-            console.log(" setviewextent!!!!!!")
-
-
-            console.log("3");
             if ( envelope !== "" && !hasPermanence){
-                console.log("4");
                 layerManager.hasSelectionDrawer = false
-                console.log("5");
-                drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
-                console.log("6");
+                  drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
 
             }
-            console.log("7");
             if ( hasPermanence){
-                console.log("8");
                 var parm = {envelope : envelope}
-                console.log("9");
                 drawer.setAttribute("selectiondrawer", parm)
-                console.log("10");
                 drawer.update()
-                console.log("11")
             }
-            console.log("12");
             zoomEnded(envelope)
-            console.log("13");
             zoomStarted = false
-            console.log("14");
             linkedDrawer.update()
-            console.log("15");
         }
         if ( layerManager.panningMode ){
             //console.log("onReleased event: panningMode")
@@ -142,12 +123,10 @@ MouseArea {
             panningPrevMouseY = -1
             cursorShape = Qt.OpenHandCursor
         }
-        console.log("16");
         floatrect.enabled = false
         floatrect.opacity = 0
         floatrect.x = 0
         floatrect.y = 0
-        console.log("17");
     }
 }
 
