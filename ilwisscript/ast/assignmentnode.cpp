@@ -173,7 +173,6 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                 QString result = _outParms->id(i);
 
                 if (  hasType(tp, itILWISOBJECT | itCOLUMN)) {
-
                     if ( hasType(tp, itRASTER)) {
                         ok &= copyObject<RasterCoverage>(sym, result,symbols);
                         IRasterCoverage resultGC = symbols.getValue<IRasterCoverage>(result);
