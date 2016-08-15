@@ -727,6 +727,12 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itDOUBLE;
     if ( name.compare( "float",Qt::CaseInsensitive) == 0)
         return  itFLOAT;
+    if ( name.compare( "bool",Qt::CaseInsensitive) == 0)
+        return  itBOOL;
+    if ( name.compare( "integer",Qt::CaseInsensitive) == 0)
+        return  itINTEGER;
+    if ( name.compare( "positiveinteger",Qt::CaseInsensitive) == 0)
+        return  itPOSITIVEINTEGER;
     if ( name.compare( "char const *",Qt::CaseInsensitive) == 0)
         return  itSTRING;
     if ( name.compare( "char *",Qt::CaseInsensitive) == 0)
