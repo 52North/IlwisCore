@@ -49,7 +49,6 @@ MouseArea {
 
         }
         if ( layerManager.panningMode ){
-            //console.log("onPressed event: panningMode")
             panningStarted = true
             panningPrevMouseX = mouseX
             panningPrevMouseY = mouseY
@@ -104,8 +103,7 @@ MouseArea {
             linkedDrawer.addCommand("setviewextent("+ linkedDrawer.viewerId + "," + envelope + ")");
             if ( envelope !== "" && !hasPermanence){
                 layerManager.hasSelectionDrawer = false
-                  drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
-
+                drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
             }
             if ( hasPermanence){
                 var parm = {envelope : envelope}
@@ -117,7 +115,6 @@ MouseArea {
             linkedDrawer.update()
         }
         if ( layerManager.panningMode ){
-            //console.log("onReleased event: panningMode")
             panningStarted = false
             panningPrevMouseX = -1
             panningPrevMouseY = -1

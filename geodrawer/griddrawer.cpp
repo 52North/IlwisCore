@@ -207,7 +207,7 @@ PrimaryGridDrawer::PrimaryGridDrawer(DrawerInterface *parentDrawer, RootDrawer *
 bool PrimaryGridDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
 
-    if ( hasType(prepType, DrawerInterface::ptGEOMETRY)){
+    if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(ptGEOMETRY)){
         Coordinate cmin, cmax;
         calcEnvelope(cmin, cmax);
         if ( _cellDistance == rUNDEF){
@@ -262,7 +262,7 @@ SecondaryGridDrawer::SecondaryGridDrawer(DrawerInterface *parentDrawer, RootDraw
 bool SecondaryGridDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOptions &options)
 {
 
-    if ( hasType(prepType, DrawerInterface::ptGEOMETRY) ){
+    if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(ptGEOMETRY) ){
         const UPDrawer& primarydrawer = parent()->drawer("PrimaryGridDrawer");
         double dist = primarydrawer->attribute("gridcelldistance").toDouble();
         _cellDistance = dist / _cellCount;
