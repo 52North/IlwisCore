@@ -148,9 +148,11 @@ quint64 Aggregation::createMetadata()
     operation.setDescription(TR("Aggregate the values of a column based on second input column"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itTABLE, TR("input table-column"),TR("input table-column from which the input column will be chosen"));
-    operation.addInParameter(1,itSTRING | itNUMBER, TR("input column name or number"),TR("column with a numerical domain or number"));
-    operation.addInParameter(2,itSTRING | itNUMBER , TR("input column name or number"),TR("column with a numerical domain or number"));
+    operation.addInParameter(1,itSTRING | itNUMBER, TR("input column name or number"),TR("column with a numerical domain or number"), OperationResource::ueCOMBO);
+    operation.addInParameter(2,itSTRING | itNUMBER , TR("input column name or number"),TR("column with a numerical domain or number"), OperationResource::ueCOMBO);
     operation.setOutParameterCount({1});
+    operation.addValidation(0,1,"columns with domain=numericdomain");
+    operation.addValidation(0,2,"columns with domain=numericdomain");
     operation.addOutParameter(0,itTABLE, TR("output table"));
     operation.setKeywords("table, operation");
 
