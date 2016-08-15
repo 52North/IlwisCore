@@ -11,6 +11,7 @@ Rectangle {
     id : commLine;
     height : 35
     color : Global.alternatecolor5
+    objectName : "mainwindow__commandline"
     z : 3
     property string arrowtype : "arrowdown.png"
 
@@ -21,6 +22,18 @@ Rectangle {
         return ""
 
     }
+    function setFirstLine(line){
+        uicontext.consoleScript(0).addLine(line, true)
+        firstLine.consoletext = lastLine()
+        uicontext.consoleScript(0).addLine("", false)
+        consolearea.model =uicontext.consoleScript(0).lines
+        consolearea.currentIndex = uicontext.consoleScript(0).lines.length - 1
+        consolearea.currentItem.editFocus = true
+        consolearea.positionViewAtEnd()
+
+        return line;
+    }
+
     function setNum(line){
         if (  uicontext.consoleScript(0).lines.length > 0) {
             return uicontext.consoleScript(0).lines[uicontext.consoleScript(0).lines.length - 1].lineNumber
