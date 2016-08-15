@@ -55,6 +55,10 @@ void PythonScriptModule::prepare()
         if ( home == sUNDEF){
             home = context()->ilwisFolder().absoluteFilePath() + "/extensions/pythonscript/python";
         }
+        QString path = qgetenv("PATH");
+        path += ";" + home;
+        bool ok = qputenv("PATH", path.toLatin1());
+
         QString checkhome = home + "/python3.dll";
         QFileInfo inf(checkhome);
         if ( !inf.exists()){
