@@ -45,6 +45,7 @@ public:
     Q_INVOKABLE QString run(const QString& txt);
     int numberOfLines() const;
 
+    bool addLine(const QString& txt);
 signals:
     void linesChanged();
 

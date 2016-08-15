@@ -5,6 +5,7 @@
 #include "operationmetadata.h"
 #include "commandhandler.h"
 #include "operation.h"
+#include "uicontextmodel.h"
 #include "consolescriptmodel.h"
 
 ConsoleScriptModel::ConsoleScriptModel(QObject *parent) : QObject(parent)
@@ -35,9 +36,11 @@ QString ConsoleScriptModel::run(const QString &txt)
     try{
         _lines[_lines.size() - 1] = new ConsoleLineModel(txt, true, this);
         _lines.back()->lineNumber(_lines.size());
+        QString line = txt; // double qoutes messes things up in expression parsing so we replace them by single quotes
+        line.replace("\"", "'");
         Ilwis::SymbolTable syms;
         Ilwis::ExecutionContext ctx;
-        QString statement = QString("runpython(\"%1\")").arg(txt);
+        QString statement = QString("runpython(\"%1\")").arg(line);
         auto expr = Ilwis::OperationExpression(statement);
         Ilwis::Operation operation(expr);
         operation->execute(&ctx, syms);
@@ -56,6 +59,18 @@ QString ConsoleScriptModel::run(const QString &txt)
 int ConsoleScriptModel::numberOfLines() const
 {
     return _lines.size();
+}
+
+bool ConsoleScriptModel::addLine(const QString &txt)
+{
+    QObject *commandline = uicontext()->rootObject()->findChild<QObject*>("mainwindow__commandline");
+    if ( !commandline){
+        return false;
+    }
+    QVariant ret;
+    bool ok = QMetaObject::invokeMethod(commandline,"setFirstLine",Q_RETURN_ARG(QVariant,ret ),Q_ARG(QVariant, txt));
+
+    return ok;
 }
 
 //----------------------------------------------------------
