@@ -99,6 +99,7 @@ public:
     void setExpression(const QString &e, const SymbolTable &symtab);
     bool matchesParameterCount(const QString &match, bool in=true) const;
     QString toString(bool rightsideonly=false) const;
+    QString toPythonExpression() const;
     template<typename T> T input(quint32 ) { return T(); }
     template<typename T> T input(quint32, bool& ok ) { return T(); }
     QMap<QString, Parameter> getKeywordParameters() const {return _inParametersMap; }

@@ -533,6 +533,42 @@ QString OperationExpression::toString(bool rightsideonly) const
     return expression;
 }
 
+QString OperationExpression::toPythonExpression() const
+{
+    QString expr("ilwis.do(");
+    QStringList parts = parm(0).value().split("=");
+    if ( parts.size() == 2){
+        expr = parts[0] + "=" + expr;
+        int index1 = parts[0].indexOf("{");
+        int index2 = parts[0].lastIndexOf("}");
+        expr.remove(index1, index2 - index1 + 1);
+
+    }
+    OperationExpression opexpr(parts[parts.size() - 1]);
+    int count = 0;
+    expr += "'" + opexpr.name() + "',";
+    for(int i=0; i < opexpr.parameterCount(); ++i) {
+        Parameter parm = opexpr.parm(i);
+        if ( count++ > 0)
+            expr += ", ";
+        if ( parm.valuetype() == itSTRING){
+            expr += "'";
+        }
+        expr += parm.value();
+
+        if ( parm.valuetype() == itSTRING){
+            expr += "'";
+        }
+    }
+    QString wcatalog = context()->workingCatalog()->resource().url().toString();
+    expr.remove(wcatalog + "/");
+    expr += ")"    ;
+
+    return expr;
+
+
+}
+
 QString OperationExpression::modifyTableOutputUrl(const QString& output, const QStringList& parms)
 {
     QString columnName = output;
