@@ -26,6 +26,7 @@
 #include "workspacemodel.h"
 #include "uicontextmodel.h"
 #include "ilwiscontext.h"
+#include "consolescriptmodel.h"
 #include "operationworker.h"
 #include "dataformat.h"
 #include "operationcatalogmodel.h"
@@ -104,14 +105,22 @@ void domainCase(const IIlwisObject& obj, const QString& condition, int parmIndex
         QStringList parts = condition.split("=");
         QVariantMap mp;
         if ( parts.size() == 2){
-            QString domainType = parts[1];
-            if ( domainType == "numericdomain"){
+            if (parts[0] == "domain"){
+                QString domainType = parts[1];
+                if ( domainType == "numericdomain"){
+                    mp["parameterIndex"] = parmIndex;
+                    mp["result"] = hasType(raster->datadef().domain()->ilwisType(), itNUMERICDOMAIN) ? obj->resource().url().toString() : "";
+                    mp["uielement"] = "textfield";
+                }else if ( domainType == "itemdomain"){
+                    mp["parameterIndex"] = parmIndex;
+                    mp["result"] = hasType(raster->datadef().domain()->ilwisType(), itITEMDOMAIN) ? obj->resource().url().toString() : "";
+                    mp["uielement"] = "textfield";
+                }
+            } else if ( parts[0] == "valuetype"){
+                QString valueType = parts[1];
+                IlwisTypes vt = IlwisObject::name2Type(valueType);
                 mp["parameterIndex"] = parmIndex;
-                mp["result"] = hasType(raster->datadef().domain()->ilwisType(), itNUMERICDOMAIN) ? obj->resource().url().toString() : "";
-                mp["uielement"] = "textfield";
-            }else if ( domainType == "itemdomain"){
-                mp["parameterIndex"] = parmIndex;
-                mp["result"] = hasType(raster->datadef().domain()->ilwisType(), itITEMDOMAIN) ? obj->resource().url().toString() : "";
+                mp["result"] = hasType(raster->datadef().domain()->valueType(), vt) ? obj->resource().url().toString() : "";
                 mp["uielement"] = "textfield";
             }
         }
@@ -389,6 +398,7 @@ void OperationCatalogModel::workSpaceChanged()
 QString OperationCatalogModel::executeoperation(quint64 operationid, const QString& parameters, QVariant runparams) {
 
     auto opExpr = OperationExpression::createExpression(operationid, parameters);
+    uicontext()->consoleScript(0)->addLine(opExpr.toPythonExpression());
     try {
         QThread* thread = new QThread;
         thread->setProperty("runparameters",runparams);
