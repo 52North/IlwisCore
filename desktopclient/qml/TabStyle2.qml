@@ -58,14 +58,40 @@ TabViewStyle {
                 }
             }
             MouseArea  {
+                id : mouseArea2
+                property variant image
+                drag.target: image
                 anchors.fill : parent
                 onClicked : {
                     currentIndex = styleData.index
                     datapane.select(side == 1, currentIndex, true)
+                    datatabview.sideChange()
+
                 }
                 onDoubleClicked: {
                     fullSize()
                 }
+//                onPressed: {
+//                    image = Qt.createQmlObject('import QtQuick 2.0; Image{
+//                        id : image
+//                        width : 140; height : 35
+//                        source : \"images/tabborderdrag.png\"
+//                        fillMode: Image.PreserveAspectFit
+//                        property var url : control.getTab(0).item.createUrl
+
+//                        Drag.keys: "datatab"
+//                        Drag.active: true
+//                        Drag.hotSpot.x: 10
+//                        Drag.hotSpot.y: 10
+//                        opacity : 0.5
+
+//                        states: State {
+//                            when: mouseArea.drag.active
+//                            ParentChange { target: image; parent: root }
+//                            AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+//                        }
+//                    }', mouseArea2, "dynamicImage");
+//                }
             }
         }
 

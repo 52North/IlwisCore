@@ -27,12 +27,18 @@ Item {
     }
 
     onSideChanged: {
+        sideChange()
+    }
+
+    function sideChange() {
         centerItem.activeSplit = Math.abs(side)
         mastercatalog.activeSplit = Math.abs(side) - 1
         var tab = centerItem.getCurrentCatalogTab()
-        if ( tab && tab.item && tab.item.currentCatalog){
-            mastercatalog.currentUrl = tab.currentCatalog.url
-            mastercatalog.currentCatalog = tab.currentCatalog
+        if ( tab ){
+            if ( "currentCatalog" in tab){
+                mastercatalog.currentUrl = tab.currentCatalog.url
+                mastercatalog.currentCatalog = tab.currentCatalog
+            }
         }
     }
 

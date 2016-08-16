@@ -40,9 +40,9 @@ Rectangle {
         if ( tabview && tabview.currentIndex >= 0 && tabview.count > 0) {
             var tab = tabview.getTab(tabview.currentIndex)
             if ( tab && tab.item){
-                if ( "currentCatalog" in tab.item)
+                if ( "currentCatalog" in tab.item){
                     return tab.item
-                else{ // apparently the tab has no catalog so we look at the other side
+                }else{ // apparently the tab has no catalog so we look at the other side
                     tabview = Math.abs(activeSplit) == 2 ? lefttab : righttab
                     if ( tabview && tabview.currentIndex >= 0 && tabview.count > 0) {
                         tab = tabview.getTab(tabview.currentIndex)
