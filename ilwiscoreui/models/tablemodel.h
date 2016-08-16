@@ -20,6 +20,7 @@ class ILWISCOREUISHARED_EXPORT TableModel : public QAbstractTableModel
     Q_PROPERTY(int recordCount READ recordCount NOTIFY recordCountChanged)
     Q_PROPERTY(QQmlListProperty<ColumnModel> columns READ columns NOTIFY columnsChanged)
     Q_PROPERTY(QString url READ url CONSTANT)
+    Q_PROPERTY(QString  id READ id CONSTANT)
 
 public:
     TableModel();
@@ -37,6 +38,7 @@ public:
     QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
     Ilwis::ITable table() const;
     QString url() const;
+    QString id() const;
 
     Q_INVOKABLE QString roleName(int index) const;
     Q_INVOKABLE int defaultWidth(int index) const;
