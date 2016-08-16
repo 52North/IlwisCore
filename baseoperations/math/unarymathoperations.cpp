@@ -13,9 +13,21 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+double sin2(double v){
+    if ( v == rUNDEF)
+        return rUNDEF;
+    return sin2(v);
+}
+
+double cos2(double v){
+    if ( v == rUNDEF)
+        return rUNDEF;
+    return cos2(v);
+}
+
 REGISTER_OPERATION(SineCoverage)
 
-SineCoverage::SineCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr,"min1to1", sin)
+SineCoverage::SineCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr,"min1to1", sin2)
 {}
 OperationImplementation *SineCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SineCoverage(metaid,expr);}
 
@@ -29,7 +41,7 @@ quint64 SineCoverage::createMetadata() {
 }
 //----------------------------------------------------------
 REGISTER_OPERATION(CosineCoverage)
-CosineCoverage::CosineCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr,"min1to1", cos)
+CosineCoverage::CosineCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr,"min1to1", cos2)
 {}
 OperationImplementation *CosineCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CosineCoverage(metaid,expr);}
 
@@ -44,7 +56,7 @@ quint64 CosineCoverage::createMetadata() {
 
 //----------------------------------------------------------
 double tangent(double v){
-    if ( std::abs(v) == M_PI / 2)
+    if ( std::abs(v) == M_PI / 2 || v == rUNDEF)
         return rUNDEF;
     return tan(v);
 }
@@ -65,7 +77,7 @@ quint64 TangentCoverage::createMetadata() {
 
 //----------------------------------------------------------
 double arcsine(double v){
-    if ( v < -1 || v > 1)
+    if ( v < -1 || v > 1 || v == rUNDEF)
         return rUNDEF;
     return asin(v);
 }
@@ -87,7 +99,7 @@ quint64 ArcsineCoverage::createMetadata() {
 
 //----------------------------------------------------------
 double arccosine(double v){
-    if ( v < -1 || v > 1)
+    if ( v < -1 || v > 1 || v == rUNDEF)
         return rUNDEF;
     return asin(v);
 }
@@ -122,7 +134,7 @@ quint64 ArcTangentCoverage::createMetadata() {
 }
 //----------------------------------------------------------
 double logten(double v){
-    if ( v > 0)
+    if ( v > 0 && v != rUNDEF)
         return log10(v);
     return rUNDEF;
 }
@@ -141,7 +153,7 @@ quint64 Log10Coverage::createMetadata() {
 }
 //----------------------------------------------------------
 double naturallog(double v){
-    if ( v > 0)
+    if ( v > 0 && v != rUNDEF)
         return log(v);
     return rUNDEF;
 }
@@ -202,7 +214,14 @@ quint64 SqrtCoverage::createMetadata() {
 }
 //----------------------------------------------------------
 REGISTER_OPERATION(CeilCoverage)
-CeilCoverage::CeilCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", std::ceil<int>)
+
+double ceil2(double v){
+    if ( v == rUNDEF)
+        return rUNDEF;
+    return std::ceil<int>(v);
+}
+
+CeilCoverage::CeilCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", ceil2)
 {}
 OperationImplementation *CeilCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CeilCoverage(metaid,expr);}
 
@@ -225,7 +244,13 @@ NumericRange *CeilCoverage::constructRangeFrom(const SPNumericRange &range)
 
 //----------------------------------------------------------
 REGISTER_OPERATION(FloorCoverage)
-FloorCoverage::FloorCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", std::floor<int>)
+
+double floor2(double v){
+    if ( v == rUNDEF)
+        return rUNDEF;
+    return std::floor<int>(v);
+}
+FloorCoverage::FloorCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", floor2)
 {}
 OperationImplementation *FloorCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new FloorCoverage(metaid,expr);}
 
@@ -246,6 +271,9 @@ NumericRange *FloorCoverage::constructRangeFrom(const SPNumericRange &range)
 }
 //----------------------------------------------------------
 double sign(double v) {
+    if ( v == rUNDEF)
+        return rUNDEF;
+
     if ( v < 0)
         return -1;
     if ( v > 0)
@@ -268,7 +296,13 @@ quint64 SignCoverage::createMetadata() {
 }
 //----------------------------------------------------------
 REGISTER_OPERATION(CosineHCoverage)
-CosineHCoverage::CosineHCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr,"value", cosh)
+
+double cosh2(double v){
+    if ( v == rUNDEF)
+        return rUNDEF;
+    return cosh(v);
+}
+CosineHCoverage::CosineHCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr,"value", cosh2)
 {}
 OperationImplementation *CosineHCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CosineHCoverage(metaid,expr);}
 
@@ -282,7 +316,14 @@ quint64 CosineHCoverage::createMetadata() {
 }
 //----------------------------------------------------------
 REGISTER_OPERATION(SineHCoverage)
-SineHCoverage::SineHCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr,"value", sinh)
+
+double sinh2(double v){
+    if ( v == rUNDEF)
+        return rUNDEF;
+    return sinh(v);
+}
+
+SineHCoverage::SineHCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr,"value", sinh2)
 {}
 OperationImplementation *SineHCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SineHCoverage(metaid,expr);}
 
@@ -297,7 +338,7 @@ quint64 SineHCoverage::createMetadata() {
 //----------------------------------------------------------
 REGISTER_OPERATION(SineTable)
 
-SineTable::SineTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr,"min1to1", sin)
+SineTable::SineTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr,"min1to1", sin2)
 {}
 OperationImplementation *SineTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SineTable(metaid,expr);}
 
@@ -311,7 +352,7 @@ quint64 SineTable::createMetadata() {
 }
 //----------------------------------------------------------
 REGISTER_OPERATION(CosineTable)
-CosineTable::CosineTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr,"min1to1", cos)
+CosineTable::CosineTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr,"min1to1", cos2)
 {}
 OperationImplementation *CosineTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CosineTable(metaid,expr);}
 
@@ -435,7 +476,7 @@ SqrtTable::SqrtTable(quint64 metaid,const Ilwis::OperationExpression& expr) : Un
 OperationImplementation *SqrtTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SqrtTable(metaid,expr);}
 
 quint64 SqrtTable::createMetadata() {
-    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/sqrt"), "Absolute value  for Columns");
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/sqrt"), "Square root value for Columns");
     resource.addProperty("pin_1_desc",QString("input data source with a positive numerical domain (or 0)"));
     resource.addProperty("pout_1_desc",QString("output data source with a positive numerical domain"));
 
@@ -444,7 +485,7 @@ quint64 SqrtTable::createMetadata() {
 }
 //----------------------------------------------------------
 REGISTER_OPERATION(CeilTable)
-CeilTable::CeilTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", std::ceil<int>)
+CeilTable::CeilTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", ceil2)
 {}
 OperationImplementation *CeilTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CeilTable(metaid,expr);}
 
@@ -458,7 +499,7 @@ quint64 CeilTable::createMetadata() {
 }
 //----------------------------------------------------------
 REGISTER_OPERATION(FloorTable)
-FloorTable::FloorTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", std::floor<int>)
+FloorTable::FloorTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", floor2)
 {}
 OperationImplementation *FloorTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new FloorTable(metaid,expr);}
 
@@ -486,7 +527,7 @@ quint64 SignTable::createMetadata() {
 }
 //----------------------------------------------------------
 REGISTER_OPERATION(CosineHTable)
-CosineHTable::CosineHTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr,"value", cosh)
+CosineHTable::CosineHTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr,"value", cosh2)
 {}
 OperationImplementation *CosineHTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new CosineHTable(metaid,expr);}
 
@@ -500,7 +541,7 @@ quint64 CosineHTable::createMetadata() {
 }
 //----------------------------------------------------------
 REGISTER_OPERATION(SineHTable)
-SineHTable::SineHTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr,"value", sinh)
+SineHTable::SineHTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr,"value", sinh2)
 {}
 OperationImplementation *SineHTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new SineHTable(metaid,expr);}
 
