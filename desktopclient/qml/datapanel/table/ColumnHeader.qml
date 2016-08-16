@@ -9,7 +9,7 @@ import "../../Global.js" as Global
 
 Rectangle {
     id : header
-    color:  "#C1D5F8"
+    color:  "#d9f2e4"
     objectName: uicontext.uniqueName()
     border.color:  Global.headerdark
     width: defaultWidth(styleData.column)
@@ -21,7 +21,8 @@ Rectangle {
         text: styleData.value
         font.weight: Font.DemiBold
         color: styleData.pressed ? "white" : "black"
-        x : 2
+        y : 3
+        x : 4
 
         onColorChanged: {
             count += 1
