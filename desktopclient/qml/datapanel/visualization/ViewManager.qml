@@ -16,6 +16,8 @@ Item {
 
     property var renderer
 
+    property alias metadata : metadata
+
     signal zoomEnded(string envelope)
 
     Layout.minimumHeight: 22
@@ -67,6 +69,7 @@ Item {
     Component{
         id : metadata
         MetaData{
+            id : innermetadata
         }
     }
 
@@ -106,7 +109,7 @@ Item {
             tab.item.renderer = renderer
 
             addTab(qsTr("Layers Info"), layersinfo)
-            tab = addTab(qsTr("Metadata"), metadata)
+            tab = addTab(qsTr("Metadata"), metadata)            
             tab.active = true // we need to be active as layers maybe added to it
         }
 
