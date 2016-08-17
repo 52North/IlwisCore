@@ -164,7 +164,6 @@ QString TypeHelper::type2name(IlwisTypes t)
     case  itPOINT+itLINE:
     case  itPOINT+itPOLYGON:
     case  itPOLYGON+itLINE:
-    case  itPOINT+itLINE+itPOLYGON:
         return "featurecoverage";
     case  itNUMERICDOMAIN:
         return "numericdomain";
