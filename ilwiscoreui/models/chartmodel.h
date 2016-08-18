@@ -22,21 +22,24 @@ public:
     ChartModel(QObject *parent = 0);
     ChartModel(TableModel *tbl, QObject *p);
 
+    Q_INVOKABLE void setGraphs(int type);
+    Q_INVOKABLE GraphModel * graph(int index);
+    Q_INVOKABLE QList<QVariant> datasets(int graphType);
+    Q_INVOKABLE void setXAxis(int columnIndex);
+    Q_INVOKABLE QString xAxis() const;
+    Q_INVOKABLE void updateChartWidth(int newWidth);
+
     QList<QVariant> xvalues();
     void xvalues(const std::vector<QVariant>& xvalues);
     void xvalues(const QList<QVariant>& xvalues);
-    Q_INVOKABLE void setGraphs(int type);
-    Q_INVOKABLE GraphModel * graph(int index);
     void addGraph(GraphModel * graph);
     void clearGraphs();
-    Q_INVOKABLE QList<QVariant> datasets(int graphType) const;
     QQmlListProperty<GraphModel> graphs();
-    QString xAxis() const;
     void xAxis(const QString& name);
     int columnIndex();
     void setColumnIndex(int ind);
     QStringList yAttributes() const;
-    Q_INVOKABLE void setXAxis(int columnIndex);
+
 
 
 signals:
@@ -53,10 +56,13 @@ private:
     int _columnIndex = Ilwis::iUNDEF;
     IlwisTypes _valueTypeXaxis = itNUMBER;
     TableModel *_table;
+    int _chartWidth = 0;
     bool _xAxisIsRecordNr = false;
     bool _hasXAggregation = false;
 
 
+    void fillXValues();
+    void fillYValues(QList<QVariant> &yvalues, IlwisTypes valueTypeYAxis, int columnIndex);
 };
 
 #endif // CHARTMODEL_H

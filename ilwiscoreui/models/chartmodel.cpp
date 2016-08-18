@@ -6,6 +6,7 @@
 #include "table.h"
 #include "tablemodel.h"
 #include "chartmodel.h"
+#include "mathhelper.h"
 
 using namespace Ilwis;
 
@@ -39,16 +40,35 @@ void ChartModel::xvalues(const QList<QVariant> &xvalues)
         _xvalues.push_back(val);
     emit xvaluesChanged();
 }
+void ChartModel::fillXValues()
+{
+   _xvalues.clear();
+    NumericRange rng = Ilwis::MathHelper::roundRange(0, _table->table()->recordCount());
+    double scale = rng.max() / _chartWidth;
+    int marker = rng.min();
+    for( int x = 0; x < _chartWidth; ++x){
+        double value = x * scale;
+        if ( value > marker){
+            _xvalues.push_back(QString::number(marker));
+            marker += rng.resolution();
+        }else
+            _xvalues.push_back("");
+    }
+}
+
 void ChartModel::setXAxis(int columnIndex)
 {
+    if ( _chartWidth == 0)
+        return;
+
     if ( columnIndex >= _table->table()->columnCount())
         return;
     _xvalues.clear();
     if ( columnIndex <= 0){
         _valueTypeXaxis = itINT32;
         _xAxisIsRecordNr = true;
-        for(int i =0; i < _table->table()->recordCount(); ++i)
-            _xvalues.push_back(i);
+
+        fillXValues();
     }else {
         columnIndex--; // columnIndex == 0 is the record counter
         std::vector<QVariant> values = _table->table()->column(columnIndex);
@@ -69,13 +89,40 @@ void ChartModel::setXAxis(int columnIndex)
             }
         }
     }
-    std::sort(_xvalues.begin(), _xvalues.end());
+    if (!_xAxisIsRecordNr )
+        std::sort(_xvalues.begin(), _xvalues.end());
 
     _columnIndex = columnIndex;
-    _xAxis = _table->table()->columndefinition(columnIndex).name();
+    if ( _columnIndex > 0)
+        _xAxis = _table->table()->columndefinition(columnIndex-1).name();
+    else
+        _xAxis = TR("Record nr");
+
     emit yAttributesChanged();
 
 
+}
+
+void ChartModel::fillYValues(QList<QVariant>& yvalues, IlwisTypes valueTypeYAxis, int columnIndex)
+{
+    QVariant oldValue = 0;
+    std::vector<QVariant> values = _table->table()->column(columnIndex);
+    NumericRange rng = Ilwis::MathHelper::roundRange(0, _table->table()->recordCount());
+    double scale = rng.max() / _chartWidth;
+    for( int x = 0; x < _chartWidth; ++x){
+        int index = x * scale;
+        if ( index < values.size()){
+
+            QVariant v = values[index];
+            if ( hasType(valueTypeYAxis,itNUMBER)){
+                if ( v == rUNDEF)
+                    v = oldValue;
+                else
+                    oldValue = v;
+            }
+            yvalues.push_back(v);
+        }
+    }
 }
 
 void ChartModel::setGraphs(int type)
@@ -105,18 +152,8 @@ void ChartModel::setGraphs(int type)
                 if ( (hasType(_valueTypeXaxis,itINTEGER) &&_xAxisIsRecordNr) || !_hasXAggregation){
                     if ( hasType(valueTypeYAxis, itNUMBER)){
                         GraphModel *graph = new GraphModel(coldef.name() ,this);
-                        std::vector<QVariant> values = _table->table()->column(i);
                         QList<QVariant> yvalues;
-                        QVariant oldValue = 0;
-                        for(auto v : values){
-                            if ( hasType(valueTypeYAxis,itNUMBER)){
-                                if ( v == rUNDEF)
-                                    v = oldValue;
-                                else
-                                    oldValue = v;
-                            }
-                            yvalues.push_back(v);
-                        }
+                        fillYValues(yvalues,valueTypeYAxis,i);
                         graph->yvalues(yvalues);
                         _graphs.push_back(graph);
                     }
@@ -148,8 +185,12 @@ void ChartModel::clearGraphs()
     _graphs.clear();
 }
 
-QList<QVariant> ChartModel::datasets(int graphType) const
+QList<QVariant> ChartModel::datasets(int graphType)
 {
+    if ( _columnIndex == iUNDEF){
+        setXAxis(0);
+        setGraphs(0);
+    }
 
     QList<QVariant> graphs;
     if ( graphType == 0 || graphType == 1){
@@ -190,6 +231,11 @@ QQmlListProperty<GraphModel> ChartModel::graphs()
 QString ChartModel::xAxis() const
 {
     return _xAxis;
+}
+
+void ChartModel::updateChartWidth(int newWidth)
+{
+    _chartWidth = newWidth * 0.8;
 }
 
 void ChartModel::xAxis(const QString &name)
