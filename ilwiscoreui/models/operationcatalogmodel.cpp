@@ -97,6 +97,27 @@ void tableCase(const IIlwisObject &obj, const QString& condition, int parmIndex,
     mp["uielement"] = "list";
     result.append(mp);
 }
+void valueListCase(const IIlwisObject& obj, const QString& condition, int parmIndex,  QVariantList& result){
+    int index = condition.indexOf("with");
+    QString rest = condition.mid(index + 5 );
+    rest.trimmed();
+
+    QVariantMap mp;
+    mp["parameterIndex"] = parmIndex;
+    QStringList codes;
+
+    InternalDatabaseConnection db(rest);
+
+
+    while(db.next()){
+        QString code = db.value(0).toString();
+        codes.push_back(code);
+    }
+    mp["result"] = codes;
+    mp["uielement"] = "list";
+    result.append(mp);
+
+}
 
 void domainCase(const IIlwisObject& obj, const QString& condition, int parmIndex,  QVariantList& result)
 {
@@ -142,7 +163,6 @@ QVariantList OperationCatalogModel::resolveValidation(const QString &metaid, con
            for(int i = 0; i < maxParmCount; ++i){
                QString parmPrefix = "pin_" + QString::number(i+1) + "_";
                if ( resource.hasProperty(parmPrefix + "validationcondition")){
-                   bool ok;
                    int source = resource[parmPrefix + "validationsource"].toInt();
                    if ( source == sourceParameterIndex){
                        QString condition = resource[parmPrefix + "validationcondition"].toString();
@@ -151,6 +171,8 @@ QVariantList OperationCatalogModel::resolveValidation(const QString &metaid, con
                                tableCase(obj, condition, i, result);
                            }else if ( condition.indexOf("domain") == 0){
                                 domainCase(obj, condition, i, result);
+                           }else if ( condition.indexOf("values with") == 0){
+                               valueListCase(obj, condition, i, result);
                            }
                        }
                    }
