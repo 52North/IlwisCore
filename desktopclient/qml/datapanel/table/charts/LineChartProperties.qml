@@ -41,8 +41,12 @@ Rectangle {
                     propertiescol.activeGraph = currentIndex
                     var g1 = chart.graph(currentIndex)
                     if ( g1){
+                        if ( graph)
+                            graph.enabled = false // removed old graph
                         graph = g1
+                        graph.enabled = true
                         enabledcheck.checked = true
+                        redraw()
                     }
                 }
             }

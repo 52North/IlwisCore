@@ -14,7 +14,7 @@ Item {
     height : parent.height - 10
 
     function init(){
-        makechart(table,1,0)
+        makechart(table,0,0)
         var graph = chart.graph(0) // by default we choose the first one
         specificProperties.setSource("LineChartProperties.qml",{ "graph": graph })
     }
@@ -24,7 +24,7 @@ Item {
         chart.setGraphs(typechoice)
         if ( typechoice === 0){
             chartpanel.chartType = Charts.ChartType.LINE
-            chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets(typechoice)}
+            chartpanel.chartData = {datasets: chart.datasets(typechoice),labels: chart.xvalues}
         }else if ( typechoice === 1){
             chartpanel.chartType = Charts.ChartType.BAR
             chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets(typechoice)}

@@ -29,6 +29,7 @@ SplitView {
     }
     Component.onCompleted: {
         chart = uicontext.chartModel(objectName,table)
+        chartpanel.updateChartWidth()
         propertiespanel.init()
     }
 

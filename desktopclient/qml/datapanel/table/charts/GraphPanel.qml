@@ -20,6 +20,15 @@ Rectangle {
         chart_drawing.requestPaint()
     }
 
+    function updateChartWidth() {
+        if ( chart)
+            chart.updateChartWidth(chart_drawing.width)
+    }
+
+    onWidthChanged: {
+        updateChartWidth()
+    }
+
     Graph.Chart {
         id: chart_drawing;
         width: parent.width
@@ -27,11 +36,6 @@ Rectangle {
         chartAnimated: true;
         chartAnimationEasing: Easing.InOutElastic;
         chartAnimationDuration: 1000;
-        //chartType: Charts.ChartType.LINE;
-
-        Component.onCompleted: {
-
-        }
     }
 }
 
