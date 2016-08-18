@@ -24,6 +24,10 @@ Item {
         return maparea.drawer
     }
 
+    function maparea(){
+        return maparea
+    }
+
     function addDataSource(filter, sourceName, sourceType){
         if ( filter.indexOf("=") !== -1){
             filter = "\"" + filter + "\""

@@ -15,6 +15,7 @@ Item {
     width : 210
     height : parent.height
     property alias coverage : overview
+    property alias mouseActions : mouseActions
     property LayerManager manager
     property bool drawerActive : false
 
@@ -146,6 +147,10 @@ Item {
                 OverViewDrawer{
                     id: overview
                     anchors.fill: parent
+
+                    Component.onCompleted: {
+                        mouseActions.mapScrollers = layers.maparea().parent.mapScrollers
+                    }
                 }
 
 

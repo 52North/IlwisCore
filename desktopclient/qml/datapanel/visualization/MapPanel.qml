@@ -17,6 +17,7 @@ Item {
     height : parent.height
     property TabModel tabmodel
     property string panelType : "mappanel"
+    property alias viewmanager : viewmanager
 
     objectName: uicontext.uniqueName()
     property LayerManager manager

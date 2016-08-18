@@ -15,6 +15,7 @@ DropArea {
     function entireMap() {
         renderer.addCommand("setviewextent("+ renderer.viewerId + ",entiremap)");
         renderer.update()
+
     }
 
 
