@@ -19,6 +19,8 @@ var uiScale = 1.0
 var rowHeight = 20 * uiScale
 var actionBarMaxHeight = 260  * uiScale
 var actionBarMinHeight = 25  * uiScale
+var panningAlong = 1;
+var panningReverse = -1;
 
 function isNumber(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);

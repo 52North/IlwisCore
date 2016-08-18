@@ -160,6 +160,7 @@ Item {
                     drawer : overview
                     linkedDrawer: renderer
                     hasPermanence: true
+                    panningDirection: Global.panningAlong
                 }
 
             }

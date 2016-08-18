@@ -4,6 +4,7 @@ import UIContextModel 1.0
 import LayerManager 1.0
 import LayersView 1.0
 import "../../controls" as Controls
+import "../../Global.js" as Global
 
 MouseArea {
     id : mapArea
@@ -19,6 +20,7 @@ MouseArea {
     property bool panningStarted : false
     property int panningPrevMouseX : -1
     property int panningPrevMouseY : -1
+    property int panningDirection : Global.panningReverse
     signal zoomEnded(string envelope)
 
     Controls.FloatingRectangle{
@@ -85,8 +87,8 @@ MouseArea {
         }
         if (panningStarted) {
             // todo: probably can be fine tuned, thus providing a smoother panning
-            mapScrollers.vscroller.scroll(-(mouseY - panningPrevMouseY))
-            mapScrollers.hscroller.scroll(-(mouseX - panningPrevMouseX))
+            mapScrollers.vscroller.scroll(panningDirection * (mouseY - panningPrevMouseY))
+            mapScrollers.hscroller.scroll(panningDirection * (mouseX - panningPrevMouseX))
             panningPrevMouseX = mouseX
             panningPrevMouseY = mouseY
         }
