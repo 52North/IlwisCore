@@ -86,13 +86,14 @@ Ilwis::OperationImplementation::State LinearRasterFilter::prepare(ExecutionConte
 quint64 LinearRasterFilter::createMetadata()
 {
     OperationResource operation({"ilwis://operations/linearrasterfilter"});
-    operation.setSyntax("linearrasterfilter(raster1, filterdefinition=linearfiltername | expression");
+    operation.setSyntax("linearrasterfilter(raster1, linearfiltername");
     operation.setDescription(TR("generates a new raster based on the conditions as specified in the linear filter definition"));
     operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER , TR("rastercoverage"),TR("input rastercoverage with numeric domain"));
-    operation.addInParameter(1,itSTRING , TR("filter definition"),TR("Definition of the filter. This can be a predefined filter name or an expression defining the filter"));
+    operation.addInParameter(1,itSTRING , TR("filter definition"),TR("Definition of the filter. This is a predefined filter name"), OperationResource::ueCOMBO);
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itTABLE, TR("output raster"),TR("output table with a numeric domain"));
+    operation.addValidation(0,1,"values with select code from filters where type='linear' ");
+    operation.addOutParameter(0,itRASTER, TR("output raster"),TR("output raster with a numeric domain"));
     operation.setKeywords("filter,raster,numeric");
 
     mastercatalog()->addItems({operation});
