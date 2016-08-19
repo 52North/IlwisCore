@@ -18,6 +18,7 @@ MouseArea {
     property var font
     property var target
     property bool active : false
+    property bool up : false
 
 
     onEntered: {
@@ -52,7 +53,7 @@ MouseArea {
             var obj = mapToItem(root, x, y);
             if ( obj){
                 toolTip.x = obj.x + 5
-                toolTip.y = obj.y + 5
+                toolTip.y = obj.y + (up ? -23 : 5)
             }
         }
     }

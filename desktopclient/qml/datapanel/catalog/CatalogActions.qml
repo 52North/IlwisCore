@@ -12,6 +12,12 @@ TabView {
     tabPosition: Qt.BottomEdge
     property string side
     Layout.minimumHeight: Global.actionBarMinHeight
+
+    property var tooltips : ["Actions on the selected objects in the active catalog",
+        "Filtering of data in the active catalog based on various criteria",
+        "Behaviour when a file from another catalog is dropped on the this catalog",
+        "Various options for refreshing and updating the current catalog"];
+
     style: DataPanel.ButtonBarTabViewStyle{}
 
     function getFormatString(requestedType) {
