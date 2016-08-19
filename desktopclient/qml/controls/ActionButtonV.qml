@@ -34,4 +34,11 @@ Button{
         }
     }
 
+    onClicked: {
+        if ( typeof addContainer.mouseClicked === "function"){
+            checked = !checked
+            mouseClicked()
+        }
+    }
+
 }
