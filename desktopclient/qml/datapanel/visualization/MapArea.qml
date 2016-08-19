@@ -4,6 +4,7 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import "../../controls" as Controls
+import "../../Global.js" as Global
 import LayersView 1.0
 
 DropArea {
@@ -58,7 +59,7 @@ DropArea {
                 drawer : renderer
                 linkedDrawer: renderer
                 showInfo: true
-                mapScrollers: mapScrollers
+                panningDirection: Global.panningReverse
             }
 
         }

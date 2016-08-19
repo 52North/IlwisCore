@@ -144,12 +144,18 @@ Item {
                     entireMap()
                 }
 
+                onVisibleChanged: {
+                    if (viewcontainer.visible)
+                        entireMap()
+                }
+
                 OverViewDrawer{
                     id: overview
                     anchors.fill: parent
 
                     Component.onCompleted: {
                         mouseActions.mapScrollers = layers.maparea().parent.mapScrollers
+                        entireMap()
                     }
                 }
 
@@ -160,6 +166,7 @@ Item {
                     drawer : overview
                     linkedDrawer: renderer
                     hasPermanence: true
+                    panningDirection: Global.panningAlong
                 }
 
             }
