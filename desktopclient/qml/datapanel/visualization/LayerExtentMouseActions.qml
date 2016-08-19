@@ -28,6 +28,7 @@ MouseArea {
     }
 
     onPressed:  {
+        //console.log("onPressed...")
         if ( layerview.tabmodel){
             if (!layerview.tabmodel.selected)
                 layerview.tabmodel.selectTab()
@@ -80,9 +81,20 @@ MouseArea {
         var mposition = mouseX + "|" + mouseY
         drawer.currentCoordinate = mposition
         if ( (zoomStarted || panningStarted) && layerManager.hasSelectionDrawer){
-            var position = {currentx: mouseX, currenty:mouseY}
-            drawer.setAttribute("selectiondrawer", position)
-            drawer.copyAttribute("selectiondrawer","envelope");
+            var position;
+            if (!panningStarted) {
+                position = {currentx: mouseX, currenty:mouseY}
+                drawer.setAttribute("selectiondrawer", position)
+                drawer.copyAttribute("selectiondrawer","envelope");
+            }
+            else {
+                position = {initialx: mouseX - 40, initialy: mouseY + 40}
+                drawer.setAttribute("selectiondrawer", position)
+                position = {currentx: mouseX + 40, currenty:mouseY - 40}
+                drawer.setAttribute("selectiondrawer", position)
+                //console.log("drag na overview")
+                drawer.copyAttribute("selectiondrawer","envelope");
+            }
             drawer.update()
         }
         if (panningStarted) {
