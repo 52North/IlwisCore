@@ -83,6 +83,11 @@ Column {
                 color: currentFolders.currentIndex === index ? "#99CCFF" : index  % 2 == 0 ? Global.alternatecolor2 : Global.alternatecolor1
                 focus : true
 
+                Controls.ToolTip{
+                    target : info
+                    text : description
+                }
+
                 Column {
                     id : info
                     width : parent.width - 30
@@ -115,6 +120,7 @@ Column {
                         state : "minimized"
                         clip : true
                     }
+
                 }
                 Image {
                     anchors.top : parent.top

@@ -26,7 +26,10 @@ Item {
          return iconP
 
      }
-
+    Controls.ToolTip{
+        target : iconDelegate
+        text : description
+    }
 
     Row {
         anchors.fill: parent

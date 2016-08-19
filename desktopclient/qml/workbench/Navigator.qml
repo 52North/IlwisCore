@@ -63,21 +63,6 @@ WorkBenchShifter {
         }
     }
     
-    Action {
-        id : createCatalogLeft
-        onTriggered : {
-            bigthing.newCatalog("container='" + mastercatalog.currentUrl +"'","catalog",mastercatalog.currentUrl, "left")
-        }
-
-    }
-
-    Action {
-        id : createCatalogRight
-        onTriggered : {
-            bigthing.newCatalog("container='" + mastercatalog.currentUrl +"'","catalog",mastercatalog.currentUrl, "right")
-        }
-
-    }
     NavigatorTopButtonBar{
         id : buttonBar
         height : 50 * Global.uiScale

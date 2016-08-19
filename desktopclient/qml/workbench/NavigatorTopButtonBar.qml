@@ -22,7 +22,15 @@ Item {
                 height : buttonBar.height - 3
                 iconsource: "../images/newcatalogCS1.png"
                 buttontext :  qsTr("New Catalog Left")
-                action : createCatalogLeft
+
+                function mouseClicked() {
+                    bigthing.newCatalog("container='" + mastercatalog.currentUrl +"'","catalog",mastercatalog.currentUrl, "left")
+                }
+
+                Controls.ToolTip {
+                    target: addCatalog
+                    text: qsTr("Creates a new catalog in the left panel with the content\n of the last active catalog")
+                }
 
             }
             Controls.ActionButtonV{
@@ -31,7 +39,16 @@ Item {
                 height : buttonBar.height - 3
                 iconsource: "../images/newcatalogCS1.png"
                 buttontext :  qsTr("New Catalog Right")
-                action : createCatalogRight
+
+                function mouseClicked() {
+                    bigthing.newCatalog("container='" + mastercatalog.currentUrl +"'","catalog",mastercatalog.currentUrl, "right")
+                }
+
+                Controls.ToolTip {
+                    target: addCatalog
+                    text: qsTr("Creates a new catalog in the right panel with the content\n of the last active catalog")
+                }
+
 
             }
 

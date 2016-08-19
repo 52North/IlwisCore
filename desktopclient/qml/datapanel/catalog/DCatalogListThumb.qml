@@ -16,7 +16,9 @@ Rectangle{
     width :  GridView.view.cellWidth
     height :  GridView.view.cellHeight
     clip : true
-    color :  isSelected ? Global.selectedColor : "white"
+    color :  isSelected ? Global.selectedColor : "#F5FFFA"
+    border.width: 1
+    border.color: "#e6e6e6"
 
     function changeImageLoader(loader, img){
         loader.setSource("ThumbImage.qml",{"imageName" : img})

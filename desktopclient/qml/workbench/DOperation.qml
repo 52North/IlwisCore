@@ -1,11 +1,18 @@
 import QtQuick 2.0
 
 import "../Global.js" as Global
+import "../controls" as Controls
 
 Item{
     id : currentOperation
     height : 35;
     width : parent.width;
+
+    Controls.ToolTip{
+        target : currentOperation
+        text : description
+    }
+
     Rectangle {
         anchors.fill: parent
         color: operationsList.currentIndex === index ? Global.selectedColor : index  % 2 == 0 ? Global.alternatecolor4 : Global.alternatecolor2

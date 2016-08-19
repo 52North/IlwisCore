@@ -5,6 +5,7 @@ import QtQuick.Controls.Styles 1.0
 import DataPaneModel 1.0
 import TabModel 1.0
 import "Global.js" as Global
+import "./controls" as Controls
 
 
 TabViewStyle {
@@ -15,7 +16,6 @@ TabViewStyle {
     property string selectColor : "steelblue"
     property string nonselectColor : "lightsteelblue"
     property int tabHeight : 35 * Global.uiScale
-
 
     tab: Rectangle {
         id : selectRect

@@ -822,15 +822,15 @@ void MasterCatalogModel::prepare()
 
     _bookmarks.push_back(addBookmark(TR("Temporary Catalog"),
                INTERNAL_CATALOG_URL,
-               TR("All objects that are memory-based only and don't have a representation in a permanent storage"),
+               TR("Catalog that holds objects that are only available this session.\nThey will not be available in when ilwis is restarted"),
                "type=" + QString::number(itANY) + " and container='ilwis://internalcatalog'",false));
      _bookmarks.push_back(addBookmark(TR("System Catalog"),
                QUrl("ilwis://system"),
-               TR("Default objects that are always available in ilwis"),
+               TR("Catalog that shows all system objects in ilwis\n System objects are read-only objects that are always available"),
                "type<>" + QString::number(itGEODETICDATUM),false));
      _bookmarks.push_back(addBookmark(TR("Operations"),
                QUrl("ilwis://operations"),
-               TR("All operations available in Ilwis"),
+               TR("Catalog that shows all available operations and workflows in ilwis"),
                "(type=" + QString::number(itSINGLEOPERATION) + " or type=" + QString::number(itWORKFLOW) + ")", false));
 
      addDefaultFilters();

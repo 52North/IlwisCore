@@ -47,6 +47,8 @@ ApplicationWindow {
         mainSplit.getWorkbenchPane(name)
     }
 
+    Controls.ToolTipLabel{id : toolTip}
+
     Rectangle {
         id : root
         y : 0

@@ -84,6 +84,11 @@ Item {
         anchors.leftMargin: 5
         anchors.rightMargin: 5
         clip : true
+
+        property var tooltips : ["View on folder structure of the local computer",
+            "Creates access to remote services by specifying their connection properties",
+            "Not implemented yet"];
+
         Tab {
             id : filetab
             height: parent.height

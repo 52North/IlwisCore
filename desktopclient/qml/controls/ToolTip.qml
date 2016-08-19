@@ -2,107 +2,100 @@ import QtQuick 2.0
 import QtQuick.Controls 1.1
 import QtGraphicalEffects 1.0
 
-Item {
-    id: toolTipRoot
-    //width: toolTip.contentWidth
-    height: toolTipContainer.height
-    visible: false
+MouseArea {
+    id: tooltipArea
+    anchors.fill : parent
     clip: false
     z: 999999999
-    parent: root
+    hoverEnabled: true
+    propagateComposedEvents:true
 
-    property alias text: toolTip.text
-    property alias radius: content.radius
-    property alias backgroundColor: content.color
-    property alias textColor: toolTip.color
-    property alias font: toolTip.font
-    property var target: null
 
-    function onMouseHover(x, y)
-    {
-        var obj = toolTipRoot.target.mapToItem(toolTipRoot.parent, x, y);
-        var obj2 = toolTipRoot.target.mapToItem(root, x, y);
-        if ( obj2.x + toolTip.contentWidth > root.width){
-            toolTipRoot.x = obj.x - toolTip.contentWidth
-            toolTipRoot.y = obj.y + 5;
-        }else {
-            toolTipRoot.x = obj.x;
-            toolTipRoot.y = obj.y + 5;
+    property string text
+    property int radius : 2
+    property var backgroundColor : "#E6FAE6"
+    property var textColor
+    property var font
+    property var target
+    property bool active : false
+
+
+    onEntered: {
+        onVisibleStatus(true)
+        active = true
+        changeToolTipPosition(mouseX, mouseY)
+    }
+
+    onExited: {
+       onVisibleStatus(false)
+       active = false
+    }
+
+    onPositionChanged: {
+        mouse.accepted = false
+        changeToolTipPosition(mouseX, mouseY)
+    }
+
+    onClicked: {
+        mouse.accepted = false
+        if ( typeof target.mouseClicked === "function")
+            target.mouseClicked()
+    }
+
+    onPressed: mouse.accepted = false;
+    onReleased: mouse.accepted = false;
+    onDoubleClicked: mouse.accepted = false;
+    onPressAndHold: mouse.accepted = false;
+
+    function changeToolTipPosition(x,y) {
+        if (active && target && text != ""){
+            var obj = mapToItem(root, x, y);
+            if ( obj){
+                toolTip.x = obj.x + 5
+                toolTip.y = obj.y + 5
+            }
         }
     }
 
     function onVisibleStatus(flag)
     {
-        if ( flag){
-            showTimer.start()
-            hideTimer.start()
-        }else
-            toolTipRoot.visible = flag;
-    }
+        if ( text == "")
+            return;
 
-    Component.onCompleted: {
-        var itemParent = toolTipRoot.target;
-
-        var newObject = Qt.createQmlObject('import QtQuick 2.0; MouseArea {signal mouserHover(int x, int y);\
-signal showChanged(bool flag); anchors.fill:target; hoverEnabled: true; parent:target;propagateComposedEvents:true;\
-onPositionChanged: {mouserHover(mouseX, mouseY)} onEntered: {showChanged(true)}\
- onExited:{showChanged(false)} onClicked:{ parent.focus = true; target.onClicked; mouse.accepted = false; } }',
-            itemParent, "mouseItem");
-        newObject.mouserHover.connect(onMouseHover);
-        newObject.showChanged.connect(onVisibleStatus);
+        if ( target){
+            if ( flag){
+                showTimer.start()
+                hideTimer.start()
+                toolTip.text = text
+                toolTip.radius = radius
+                toolTip.backgroundColor = backgroundColor
+            }else{
+                showTimer.stop()
+                hideTimer.stop()
+                toolTip.visible = flag;
+            }
+        }
     }
 
     Timer{
         id : showTimer
         interval: 2000
-        onTriggered: toolTipRoot.visible = true
+        onTriggered: {
+            toolTip.visible = true
+
+
+        }
 
     }
 
     Timer{
         id : hideTimer
         interval: 7000
-        onTriggered: toolTipRoot.visible = false;
-
-    }
-
-    Item {
-        id: toolTipContainer
-        z: toolTipRoot.z + 1
-        width: content.width + (2*toolTipShadow.radius)
-        height: content.height + (2*toolTipShadow.radius)
-
-        Rectangle {
-            id: content
-            anchors.centerIn: parent
-            width: toolTip.contentWidth + 8
-            height: toolTip.contentHeight + 4
-            radius: 3
-            color : "cornsilk"
-
-            Text {
-                id: toolTip
-                wrapMode: Text.WordWrap
-                x : 4
-                anchors.verticalCenter: parent.verticalCenter
-            }
+        onTriggered: {
+            toolTip.visible = false
         }
 
     }
 
-    DropShadow {
-        id: toolTipShadow
-        z: toolTipRoot.z + 1
-        anchors.fill: source
-        cached: true
-        horizontalOffset: 2
-        verticalOffset: 2
-        radius: 8.0
-        samples: 16
-        color: "#80000000"
-        smooth: true
-        source: toolTipContainer
-    }
 
-    Behavior on visible { NumberAnimation { duration: 200 }}
 }

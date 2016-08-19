@@ -154,7 +154,7 @@ QVariantList OperationCatalogModel::resolveValidation(const QString &metaid, con
    QVariantList result;
     try {
 
-       Resource resource = mastercatalog()->id2Resource(metaid.toULongLong());\
+       Resource resource = mastercatalog()->id2Resource(metaid.toULongLong());
        IIlwisObject obj;
        obj.prepare(objectid.toULongLong());
        if ( obj.isValid() && resource.isValid()){

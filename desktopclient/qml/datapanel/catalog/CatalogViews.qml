@@ -47,6 +47,11 @@ DropArea {
         id : catalogPanels
         anchors.fill: parent
 
+        property var tooltips : ["Bulk view in grid layout for available ilwis objects",
+            "More detailed view with some metadata in list layout",
+            "Preview on coverages in Grid Layout",
+            "Spatial location of coverages in the active catalog"];
+
         
     style: Base.TabStyle1{ minimumWidth: 60* Global.uiScale}
 

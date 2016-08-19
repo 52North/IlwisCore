@@ -21,6 +21,13 @@ ToolButton{
             textLabel.visible = false
     }
 
+    onClicked: {
+        if ( typeof button.mouseClicked === "function"){
+            checked = !checked
+            mouseClicked()
+        }
+    }
+
     Image { id : but
         anchors.centerIn: parent
         source: "../images/" + iconname

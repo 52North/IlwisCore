@@ -3,6 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import "Global.js" as Global
+import "controls" as Controls
 
 TabViewStyle {
     property string selectColor : Global.headerdark
@@ -12,6 +13,7 @@ TabViewStyle {
 
     frameOverlap: 1
     tab: Rectangle {
+        id : labelArea
         color: styleData.selected ? selectColor : nonselectColor
         border.color:  selectColor
 
@@ -25,6 +27,19 @@ TabViewStyle {
             color: styleData.selected ? "white" : "black"
             font.pointSize: 10 * Global.uiScale
         }
+
+        Controls.ToolTip{
+            id : ttip
+            target : labelArea
+        }
+
+        Component.onCompleted: {
+            if ( 'tooltips' in control ){
+                ttip.text = control.tooltips[styleData.index]
+            }
+        }
     }
     frame: Rectangle { color: "white"; border.width: 1 ; border.color: "lightgrey" }
+
+
 }

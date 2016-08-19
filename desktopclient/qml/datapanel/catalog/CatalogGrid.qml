@@ -14,7 +14,7 @@ FocusScope {
     anchors.fill: parent
     Rectangle {
         anchors.fill :parent
-        color : tabmodel && tabmodel.side == "right" ? "#f3f8fc" : "#f5f5f0"
+        color : tabmodel && tabmodel.side == "right" ? "#F5FCFF" : "#FFFFF7"
 
         ScrollView {
             id : catalogGrid
