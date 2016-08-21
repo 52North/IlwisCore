@@ -19,7 +19,7 @@ Rectangle {
         anchors.fill: parent
         spacing : 3
         Controls.TextEditLabelPair{
-
+            id : filterText
             labelText:  qsTr("Filter Text")
             labelWidth: 100
             width : parent.width - 9
@@ -27,6 +27,10 @@ Rectangle {
             onContentChanged: {
                 operations.nameFilter = content
                 operations.refresh()
+            }
+            Controls.ToolTip{
+                target : filterText
+                text : qsTr("Search text that filters the operation names on the string typed")
             }
         }
         Row {
@@ -42,16 +46,12 @@ Rectangle {
                     operations.keyFilter = filtertxt.content;
                     operations.refresh()
                 }
+                Controls.ToolTip{
+                    target : filtertxt
+                    text : qsTr("Comma seperated list of keywords that form the filter for the operations")
+                }
             }
-//            Button{
-//                width : 40
-//                height : 20
-//                text : qsTr("Apply")
-//                onClicked: {
-//                    operations.keyFilter = filtertxt.content;
-//                }
-//            }
-        }
+       }
     }
 }
 
