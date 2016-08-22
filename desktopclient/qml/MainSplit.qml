@@ -54,10 +54,20 @@ SplitView {
         workBench.transitionInfoPane(newpane, visstate)
     }
 
-    function getWorkbenchPane(name){
+    function getWorkbenchPane(name, vstate){
         if ( workBench.lastPage !== name){
-            workBench.transitionInfoPane(name, "visible")
-            workBenchButtons.setButtonStatus(name,"on")
+            if ( vstate === "visible"){
+                workBench.transitionInfoPane(name, "visible")
+                workBenchButtons.setButtonStatus(name,"on")
+            }
+            if ( vstate === "invisible"){
+                workBench.transitionInfoPane(name, "invisible")
+                workBenchButtons.setButtonStatus(name,"off")
+            }
+            if ( vstate === "toggle"){
+                workBench.transitionInfoPane(name, "toggle")
+                workBenchButtons.setButtonStatus(name,"toggle")
+            }
         }
     }
 

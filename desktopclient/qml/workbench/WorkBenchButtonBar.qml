@@ -20,6 +20,11 @@ Rectangle {
 
 
     function setButtonStatus(buttonname, status) {
+        if ( status === "toggle"){
+            toggle(buttonname,status)
+            return
+        }
+
         prop.checked = nav.checked = oper.checked = errors.checked = progress.checked = create.checked = preferences.checked = false
         if ( buttonname === "navigator"){
             nav.checked = status === "on"

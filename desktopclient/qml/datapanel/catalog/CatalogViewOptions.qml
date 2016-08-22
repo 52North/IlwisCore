@@ -104,6 +104,11 @@ Item {
                             id : keywords
                             width :parent.width - 50* Global.uiScale
                             height : parent.height
+
+                            Controls.ToolTip{
+                                target: keywords
+                                text : qsTr("Comma separated list of keywords will be added to the selected objects")
+                            }
                         }
                         Button {
                             height : parent.height
@@ -121,6 +126,11 @@ Item {
                             id : rem
                             width :parent.width - 50* Global.uiScale
                             height : parent.height
+
+                            Controls.ToolTip{
+                                target: keywords
+                                text : qsTr("Remove a keyword from the selected objects")
+                            }
                         }
                         Button {
                             height : parent.height

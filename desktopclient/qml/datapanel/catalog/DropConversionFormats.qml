@@ -39,6 +39,11 @@ Column {
         labelText: qsTr("Raster coverage")
         labelWidth: 120
 
+        Controls.ToolTip{
+            target: rasters
+            text : qsTr("Raster coverages dropped in this catalog will be converted to the indicated format")
+        }
+
         Component.onCompleted: {
             var name = preferences.preferedDataFormat("rastercoverage")
             if ( name !== "?")
@@ -61,6 +66,11 @@ Column {
         ilwisType: uicontext.typeName2typeId("featurecoverage");
         labelText: qsTr("Feature coverage")
         labelWidth: 120
+
+        Controls.ToolTip{
+            target: features
+            text : qsTr("Feature coverages dropped in this catalog will be converted to the indicated format")
+        }
 
         Component.onCompleted: {
             var name = preferences.preferedDataFormat("featurecoverage")
@@ -85,6 +95,11 @@ Column {
         labelText: qsTr("Table")
         labelWidth: 120
 
+        Controls.ToolTip{
+            target: table
+            text : qsTr("Tables dropped in this catalog will be converted to the indicated format")
+        }
+
         Component.onCompleted: {
             var name = preferences.preferedDataFormat("table")
             if ( name !== "?")
@@ -106,6 +121,11 @@ Column {
         ilwisType: uicontext.typeName2typeId("coordinatesystem");
         labelText: qsTr("CoordinateSystem")
         labelWidth: 120
+
+        Controls.ToolTip{
+            target: csy
+            text : qsTr("Coordinate system dropped in this catalog will be converted to the indicated format")
+        }
 
         Component.onCompleted: {
             var name = preferences.preferedDataFormat("coordinatesystem")
@@ -129,6 +149,11 @@ Column {
         ilwisType: uicontext.typeName2typeId("domain");
         labelText: qsTr("Domain")
         labelWidth: 120
+
+        Controls.ToolTip{
+            target: dom
+            text : qsTr("Domains dropped in this catalog will be converted to the indicated format")
+        }
 
         Component.onCompleted: {
             var name = preferences.preferedDataFormat("domain")

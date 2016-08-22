@@ -83,6 +83,10 @@ Item {
                     layerManager: worldmapcontainer.manager
                     drawer : worldmap
                 }
+                Controls.ToolTip{
+                    target: worldmap
+                    text : qsTr("Selects coverages within the indicated rectangle")
+                }
             }
 
         }

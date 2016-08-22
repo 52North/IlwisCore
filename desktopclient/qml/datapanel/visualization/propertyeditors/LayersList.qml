@@ -28,6 +28,10 @@ Item {
                 x : 5
                 anchors.verticalCenter: parent.verticalCenter
             }
+            Controls.ToolTip{
+                target: layersLabel
+                text : qsTr("An ordered list of the layers visible in the map panel")
+            }
         }
         Rectangle {
             width : parent.width - 8
