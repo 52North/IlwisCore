@@ -267,6 +267,15 @@ QVariantMap LayerManager::coord2Screen(const QVariantMap &var) const
     return bb.toMap();
 }
 
+QVariantMap LayerManager::screen2Coord(const QVariantMap &var) const
+{
+    BoundingBox bb(var);
+
+    Envelope env = _screenGrf->pixel2Coord(bb);
+
+    return env.toMap();
+}
+
 void LayerManager::init()
 {
 
