@@ -59,6 +59,8 @@ void LayerManager::addDataSource(const QUrl &url, IlwisTypes tp, Ilwis::Geodrawe
                     kernel()->issues()->log(mes, IssueObject::itWarning);
                     return;
                 }
+                if ( layer->coverage()->id() == coverage->id()) // dont duplicate layers
+                    return;
             }
         }
         if ( _masterCsy == 0) {// first real layer sets the csy
