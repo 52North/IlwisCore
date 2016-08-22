@@ -225,9 +225,10 @@ QList<OVertex> Workflow::getNodesWithExternalInput()
             } else {
                 // some pins may be unassigned
                 int assignedInputSize = getImplicitInputAssignments(v).size() + getConstantInputAssignments(v).size();
-
+                quint16 possibleInputSize = 0;
                 IOperationMetaData meta = getOperationMetadata(v);
-                quint16 possibleInputSize = meta->getInputParameters().size();
+                if ( meta.isValid())
+                    possibleInputSize = meta->getInputParameters().size();
 
                 if (assignedInputSize < possibleInputSize) {
                     _inputNodes.push_back(v); // further parameter assignment possible
@@ -293,8 +294,10 @@ QList<OVertex> Workflow::getNodesWithExternalOutputs()
                 std::vector<quint16> assignedPouts = getAssignedPouts(v);
                 quint16 assignedOutputSize = assignedPouts.size();
 
+                quint16 possibleOutputSize = 0;
                 IOperationMetaData meta = getOperationMetadata(v);
-                quint16 possibleOutputSize = meta->getOutputParameters().size();
+                if ( meta.isValid())
+                    possibleOutputSize = meta->getOutputParameters().size();
 
                 if (possibleOutputSize > assignedOutputSize) {
                     _outputNodes.push_back(v); // further parameter assignment possible
