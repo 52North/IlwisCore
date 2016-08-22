@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import "../../../Global.js" as Global
+import "../../../controls" as Controls
 
 Rectangle {
     id : displayEditorColumn
@@ -29,6 +30,10 @@ Rectangle {
             text : qsTr("Property Editor")
             font.bold: true
             anchors.verticalCenter: parent.verticalCenter
+        }
+        Controls.ToolTip{
+            target: editorsLabel
+            text : qsTr("Editor for the a set of visual properties of a data attribute")
         }
     }
 

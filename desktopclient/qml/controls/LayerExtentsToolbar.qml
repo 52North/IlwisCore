@@ -24,6 +24,10 @@ ToolBar{
                 zoominButton.checked = false
                 panButton.checked = false
             }
+            Controls.ToolTip{
+                target: entireMap
+                text : qsTr("Expands the view to the maximal spatial extent as defined by the layers")
+            }
         }
 
         MapExtentButton{
@@ -37,6 +41,10 @@ ToolBar{
                 zoominButton.checked = false
 
             }
+            Controls.ToolTip{
+                target: panButton
+                text : qsTr("Triggers a state so that a mouse movement, while keeping the mouse button pressed,\n moves visibility window in the map panel ")
+            }
         }
 
         MapExtentButton{
@@ -49,11 +57,20 @@ ToolBar{
                 checked = !checked
                 panButton.checked = false
             }
+            Controls.ToolTip{
+                target: zoominButton
+                text : qsTr("Trigger a state so that a rectangle can be drawn for zooming purposes")
+            }
         }
         MapExtentButton{
             id : zoomoutButton
             icon :"zoomout20.png"
             action : zoomOutClicked
+
+            Controls.ToolTip{
+                target: zoomoutButton
+                text : qsTr("Enlarges the zoomed view by square root of 2 in x/y size while keeping the center constant")
+            }
         }
     }
 }

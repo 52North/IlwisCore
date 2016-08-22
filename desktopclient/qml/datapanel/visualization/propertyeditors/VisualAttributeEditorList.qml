@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import "../../../Global.js" as Global
+import "../../../controls" as Controls
 
 Item {
     id : displaypropertiesColumn
@@ -16,6 +17,11 @@ Item {
             font.bold: true
             anchors.verticalCenter: parent.verticalCenter
         }
+        Controls.ToolTip{
+            target: propertiesLabel
+            text : qsTr("List of editors for the visual properties of the selected attribute that can be changed")
+        }
+
     }
     Rectangle {
         id : displayEditors

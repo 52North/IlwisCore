@@ -37,6 +37,7 @@ LayerManager::~LayerManager()
 void LayerManager::addVisualizationModel(CoverageLayerModel *newmodel)
 {
     _layers.insert(1,newmodel);
+    emit layerChanged();
 }
 
 void LayerManager::addDataSource(const QUrl &url, IlwisTypes tp, Ilwis::Geodrawer::DrawerInterface *drawer)

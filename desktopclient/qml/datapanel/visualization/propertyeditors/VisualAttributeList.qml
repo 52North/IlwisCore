@@ -32,6 +32,10 @@ Rectangle {
             x : 5
             anchors.verticalCenter: parent.verticalCenter
         }
+        Controls.ToolTip{
+            target: attributesLabel
+            text : qsTr("List of data attributes of the selected layer in the layer list.\n The selected attribute will be the active attribute in the map panel")
+        }
     }
 
     Rectangle {

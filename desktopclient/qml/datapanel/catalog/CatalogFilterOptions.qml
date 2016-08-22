@@ -41,6 +41,11 @@ Item {
                 CatalogFilterComboBox{
                     id : catalogfilters
                     width : parent.width - 105* Global.uiScale
+
+                    Controls.ToolTip{
+                        target: catalogfilters
+                        text : qsTr("A number of default catalog queries. These fill a catalog with the content as defined in the query ")
+                    }
                 }
             }
             Controls.ComboxLabelPair{
@@ -51,6 +56,12 @@ Item {
                 itemModel: internaldatabase.query("Select * from teritories where type='country' order by name")
                 role : "name"
                 fontSize: 8 * Global.uiScale
+
+                Controls.ToolTip{
+                    target: countryselect
+                    text : qsTr("Selects coverages that are within the rectangular envelope of a country. It is not an exact boundry match")
+                }
+
                 Component.onCompleted: {
                     currentIndex = itemModel.count - 4
                 }
@@ -73,12 +84,19 @@ Item {
             }
 
             Controls.ComboxLabelPair{
+                id : regionselect
                 labelText: qsTr("Region select")
                 labelWidth: 100* Global.uiScale
                 width : parent.width - 5* Global.uiScale
                 itemModel: internaldatabase.query("Select * from teritories where type='region' order by name")
                 role : "name"
                 fontSize: 8 * Global.uiScale
+
+                Controls.ToolTip{
+                    target: regionselect
+                    text : qsTr("Selects coverages that are within the envelope of a defined region on earth.")
+                }
+
                 Component.onCompleted: {
                     currentIndex = itemModel.count - 1
                 }
@@ -100,6 +118,7 @@ Item {
                 }
             }
             Controls.TextEditLabelPair{
+                id : keyselect
                 labelText: qsTr("Keyword filters")
                 labelWidth: 100* Global.uiScale
                 width : parent.width - 5
@@ -107,6 +126,10 @@ Item {
                 fontSize: 8 * Global.uiScale
                 onContentChanged: {
                     currentCatalog.filter("keyword", content)
+                }
+                Controls.ToolTip{
+                    target: keyselect
+                    text : qsTr("Comma seperated list with keywords that define the filter for this catalog. Only objects that have these keywords will appear")
                 }
             }
 
@@ -120,6 +143,10 @@ Item {
                     width : parent.width -5* Global.uiScale
                     transparentBackgrond : false
                     fontSize: 8 * Global.uiScale
+                    Controls.ToolTip{
+                        target: label1
+                        text : qsTr("Selects objects with the string in de edit field in the name")
+                    }
                     onContentChanged: {
                         currentCatalog.filter("name", content)
                     }
