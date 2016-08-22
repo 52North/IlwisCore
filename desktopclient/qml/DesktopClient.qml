@@ -43,8 +43,8 @@ ApplicationWindow {
     }
 
 
-    function getWorkbenchPane(name){
-        mainSplit.getWorkbenchPane(name)
+    function getWorkbenchPane(name, vstate){
+        mainSplit.getWorkbenchPane(name, vstate)
     }
 
     Controls.ToolTipLabel{id : toolTip}

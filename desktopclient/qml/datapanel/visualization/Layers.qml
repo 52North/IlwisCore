@@ -29,11 +29,13 @@ Item {
     }
 
     function addDataSource(filter, sourceName, sourceType){
+        var filter2 = filter
         if ( filter.indexOf("=") !== -1){
             filter = "\"" + filter + "\""
         }
         maparea.drawer.addCommand("adddrawer(" + maparea.drawer.viewerId + ","+ sourceName + "," + filter + "," + sourceType + ")")
         maparea.drawer.update()
+        viewmanager.addDataSource(filter2, sourceName, sourceType)
         return maparea.drawer.viewerId
     }
 

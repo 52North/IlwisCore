@@ -42,7 +42,7 @@ ListView {
                         onClicked: {
                             layersList.currentIndex = index
                             mastercatalog.setSelectedObjects(id)
-                            bigthing.getWorkbenchPane("ObjectProperties.qml");
+                            bigthing.getWorkbenchPane("objectproperties","visible");
                         }
                     }
                 }
