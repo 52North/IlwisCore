@@ -269,7 +269,7 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
 
     QString textField = "DropArea{ x : %2; height : 20; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
                onDropped : { pin_%1.text = drag.source.message; addValidation(pin_%1,%1, drag.source.ilwisobjectid) }\
-            TextField{ id : pin_%1; objectName : \"pin_%1_\" + " + metaid + "; property string itemType : \"textfield\"; text: \"%7\"; anchors.fill : parent optionalOutputMarker %8}}";
+            TextField{ id : pin_%1; objectName : \"pin_%1_\" + " + metaid + "; property string itemType : \"textfield\"; text: \"%7\";Controls.ToolTip{target : pin_%1; text:operation ? operation.inputparameterDescription(%1) : \"\"} anchors.fill : parent optionalOutputMarker %8}}";
     QString textArea = "DropArea{ x : %2; height : 55; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
            onDropped : { pin_%1.text = drag.source.message }\
         TextArea{ id : pin_%1; property string itemType : \"textarea\";text: \"%7\"; anchors.fill : parent optionalOutputMarker %8}}";
@@ -280,7 +280,7 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
             "onClicked : {mastercatalog.currentCatalog.filterChanged(\"%2|exclusive\" , checked)}"
             "Image{anchors.centerIn : parent;width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}}";
     QString iconField2 = "Image{width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}";
-    QString comboField = "ComboBox{id : pin_%1; objectName : \"pin_%1_\" + " + metaid + "; property string itemType : \"combobox\";x : %2;width : parent.width - label_pin_%1.width - 5 - %3;model : %4;currentIndex: %5;";
+    QString comboField = "ComboBox{id : pin_%1; objectName : \"pin_%1_\" + " + metaid + "; property string itemType : \"combobox\";x : %2;width : parent.width - label_pin_%1.width - 5 - %3;Controls.ToolTip{target : pin_%1; text:operation ? operation.inputparameterDescription(%1) : \"\"}model : %4;currentIndex: %5;";
     QString rowBodyChoiceHeader = "Row{ width : parent.width;Text { text: qsTr(\"%1\"); width : %2; } Column{ExclusiveGroup { id: exclusivegroup_pin_%3} %4}}";
     QString rowChoiceOption = "RadioButton{id:choice_pin_%1;text:qsTr(\"%2\");checked:%3;exclusiveGroup:exclusivegroup_pin_%4;property string value:qsTr(\"%5\")}";
     QString formRows;
@@ -480,7 +480,7 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showout
         QString validation = "function addValidation(e, idx, u){var r = operations.resolveValidation(metaid, u,idx);";
         validation += "if ( r){for(var k=0; k<r.length;k++){var p=r[k];var ue = \"pin_\" + p.parameterIndex + \"" + QString("_") + mid + "\"" ;
         validation += "; var item = uicontext.getItem(ue,0); if ( item !== null) { if ( p.uielement==\"list\"){item.model=p.result}if(p.uielement==\"textfield\"){item.text=p.result}}}}}";
-        QString propertyMetaid = "property var metaid :" + mid + ";";
+        QString propertyMetaid = "property var metaid :" + mid + ";property var operation : operations.operation(" + mid + ");";
         QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import UIContextModel 1.0;import MasterCatalogModel 1.0;import \"../controls\" as Controls;";
         columnStart += "Column { " + validation + " " + propertyMetaid + "%1 x:5; width : Math.min(parent.width - 5,420); height : parent.height;spacing :10;";
         QString exclusiveGroup = "ExclusiveGroup { id : sourceFilterGroup; onCurrentChanged: {}}";
