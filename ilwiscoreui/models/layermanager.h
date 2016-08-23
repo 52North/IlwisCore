@@ -41,7 +41,7 @@ public:
     Q_INVOKABLE CoverageLayerModel* layer(quint32 layerIndex);
     Q_INVOKABLE void refresh();
     QVariantMap coord2Screen(const QVariantMap &var) const;
-    QVariantMap screen2Coord(const QVariantMap &var) const;
+    Q_INVOKABLE QVariantMap screen2Coord(const QVariantMap &var);
 
     void addVisualizationModel(CoverageLayerModel* model);
     void addDataSource(const QUrl& url, IlwisTypes tp, Ilwis::Geodrawer::DrawerInterface *drawer);
