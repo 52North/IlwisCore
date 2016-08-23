@@ -232,8 +232,8 @@ quint64 BinaryMathRaster::createMetadata()
     operation.setSyntax("binarymathraster(gridcoverage1|number,gridcoverage2|number,rasteroperation=!add|substract|divide|times|mod|power)");
     operation.setDescription(TR("Generates a new numerical rastercoverage/featurecoverage based on the operation, applied to all the pixels"));
     operation.setInParameterCount({3});
-    operation.addInParameter(0,itRASTER | itNUMBER, TR("raster or number"));
-    operation.addInParameter(1,itRASTER | itNUMBER, TR("raster or number"));
+    operation.addInParameter(0,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+    operation.addInParameter(1,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
     operation.addInParameter(2,itSTRING , TR("operator"),TR("operator (add, substract,divide, multiply) applied to the other 2 input operators"));
     operation.setOutParameterCount({1});
     operation.addValidation(0,0,"domain=numericdomain");
