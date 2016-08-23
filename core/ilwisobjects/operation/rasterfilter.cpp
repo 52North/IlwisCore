@@ -64,10 +64,16 @@ double LinearGridFilter::applyTo(const GridBlock& block)
     for(qint32 y=-dy; y <= dy; ++y) {
         for(qint32 x=-dx ; x <= dx; ++x) {
             double val = block(x , y , 0);
-            v +=  val * _filterdef[y + dy][x + dx];
+            if ( val != rUNDEF && v != rUNDEF){
+                v +=  val * _filterdef[y + dy][x + dx];
+            }else {
+                v = rUNDEF;
+            }
+
         }
     }
-    v *= _gain;
+    if ( v != rUNDEF)
+        v *= _gain;
 
     return v;
 }
