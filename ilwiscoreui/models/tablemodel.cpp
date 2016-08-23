@@ -199,6 +199,14 @@ void TableModel::update()
     emit layoutChanged();
 }
 
+bool TableModel::isNumericalColumn(int index) const
+{
+    if ( index < _columns.size())    {
+        return _columns[index]->isNumerical();
+    }
+    return false;
+}
+
 void TableModel::updateColumns()
 {
     setColumns();
