@@ -185,8 +185,8 @@ INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
                 $$ILWISCORE \
                 $$BOOST
 win32{
-    DESTDIR = $$PWD/../libraries/$$CONF/extensions/ui/LayersView
-    DLLDESTDIR = $$PWD/../output/$$CONF/bin/extensions/ui/LayersView
+    DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/ui/LayersView
+    DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/ui/LayersView
 }
 
 linux{
