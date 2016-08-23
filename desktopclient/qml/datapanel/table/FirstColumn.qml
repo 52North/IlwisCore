@@ -10,7 +10,7 @@ import "../../Global.js" as Global
 Rectangle {
     width : defaultWidth(styleData.column)
     height : 20
-    color : styleData.selected ? Global.selectedColor :  (((styleData.row % 10) > 4)? "#edf2f7": "#dbe4f0" )
+    color : styleData.selected ? Global.selectedColor :  (((styleData.row % 10) > 4)? "#d7d4a7": "#dfddb9" )
     Text {
         text: styleData.value
         anchors.verticalCenter: parent.verticalCenter
