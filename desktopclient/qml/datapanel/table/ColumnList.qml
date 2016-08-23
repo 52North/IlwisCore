@@ -3,6 +3,7 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import "../../Global.js" as Global
+import "../../controls" as Controls
 import "../.." as Base
 
 Item {
@@ -26,8 +27,14 @@ Item {
         id : title
         text : qsTr("Columns")
         width : parent.width
+        font.bold: true
         x : 3
         font.weight: Font.DemiBold
+
+        Controls.ToolTip {
+            target : title
+            text : qsTr("All columns available in the table")
+        }
     }
 
     ListView {
