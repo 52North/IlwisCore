@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import QtQuick 2.0
 import "../../Global.js" as Global
+import "../../controls" as Controls
 import "../.." as Base
 
 Item {
@@ -34,7 +35,12 @@ Item {
         text : qsTr("Operations")
         width : parent.width
         x : 3
-        font.weight: Font.DemiBold
+        font.bold : true
+
+        Controls.ToolTip {
+            target : title
+            text : qsTr("All operations that are applicable to the selected column")
+        }
     }
     ListView {
         id : operationlist

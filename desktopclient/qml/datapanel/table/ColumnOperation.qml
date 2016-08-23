@@ -3,6 +3,7 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import "../../Global.js" as Global
+import "../../controls" as Controls
 import "../.." as Base
 
 Item {
@@ -34,9 +35,16 @@ Item {
         height : 18
         color : Global.alternatecolor3
         Text{
+            id : lbl
             text : qsTr("Operation")
-            font.weight: Font.DemiBold
+            font.bold : true
             anchors.verticalCenter: parent.verticalCenter
+
+
+        }
+        Controls.ToolTip {
+            target : operationLabel
+            text : qsTr("Operation that changes the content/organization of a column or adds a new column")
         }
     }
 
