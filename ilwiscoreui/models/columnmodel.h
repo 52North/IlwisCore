@@ -33,6 +33,7 @@ class ILWISCOREUISHARED_EXPORT ColumnModel : public AttributeModel
     Q_PROPERTY(QString variance READ variance CONSTANT)
     Q_PROPERTY(QString skew READ skew CONSTANT)
     Q_PROPERTY(QString kurtosis READ kurtosis CONSTANT)
+    Q_PROPERTY(bool isNumerical READ isNumerical CONSTANT)
     Q_PROPERTY(QQmlListProperty<Ilwis::Desktop::TableOperation> operations READ operations NOTIFY operationsChanged)
 public:
     explicit ColumnModel();
@@ -44,6 +45,7 @@ public:
     bool isSelected() const;
     void selected(bool yesno);
     bool isSortColumn() const;
+    bool isNumerical() const;
     void sortColumn(bool yesno);
     quint32 defaultWidth() const;
     quint32 columnIndex() const;
@@ -73,6 +75,7 @@ private:
     quint32 _defaultWidth = 40;
     bool _selected = false;
     bool _sortColumn = false;
+    bool _numerical = false;
     quint32 _columnIndex;
     Ilwis::NumericStatistics _stats;
     QList<Ilwis::Desktop::TableOperation *> _operations;

@@ -20,6 +20,7 @@ ColumnModel::ColumnModel(TableModel *tblModel, quint32 index) : AttributeModel(t
 {
     _name = tblModel->table()->columndefinition(index).name();
     _role = _name;
+    _numerical = hasType(tblModel->table()->columndefinition(index).datadef().domain()->ilwisType(), itNUMERICDOMAIN);
 
     IlwisTypes tp = tblModel->table()->columndefinition(index).datadef().domain()->valueType();
     if ( hasType(tp, itSTRING))
@@ -65,7 +66,9 @@ ColumnModel::ColumnModel(TableModel *tblModel, const QString &name, const QStrin
             _defaultWidth = 55;
         else
             _defaultWidth  = 65;
-    }
+    }else
+        _numerical = hasType(tblModel->table()->columndefinition(name).datadef().domain()->ilwisType(), itNUMERIC);
+
 }
 
 QString ColumnModel::attributename() const
@@ -91,6 +94,11 @@ void ColumnModel::selected(bool yesno)
 bool ColumnModel::isSortColumn() const
 {
     return _sortColumn;
+}
+
+bool ColumnModel::isNumerical() const
+{
+    return _numerical;
 }
 
 void ColumnModel::sortColumn(bool yesno)
