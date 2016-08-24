@@ -28,6 +28,10 @@ Item {
         return maparea
     }
 
+    function transfer(mappane){
+        maparea.transfer(mappane)
+    }
+
     function addDataSource(filter, sourceName, sourceType){
         var filter2 = filter
         if ( filter.indexOf("=") !== -1){
