@@ -270,7 +270,7 @@ QVariantMap LayerManager::coord2Screen(const QVariantMap &var) const
     return bb.toMap();
 }
 
-QVariantMap LayerManager::screen2Coord(const QVariantMap &var) const
+QVariantMap LayerManager::screen2Coord(const QVariantMap &var)
 {
     BoundingBox bb(var);
 
