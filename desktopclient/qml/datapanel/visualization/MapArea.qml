@@ -23,7 +23,7 @@ DropArea {
 
     function transfer(datapanel){
         var layers = datapanel.manager.layers;
-        for(var i =1; i < layers.length; i++){  // start at 1 because the first layer is always the global layer, is there by default so we skip it
+        for(var i = layers.length-1; i > 0; --i){  // start at 1 because the first layer is always the global layer, is there by default so we skip it
             var expr = "adddrawer(" + renderer.viewerId + ","+ layers[i].name + ",\"itemid=" + layers[i].id + "\"," + layers[i].typeName + ")"
             renderer.addCommand(expr)
         }
