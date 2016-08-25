@@ -35,15 +35,15 @@ uint Ilwis::qHash(const ConnectorFormatSelector& filter ){
 }
 
 bool Ilwis::operator==(const ConnectorFormatSelector& filter1, const ConnectorFormatSelector& filter2 ){
-    bool ok = filter1._format == filter2._format;
+    bool ok = filter1._format.toLower() == filter2._format.toLower();
     if (  filter1._provider == sUNDEF || filter2._provider == sUNDEF)
         return ok;
-     return  ok && filter1._provider == filter2._provider;
+     return  ok && filter1._provider.toLower() == filter2._provider.toLower();
 }
 
 
 bool Ilwis::operator<(const ConnectorFormatSelector& filter1, const ConnectorFormatSelector& filter2 ){
-    return filter1._provider < filter2._provider;
+    return filter1._provider.toLower() < filter2._provider.toLower();
 }
 
 ConnectorFactory::ConnectorFactory() : AbstractFactory("ConnectorFactory","ilwis","Creates all object connectors" )

@@ -15,13 +15,13 @@ typedef std::function<Ilwis::CatalogExplorer*(const Ilwis::Resource &resource,co
 //typedef ConnectorInterface* (*ConnectorCreate)(const IlwisResource &resource);
 //-----------------------------------------------------------------------------------------
 struct ConnectorFilter{
-    ConnectorFilter(quint64 types, const QString& provider) : _objectTypes(types), _provider(provider) {}
+    ConnectorFilter(quint64 types, const QString& provider) : _objectTypes(types), _provider(provider.toLower()) {}
     quint64 _objectTypes;
     QString _provider;
 };
 
 struct ConnectorFormatSelector{
-    ConnectorFormatSelector(const QString& format, const QString& provider=sUNDEF) : _format(format), _provider(provider) {}
+    ConnectorFormatSelector(const QString& format, const QString& provider=sUNDEF) : _format(format.toLower()), _provider(provider.toLower()) {}
 
     QString _format;
     QString _provider;
