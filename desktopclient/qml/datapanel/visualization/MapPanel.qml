@@ -17,6 +17,7 @@ Item {
     height : parent.height
     property TabModel tabmodel
     property string panelType : "mappanel"
+    property var createParameters : []
     property alias viewmanager : viewmanager
 
     objectName: uicontext.uniqueName()
@@ -37,6 +38,7 @@ Item {
         if ( sourceUrl !== ""){
             var id = layers.addDataSource(sourceUrl, sourceName, sourceType)
             viewmanager.addDataSource(sourceUrl, sourceName, sourceType)
+            createParameters = [sourceUrl, sourceName, sourceType]
             return id
         }
         return -1
@@ -90,7 +92,7 @@ Item {
                 console.log("zoomOutClicked onTriggered 1")
                 var envelope = layers.drawer().attributeOfDrawer("rootdrawer","zoomenvelope");
                 console.log("zoomOutClicked onTriggered 2")
-                Global.calcZoomOutEnvelope(envelope, layers, viewmanager)
+                Global.calcZoomOutEnvelope(envelope, layers, viewmanager,0.707)
                 console.log("zoomOutClicked onTriggered 3")
             }
         }

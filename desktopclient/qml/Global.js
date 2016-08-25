@@ -26,7 +26,7 @@ function isNumber(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-function calcZoomOutEnvelope(envelope, layers, viewmanager)
+function calcZoomOutEnvelope(envelope, layers, viewmanager, factor)
 {
     if ( envelope !== ""){
         var x1,x2,y1,y2
@@ -43,12 +43,14 @@ function calcZoomOutEnvelope(envelope, layers, viewmanager)
             y2 = parseFloat(parts[3])
         }
 
-        var dx = 0.707 * Math.abs(x1 - x2)
-        var dy = 0.707 * Math.abs(y1 - y2)
+        var dx = factor * Math.abs(x1 - x2)
+        var dy = factor * Math.abs(y1 - y2)
+
         var nx1 = (x2 + x1) / 2.0 - dx
         var nx2 = (x2 + x1) / 2.0 + dx
         var ny1 = (y2 + y1) / 2.0 - dy
         var ny2 = (y2 + y1) / 2.0 + dy
+        console.debug(x1, x2, nx1, nx2, dx, factor)
         var newenvelope = nx1 + " " + ny1 + " " + nx2 + " " + ny2
         layers.newExtent(newenvelope)
         if (typeof viewmanager.newZoomExtent == 'function')

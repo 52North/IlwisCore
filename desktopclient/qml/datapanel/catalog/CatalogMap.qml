@@ -42,7 +42,7 @@ Rectangle {
         onTriggered : {
             if ( renderer.manager){
                 var envelope = renderer.attributeOfDrawer("rootdrawer","zoomenvelope");
-                Global.calcZoomOutEnvelope(envelope, renderer, renderer.manager)
+                Global.calcZoomOutEnvelope(envelope, renderer, renderer.manager,0.707)
             }
         }
     }

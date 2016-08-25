@@ -13,8 +13,10 @@ Item {
     width : parent.width
     height : parent.height
     property TabModel tabmodel
+    property string panelType : "workflow"
     property Modeller model
     property int ontTopZValue: 1000000
+    property var createParameters : []
     property double factor : 1.1
 
     function addDataSource(filter, sourceName, sourceType){
@@ -28,6 +30,7 @@ Item {
                 if (resource) {
                     canvas.drawFromWorkflow()
                 }
+                createParameters = [filter, sourceName, sourceType]
                 manager.showWorkflowMetadata(canvas.workflow)
             }
         }

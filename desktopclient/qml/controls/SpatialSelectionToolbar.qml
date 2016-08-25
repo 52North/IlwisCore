@@ -33,7 +33,7 @@ Rectangle {
         onTriggered : {
             if ( worldmapcontainer.manager){
                 var envelope = worldmap.attributeOfDrawer("rootdrawer","zoomenvelope");
-                Global.calcZoomOutEnvelope(envelope, worldmap, worldmapcontainer.manager)
+                Global.calcZoomOutEnvelope(envelope, worldmap, worldmapcontainer.manager,0.707)
             }
         }
     }

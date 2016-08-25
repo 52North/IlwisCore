@@ -14,6 +14,7 @@ Item {
     property CatalogModel currentCatalog
     property TabModel tabmodel
     property string panelType : "catalog"
+    property var createParameters : []
     id : catalogViews
     width : parent.width
     height : parent.height
@@ -45,7 +46,6 @@ Item {
                 // try to find a suitable data pane for it
                 newPanel =datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
                 if ( newPanel == null){ // we dont have a seperate pane for it so it is an object with only metadata to show
-                    console.debug("hier")
                     mastercatalog.setSelectedObjects(objectid, newPanel)
                     bigthing.getWorkbenchPane("objectproperties","visible");
                 }
@@ -64,6 +64,7 @@ Item {
             currentCatalog.makeParent(catalogViews)
             mastercatalog.currentCatalog = currentCatalog
         }
+        createParameters = [filter, sourceName, sourceType]
         return currentCatalog.id
     }
 

@@ -130,7 +130,7 @@ Rectangle {
                         return newPanel
                     }
                 }else {
-                    var p = datapanesplit.newPanel(filter,outputtype,url,"other")
+                    datapanesplit.newPanel(filter,outputtype,url,"other")
                 }
             }
 

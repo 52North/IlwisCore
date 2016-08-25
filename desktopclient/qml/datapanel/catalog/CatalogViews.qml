@@ -22,11 +22,14 @@ DropArea {
         if ( idstring === "?" || idstring === "")
             idstring = drag.source.ilwisobjectid
 
+        if ( idstring === "")
+            return
 
         var ids = idstring.split("|")
         for(var i=0; i < ids.length; ++i ){
 
             var obj = mastercatalog.id2object(ids[i], catalogViewsArea)
+            console.debug(obj.name)
             if (obj) {
                 if ( currentCatalog.url == "ilwis://internalcatalog")
                     formatstrings = "stream:" + obj.typeName;

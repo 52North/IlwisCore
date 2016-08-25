@@ -71,27 +71,52 @@ TabViewStyle {
                 onDoubleClicked: {
                     fullSize()
                 }
-//                onPressed: {
-//                    image = Qt.createQmlObject('import QtQuick 2.0; Image{
-//                        id : image
-//                        width : 140; height : 35
-//                        source : \"images/tabborderdrag.png\"
-//                        fillMode: Image.PreserveAspectFit
-//                        property var url : control.getTab(0).item.createUrl
+                onReleased: {
+                   if ( image){
+                        image.Drag.drop()
+                        image.parent = mouseArea2
+                        image.anchors.fill = mouseArea2
+                        image.destroy();
+                    }else
+                       showTimer.stop()
+                }
 
-//                        Drag.keys: "datatab"
-//                        Drag.active: true
-//                        Drag.hotSpot.x: 10
-//                        Drag.hotSpot.y: 10
-//                        opacity : 0.5
+                function createDragObject() {
+                    image = Qt.createQmlObject('import QtQuick 2.0; Image{
+                        id : image
+                        width : 140; height : 35
+                        source : \"images/tabborderdrag.png\"
+                        fillMode: Image.PreserveAspectFit
+                        property var sourcePanel : control.getTab(currentIndex).item
 
-//                        states: State {
-//                            when: mouseArea.drag.active
-//                            ParentChange { target: image; parent: root }
-//                            AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
-//                        }
-//                    }', mouseArea2, "dynamicImage");
-//                }
+                        Drag.keys: "datatab"
+                        Drag.active: mouseArea2.drag.active
+                        Drag.hotSpot.x: 10
+                        Drag.hotSpot.y: 10
+                        Drag.source : image
+                        opacity : 0.5
+
+                        states: State {
+                            when: mouseArea2.drag.active
+                            ParentChange { target: image; parent: root }
+                            AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+                        }
+                    }', mouseArea2, "dynamicImage");
+                }
+
+                onPressed: {
+                    showTimer.start()
+                }
+            }
+            Timer{
+                id : showTimer
+                interval: 250
+                onTriggered: {
+                    mouseArea2.createDragObject()
+
+
+                }
+
             }
         }
 

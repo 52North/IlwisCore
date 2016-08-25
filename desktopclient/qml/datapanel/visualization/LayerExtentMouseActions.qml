@@ -139,6 +139,13 @@ MouseArea {
         floatrect.x = 0
         floatrect.y = 0
     }
+    onWheel: {
+        if ( manager){
+            console.debug(wheel.angleDelta.y)
+            var envelope = renderer.attributeOfDrawer("rootdrawer","zoomenvelope");
+            Global.calcZoomOutEnvelope(envelope, layers, viewmanager, wheel.angleDelta.y < 0 ? 0.9 : -0.2 )
+        }
+    }
 }
 
 

@@ -109,6 +109,24 @@ Item {
             source : side == 1 && width > 0 ? "../images/arrowleftlight.png" : "../images/arrowrightlight.png"
         }
     }
+    DropArea {
+        keys: [ "datatab" ]
+        anchors.left: side == 1 ? szbut.right : parent.left
+        anchors.leftMargin: 5
+        height : 20
+        width: parent.width - szbut.width - 5
+        onDropped:{
+            console.debug(drop.source.sourcePanel, side)
+            var createParameters = drop.source.sourcePanel.createParameters
+            datapanesplit.newPanel(createParameters[0],createParameters[2],createParameters[1],side==1 ? "left" : "right")
+            if ( drop.source.sourcePanel.panelType === "mappanel") {
+                var tab = datatab.getTab(datatab.count - 1)
+                var datapanel = tab.item
+                datapanel.transfer(drop.source.sourcePanel)
+            }
+        }
+        z: 10
+    }
 
     TabView {
         id : datatab

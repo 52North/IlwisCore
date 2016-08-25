@@ -14,6 +14,7 @@ Item {
     height : parent.height
     property bool canSeparate : true
     property string panelType : "tablepanel"
+    property var createParameters : []
     property TabModel tabmodel
 
     property TableModel table
@@ -51,6 +52,7 @@ Item {
                     tableView.addColumn(column.createObject(tableView,{"role" : roleName, "title" : roleName, "width" : dw}))
                 }
             }
+            createParameters = [sourceUrl, filter, sourceType]
             return table.id
         }
     }
