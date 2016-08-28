@@ -191,7 +191,7 @@ Rectangle {
         rowDelegate: Rectangle {
             id : rowdelegate
             height : 20
-            color : styleData.selected ? Global.selectedColor : (styleData.alternate? "#eee" : "#fff")
+            color : styleData.selected ? Global.selectedColor : (styleData.alternate? "#eee" : catalogSplit.backgroundCatalogColor)
         }
 
         onClicked: {

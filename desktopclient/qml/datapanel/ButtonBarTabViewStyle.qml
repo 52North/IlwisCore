@@ -6,8 +6,8 @@ import "../Global.js" as Global
 import "../controls" as Controls
 
 TabViewStyle {
-    property string selectColor : "#B0C4DE"
-    property string nonselectColor : "white"
+    property string selectColor : "white"
+    property string nonselectColor : "#e6e6e6"
     property int tabHeight : 23 * Global.uiScale
 
 
@@ -15,7 +15,7 @@ TabViewStyle {
     tab: Rectangle {
         id : labelArea
         color : styleData.selected ? selectColor :  nonselectColor
-        border.color:  Global.edgecolor
+        border.color:  selectColor
 
         implicitWidth: control.width / control.count
         implicitHeight: tabHeight
@@ -31,6 +31,8 @@ TabViewStyle {
             anchors.centerIn: parent
             text: styleData.title
             font.pointSize: 9 * Global.uiScale
+            font.weight: Font.DemiBold
+            color: styleData.selected ? "#003366" : "#a3a3c2"
             anchors.verticalCenter: parent.verticalCenter
         }
         MouseArea  {

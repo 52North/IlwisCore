@@ -12,6 +12,7 @@ import LayersView 1.0
 Rectangle {
     width : parent.width
     id : catalogMapView
+    color : tabmodel && tabmodel.side == "right" ? "#F5FCFF" : "#FFFFF7"
 
     function closeGrid() {
       grid.setSource("")
@@ -128,6 +129,7 @@ Rectangle {
             renderer.addCommand(cmd)
             renderer.addCommand("setlinecolor(" + renderer.viewerId + ", 0,darkblue)");
             renderer.associate(objectName,"drawEnded")
+            renderer.addCommand("setbackgroundcolor(" + renderer.viewerId + "," + catalogMapView.color + ")")
             renderer.update()
 
         }

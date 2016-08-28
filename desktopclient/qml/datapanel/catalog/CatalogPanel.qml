@@ -144,12 +144,20 @@ Item {
         anchors.top : infobar.bottom
         id : catalogSplit
 
+        property color backgroundCatalogColor : (tabmodel && tabmodel.side == "right" ? "#F5FAFF" : "#FFFFF7")
+
         CatalogViews {
             id : catalogView
             height : parent.height - Global.actionBarMinHeight
         }
         CatalogActions{
             id : actionBar
+        }
+
+        handleDelegate: Rectangle{
+            width : parent.width
+            height : 1
+            color : "lightgrey"
         }
 
     }

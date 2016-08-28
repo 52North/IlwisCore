@@ -7,9 +7,10 @@ import QtGraphicalEffects 1.0
 import "../../Global.js" as Global
 import "../../controls" as Controls
 
-Item {
+Rectangle {
     anchors.fill: parent
     anchors.topMargin: 3
+    color : catalogSplit.backgroundCatalogColor
     Rectangle {
         id : choices
         anchors.bottom : parent.bottom

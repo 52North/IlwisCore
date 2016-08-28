@@ -56,7 +56,10 @@ DropArea {
             "Spatial location of coverages in the active catalog"];
 
         
-    style: Base.TabStyle1{ minimumWidth: 60* Global.uiScale}
+    style: Base.TabStyle1{
+        minimumWidth: 60* Global.uiScale
+        backgroundColor: catalogSplit.backgroundCatalogColor
+    }
 
         Tab{
             title : qsTr("Grid")
@@ -71,7 +74,7 @@ DropArea {
             CatalogTable{
                 Connections{
                     target : iconListView
-                    onShowObject : { showObject(objectid,"")}
+                    onShowObject : { showObject(objectid)}
                 }
                 id : iconListView
                 height : parent.height

@@ -12,9 +12,10 @@ import "../../Global.js" as Global
 
 FocusScope {
     anchors.fill: parent
+    property color backgroundColor: "white"
     Rectangle {
         anchors.fill :parent
-        color : tabmodel && tabmodel.side == "right" ? "#F5FCFF" : "#FFFFF7"
+        color : catalogSplit.backgroundCatalogColor
 
         ScrollView {
             id : catalogGrid

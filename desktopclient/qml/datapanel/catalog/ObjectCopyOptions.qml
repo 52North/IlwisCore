@@ -5,8 +5,9 @@ import QtQuick.Controls.Styles 1.1
 import "../../controls" as Controls
 import "../../Global.js" as Global
 
-Item {
+Rectangle {
     anchors.fill: parent
+    color : catalogSplit.backgroundCatalogColor
     property alias useDropFormat : convert.checked
 
     function getFormatString(requestedType) {

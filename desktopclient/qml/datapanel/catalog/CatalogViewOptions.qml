@@ -8,8 +8,10 @@ import UIContextModel 1.0
 import "../../Global.js" as Global
 import "../../controls" as Controls
 
-Item {
+Rectangle {
     anchors.fill: parent
+    color : catalogSplit.backgroundCatalogColor
+
     Component {
         id : layerDrawer
         LayersView{
