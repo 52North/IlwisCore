@@ -48,6 +48,9 @@ Column {
             var name = preferences.preferedDataFormat("rastercoverage")
             if ( name !== "?")
                 rasters.select(name)
+            else
+                rasters.select("Ilwis 4 rastercoverage")
+
 
         }
         Connections {
@@ -76,6 +79,8 @@ Column {
             var name = preferences.preferedDataFormat("featurecoverage")
             if ( name !== "?")
                 features.select(name)
+            else
+                features.select("Ilwis 4 featurecoverage")
 
         }
         Connections {
@@ -104,6 +109,8 @@ Column {
             var name = preferences.preferedDataFormat("table")
             if ( name !== "?")
                 table.select(name)
+            else
+                table.select("Ilwis 4 table")
 
         }
         Connections {
@@ -131,6 +138,8 @@ Column {
             var name = preferences.preferedDataFormat("coordinatesystem")
             if ( name !== "?")
                 csy.select(name)
+            else
+                csy.select("Ilwis 4 coordinatesystem")
 
         }
         Connections {
@@ -159,6 +168,37 @@ Column {
             var name = preferences.preferedDataFormat("domain")
             if ( name !== "?")
                 dom.select(name)
+            else
+                dom.select("Ilwis 4 domain")
+
+        }
+        Connections {
+            target: rasters
+            onIndexChanged :{
+                preferences.setPreferedDataFormat("domain",dom.comboText)
+            }
+        }
+    }
+    Controls.FormatsComboBox{
+        id : catalog
+        width : parent.width
+        height : 20
+        ilwisType: uicontext.typeName2typeId("catalog");
+        labelText: qsTr("Catalog")
+        labelWidth: 120
+        enabled : false // future
+
+        Controls.ToolTip{
+            target: dom
+            text : qsTr("Catalogs dropped in this catalog will be converted to the indicated format")
+        }
+
+        Component.onCompleted: {
+            var name = preferences.preferedDataFormat("catalog")
+            if ( name !== "?")
+                catalog.select(name)
+            else
+                catalog.select("Ilwis 4 catalog")
 
         }
         Connections {
