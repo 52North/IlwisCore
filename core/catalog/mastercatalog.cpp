@@ -373,7 +373,7 @@ bool MasterCatalog::changeResource(quint64 objectid, const QString &attribute, c
     Locker<std::recursive_mutex> lock(_guard);
     auto setExtended = [](quint64 objectid, const QString &attribute, const QVariant &var)->QString{
         QString statement;
-        Resource res = mastercatalog()->id2Resource(var.toLongLong());
+        Resource res = mastercatalog()->id2Resource(objectid);
         if ( res.isValid() && res.hasProperty(attribute))
             statement = QString("update catalogitemproperties set propertyname='%1', propertyvalue='%2' where itemid=%3").arg(attribute).arg(var.toString()).arg(objectid);
         else
