@@ -538,9 +538,11 @@ QString OperationExpression::toPythonExpression() const
     QString expr("ilwis.do(");
     QStringList parts = parm(0).value().split("=");
     if ( parts.size() == 2){
-        expr = parts[0] + "=" + expr;
-        int index1 = parts[0].indexOf("{");
-        int index2 = parts[0].lastIndexOf("}");
+        QString output = parts[0];
+        output.remove(".ilwis");
+        int index1 = output.indexOf("{");
+        int index2 = output.lastIndexOf("}");
+        expr = output + "=" + expr;
         expr.remove(index1, index2 - index1 + 1);
 
     }
