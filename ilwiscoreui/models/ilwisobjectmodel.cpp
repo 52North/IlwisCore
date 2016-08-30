@@ -838,9 +838,18 @@ QString IlwisObjectModel::copy(const QString &newUrl, const QString &format, con
 {
     try {
         if ( _ilwisobject.isValid()){
+
             quint64 id = mastercatalog()->name2id(newUrl, _ilwisobject->ilwisType());
             if ( id == i64UNDEF){
-                _ilwisobject->connectTo(newUrl,format.toLower(), provider.toLower(), IlwisObject::cmOUTPUT);
+                QString bareUrl = newUrl;
+                int index = newUrl.lastIndexOf(".");
+                if ( index != -1){ // remove extension
+                    QString p = newUrl.mid(index + 1);
+                    if (p.size() < 4 || p == "ilwis"){
+                        bareUrl = newUrl.left(index);
+                    }
+                }
+                _ilwisobject->connectTo(bareUrl,format.toLower(), provider.toLower(), IlwisObject::cmOUTPUT);
                 _ilwisobject->store();
                 // original object must forget about its copy
                 _ilwisobject->resetOutputConnector();
