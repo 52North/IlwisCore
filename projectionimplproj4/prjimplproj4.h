@@ -29,6 +29,7 @@ private:
     projPJ  _pjBase;
     bool _outputIsLatLon;
     void fillParameters(const QString &code);
+    void removeParameter(const QString &parm);
 };
 }
 

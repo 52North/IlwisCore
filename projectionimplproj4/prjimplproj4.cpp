@@ -32,32 +32,45 @@ void ProjectionImplementationProj4::setParameter(Projection::ProjectionParamValu
     QString value = v.toString();
     switch(type) {
     case Projection::pvFALSEEASTING:
+        removeParameter("+x_0");
         _targetDef += " +x_0=" + value;break;
     case Projection::pvFALSENORTHING:
+         removeParameter("+y_0");
         _targetDef += " +y_0=" + value; break;
     case Projection::pvCENTRALMERIDIAN:
+         removeParameter("+lon_0");
         _targetDef += " +lon_0=" + value; break;
     case Projection::pvCENTRALPARALLEL:
+        removeParameter("+lat_0");
         _targetDef += " +lat_0=" + value; break;
     case Projection::pvSTANDARDPARALLEL1:
+        removeParameter("+lat_1");
         _targetDef += " +lat_1=" + value; break;
     case Projection::pvSTANDARDPARALLEL2:
+        removeParameter("+lat_2");
         _targetDef += " +lat_2=" + value; break;
     case Projection::pvLATITUDEOFTRUESCALE:
+        removeParameter("+lat_ts");
         _targetDef += " +lat_ts=" + value; break;
     case Projection::pvZONE:
+        removeParameter("+zone");
         _targetDef += " +zone=" + value; break;
     case Projection::pvSCALE:
+        removeParameter("+k_0");
         _targetDef += " +k_0=" + value; break;
     case Projection::pvELLCODE:
+        removeParameter("+a");
+        removeParameter("+b");
         if ( value.indexOf("+a") != -1)
             _targetDef += " " + value;
         else
             _targetDef += " ellps=" + value;
         break;
     case Projection::pvNORTH:
+        removeParameter("+south");
         _targetDef += value == "No" ? " +south" : ""; break;
     case Projection::pvHEIGHT:
+        removeParameter("+h");
         _targetDef += " +h=" + value; break;
     default:
         _targetDef += "";
@@ -112,6 +125,23 @@ ProjectionImplementationProj4::~ProjectionImplementationProj4()
 {
     pj_free(_pjLatlon);
     pj_free(_pjBase);
+}
+
+void ProjectionImplementationProj4::removeParameter(const QString& parm){
+    int index;
+    while((index = _targetDef.indexOf(parm)) != -1){
+        QString rest = _targetDef.mid(index+1);
+        int index2 = rest.indexOf('+');
+        if ( index2 != -1){
+            rest = rest.left(index2);
+            rest = "+" + rest;
+            _targetDef.remove(rest);
+        }else {
+            rest = "+" + rest;
+            _targetDef.remove(rest);
+        }
+    }
+
 }
 
 bool ProjectionImplementationProj4::prepare(const QString &parms)
