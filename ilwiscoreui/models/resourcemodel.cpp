@@ -547,8 +547,8 @@ void ResourceModel::keywords(const QString &pkeys)
         QStringList parts1 = keywrds.split(",");
         QStringList parts2 = keys.split(",");
            for(QString key : parts2){
-            if ( !parts1.contains(key)){
-                keywrds += key    ;
+            if ( !parts1.contains(key.trimmed())){
+                keywrds += ","+ key.trimmed()    ;
             }
         }
         _item.addProperty("keyword", keywrds)   ;
