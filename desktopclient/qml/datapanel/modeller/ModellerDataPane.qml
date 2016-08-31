@@ -141,8 +141,6 @@ Item {
     signal exit;
 
     property bool canSeparate : true
-    property string panelType : "workflow"
-
 
     ModellerTools{
         id : modellertools
