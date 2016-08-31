@@ -28,6 +28,7 @@
 #include "selectnode.h"
 #include "selectornode.h"
 #include "outparametersnode.h"
+#include "dataformat.h"
 #include "assignmentnode.h"
 
 using namespace Ilwis;
@@ -153,6 +154,20 @@ void createCatalog(const IRasterCoverage& raster){
     mastercatalog()->addItems(bands);
 }
 
+QString AssignmentNode::addPossibleExtension(QSharedPointer<ASTNode> &specifier, QString result, IlwisTypes tp)
+{
+    if (!specifier.isNull()){
+        QString format, provider;
+        getFormat(specifier, format, provider);
+        QVariantList extensions = Ilwis::DataFormat::getFormatProperties(DataFormat::fpEXTENSION,tp, provider, format);
+        if ( extensions.size() > 0 && result.indexOf("." + extensions[0].toString()) == -1){
+            result += "." + extensions[0].toString();
+
+        }
+    }
+    return result;
+}
+
 bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx)
 {
     if ( _expression.isNull())
@@ -171,7 +186,10 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                 Symbol sym = symbols.getSymbol(val.id(i),SymbolTable::gaREMOVEIFANON);
                 IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
                 QString result = _outParms->id(i);
-
+                QSharedPointer<ASTNode> specifier = _outParms->specifier(_outParms->id(i));
+                if (  hasType(tp, itILWISOBJECT)){
+                    result = addPossibleExtension(specifier, result, tp);
+                }
                 if (  hasType(tp, itILWISOBJECT | itCOLUMN)) {
                     if ( hasType(tp, itRASTER)) {
                         ok &= copyObject<RasterCoverage>(sym, result,symbols);
@@ -208,7 +226,6 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                     if(!ok) {
                         throw ErrorObject(QString(TR(ERR_OPERATION_FAILID1).arg("assignment")));
                     }
-                    QSharedPointer<ASTNode> specifier = _outParms->specifier(_outParms->id(i));
                     if ( !specifier.isNull()) {
                         if ( specifier->noOfChilderen()!= 1)
                             return ERROR2(ERR_NO_OBJECT_TYPE_FOR_2, "Output object", "expression");

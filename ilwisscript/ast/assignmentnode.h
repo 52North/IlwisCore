@@ -20,20 +20,20 @@ public:
     void addOutputs(OutParametersNode *p);
     void setOutId(IDNode *idnode);
 private:
-    template<typename T1> bool copyObject(Symbol& sym, QString& name,SymbolTable &symbols, bool useMerge=false) {
+    template<typename T1> bool copyObject(Symbol& sym, QString& ident,SymbolTable &symbols, bool useMerge=false) {
         IlwisData<T1> source =  sym._var.value<IlwisData<T1>>();
         if (!source.isValid())
             return false;
-        if (name == sUNDEF) {
+        if (ident == sUNDEF) {
             IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
-            name = TypeHelper::type2name(tp) + "_" + QString::number(source->id());
+            ident = TypeHelper::type2name(tp) + "_" + QString::number(source->id());
         }
         bool wasAnonymous = source->isAnonymous();
         bool done = false;
         IlwisData<T1> target;
         //target.prepare(name, source->ilwisType());
         if ( useMerge) {
-            if ( target.prepare(name, source->ilwisType())) {
+            if ( target.prepare(ident, source->ilwisType())) {
                 done = target->merge(source.ptr());
             }
         }
@@ -41,7 +41,12 @@ private:
             T1 *obj = static_cast<T1 *>(source->clone());
             if(!obj)
                 return false;
-            obj->name(name);
+            if ( ident.indexOf("://")!= -1) {// its a link, not a name
+                obj->resourceRef().setUrl(QUrl(ident));
+                obj->resourceRef().setUrl(QUrl(ident), true);
+
+            } else
+                obj->name(ident);
             target.set(obj);
         }
         if ( !target.isValid())
@@ -50,7 +55,7 @@ private:
         QVariant var;
         var.setValue<IlwisData<T1>>(target);
         sym = Symbol(1000,target->ilwisType(), var);
-        symbols.setSymbol(name, sym);
+        symbols.setSymbol(ident, sym);
         if ( wasAnonymous)
             mastercatalog()->addItems({target->resource(IlwisObject::cmINPUT | IlwisObject::cmEXTENDED)});
 
@@ -63,6 +68,7 @@ private:
     QSharedPointer<ASTNode> _expression;
     QSharedPointer<OutParametersNode> _outParms;
 
+    QString addPossibleExtension(QSharedPointer<Ilwis::ASTNode> &specifier, QString result, IlwisTypes tp);
 };
 }
 
