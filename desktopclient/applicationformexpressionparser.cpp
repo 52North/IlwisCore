@@ -414,7 +414,6 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
                     if (choice[0] == '!') {
                         choice = choice.mid(1);
                         //if (!validConstant && buttons.isEmpty()) state = "true";
-                        qDebug() << validConstant << buttons;
                         state = "true";
                     }
                     if (validConstant && constantValue == choice) {
