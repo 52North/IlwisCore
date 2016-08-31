@@ -34,7 +34,12 @@ QString UserMessageHandler::messageIcon() const{
 void UserMessageHandler::resetColor(int index)
 {
     if ( index < _messages.size()){
-        _messages[index]->resetColor();
+        if ( index < 0){
+            for(int i = 0; i < _messages.size(); ++i){
+                _messages[i]->resetColor();
+            }
+        }else
+            _messages[index]->resetColor();
         emit messageChanged();
         emit messageIconChanged();
     }

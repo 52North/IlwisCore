@@ -32,7 +32,7 @@ WorkBenchShifter {
             width: parent.width - 20
             anchors.horizontalCenter: parent.horizontalCenter
             onClicked: {
-                messagehandler.resetColor(0)
+                messagehandler.resetColor(-1)
             }
 
         }
