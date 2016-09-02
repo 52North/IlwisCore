@@ -385,7 +385,7 @@ QString ResourceModel::geoReferenceType() const
 
 
 void ResourceModel::realizeThumbPath(){
-    QFileInfo inf(itemRef().url().toLocalFile());
+    QFileInfo inf(itemRef().url(true).toLocalFile());
     QString path = inf.absolutePath();
     QString thumbDir =  path + "/.ilwis/thumbs";
     QDir dir(thumbDir) ;
