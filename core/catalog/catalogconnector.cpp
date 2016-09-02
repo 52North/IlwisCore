@@ -89,7 +89,7 @@ const std::unique_ptr<MasterCatalogCache> &CatalogConnector::cache()
 
 QFileInfo CatalogConnector::toLocalFile(const Resource &resource) const
 {
-    QFileInfo currentPath =  toLocalFile(resource.url());
+    QFileInfo currentPath =  toLocalFile(resource.url(true));
 
     if ( !currentPath.exists()){
         for(const auto& explorer: _dataProviders) {
