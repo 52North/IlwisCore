@@ -17,7 +17,7 @@ using namespace Ilwis;
 
 CatalogExplorer *FolderCatalogExplorer::create(const Resource &resource, bool load, const IOOptions &options) {
     if ( resource.ilwisType() == itCATALOG ){
-        QDir localDir = resource.url().toLocalFile();
+        QDir localDir = resource.url(true).toLocalFile();
         if ( localDir.path() != "." && localDir.exists()){
             return new FolderCatalogExplorer(resource, load, options);
         }
@@ -102,7 +102,7 @@ std::vector<Resource> FolderCatalogExplorer::loadItems(const IOOptions&)
 bool FolderCatalogExplorer::canUse(const Resource &resource) const
 {
     if ( resource.ilwisType() == itCATALOG ){
-        QDir localDir = resource.url().toLocalFile();
+        QDir localDir = resource.url(true).toLocalFile();
         if ( localDir.exists()){
             return true;
         }
