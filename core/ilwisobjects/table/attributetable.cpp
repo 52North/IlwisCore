@@ -78,11 +78,11 @@ const Record &AttributeTable::record(quint32 n) const
 ITable AttributeTable::toTable(const QString &nm) const
 {
     QString  url;
-    if ( nm.indexOf(ANONYMOUS_PREFIX)!= 0){
+    if ( nm.indexOf(ANONYMOUS_PREFIX) == 0){
         url = INTERNAL_CATALOG + "/" + Identity::newAnonymousName();
     }else
         url = INTERNAL_CATALOG + "/" + (nm != sUNDEF ? name() : nm);
-    ITable tbl;
+    IFlatTable tbl;
     tbl.prepare(url);
     for(int i=0; i < columnCount(); ++i){
         tbl->addColumn(columndefinition(i));
