@@ -53,7 +53,7 @@ struct NodeProperties {
         _x = x;
         _y = y;
         std::vector<Resource> items = mastercatalog()->select("catalogitemproperties.propertyname='syntax' and catalogitemproperties.propertyvalue='" + syntax + "'");
-        if ( items.size() == 1){
+        if ( items.size() >= 1){
             _operationid = items[0].id();
         }
     }
