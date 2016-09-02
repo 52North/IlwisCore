@@ -632,7 +632,7 @@ void Resource::setId(quint64 newid)
 }
 
 QString Resource::toLocalFile(bool relative) const {
-    return toLocalFile(_normalizedUrl, relative);
+    return toLocalFile(_rawUrl, relative);
 }
 
 QString Resource::toLocalFile(const QUrl& url, bool relative, const QString& ext) {
