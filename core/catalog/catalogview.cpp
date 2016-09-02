@@ -46,6 +46,9 @@ std::vector<Resource> CatalogView::items() const
     }
     auto iter = _filters.find("basefilter");
     QString filter = iter != _filters.end() ? (*iter).second._filter.toString() : "";
+    if ( filter == ""){ // fall back if for whatever reason the filter has become empty
+        filter = "container='" +context()->workingCatalog()->resource().url().toString() + "'";
+    }
     results =  mastercatalog()->select(filter);
 
     std::set<Resource> uniques(results.begin(), results.end());
