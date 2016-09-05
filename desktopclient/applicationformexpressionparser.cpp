@@ -294,6 +294,7 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
 
         for(int i = 0; i < parameters.size(); ++i){
             QString constantValue = constantValues.value(i, "");
+            constantValue.replace("\"","\\\"");
             bool validConstant = constantValues.value(i, "").size() != 0;
             QString operationRowStart;
             QString operationRowEnd;
@@ -406,9 +407,9 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
             }
             if ( parameters[i]._fieldType == ftRADIOBUTTON){
                 QString buttons;
-                if (showEmptyOptionInList) {
-                    buttons += QString(rowChoiceOption).arg(QString::number(i) + "empty_value").arg("- (empty)").arg(validConstant ? "false" : "true").arg(i).arg(" ");
-                }
+//                if (showEmptyOptionInList) {
+//                    buttons += QString(rowChoiceOption).arg(QString::number(i) + "empty_value").arg("- (empty)").arg(validConstant ? "false" : "true").arg(i).arg(" ");
+//                }
                 for(auto choiceString : parameters[i]._choiceList){
                     QString choice = choiceString, state="false";
                     if (choice[0] == '!') {
