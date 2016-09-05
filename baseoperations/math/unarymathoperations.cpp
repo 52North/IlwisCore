@@ -16,13 +16,13 @@ using namespace BaseOperations;
 double sin2(double v){
     if ( v == rUNDEF)
         return rUNDEF;
-    return sin2(v);
+    return sin(v);
 }
 
 double cos2(double v){
     if ( v == rUNDEF)
         return rUNDEF;
-    return cos2(v);
+    return cos(v);
 }
 
 REGISTER_OPERATION(SineCoverage)

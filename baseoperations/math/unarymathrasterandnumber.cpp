@@ -74,7 +74,7 @@ OperationImplementation::State UnaryMathRasterAndNumber::prepare(ExecutionContex
     IlwisTypes ptype = _expression.parm(0).valuetype();
 
 
-    if ( ptype & itNUMBER ) {
+    if ( hasType(ptype,itNUMBER) ) {
         _case = otNUMBER;
         bool ok;
         _number = _expression.parm(0).value().toDouble(&ok);
@@ -85,7 +85,7 @@ OperationImplementation::State UnaryMathRasterAndNumber::prepare(ExecutionContex
         }
         return sPREPARED;
 
-    } else if ( ptype == itRASTER) {
+    } else if ( hasType(ptype,itRASTER)) {
         QString raster = _expression.parm(0).value();
 
         if (!_inputGC.prepare(raster)) {
