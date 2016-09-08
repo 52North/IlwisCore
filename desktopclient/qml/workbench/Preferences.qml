@@ -15,7 +15,7 @@ WorkBenchShifter {
 
     FunctionBarHeader{
         id : functionBar
-        headerImage: "../images/preferencesCS1.png"
+        headerImage: "../images/settings.png"
         headerText:"Settings"
     }
     Column {

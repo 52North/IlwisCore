@@ -67,10 +67,10 @@ TabView {
     }
 
     Component.onCompleted: {
-        addTab(qsTr("Selection"), viewOptions)
-        addTab(qsTr("Filter"), filterOptions)
-        addTab(qsTr("Copy"), copyOptions)
-        addTab(qsTr("Refresh"), refreshOptions)
+        addTab(qsTr("Selection"), viewOptions).active = true
+        addTab(qsTr("Filter"), filterOptions).active = true
+        addTab(qsTr("Copy"), copyOptions).active = true
+        addTab(qsTr("Refresh"), refreshOptions).active = true
     }
 
 

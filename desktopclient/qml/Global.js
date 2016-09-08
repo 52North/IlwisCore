@@ -17,10 +17,16 @@ var alternateSelectedTabColor = "#87CEFA"
 var notSelectedTabColor = "white"
 var uiScale = 1.0
 var rowHeight = 20 * uiScale
-var actionBarMaxHeight = 260  * uiScale
-var actionBarMinHeight = 25  * uiScale
+var actionBarMaxHeight = 280  * uiScale
+var actionBarMinHeight = 50  * uiScale
 var panningAlong = 1;
 var panningReverse = -1;
+var darkestgreen = "#256E4D"
+var darkgreen = "#2E8D63"
+var middlegreen = "#6CBFA1"
+var palegreen = "#B9CEBD"
+var lightgreen = "#DDE6DE"
+var lightestgreen = "#EBF0EC"
 
 function isNumber(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);

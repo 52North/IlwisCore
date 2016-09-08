@@ -9,6 +9,7 @@ Rectangle {
     id : container
     anchors.fill : parent
     color : Global.formBackGround
+    anchors.margins: 2
 
     function rangeFieldType(rdef) {
         var index = rdef.indexOf(":")

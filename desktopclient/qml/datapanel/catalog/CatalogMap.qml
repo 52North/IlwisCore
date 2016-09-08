@@ -12,7 +12,7 @@ import LayersView 1.0
 Rectangle {
     width : parent.width
     id : catalogMapView
-    color : tabmodel && tabmodel.side == "right" ? "#F5FCFF" : "#FFFFF7"
+    color : tabmodel && tabmodel.side == "right" ? "white" : "#FFFFF7"
 
     function closeGrid() {
       grid.setSource("")

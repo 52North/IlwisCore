@@ -126,7 +126,7 @@ Item {
         id : infobar
         width : parent.width
         height : 20
-        color : Global.alternatecolor4
+        color : "white"
         Text {
             width : parent.width
             height : 16
@@ -144,7 +144,7 @@ Item {
         anchors.top : infobar.bottom
         id : catalogSplit
 
-        property color backgroundCatalogColor : (tabmodel && tabmodel.side == "right" ? "#F5FAFF" : "#FFFFF7")
+        property color backgroundCatalogColor : (tabmodel && tabmodel.side == "right" ? "#F5FAFF" : "white")
 
         CatalogViews {
             id : catalogView
@@ -153,7 +153,6 @@ Item {
         CatalogActions{
             id : actionBar
         }
-
         handleDelegate: Rectangle{
             width : parent.width
             height : 1

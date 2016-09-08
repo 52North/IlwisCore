@@ -17,10 +17,9 @@ import "../controls" as Controls
 Rectangle {
 
     id: centerItem
-    color: Global.alternatecolor5
+    color: Global.lightgreen
     objectName : "datapane_container_mainui"
-    height : parent.height - 16
-    width : bigthing.width - workBenchButtons.width - workBench.width - 5
+    height : parent.height
     property int activeSplit : 2
 
     /*
@@ -203,12 +202,6 @@ Rectangle {
                 activeSplit = 2
                 activeSplit = 1
             }
-        }
-        handleDelegate: Controls.SplitHandle{
-            imageHeight: 22
-            offset : 25
-            handlePic: ""
-           // func : datapanesplit.changeWidth
         }
 
         DataTabView2 {

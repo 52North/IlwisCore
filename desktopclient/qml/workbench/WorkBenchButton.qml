@@ -11,10 +11,11 @@ ToolButton{
     property string label
     height : parent.width// buttonB.width
     width : parent.width
+
     checkable: true
     checked: false
     onWidthChanged: {
-        if ( width > 75){
+        if ( width > 50){
             textLabel.width = button.width
             textLabel.visible = true
         }else
@@ -30,7 +31,7 @@ ToolButton{
 
     Image { id : but
         anchors.centerIn: parent
-        source: "../images/" + iconname
+        source: iconname == "" ? "" : "../images/" + iconname
         fillMode: Image.PreserveAspectFit
         width : 40
         height: width
@@ -44,16 +45,16 @@ ToolButton{
         horizontalAlignment: Text.AlignHCenter
         visible : true
         font.weight: Font.DemiBold
-        font.pointSize: 10 * Global.uiScale
+        font.pointSize: 9 * Global.uiScale
+        color : "white"
+
 
     }
 
     style : ButtonStyle{
         background: Rectangle {
             anchors.fill: parent
-            color : (control.pressed || checked) ? Global.selectedColor : "white"
-            border.width: 1
-            border.color: "lightgrey"
+            color : ((control.pressed || checked) ? Global.darkgreen : Global.middlegreen)
         }
     }
     states: [

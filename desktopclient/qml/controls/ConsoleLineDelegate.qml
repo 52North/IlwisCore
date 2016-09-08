@@ -5,10 +5,11 @@ import QtQuick.Controls.Styles 1.0
 import ConsoleLineModel 1.0
 import "../Global.js" as Global
 
-Item {
+Rectangle {
     id : lineDelegate
     width: parent.width
     height: 25
+    color : "#256E4D"
     property string consoletext : content
     property string line : lineNumber
     property int listindex : index
@@ -24,14 +25,15 @@ Item {
     Row {
         width : parent.width
         height : parent.height
+        y : 3
         Rectangle{
             id : linenum
-            color : Global.alternatecolor5
+            color : "#256E4D"
             height : parent.height
             width : 30
             Text {
                 text : line
-                color : "darkgrey"
+                color : "white"
                 x : 3
                 y : 4
             }
@@ -40,20 +42,20 @@ Item {
             id : marker
             width : 24
             height : parent.height
-            color : Global.alternatecolor3
+            color : "#256E4D"
             Text {
                 text : ">>>"
                 y: 4
-                color : "darkgrey"
+                color : "white"
             }
         }
 
         TextField {
             id : inputField
             text : consoletext
-            anchors.verticalCenter: parent.Center
+            y:-2
             width : parent.width - marker.width - linenum.width
-            height : parent.height+ 1
+            height : parent.height+ 2
             activeFocusOnTab : true
             style: TextFieldStyle {
                  textColor: "black"

@@ -9,6 +9,7 @@ Rectangle {
     anchors.fill: parent
     color : catalogSplit.backgroundCatalogColor
     property alias useDropFormat : convert.checked
+    property string iconName : "../images/copy"
 
     function getFormatString(requestedType) {
         return conversionFormats.getFormatString(requestedType)
@@ -20,7 +21,7 @@ Rectangle {
         border.width: 1
         border.color: Global.edgecolor
         color :  Global.actionItemColor
-        enabled: currentCatalog.url != "ilwis://internalcatalog" && currentCatalog.url.indexOf("ilwis://system") == -1
+        enabled: currentCatalog ? (currentCatalog.url != "ilwis://internalcatalog" && currentCatalog.url.indexOf("ilwis://system") == -1) : false
 
         Column {
             anchors.fill: parent

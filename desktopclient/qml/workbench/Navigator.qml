@@ -50,7 +50,7 @@ WorkBenchShifter {
 
     FunctionBarHeader{
         id : functionBarHeader
-        headerImage: "../images/navigatorCS1.png"
+        headerImage: "../images/locator.png"
         headerText:qsTr("Navigator")
     }
 

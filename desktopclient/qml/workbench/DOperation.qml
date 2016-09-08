@@ -15,7 +15,7 @@ Item{
 
     Rectangle {
         anchors.fill: parent
-        color: operationsList.currentIndex === index ? Global.selectedColor : index  % 2 == 0 ? Global.alternatecolor4 : Global.alternatecolor2
+        color: operationsList.currentIndex === index ? Global.selectedColor : index  % 2 == 0 ? Global.lightestgreen: "white"
         Row {
             id : operationName
             height : 17

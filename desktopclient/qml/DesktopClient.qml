@@ -10,6 +10,7 @@ import "controls" as Control
 import MessageModel 1.0
 import ResourceModel 1.0
 import MasterCatalogModel 1.0
+import QtGraphicalEffects 1.0
 import "Global.js" as Global
 import "controls" as Controls
 
@@ -17,7 +18,7 @@ ApplicationWindow {
     id : bigthing
     width: Screen.width * 0.8
     height : Screen.height * 0.9
-    color : "light grey"
+    color : Global.lightgreen
     objectName: "mainwindow__mainui"
 
     onClosing: {
@@ -49,22 +50,57 @@ ApplicationWindow {
 
     Controls.ToolTipLabel{id : toolTip}
 
-    Rectangle {
+    Item {
         id : root
-        y : 0
         height : parent.height
         width : parent.width
-        color : Global.alternatecolor5
 
+        Rectangle {
+            anchors.left: parent.left
+            anchors.top : parent.top
+            width : xu1.width + 1
+            height : 100
+            color : Global.palegreen
+            border.width: 1
+            border.color : "#b3b3b3"
+        }
+
+        Item {
+            id : xu1
+            anchors.left: parent.left
+            anchors.top : parent.top
+            width : dummy.width + 7
+            height : 100
+
+            Rectangle{
+                id : dummy
+                height : 100
+                width : 70 * Global.uiScale
+                anchors.left: parent.left
+                anchors.top : parent.top
+                color : Global.middlegreen
+            }
+        }
+        DropShadow {
+            id: butShadow2
+            anchors.fill: source
+            cached: true
+            horizontalOffset: 4
+            radius: 6
+            samples: 12
+            color: "#80000000"
+            smooth: true
+            opacity: 0.7
+            source: xu1
+        }
         CommandLineArea {
             id : commLine
-            width : parent.width - 10
-
+            width : parent.width
         }
+
 
         MainSplit {
             id : mainSplit
-            orientation: Qt.Horizontal
             width: parent.width
             anchors.top : commLine.bottom
             anchors.bottom : parent.bottom

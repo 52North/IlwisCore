@@ -118,16 +118,16 @@ QColor MessageModel::color() const
 QString MessageModel::messageIcon() const
 {
     if ( _isReset)
-        return "messageCS1.png";
+        return "message.png";
     switch(_message.type()){
     case IssueObject::itWarning:
-        return "messageorangeCS1.png";
+        return "message_orange.png";
     case IssueObject::itError:
-        return "messageredCS1.png";
+        return "message_red.png";
     case IssueObject::itCritical:
         return "messagepurpleCS1.png";
     default:
-        return "messageCS1.png";
+        return "message.png";
 
     }
 }

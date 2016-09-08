@@ -21,7 +21,7 @@ WorkBenchShifter {
 
     FunctionBarHeader{
         id : functionBarHeader
-        headerImage: "../images/operationCS1.png"
+        headerImage: "../images/operations.png"
         headerText:qsTr("Operations")
     }
 

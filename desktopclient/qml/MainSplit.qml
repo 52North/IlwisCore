@@ -13,34 +13,9 @@ import MasterCatalogModel 1.0
 import "Global.js" as Global
 import "controls" as Controls
 
-SplitView {
+
+Rectangle {
     id : mainSplit
-
-    function changeWidthSplitter(pside, partside){
-        if ( pside === 1 && partside === 0){
-            if ( workBench.width === 0){
-                workBenchButtons.state = "invisible"
-            }else
-                workBench.state = "invisible"
-        }
-        if ( pside === 1 && partside === 1){
-            if ( workBenchButtons.width === 0 && workBench.width == 0){
-                workBenchButtons.state = "visible"
-            } else
-                workBench.state = "visible"
-        }
-        if ( pside === 0 && partside === 0){
-            workBenchButtons.state = "invisible"
-        }
-        if ( pside === 0 && partside === 1){
-            workBenchButtons.state = "visible"
-        }
-    }
-
-    handleDelegate: Controls.SplitHandle{
-        imageHeight: 22
-        func : mainSplit.changeWidthSplitter
-    }
 
     function newCatalog(filter, outputtype, url,side){
         dataPanel.newCatalog(filter, outputtype, url,side)
@@ -70,19 +45,29 @@ SplitView {
             }
         }
     }
-
     WorkBench.WorkBenchButtonBar{
         id : workBenchButtons
     }
 
-    WorkBench.WorkBench{
-        id : workBench
-        state : "invisible"
+    SplitView {
+        width : parent.width - workBenchButtons.width
+        height : parent.height
+        anchors.left: workBenchButtons.right
+        orientation: Qt.Horizontal
+
+        WorkBench.WorkBench{
+            id : workBench
+            state : "invisible"
+        }
+
+        DataPanel.DataPane{
+            id : dataPanel
+            width : parent.width - workBench.width
+            anchors.left: workBench.right
+        }
     }
 
-    DataPanel.DataPane{
-        id : dataPanel
-    }
+
 
 }
 

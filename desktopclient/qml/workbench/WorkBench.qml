@@ -61,7 +61,6 @@ Rectangle {
     color :  Global.alternatecolor2
 
     Navigator{ id : navigator}
-    //Workspaces{ id : workspaces }
     Tranquilizers{ id : tranquilizers}
     OperationSelection{ id : operationselection}
     ObjectCreation{ id : objectcreation}

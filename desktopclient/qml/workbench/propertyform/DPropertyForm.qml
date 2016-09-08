@@ -33,7 +33,8 @@ Rectangle {
     }
 
     y : 4
-    height :460
+    x : 4
+    height :464
     width : parent.width
 
     Component {
@@ -68,7 +69,7 @@ Rectangle {
         id : header
         width : parent.width
         height : 24
-        color : "steelblue"
+        color : Global.middlegreen
         Text {
             x : 5
             anchors.verticalCenter: parent.verticalCenter
@@ -96,7 +97,7 @@ Rectangle {
         id : propertyTabs
         anchors.top : header.bottom
         anchors.topMargin: 3
-        width : propertyForm.width
+        width : propertyForm.width - 4
         height : propertyForm.height - header.height - 35
         style: Base.TabStyle1{}
         onCurrentIndexChanged: {
@@ -122,7 +123,7 @@ Rectangle {
     Loader {
         anchors.top : propertyTabs.bottom
         anchors.right : parent.right
-        anchors.rightMargin: 5
+        anchors.rightMargin: 9
         anchors.topMargin: 5
         source : isSystemObject ?  "" : "PropertyEditButtons.qml"
     }

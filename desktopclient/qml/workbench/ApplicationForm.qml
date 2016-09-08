@@ -3,6 +3,7 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick 2.0
+import "../Global.js" as Global
 
 Rectangle {
     property color background1 : "white"
@@ -56,13 +57,12 @@ Rectangle {
     Column {
         anchors.fill: parent
         spacing : 3
-        BorderImage {
+        Rectangle {
             id : title
             width: parent.width
             height : formTitle != "" && showTitle ? 25 : 0
             opacity : formTitle != "" && showTitle ? 1 : 0
-            source : "../images/headerblue2CS1.png"
-            border { left: 15; top: 0; right: 15; bottom: 0 }
+            color : Global.palegreen
             smooth : true
             Text  {
                 text : formTitle

@@ -6,9 +6,9 @@ import "../Global.js" as Global
 import "../controls" as Controls
 
 TabViewStyle {
-    property string selectColor : "white"
+    property string selectColor : Global.palegreen
     property string nonselectColor : "#e6e6e6"
-    property int tabHeight : 23 * Global.uiScale
+    property int tabHeight : 50 * Global.uiScale
 
 
     frameOverlap: 1
@@ -26,15 +26,26 @@ TabViewStyle {
             up : true
         }
 
+        Image {
+            source : styleData.selected ? control.getTab(styleData.index).item.iconName + "_green.png" : control.getTab(styleData.index).item.iconName + "_grey.png"
+            anchors.top: parent.top
+            anchors.topMargin: 1
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+
         Text {
             id: text
-            anchors.centerIn: parent
+            anchors.bottom : parent.bottom
+            anchors.bottomMargin: 2
+            anchors.horizontalCenter: parent.horizontalCenter
+            horizontalAlignment:Text.AlignHCenter
+
             text: styleData.title
+            color: styleData.selected ? Global.darkestgreen : "grey"
             font.pointSize: 9 * Global.uiScale
             font.weight: Font.DemiBold
-            color: styleData.selected ? "#003366" : "#a3a3c2"
-            anchors.verticalCenter: parent.verticalCenter
         }
+
         MouseArea  {
             anchors.fill : parent
             onClicked: {

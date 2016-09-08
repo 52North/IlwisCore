@@ -23,7 +23,7 @@ WorkBenchShifter {
 
     FunctionBarHeader{
         id : functionBar
-        headerImage: "../images/propertiesCS1.png"
+        headerImage: "../images/metadata.png"
         headerText:"Object properties"
         z : 1
     }

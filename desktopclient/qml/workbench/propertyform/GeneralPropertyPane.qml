@@ -10,7 +10,7 @@ Rectangle {
     id : container
     width : parent.width - 2
     height : parent.height -2
-    anchors.margins: 1
+    anchors.margins: 2
     function storeData() {
         if ( propertyForm.editable){
             displayName = objectDisplayName.content

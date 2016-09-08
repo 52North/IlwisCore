@@ -9,8 +9,7 @@ import UIContextModel 1.0
 
 Rectangle {
     id : commLine;
-    height : 35
-    color : Global.alternatecolor5
+    color : "#256E4D"
     objectName : "mainwindow__commandline"
     z : 3
     property string arrowtype : "arrowdown.png"
@@ -70,20 +69,21 @@ Rectangle {
 
     ConsoleLineDelegate{
         id : firstLine
-        width : parent.width - titleArrow.width
+        width : parent.width - titleArrow.height - 10
         consoletext: lastLine()
         line : setNum(0)
         listindex: 100000
         asMainEdit : true
+        y : 6
     }
     Rectangle {
         id: t3
         anchors.leftMargin: 5
         anchors.top : firstLine.top
-        width : parent.width - titleArrow.width
+        width : parent.width - titleArrow.height - 10
         height : 25
         opacity : 0
-        color : Global.alternatecolor2
+        color : "#256E4D"
 
 
         ScrollView{
@@ -94,7 +94,7 @@ Rectangle {
                 clip : true
                 model : uicontext.consoleScript(0).lines
                 delegate : ConsoleLineDelegate{
-                    height : 20
+                    height : 25
                     onRunLine: {
                         executeLine(lineIndex, txt)
                     }
@@ -102,29 +102,36 @@ Rectangle {
             }
         }
     }
-    Image {
+    Rectangle {
         id: titleArrow
-        width:  15
+        width:  commLine.state == "collapsed" ? 15 : 2
         height:  15
-        anchors.left: t3.right
+        anchors.left: firstLine.right
+        anchors.leftMargin: commLine.state == "collapsed" ? 2 : 10
+        color : commLine.state == "collapsed" ? "#256E4D" : "white"
+        border.width: 2
+        border.color : "white"
+        radius : 3
+        y : 11
+
+
+    }
+    MouseArea{
+        width: 15
+        height:  15
+        anchors.left: firstLine.right
         anchors.leftMargin: 2
-        y : 5
-        source: "../images/" + arrowtype
-        MouseArea{
-            width: parent.width
-            height:  parent.height
-            onClicked: {
-                if (commLine.state == "collapsed")
-                {
-                    commLine.state = "open"
-                }
-                else
-                {
-                    commLine.state = "collapsed"
-                }
+        y : 6
+        onClicked: {
+            if (commLine.state == "collapsed")
+            {
+                commLine.state = "open"
+            }
+            else
+            {
+                commLine.state = "collapsed"
             }
         }
-
     }
 
     states: [
@@ -144,7 +151,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: commLine
-                height : 35
+                height : 35 + 10
             }
 
         },

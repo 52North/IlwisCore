@@ -18,7 +18,7 @@ WorkBenchShifter {
 
     FunctionBarHeader{
         id : functionBar
-        headerImage: "../images/createCS.png"
+        headerImage: "../images/create.png"
         headerText:"Object Creation"
     }
 

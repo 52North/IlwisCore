@@ -13,15 +13,15 @@ TabViewStyle {
     signal expandToWindow(int panelside, int tabindex);
     signal fullSize()
 
-    property string selectColor : "steelblue"
-    property string nonselectColor : "lightsteelblue"
+    property string selectColor : "white"
+    property string nonselectColor : Global.palegreen
     property int tabHeight : 35 * Global.uiScale
 
     tab: Rectangle {
         id : selectRect
         property TabModel tabmodel : datapane.tab(side == 1, styleData.index)
 
-        color: tabmodel && tabmodel.selected ? "black" : nonselectColor
+        color: tabmodel && tabmodel.selected ? selectColor : nonselectColor
         border.color:  Global.edgecolor
 
         implicitWidth: Global.uiScale *140
@@ -41,7 +41,7 @@ TabViewStyle {
                     width : parent.width
                     height : 14 * Global.uiScale
                     text: tabmodel ? "[ " + tabmodel.id + " ]": "?"
-                    color: tabmodel && tabmodel.selected ? "white" : "black"
+                    color: tabmodel && tabmodel.selected ? "black" : "white"
                     font.pointSize: 8 * Global.uiScale
                 }
 
@@ -49,10 +49,11 @@ TabViewStyle {
                     width : parent.width
                     height : 20 * Global.uiScale
                     text: tabmodel ? tabmodel.displayName : "?"
-                    color: tabmodel && tabmodel.selected ? "white" : "black"
+                    color: tabmodel && tabmodel.selected ? "black" : "white"
                     elide: Text.ElideMiddle
-                    font.pointSize: tabmodel && tabmodel.selected ? 10 : 9
-                    font.bold: tabmodel && tabmodel.selected ? true : false
+                    font.pointSize: tabmodel && tabmodel.selected ? 9 : 8
+                    //font.bold: tabmodel && tabmodel.selected ? true : false
+                    font.weight: tabmodel && tabmodel.selected ? Font.DemiBold : Font.Normal
 
 
                 }
@@ -123,9 +124,9 @@ TabViewStyle {
 
         Button {
             id : closeButton
-            y : 2
+            y : 3
             anchors.right : parent.right
-            anchors.rightMargin: 2
+            anchors.rightMargin: 3
             width : 18 * Global.uiScale
             height : width
             opacity : 0.5
@@ -138,7 +139,7 @@ TabViewStyle {
                 x : 1
                 width : 15
                 height : 15
-                source : "images/close20.png"
+                source : "images/close_grey.png"
 
 
             }

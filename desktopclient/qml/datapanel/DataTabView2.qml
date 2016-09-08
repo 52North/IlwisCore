@@ -131,7 +131,6 @@ Item {
     TabView {
         id : datatab
         anchors.left: side == 1 ? szbut.right : parent.left
-        anchors.leftMargin: 5
         height : parent.height
         width: parent.width - szbut.width - 5
 

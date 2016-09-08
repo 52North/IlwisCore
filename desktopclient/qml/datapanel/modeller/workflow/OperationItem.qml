@@ -129,7 +129,7 @@ Rectangle {
         elide: Text.ElideMiddle
         font.pointSize: 11
         x : 15
-        text : itemid + ". " + (operation ? operation.name : "?")
+        text : itemid + ". " + (operation ? operation.name : "??")
         font.bold : true
     }
     Text {

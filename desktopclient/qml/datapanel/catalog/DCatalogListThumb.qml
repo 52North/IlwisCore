@@ -16,7 +16,7 @@ Rectangle{
     width :  GridView.view.cellWidth
     height :  GridView.view.cellHeight
     clip : true
-    color :  isSelected ? Global.selectedColor : "#F5FFFA"
+    color :  isSelected ? Global.selectedColor : "white"
     border.width: 1
     border.color: "#e6e6e6"
 

@@ -199,7 +199,8 @@ void StartIlwis::initMainWindow()
     if ( topLevel){
         uicontext()->rootObject(topLevel);
         QQuickWindow *window = qobject_cast<QQuickWindow *>(topLevel);
-        window->setIcon(QIcon("./qml/images/ilwis4.bmp"));
+        window->setIcon(QIcon("./qml/images/ilwis4.png"));
+        window->setTitle(" ");
         if ( !window ) {
             qWarning("Error: Your root item has to be a Window.");
             return;

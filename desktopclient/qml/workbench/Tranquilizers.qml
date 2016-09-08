@@ -16,8 +16,8 @@ WorkBenchShifter {
 
     FunctionBarHeader{
         id : functionBarHeader
-        headerImage: "../images/progress2CS1.png"
-        headerText:"Tranquilizers"
+        headerImage: "../images/progress.png"
+        headerText:"Progress"
     }
 
 

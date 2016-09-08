@@ -2,6 +2,7 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
+import QtGraphicalEffects 1.0
 import MasterCatalogModel 1.0
 import TranquilizerHandler 1.0
 import UIContextModel 1.0
@@ -12,9 +13,8 @@ Rectangle {
     id : buttonB
     y : 0
     height : parent.height
-    width : 80 * Global.uiScale
-    color : Global.alternatecolor2
-    Layout.maximumWidth : 140
+    width :colContainer.width
+    color : Global.palegreen
 
     //signal transitionInfoPane(string pagename)
 
@@ -32,7 +32,7 @@ Rectangle {
         if ( buttonname === "operationselection")
             oper.checked = status === "on"
         if ( buttonname === "objectproperties")
-           prop.checked = status === "on"
+            prop.checked = status === "on"
         if ( buttonname === "messages")
             errors.checked = status === "on"
         if ( buttonname === "tranquilizer")
@@ -49,174 +49,197 @@ Rectangle {
         var currentValue = button.checked
         prop.checked = nav.checked = oper.checked = errors.checked = progress.checked = create.checked = preferences.checked = false
         button.checked = !currentValue
+        butColumn.initial = false
     }
 
-    Column {
-        anchors.fill: parent
+    DropShadow {
+        id: butShadow
+       // z: colContainer.z + 1
+        anchors.fill: source
+        cached: true
+        horizontalOffset: 4
+        radius: 6
+        samples: 12
+        color: "#80000000"
+        smooth: true
+        opacity: 0.7
+        source: colContainer
+    }
 
-        WorkBenchButton{
-            id : nav
-            objectName : "workbench_navbutton_mainui"
-            iconname: "navigatorCS1.png"
-            label: qsTr("Navigator")
+    Item {
+        id : colContainer
+        width : butColumn.width + 7
+        height : parent.height
+        Column {
+            id : butColumn
+            width : 70 * Global.uiScale
+            height : parent.height
+            property bool initial : true
+            z: buttonB.z + 1
 
-            function mouseClicked() {
-               toggle(nav)
-               transitionInfoPane("navigator","toggle")
+            WorkBenchButton{
+                id : nav
+                objectName : "workbench_navbutton_mainui"
+                iconname: butColumn.initial ? "locator_start.png" : "locator.png"
+                label: qsTr("Locator")
+
+                function mouseClicked() {
+                    toggle(nav)
+                    transitionInfoPane("navigator","toggle")
+                }
+
+                Controls.ToolTip {
+                    target: nav
+                    text: qsTr("Access to navigation over data sources. Bookmark creation")
+                }
             }
 
-            Controls.ToolTip {
-                target: nav
-                text: qsTr("Access to navigation over data sources. Bookmark creation")
-            }
+            WorkBenchButton{
+                id : oper
+                iconname : "operations.png"
+                label: qsTr("Operations")
 
+                function mouseClicked() {
+                    toggle(oper)
+                    transitionInfoPane("operationselection","toggle")
+                }
 
-        }
-
-        WorkBenchButton{
-            id : oper
-            iconname : "operationCS1.png"
-            label: qsTr("Operations")
-
-            function mouseClicked() {
-                toggle(oper)
-                transitionInfoPane("operationselection","toggle")
-            }
-
-            Controls.ToolTip {
-                target: oper
-                text: qsTr("Browsing and executing data operations")
-            }
-
-        }
-
-        WorkBenchButton{
-            id : prop
-            iconname : "propertiesCS1.png"
-            label: qsTr("Metadata")
-
-            function mouseClicked() {
-                toggle(prop)
-                transitionInfoPane("objectproperties","toggle")
-            }
-
-            Controls.ToolTip {
-                target: prop
-                text: qsTr("Acces to metadata of IlwisObjects selected in the active catalog")
-            }
-
-        }
-        WorkBenchButton{
-            id : create
-            iconname : "createCS.png"
-            label: qsTr("Create")
-
-            function mouseClicked() {
-                toggle(create)
-                transitionInfoPane("objectcreation","toggle")
-            }
-
-            Controls.ToolTip {
-                target: create
-                text: qsTr("Creation of IlwisObjects")
-            }
-        }
-        WorkBenchButton{
-            id : errors
-            iconname : messagehandler.messageIcon
-            label: qsTr("Messages")
-
-            function mouseClicked() {
-                toggle(errors)
-                transitionInfoPane("messages","toggle")
-            }
-
-            Controls.ToolTip {
-                target: errors
-                text: qsTr("Messages generated by the system including warnings and errors")
-            }
-        }
-        WorkBenchButton{
-            id : progress
-            ProgressBar {
-                anchors.top: progress.top
-                anchors.topMargin: 5
-                width : parent.width - 10
-                x : 5
-                height : 12
-                maximumValue: 100
-                minimumValue: 0
-                value : tranquilizerHandler.aggregateValue
-                opacity: (value > 0) ? 0.35 : 0
-
-                style: ProgressBarStyle {
-                     background: Rectangle {
-                         radius: 2
-                         color: "grey"
-                         border.color: "gray"
-                         border.width: 1
-                     }
-                     progress: Rectangle {
-                         color: "red"
-                         border.color: "steelblue"
-                     }
+                Controls.ToolTip {
+                    target: oper
+                    text: qsTr("Browsing and executing data operations")
                 }
 
             }
 
-            iconname : "progress2CS1.png"
-            label: qsTr("Progress")
+            WorkBenchButton{
+                id : prop
+                iconname : "metadata.png"
+                label: qsTr("Metadata")
 
-            function mouseClicked() {
-                toggle(progress)
-                transitionInfoPane("tranquilizers","toggle")
+                function mouseClicked() {
+                    toggle(prop)
+                    transitionInfoPane("objectproperties","toggle")
+                }
+
+                Controls.ToolTip {
+                    target: prop
+                    text: qsTr("Acces to metadata of IlwisObjects selected in the active catalog")
+                }
+
             }
+            WorkBenchButton{
+                id : create
+                iconname : "create.png"
+                label: qsTr("Create")
 
-            Controls.ToolTip {
-                target: progress
-                text: qsTr("Progress of currently running operations and actions")
+                function mouseClicked() {
+                    toggle(create)
+                    transitionInfoPane("objectcreation","toggle")
+                }
+
+                Controls.ToolTip {
+                    target: create
+                    text: qsTr("Creation of IlwisObjects")
+                }
+            }
+            WorkBenchButton{
+                id : errors
+                iconname : messagehandler.messageIcon
+                label: qsTr("Messages")
+
+                function mouseClicked() {
+                    toggle(errors)
+                    transitionInfoPane("messages","toggle")
+                }
+
+                Controls.ToolTip {
+                    target: errors
+                    text: qsTr("Messages generated by the system including warnings and errors")
+                }
+            }
+            WorkBenchButton{
+                id : progress
+                ProgressBar {
+                    anchors.top: progress.top
+                    anchors.topMargin: 5
+                    width : parent.width - 10
+                    x : 5
+                    height : 12
+                    maximumValue: 100
+                    minimumValue: 0
+                    value : tranquilizerHandler.aggregateValue
+                    opacity: (value > 0) ? 0.55 : 0
+
+                    style: ProgressBarStyle {
+                        background: Rectangle {
+                            radius: 2
+                            color: "grey"
+                            border.color: "gray"
+                            border.width: 1
+                        }
+                        progress: Rectangle {
+                            color: Global.lightgreen
+                            border.color: Global.darkestgreen
+                        }
+                    }
+
+                }
+
+                iconname : "progress.png"
+                label: qsTr("Progress")
+
+                function mouseClicked() {
+                    toggle(progress)
+                    transitionInfoPane("tranquilizers","toggle")
+                }
+
+                Controls.ToolTip {
+                    target: progress
+                    text: qsTr("Progress of currently running operations and actions")
+                }
+
+            }
+            WorkBenchButton{
+                id : preferences
+                iconname : "settings.png"
+                label: qsTr("Settings")
+
+                function mouseClicked() {
+                    toggle(preferences)
+                    transitionInfoPane("preferences","toggle")
+                }
+
+                Controls.ToolTip {
+                    target: preferences
+                    text: qsTr("User defined settings for Ilwis 4")
+                }
+
+            }
+            WorkBenchButton{
+                id : info
+                iconname : "info.png"
+                label: qsTr("Info")
+
+                function mouseClicked() {
+                    toggle(info)
+                    transitionInfoPane("info","toggle")
+                }
+
+                Controls.ToolTip {
+                    target: info
+                    text: qsTr("Information on Ilwis 4")
+                }
             }
 
         }
-        WorkBenchButton{
-            id : preferences
-            iconname : "preferencesCS1.png"
-            label: qsTr("Settings")
-
-            function mouseClicked() {
-                toggle(preferences)
-                transitionInfoPane("preferences","toggle")
-            }
-
-            Controls.ToolTip {
-                target: preferences
-                text: qsTr("User defined settings for Ilwis 4")
-            }
-
-        }
-        WorkBenchButton{
-            id : info
-            iconname : "helpCS1.png"
-            label: qsTr("Info")
-
-            function mouseClicked() {
-                toggle(info)
-                transitionInfoPane("info","toggle")
-            }
-
-            Controls.ToolTip {
-                target: info
-                text: qsTr("Information on Ilwis 4")
-            }
-        }
-
     }
+
     states: [
         State { name: "visible"
 
             PropertyChanges {
                 target: buttonB
-                width : 80
+                width : 70 * Global.uiScale
             }
         },
         State {

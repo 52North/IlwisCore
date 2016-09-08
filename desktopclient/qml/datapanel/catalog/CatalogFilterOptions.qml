@@ -11,6 +11,7 @@ Rectangle {
     anchors.fill: parent
     anchors.topMargin: 3
     color : catalogSplit.backgroundCatalogColor
+    property string iconName : "../images/filter"
     Rectangle {
         id : choices
         anchors.bottom : parent.bottom

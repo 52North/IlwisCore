@@ -15,7 +15,7 @@ WorkBenchShifter {
 
     FunctionBarHeader{
         id : functionBar
-        headerImage: "../images/message40.png"
+        headerImage: "../images/message.png"
         headerText:"Messages"
     }
 
@@ -84,7 +84,7 @@ WorkBenchShifter {
             }
             rowDelegate: Rectangle {
                 height : 30
-                color : styleData.selected ? "#B0B0B0" : (styleData.alternate? "#eee" : "#fff")
+                color : styleData.selected ? "#B0B0B0" : (styleData.alternate? Global.lightestgreen: "white")
             }
         }
     }

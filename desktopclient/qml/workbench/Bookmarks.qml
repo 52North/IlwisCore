@@ -38,13 +38,12 @@ Column {
     state : "visible"
     signal catalogChanged
 
-    BorderImage {
+    Rectangle {
         width : parent.width
         height : 24
         id : title
-        border { left: 15; top: 0; right: 15; bottom: 0 }
         smooth : true
-        source : "../images/headerblue2CS1.png"
+        color : Global.palegreen
         Text {
             x : 10
             y : 5
@@ -80,7 +79,7 @@ Column {
                 id : catalogentry
                  height : 40 + catalogProperties.height
                 width : parent.width - 5
-                color: currentFolders.currentIndex === index ? "#99CCFF" : index  % 2 == 0 ? Global.alternatecolor2 : Global.alternatecolor1
+                color: currentFolders.currentIndex === index ? "#99CCFF" : index  % 2 == 0 ? Global.lightestgreen: "white"
                 focus : true
 
                 Controls.ToolTip{

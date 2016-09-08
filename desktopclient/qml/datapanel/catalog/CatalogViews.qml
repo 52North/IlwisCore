@@ -6,6 +6,7 @@ import CatalogModel 1.0
 import IlwisObjectModel 1.0
 import "../.." as Base
 import "../../Global.js" as Global
+import "../../controls" as Controls
 
 DropArea {
     id : catalogViewsArea
@@ -56,21 +57,23 @@ DropArea {
             "Spatial location of coverages in the active catalog"];
 
         
-    style: Base.TabStyle1{
+    style: Base.TabStyleCatalog{
         minimumWidth: 60* Global.uiScale
         backgroundColor: catalogSplit.backgroundCatalogColor
     }
 
-        Tab{
+        Controls.CatalogTab{
             title : qsTr("Grid")
+            iconName: "images/tab_grid"
             CatalogGrid{
                 id : iconGridView
                 height : parent.height
                 opacity : 1
             }
         }
-        Tab {
+        Controls.CatalogTab {
             title : qsTr("List")
+            iconName: "images/tab_list"
             CatalogTable{
                 Connections{
                     target : iconListView
@@ -80,16 +83,18 @@ DropArea {
                 height : parent.height
             }
         }
-        Tab {
+        Controls.CatalogTab {
             title : qsTr("Thumb")
+            iconName: "images/tab_thumb"
             CatalogThumbGrid{
                 id : thumbListView
                 height : parent.height
 
             }
         }
-        Tab {
+        Controls.CatalogTab {
             title : qsTr("Spatial")
+            iconName: "images/tab_spatial"
             CatalogMap{
                 id : catalogMapView
                 height : parent.height

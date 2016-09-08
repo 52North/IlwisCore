@@ -11,6 +11,7 @@ import "../../controls" as Controls
 Rectangle {
     anchors.fill: parent
     color : catalogSplit.backgroundCatalogColor
+    property string iconName : "../images/selection"
 
     Component {
         id : layerDrawer
