@@ -20,13 +20,6 @@ TabViewStyle {
         width: Global.uiScale * Math.max(text.width + 4, minimumWidth)
         height: tabHeight
 
-//        Image {
-//            source : control.getTab(styleData.index).iconName
-//            anchors.top: parent.top
-//            anchors.topMargin: 1
-//            anchors.horizontalCenter: parent.horizontalCenter
-//        }
-
         Text {
             id: text
             anchors.bottom : parent.bottom

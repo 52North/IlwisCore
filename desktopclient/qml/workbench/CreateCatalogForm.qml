@@ -93,8 +93,7 @@ Item {
             id : filetab
             height: parent.height
             width : parent.width
-            title : "Local"
-
+            title : qsTr("Local")
 
             Item {
                 function changeFolder(url){
@@ -113,7 +112,7 @@ Item {
         }
         Tab {
 
-            title : "Remote"
+            title : qsTr("Remote")
             height: parent.height
             width : parent.width
             Item {
@@ -123,9 +122,6 @@ Item {
             }
         }
 
-        Tab {
-            title : "Selection"
-        }
         style: Base.TabStyle1{}
 
     }

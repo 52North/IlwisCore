@@ -33,23 +33,33 @@ Column {
     }
 
     opacity : 1
-    //height : defaultHeight
     clip : true
     state : "visible"
     signal catalogChanged
 
-    Rectangle {
+    BorderImage {
+        source: "../images/tab_big_green.png"
+        border.left: 5; border.top: 5
+        border.right: 5; border.bottom: 5
         width : parent.width
-        height : 24
+        height : 34
         id : title
         smooth : true
-        color : Global.palegreen
-        Text {
-            x : 10
-            y : 5
-            font.bold : true
+        Row {
+            width : parent.width
+            height : parent.height
+            Image {
+                source : "../images/bookmark.png"
+            }
 
-            text : qsTr("Bookmarked Catalogs")
+            Text {
+                x : 10
+                y : 5
+                font.bold : true
+                color : "white"
+                text : qsTr("Bookmarked Catalogs")
+                anchors.verticalCenter: parent.verticalCenter
+            }
         }
     }
 
@@ -58,11 +68,11 @@ Column {
 
         id : listRect
         width: parent.width
-        height : parent.height - title.height - addBookmarkButton.height - 20
+        height : parent.height - title.height - addBookmarkButton.height - 25
         color : Global.mainbackgroundcolor
-        border.width: 1
-        border.color: Global.edgecolor
-        radius: 5
+//        border.width: 1
+//        border.color: Global.edgecolor
+//        radius: 5
 
         ListView{
             id : currentFolders
@@ -122,42 +132,60 @@ Column {
 
                 }
                 Image {
-                    anchors.top : parent.top
-                    anchors.bottom : parent.bottom
-                    anchors.topMargin: 2
-                    anchors.bottomMargin: 2
+                    id : marker
+                    anchors.top : info.top
+                    anchors.topMargin: 12
                     width : 25
+                    fillMode : Image.Pad
                     anchors.right : info.right
                     anchors.rightMargin: -32
-                    source : "../images/drop1.png"
-                    Image {
-                        id : marker
-                        height : 16
-                        width : 16
-                        x : 3
-                        anchors.verticalCenter: parent.verticalCenter
-                        source : "../images/splithandle.png"
-                    }
-                    opacity: 0.6
+                    source : "../images/bookmark_close.png"
+                    rotation: 90
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            if ( marker.rotation == 0)    {
-                                marker.rotation = 90
-                                marker.source = "../images/splithandledark.png"
+                            if ( marker.rotation == 90)    {
+                                marker.state = "open"
+                                marker.source = "../images/bookmark_open.png"
                                 catalogProperties.humannametext = displayName
                                 catalogProperties.defintiontext = url
                                 catalogProperties.descriptiontext = description
                                 catalogProperties.state = "maximized"
                             }else{
-                                marker.rotation = 0
-                                marker.source = "../images/splithandle.png"
+                                marker.state = "closed"
+                                marker.source = "../images/bookmark_close.png"
                                 catalogProperties.state = "minimized"
                                 displayName = catalogProperties.humannametext
                                 description = catalogProperties.descriptiontext
                             }
                         }
                     }
+                    states: [
+                        State { name: "closed"
+
+                            PropertyChanges {
+                                target: marker
+                                z : 0
+                                rotation : 90
+                            }
+                        },
+                        State {
+                            name : "open"
+                            PropertyChanges {
+                                target: marker
+                                rotation : 0
+                            }
+                        }
+
+                    ]
+                    transitions: [
+                        Transition {
+                            NumberAnimation
+                            { id : opatrans; properties: "rotation"; duration : 500 ; easing.type: Easing.OutCubic
+                            }
+
+                        }
+                    ]
 
                 }
 
@@ -188,8 +216,6 @@ Column {
     Row {
         height : 45
         width :215
-        anchors.right : parent.right
-        anchors.rightMargin: 15
 
         Action {
             id :addbookmark
@@ -208,9 +234,9 @@ Column {
 
         Controls.ActionButtonV{
             id : removeBookmark
-            width : 115
-            height : 45
-            iconsource: "../images/deletebookmarkCS1.png"
+            width : navigationFoldercreate.width /2
+            height : 55
+            iconsource: "../images/bookmark_delete.png"
             buttontext :  qsTr("Delete Bookmark");
             action : deleteBookmark
 
@@ -219,9 +245,9 @@ Column {
             id : addBookmarkButton
 
             buttontext : "Add Bookmark"
-            iconsource : "../images/addbookmarkCS1.png"
-            height : 45
-            width :115
+            iconsource : "../images/bookmark_add.png"
+            height : 55
+            width :navigationFoldercreate.width /2
             action : addbookmark
             enabled : false
             z : 1
@@ -229,12 +255,6 @@ Column {
 
 
     }
-//    Catalog.CatalogProperties{
-//        id : catalogProperties
-//        anchors.bottom : parent.bottom
-//        height : 200
-//        clip : true
-//    }
 
     states: [
         State { name: "visible"

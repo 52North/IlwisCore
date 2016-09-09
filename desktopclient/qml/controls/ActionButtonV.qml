@@ -9,17 +9,14 @@ Button{
     property string buttontext;
 
     id : addContainer
-//    width : 40
-//    height : 80
     Image {
         id : buttonIcon
         anchors.horizontalCenter: parent.horizontalCenter
         source: iconsource
-        y : 5 ;width : 25* Global.uiScale; height : 25* Global.uiScale
-        fillMode: Image.PreserveAspectFit
     }
     Text {
-        anchors.top: buttonIcon.bottom
+        anchors.bottom: addContainer.bottom
+        anchors.bottomMargin: 2
         anchors.horizontalCenter: parent.horizontalCenter
         text : buttontext
         font.pointSize: 9 * Global.uiScale
@@ -28,9 +25,7 @@ Button{
     style : ButtonStyle{
         background: Rectangle {
             anchors.fill: parent
-            color : control.pressed || (checked) ? "#B0C4DE" : "white"
-            border.width: 1
-            border.color: "lightgrey"
+            color : control.pressed ? Global.palegreen : "white"
         }
     }
 

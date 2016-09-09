@@ -17,43 +17,51 @@ TabViewStyle {
     property string nonselectColor : Global.palegreen
     property int tabHeight : 35 * Global.uiScale
 
-    tab: Rectangle {
-        id : selectRect
+    tab: BorderImage {
+        id: name
+        source: tabmodel && tabmodel.selected ? "images/tab_big_active.png" : "images/tab_big_inactive.png"
+        border.left: 5; border.right: 5
+
         property TabModel tabmodel : datapane.tab(side == 1, styleData.index)
 
-        color: tabmodel && tabmodel.selected ? selectColor : nonselectColor
-        border.color:  Global.edgecolor
 
-        implicitWidth: Global.uiScale *140
-        implicitHeight: tabHeight
-        radius: 5
+        width: Global.uiScale *200
+        height: tabHeight
+        Layout.minimumWidth: 500
 
 
         Item {
             id : label
             width : parent.width - closeButton.width - expandButton.width
             height : tabHeight - 2
-            y : 1  * Global.uiScale
-            x : 6 *  Global.uiScale
-            Column {
-                anchors.fill: parent
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            Row {
+                width : parent.width
+                anchors.bottom: parent.bottom
+                x : 8
+                height : 35 * Global.uiScale
                 Text {
-                    width : parent.width
+                    width : 20
                     height : 14 * Global.uiScale
-                    text: tabmodel ? "[ " + tabmodel.id + " ]": "?"
-                    color: tabmodel && tabmodel.selected ? "black" : "white"
+                    text: tabmodel ? "[" + tabmodel.id + "]": "?"
+                    color: tabmodel && tabmodel.selected ? "black" : "darkgrey"
                     font.pointSize: 8 * Global.uiScale
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 8
                 }
 
                 Text {
                     width : parent.width
                     height : 20 * Global.uiScale
                     text: tabmodel ? tabmodel.displayName : "?"
-                    color: tabmodel && tabmodel.selected ? "black" : "white"
+                    color: tabmodel && tabmodel.selected ? "black" : "darkgrey"
                     elide: Text.ElideMiddle
                     font.pointSize: tabmodel && tabmodel.selected ? 9 : 8
                     //font.bold: tabmodel && tabmodel.selected ? true : false
                     font.weight: tabmodel && tabmodel.selected ? Font.DemiBold : Font.Normal
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 2
 
 
                 }
@@ -124,9 +132,9 @@ TabViewStyle {
 
         Button {
             id : closeButton
-            y : 3
+            y : 6
             anchors.right : parent.right
-            anchors.rightMargin: 3
+            anchors.rightMargin: 6
             width : 18 * Global.uiScale
             height : width
             opacity : 0.5
@@ -147,9 +155,9 @@ TabViewStyle {
 
         Button {
             id : expandButton
-            y : 2
+            y : 6
             anchors.right : closeButton.left
-            anchors.leftMargin: 2
+            anchors.rightMargin: 4
             width : 18 * Global.uiScale
             height : width
             opacity : canSeparate(index) ? 0.7 : 0;

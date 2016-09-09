@@ -15,13 +15,13 @@ Item {
         Row {
             id : buttonRow
             anchors.top : parent.top
-            anchors.margins: 3
+            width : parent.width
             Controls.ActionButtonV{
                 id : addCatalog
-                width : 115* Global.uiScale
+                width : parent.width / 3
                 height : buttonBar.height - 3
-                iconsource: "../images/newcatalogCS1.png"
-                buttontext :  qsTr("New Catalog Left")
+                iconsource: "../images/newcatalog_left.png"
+                buttontext :  qsTr("New Left")
 
                 function mouseClicked() {
                     bigthing.newCatalog("container='" + mastercatalog.currentUrl +"'","catalog",mastercatalog.currentUrl, "left")
@@ -35,10 +35,10 @@ Item {
             }
             Controls.ActionButtonV{
                 id : addCatalog2
-                width : 115* Global.uiScale
+                width : parent.width / 3
                 height : buttonBar.height - 3
-                iconsource: "../images/newcatalogCS1.png"
-                buttontext :  qsTr("New Catalog Right")
+                iconsource: "../images/newcatalog_right.png"
+                buttontext :  qsTr("New Right")
 
                 function mouseClicked() {
                     bigthing.newCatalog("container='" + mastercatalog.currentUrl +"'","catalog",mastercatalog.currentUrl, "right")
@@ -51,44 +51,28 @@ Item {
 
 
             }
+            Controls.ActionButtonV{
+                id : minimize
+                width : parent.width / 3
+                height : buttonBar.height - 3
+                iconsource: createCatalogForm.state == "maximized" ? "../images/minimize_small_grey.png" : "../images/maximize_small_grey.png"
+                buttontext :  createCatalogForm.state == "maximized" ? qsTr("Minimize") : qsTr("Maximize")
+
+                function mouseClicked() {
+                    createCatalogForm.state = (createCatalogForm.state == "maximized") ? "minimized" : "maximized"
+                }
+
+                Controls.ToolTip {
+                    target: addCatalog
+                    text: qsTr("Reduces the size of the navigator area")
+                }
+
+
+            }
 
         }
 
     }
-    Row {
-        height : 20
-        anchors.right : parent.right
-        anchors.rightMargin: -28
-        anchors.top : parent.top
-        anchors.topMargin: 4
-        width : 75
-        Action {
-            id :maxButtons
-            onTriggered: {
-                createCatalogForm.state = "maximized"
-            }
-        }
 
-        Action {
-            id :minButtons
-            onTriggered: {
-                createCatalogForm.state = "minimized"
-            }
-        }
-        Button{
-            id : full
-            height : 20
-            width :20
-            action : maxButtons
-            Image { anchors.centerIn : parent; source: "../images/max1.png" }
-        }
-        Button{
-            id : close
-            height : 20
-            width :20
-            action : minButtons
-            Image { anchors.centerIn : parent; source: "../images/min1.png" }
-        }
-    }
 }
 

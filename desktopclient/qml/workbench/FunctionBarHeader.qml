@@ -9,23 +9,15 @@ Rectangle {
     height : 30
     anchors.left: parent.left
     width : parent.width
-    color : Global.darkgreen
-
-    y : 5
-    Rectangle {
+    color : Global.darkestgreen
+    Image {
         id : idBackground
         anchors.verticalCenter: parent.verticalCenter
         x : 5
         width: 24
         height : 24
-        color : Global.middlegreen
-        Image {
-            id : icon
-            source: headerImage
-            anchors.fill: parent
-            anchors.margins: 2
-            fillMode: Image.PreserveAspectFit
-        }
+        source: headerImage
+        fillMode: Image.PreserveAspectFit
     }
     Text {
         x : 39

@@ -187,7 +187,7 @@ Rectangle {
                 Rectangle{
                     anchors.fill: parent
                     color :  fileFolders.currentIndex == index ? Global.alternatecolor1 : Global.alternatecolor2
-                    Image{ x : 2;y:3; id : folderico; source : "../images/folder16.png"}
+                    Image{ x : 2;y:3; id : folderico; source : "../images/data_folder.png"}
                     Text { id: filename; text: fileName; anchors.left : folderico.right; anchors.leftMargin: 5;anchors.verticalCenter: parent.verticalCenter }
                 }
 

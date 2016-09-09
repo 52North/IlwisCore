@@ -8,26 +8,31 @@ import "controls" as Controls
 TabViewStyle {
     property color backgroundColor: "white"
     property int tabHeight : 22 * Global.uiScale
-    property int minimumWidth : 100
 
     frameOverlap: 1
     tab: Rectangle {
         id : labelArea
-        color: styleData.selected ? backgroundColor : "#d9d9d9"
-        border.color:  backgroundColor
-
-        implicitWidth: Global.uiScale * Math.max(text.width + 4, minimumWidth)
+        implicitWidth: Global.uiScale *control.width / control.count
         implicitHeight: tabHeight
-        radius: 2
-        Text {
-            id: text
-            anchors.centerIn: parent
-            text: styleData.title
-            color: styleData.selected ? "#003366" : "#a3a3c2"
-            font.pointSize: 10 * Global.uiScale
-            font.weight: Font.DemiBold
-        }
+        BorderImage {
+            id: name
+            anchors.fill: parent
+            border.left: 5; border.top: 5
+            border.right: 5
+            source : styleData.selected ? "images/tab_big_active.png" : "images/tab_big_inactive.png"
 
+
+            Text {
+                id: text
+                anchors.centerIn: parent
+                text: styleData.title
+                color: styleData.selected ? "#003366" : "#a3a3c2"
+                font.pointSize: 10 * Global.uiScale
+                font.weight: Font.DemiBold
+            }
+
+
+        }
         Controls.ToolTip{
             id : ttip
             target : labelArea
@@ -39,7 +44,7 @@ TabViewStyle {
             }
         }
     }
-    frame: Rectangle { color: "white"; border.width: 1 ; border.color: "lightgrey" }
+   /// frame: Rectangle { color: "white"; border.width: 1 ; border.color: "lightgrey" }
 
 
 }

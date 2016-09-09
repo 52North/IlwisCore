@@ -75,7 +75,6 @@ WorkBenchShifter {
         width : parent.width - 10
         height : parent.height - buttonBar.height - functionBarHeader.height
         anchors.top: buttonBar.bottom
-        anchors.margins: 5
         orientation: Qt.Vertical
 
         CreateCatalogForm{

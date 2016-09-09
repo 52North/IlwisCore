@@ -116,7 +116,6 @@ Item {
         height : 20
         width: parent.width - szbut.width - 5
         onDropped:{
-            console.debug(drop.source.sourcePanel, side)
             var createParameters = drop.source.sourcePanel.createParameters
             datapanesplit.newPanel(createParameters[0],createParameters[2],createParameters[1],side==1 ? "left" : "right")
             if ( drop.source.sourcePanel.panelType === "mappanel") {
