@@ -19,8 +19,7 @@ Rectangle {
         height : parent.height
         border.width: 1
         border.color: Global.edgecolor
-        color :  Global.actionItemColor
-
+        color :  Global.formBackGround
 
         Column {
             height : parent.height
