@@ -371,7 +371,9 @@ resources.files = core/resources/referencesystems.csv \
     core/resources/ilwis.config \
     core/resources/country_boundaries.ilwis \
     core/resources/teritories.csv \
-    core/resources/color_chart.csv
+    core/resources/color_chart.csv \
+    core/resources/svgcolornames.txt\
+    core/resources/extract_epsgCodes_with_forcedXY.py 
 
 
 win32{
