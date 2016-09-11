@@ -69,7 +69,7 @@ Rectangle {
         id : header
         width : parent.width
         height : 24
-        color : Global.middlegreen
+        color : Global.darkgreen
         Text {
             x : 5
             anchors.verticalCenter: parent.verticalCenter

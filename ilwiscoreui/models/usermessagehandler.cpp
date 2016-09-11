@@ -121,11 +121,11 @@ QString MessageModel::messageIcon() const
         return "message.png";
     switch(_message.type()){
     case IssueObject::itWarning:
-        return "message_orange.png";
+        return "message_large_warning.png";
     case IssueObject::itError:
-        return "message_red.png";
+        return "message_large_critical.png";
     case IssueObject::itCritical:
-        return "messagepurpleCS1.png";
+        return "message_large_critical.png";
     default:
         return "message.png";
 

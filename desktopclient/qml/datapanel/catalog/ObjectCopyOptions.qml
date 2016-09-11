@@ -20,7 +20,7 @@ Rectangle {
         height: parent.height - 3
         border.width: 1
         border.color: Global.edgecolor
-        color :  Global.actionItemColor
+        color :  Global.formBackGround
         enabled: currentCatalog ? (currentCatalog.url != "ilwis://internalcatalog" && currentCatalog.url.indexOf("ilwis://system") == -1) : false
 
         Column {

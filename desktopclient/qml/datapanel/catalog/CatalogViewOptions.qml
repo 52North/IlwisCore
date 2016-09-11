@@ -41,7 +41,7 @@ Rectangle {
         y : 4 * Global.uiScale
         border.width: 1
         border.color : Global.edgecolor
-        color :   Global.actionItemColor
+        color :   Global.formBackGround
 
 
         Column {

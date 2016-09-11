@@ -19,15 +19,17 @@ TabViewStyle {
 
     tab: BorderImage {
         id: name
-        source: tabmodel && tabmodel.selected ? "images/tab_big_active.png" : "images/tab_big_inactive.png"
+        source: tabmodel && tabmodel.selected ? "images/tab_big_active2.png" : "images/tab_big_inactive2.png"
         border.left: 5; border.right: 5
 
         property TabModel tabmodel : datapane.tab(side == 1, styleData.index)
 
 
-        width: Global.uiScale *200
+        width: 300
         height: tabHeight
-        Layout.minimumWidth: 500
+
+
+        //Layout.minimumWidth: 500
 
 
         Item {
@@ -45,7 +47,7 @@ TabViewStyle {
                     width : 20
                     height : 14 * Global.uiScale
                     text: tabmodel ? "[" + tabmodel.id + "]": "?"
-                    color: tabmodel && tabmodel.selected ? "black" : "darkgrey"
+                    color: tabmodel && tabmodel.selected ? "black" : "#403F3F"
                     font.pointSize: 8 * Global.uiScale
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 8
@@ -55,10 +57,9 @@ TabViewStyle {
                     width : parent.width
                     height : 20 * Global.uiScale
                     text: tabmodel ? tabmodel.displayName : "?"
-                    color: tabmodel && tabmodel.selected ? "black" : "darkgrey"
+                    color: tabmodel && tabmodel.selected ? "black" : "#403F3F"
                     elide: Text.ElideMiddle
                     font.pointSize: tabmodel && tabmodel.selected ? 9 : 8
-                    //font.bold: tabmodel && tabmodel.selected ? true : false
                     font.weight: tabmodel && tabmodel.selected ? Font.DemiBold : Font.Normal
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 2
@@ -137,7 +138,7 @@ TabViewStyle {
             anchors.rightMargin: 6
             width : 18 * Global.uiScale
             height : width
-            opacity : 0.5
+            opacity : datapanesplit.totalTabCount() > 1 ? 0.5 : 0
             onClicked: {
                datapanesplit.closeTab(side == 1, styleData.index)
             }

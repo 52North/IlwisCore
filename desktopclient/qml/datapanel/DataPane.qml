@@ -204,6 +204,10 @@ Rectangle {
             }
         }
 
+        function totalTabCount(){
+            return lefttab.count + righttab.count
+        }
+
         DataTabView2 {
             id : lefttab
             property bool fillWidth : true

@@ -1,15 +1,18 @@
 import QtQuick 2.0
 import "../Global.js" as Global
 
-Rectangle {
+BorderImage {
+    source: "../images/tab_big_green.png"
+    border.left: 5; border.top: 5
+    border.right: 5; border.bottom: 5
     property string headerImage
     property string headerText
 
     id : title
     height : 30
     anchors.left: parent.left
-    width : parent.width
-    color : Global.darkestgreen
+    width : parent.width - 4
+    anchors.leftMargin: 4
     Image {
         id : idBackground
         anchors.verticalCenter: parent.verticalCenter

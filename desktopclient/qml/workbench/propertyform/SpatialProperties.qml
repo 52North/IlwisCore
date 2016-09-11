@@ -10,6 +10,7 @@ Rectangle {
             csyProps.storeData()
         }
     }
+    color : Global.formBackGround
     CoordinateSystemProperties{
         id : csyProps
     }
