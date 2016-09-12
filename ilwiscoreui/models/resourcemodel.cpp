@@ -25,8 +25,10 @@ using namespace Ilwis;
 
 QString ResourceModel::getProperty(const QString &propertyname) const
 {
+    try{
     if(itemRef().hasProperty(propertyname))
         return itemRef()[propertyname].toString();
+    } catch(const ErrorObject&) {}
     return sUNDEF;
 }
 
@@ -61,8 +63,8 @@ ResourceModel &ResourceModel::operator=(const ResourceModel &model)
     _imagePath = model._imagePath;
     _type = model._type;
     _isRoot = model._isRoot;
-   _selected = model._selected;
-      _is3d = model._is3d;
+    _selected = model._selected;
+    _is3d = model._is3d;
 
     return *this;
 }
@@ -87,26 +89,32 @@ QString ResourceModel::typeName() const
 
 QString ResourceModel::name() const
 {
-    if ( itemRef().isValid()) {
-        return itemRef().name();
-    }
+    try{
+        if ( itemRef().isValid()) {
+            return itemRef().name();
+        }
+    }   catch (const ErrorObject&){}
     return "";
 }
 
 QString ResourceModel::size() const
 {
-    if ( itemRef().isValid() && itemRef().ilwisType() != itCATALOG){
-        quint64 sz = itemRef().size();
-        if ( sz != 0)
-            return  QString::number(sz);
-    }
+    try{
+        if ( itemRef().isValid() && itemRef().ilwisType() != itCATALOG){
+            quint64 sz = itemRef().size();
+            if ( sz != 0)
+                return  QString::number(sz);
+        }
+    } catch (const ErrorObject&){}
     return "";
 }
 
 QString ResourceModel::description() const
 {
-    if ( itemRef().isValid())
-        return itemRef().description();
+    try {
+        if ( itemRef().isValid())
+            return itemRef().description();
+    } catch (const ErrorObject&){}
     return "";
 }
 
@@ -121,8 +129,10 @@ void ResourceModel::setDescription(const QString &desc)
 
 QString ResourceModel::dimensions() const
 {
-    if ( itemRef().isValid())
-        return itemRef().dimensions();
+    try{
+        if ( itemRef().isValid())
+            return itemRef().dimensions();
+    } catch (const ErrorObject&){}
     return "";
 }
 
@@ -133,22 +143,32 @@ QString ResourceModel::displayName() const
 
 void ResourceModel::setDisplayName(const QString &name)
 {
-    if ( itemRef().isValid()){
-        _displayName = name;
-        itemRef().name(name, false);
-        mastercatalog()->changeResource(itemRef().id(), "name",name);
-        emit displayNameChanged();
-    }
+
+    try {
+        if ( itemRef().isValid()){
+            _displayName = name;
+            itemRef().name(name, false);
+            mastercatalog()->changeResource(itemRef().id(), "name",name);
+            emit displayNameChanged();
+        }
+    } catch (const ErrorObject&){}
 }
 
 QString ResourceModel::url() const
 {
-    return itemRef().url().toString();
+    try{
+        return itemRef().url().toString();
+    } catch (const ErrorObject&){}
+    return "";
 }
 
 QString ResourceModel::container() const
 {
-   return itemRef().container().toString();
+    try{
+        return itemRef().container().toString();
+    } catch (const ErrorObject&){}
+
+    return "";
 }
 
 QString ResourceModel::iconPath() const
@@ -297,8 +317,10 @@ bool ResourceModel::isRoot() const
 
 QString ResourceModel::id() const
 {
+    try {
     if ( itemRef().isValid())
         return QString::number(itemRef().id());
+    } catch (const ErrorObject&){}
     return sUNDEF;
 }
 
@@ -309,22 +331,26 @@ Resource ResourceModel::item() const
 
 
 QString ResourceModel::domainName() const {
+    try{
     QString nme =  propertyName("domain");
     if ( nme != displayName() && nme != "")
         return nme;
     quint64 tp = itemRef().ilwisType();
     if ( hasType(tp, itCOVERAGE))
         return "self";
+    } catch(const ErrorObject&) {}
     return "";
 }
 
 QString ResourceModel::domainType() const {
+    try{
     QString nme = propertyTypeName(itDOMAIN, "domain");
     if ( nme != "")
         return nme;
     quint64 tp = itemRef().ilwisType();
     if ( hasType(tp, itCOVERAGE))
         return "IndexedIdentifier";
+    } catch(const ErrorObject&) {}
     return "";
 }
 
@@ -338,31 +364,34 @@ QString ResourceModel::proj42DisplayName(const QString& proj4Def) const{
 }
 
 QString ResourceModel::coordinateSystemName() const {
-    QString proj = itemRef()["projectionname"].toString();
-    if ( proj != sUNDEF)
-        return proj;
+    try{
+        QString proj = itemRef()["projectionname"].toString();
+        if ( proj != sUNDEF)
+            return proj;
 
-    QString nme =  propertyName("coordinatesystem");
-    if ( nme != displayName() && nme != "" && nme != sUNDEF)
-        return nme;
-    if ( nme == ""){
-        nme = itemRef()["coordinatesystem"].toString();
-        if ( nme != sUNDEF){
-            int index = nme.toLower().indexOf("code=");
-            if ( index == -1){
-                nme = itemRef().code();
-            }
-            if ((index = nme.toLower().indexOf("code=epsg")) != -1){
-                nme = nme.mid(5);
-            }
-            else if ( (index = nme.toLower().indexOf("code=proj4")) != -1){
-                nme = proj42DisplayName(nme.mid(5));
-            }else {
-                nme = Projection::projectionCode2Name(nme.mid(5));
+        QString nme =  propertyName("coordinatesystem");
+        if ( nme != displayName() && nme != "" && nme != sUNDEF)
+            return nme;
+        if ( nme == ""){
+            nme = itemRef()["coordinatesystem"].toString();
+            if ( nme != sUNDEF){
+                int index = nme.toLower().indexOf("code=");
+                if ( index == -1){
+                    nme = itemRef().code();
+                }
+                if ((index = nme.toLower().indexOf("code=epsg")) != -1){
+                    nme = nme.mid(5);
+                }
+                else if ( (index = nme.toLower().indexOf("code=proj4")) != -1){
+                    nme = proj42DisplayName(nme.mid(5));
+                }else {
+                    nme = Projection::projectionCode2Name(nme.mid(5));
+                }
             }
         }
-    }
-    return nme != sUNDEF ? nme : "";
+        return nme != sUNDEF ? nme : "";
+    } catch(const ErrorObject&) {}
+    return "" ;
 }
 
 QString ResourceModel::coordinateSystemType() const {
@@ -434,7 +463,7 @@ void ResourceModel::resource(const Ilwis::Resource& res)
                 _imagePath = "catalog.png";
             }
             if ( hasType(item.ilwisType(), itRASTER))
-                 _imagePath = "remote.png";
+                _imagePath = "remote.png";
             else if ( hasType(item.ilwisType(), itFEATURE))
                 _imagePath = "polygon.png";
             else if ( hasType(item.ilwisType(), itCOORDSYSTEM))
@@ -512,14 +541,16 @@ void ResourceModel::makeParent(QObject *item)
 
 bool ResourceModel::hasExtendedType(const QString &tp) const
 {
-    if ( itemRef().isValid()) {
-        IlwisTypes typ = Ilwis::IlwisObject::name2Type(tp);
-        if ( typ != itUNKNOWN) {
-            bool ok = hasType(itemRef().extendedType(), typ);
-            return ok;
-        }
+    try{
+        if ( itemRef().isValid()) {
+            IlwisTypes typ = Ilwis::IlwisObject::name2Type(tp);
+            if ( typ != itUNKNOWN) {
+                bool ok = hasType(itemRef().extendedType(), typ);
+                return ok;
+            }
 
-    }
+        }
+    } catch (const ErrorObject&){}
     return false;
 }
 
@@ -546,7 +577,7 @@ void ResourceModel::keywords(const QString &pkeys)
     }else {
         QStringList parts1 = keywrds.split(",");
         QStringList parts2 = keys.split(",");
-           for(QString key : parts2){
+        for(QString key : parts2){
             if ( !parts1.contains(key.trimmed())){
                 keywrds += ","+ key.trimmed()    ;
             }
