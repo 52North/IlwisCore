@@ -8,7 +8,7 @@ import "../../controls" as Controls
 import "../../Global.js" as Global
 import "../.." as Base
 
-Item {
+Column {
     id : layersinfo
     width : viewmanager.width
     height: viewmanager.height
@@ -20,9 +20,21 @@ Item {
          return iconP
 
      }
-
+    Rectangle {
+        id : header
+        width : parent.width
+        height : 18
+        color : Global.palegreen
+        Text{
+            text : qsTr("Attribute information on Mouse Position")
+            font.bold: true
+            x : 3
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
     GridView{
-        anchors.fill: parent
+        width : parent.width
+        height : parent.height - header.height - 2
         model : manager.layerInfoItems
         cellWidth : 240
         cellHeight : 15

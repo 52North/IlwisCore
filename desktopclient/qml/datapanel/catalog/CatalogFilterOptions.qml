@@ -26,6 +26,18 @@ Rectangle {
             width : parent.width  - 5 * Global.uiScale
             spacing : 4 * Global.uiScale
             x : 5 * Global.uiScale
+            Rectangle {
+                id : header
+                width : parent.width
+                height : 18
+                color : Global.palegreen
+                Text{
+                    text : qsTr("Filters")
+                    font.bold: true
+                    x : 3
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
             CatalogFilterButtons{
                 id : objectfilters
             }
@@ -178,7 +190,6 @@ Rectangle {
     }
     Controls.SpatialSelection{
         id : spatselect
-        showState: "open"
         anchors.left: choices.right
         anchors.leftMargin: 6* Global.uiScale
         z : 1

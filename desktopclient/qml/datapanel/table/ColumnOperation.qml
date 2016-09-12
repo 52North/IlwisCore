@@ -29,18 +29,18 @@ Item {
              operation2.source = ""
          }
      }
+
     Rectangle {
         id : operationLabel
-        width : parent.width
+        width : parent.width - 2
         height : 18
-        color : Global.alternatecolor3
-        Text{
-            id : lbl
+        color : Global.palegreen
+        Text {
             text : qsTr("Operation")
-            font.bold : true
+            width : parent.width
+            font.bold: true
+            x : 5
             anchors.verticalCenter: parent.verticalCenter
-
-
         }
         Controls.ToolTip {
             target : operationLabel

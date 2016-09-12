@@ -13,9 +13,6 @@ Column {
     id : column
     property int itemHeight : 16
     property int fSize : 7
-    width : parent.width
-    height : 120
-    anchors.fill: parent
 
     function setEnvelope(env, ismin){
         if ( !env || !("minx" in env))
@@ -33,10 +30,23 @@ Column {
         zoomEnvelope2.content =  parseFloat(parts[2]).toFixed(4) + " " + parseFloat(parts[3]).toFixed(4)
     }
 
+    Rectangle {
+        id : layersLabel
+        width : parent.width -2
+        height : 18
+        color : Global.palegreen
+        Text{
+            text : qsTr("Spatial metadata")
+            font.bold : true
+            x : 5
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
+
     Controls.TextEditLabelPair{
         height : column.itemHeight
         width : parent.width
-        labelWidth: 115
+        labelWidth: 90
         fontSize: fSize
         content : renderer.viewerId
 
@@ -47,7 +57,7 @@ Column {
     Controls.TextEditLabelPair{
         height : column.itemHeight
         width : parent.width
-        labelWidth: 115
+        labelWidth: 90
         fontSize: fSize
         content : metatdata.manager.coordinateSystem ? metatdata.manager.coordinateSystem.displayName : ""
 
@@ -57,7 +67,7 @@ Column {
     Controls.TextEditLabelPair{
         height : column.itemHeight
         width : parent.width
-        labelWidth: 115
+        labelWidth: 90
         fontSize: fSize
         content : metatdata.manager.coordinateSystem ? metatdata.manager.coordinateSystem.coordinateSystemName : ""
         labelText : qsTr("Projection")
@@ -67,7 +77,7 @@ Column {
         id : viewenv
         height : column.itemHeight
         width : parent.width
-        labelWidth: 115
+        labelWidth: 90
         fontSize: fSize
         labelText : qsTr("View Envelope")
         content : metatdata.manager.coordinateSystem ? column.setEnvelope(metatdata.manager.viewEnvelope, true) : ""
@@ -76,7 +86,7 @@ Column {
     Controls.TextEditLabelPair{
         height : column.itemHeight
         width : parent.width
-        labelWidth: 115
+        labelWidth: 90
         labelText :""
         fontSize: fSize
         content : metatdata.manager.coordinateSystem ? column.setEnvelope(metatdata.manager.viewEnvelope, false) : ""
@@ -86,7 +96,7 @@ Column {
         id : zoomEnvelope1
         height : column.itemHeight
         width : parent.width
-        labelWidth: 115
+        labelWidth: 90
         fontSize: fSize
         labelText : qsTr("Zoom Envelope ")
 
@@ -95,7 +105,7 @@ Column {
         id : zoomEnvelope2
         height : column.itemHeight
         width : parent.width
-        labelWidth: 115
+        labelWidth: 90
         fontSize: fSize
         labelText : ""
     }
@@ -103,7 +113,7 @@ Column {
     Controls.TextEditLabelPair{
         height : column.itemHeight
         width : parent.width
-        labelWidth: 115
+        labelWidth: 90
         fontSize: fSize
         content : metatdata.manager.coordinateSystem ? column.setEnvelope(metatdata.manager.latlonEnvelope, true) : ""
         labelText : qsTr("Lat/Lon Envelope")
@@ -112,14 +122,14 @@ Column {
     Controls.TextEditLabelPair{
         height : column.itemHeight
         width : parent.width
-        labelWidth: 115
+        labelWidth: 90
         fontSize: fSize
         content : metatdata.manager.coordinateSystem ? column.setEnvelope(metatdata.manager.latlonEnvelope, false) : ""
     }
     Controls.TextEditLabelPair{
         height : column.itemHeight
         width : parent.width
-        labelWidth: 115
+        labelWidth: 90
         fontSize: fSize
         content : ""
         labelText : qsTr("Georeference")

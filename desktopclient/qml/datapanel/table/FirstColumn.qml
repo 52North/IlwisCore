@@ -10,11 +10,11 @@ import "../../Global.js" as Global
 Rectangle {
     width : defaultWidth(styleData.column)
     height : 20
-    color : styleData.selected ? Global.selectedColor :  (((styleData.row % 10) > 4)? "#d7d4a7": "#dfddb9" )
+    color : styleData.selected ? Global.selectedColor :  (((styleData.row % 10) > 4)? Global.darkestgreen: Global.darkgreen )
     Text {
         text: styleData.value
         anchors.verticalCenter: parent.verticalCenter
-        color : styleData.selected ? "#2121A3" : "black"
+        color : styleData.selected ? "#2121A3" : "white"
         horizontalAlignment: Text.AlignLeft
         x : 4
         font.bold: true

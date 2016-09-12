@@ -11,7 +11,6 @@ import LayerManager 1.0
 
 Item {
     id : selector
-    property alias showState : worldmapcontainer.state
     property var currentEnvelope
 
 
@@ -23,81 +22,76 @@ Item {
         }else
             worldmap.newExtent(currentEnvelope)
     }
-
-    Controls.CollapsiblePanel {
-        y : 4
-        x : 8
-        id : worldmapcontainer
+    Rectangle {
+        id : mapLabel
         width : parent.width
-        titleText: qsTr("Spatial Selection")
-        headerHeight: 20
-        panelHeight: 250
-        state : "collapsed"
-        objectName: uicontext.uniqueName()
-        property LayerManager manager
-        headerColor: Global.alternatecolor5
-
-
-
-        Rectangle{
-            id : operList
-            width : parent.width
-            height : parent.height
-            parent : worldmapcontainer.expandableArea
-//            border.width : 1
-//            border.color : Global.edgecolor
-//            color : Global.actionItemColor
-
-            SpatialSelectionToolbar{
-                id : buttons
-                anchors.right: worldmap.left
-            }
-
-            LayersView{
-                id : worldmap
-                width : parent.width - 30
-                height : worldmapcontainer.panelHeight - 15
-                x : 28
-                y : 2
-                Connections{
-                    target : mouseActions
-                    onZoomEnded : {
-                        currentCatalog.filter("spatial", envelope)
-                        currentEnvelope = envelope
-                    }
-                }
-
-                function newExtent(ext){
-                    addCommand("setviewextent("+ viewerId + "," + ext + ")");
-                    update()
-                }
-                Component.onCompleted: {
-                    var cmd = uicontext.worldmapCommand(viewerId)
-                    addCommand(cmd)
-                    setAttribute("GridDrawer", {"active" : false})
-                    cmd = "setlinecolor("+ viewerId + ", 0, black)";
-                    addCommand(cmd)
-                }
-                LayerExtentMouseActions{
-                    id : mouseActions
-                    layerManager: worldmapcontainer.manager
-                    drawer : worldmap
-                }
-                Controls.ToolTip{
-                    target: worldmap
-                    text : qsTr("Selects coverages within the indicated rectangle")
-                }
-            }
-
+        height : 18
+        color : Global.palegreen
+        Text{
+            text : qsTr("Spatial Selection")
+            font.bold: true
+            x : 3
+            anchors.verticalCenter: parent.verticalCenter
         }
-
-        clip : true
     }
 
 
+    Rectangle{
+        id : operList
+        width : parent.width
+        height : 250
+        anchors.top: mapLabel.bottom
+        property LayerManager manager
+
+        SpatialSelectionToolbar{
+            id : buttons
+            anchors.right: worldmap.left
+        }
+
+        LayersView{
+            id : worldmap
+            width : parent.width - 30
+            height : 240
+            x : 28
+            y : 2
+            Connections{
+                target : mouseActions
+                onZoomEnded : {
+                    currentCatalog.filter("spatial", envelope)
+                    currentEnvelope = envelope
+                }
+            }
+
+            function newExtent(ext){
+                addCommand("setviewextent("+ viewerId + "," + ext + ")");
+                update()
+            }
+            Component.onCompleted: {
+                var cmd = uicontext.worldmapCommand(viewerId)
+                addCommand(cmd)
+                setAttribute("GridDrawer", {"active" : false})
+                cmd = "setlinecolor("+ viewerId + ", 0, black)";
+                addCommand(cmd)
+            }
+            LayerExtentMouseActions{
+                id : mouseActions
+                layerManager: operList.manager
+                drawer : worldmap
+            }
+            Controls.ToolTip{
+                target: worldmap
+                text : qsTr("Selects coverages within the indicated rectangle")
+            }
+        }
+
+    }
+
+    clip : true
+
+
     Component.onCompleted: {
-       worldmapcontainer.manager = uicontext.createLayerManager(objectName)
-       worldmap.setManager(worldmapcontainer.manager)
+        operList.manager = uicontext.createLayerManager(objectName)
+        worldmap.setManager(operList.manager)
     }
 }
 

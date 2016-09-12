@@ -35,9 +35,23 @@ Rectangle {
         }
     }
     Rectangle {
+        id : header
+        width : leftContainer.width
+        height : 18
+        color : Global.palegreen
+        Text{
+            text : qsTr("Actions on Selected objects")
+            font.bold: true
+            x : 3
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
+
+    Rectangle {
         id : leftContainer
         width : 260 * Global.uiScale
-        height : parent.height
+        height : parent.height - header.height
+        anchors.top : header.bottom
         y : 4 * Global.uiScale
         border.width: 1
         border.color : Global.edgecolor
@@ -50,7 +64,8 @@ Rectangle {
             id : buttonRow
             width : parent.width
             height : parent.height - 5 * Global.uiScale
-            spacing : 6
+            spacing : 4
+
             property int buttonWidth : 220 * Global.uiScale
 
             Controls.WideButton{
@@ -177,11 +192,25 @@ Rectangle {
         }
     }
     Column {
+        id : previews
         width : 240* Global.uiScale
         anchors.left: leftContainer.right
-        height : parent.height -5
+        anchors.leftMargin: 3
+        height : parent.height - 5
         spacing : 6* Global.uiScale
-        y : 5* Global.uiScale
+        Rectangle {
+            id : header2
+            width : previews.width
+            height : 18
+            color : Global.palegreen
+            Text{
+                text : qsTr("Previews")
+                font.bold: true
+                x : 3
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
+
         Controls.WideButton{
             image : "../images/mapview.png"
             label : qsTr("Generate previews\nof selected coverages")

@@ -21,7 +21,7 @@ Item {
             id : layersLabel
             width : parent.width + 10
             height : 18
-            color : Global.alternatecolor3
+            color : Global.palegreen
             Text{
                 text : qsTr("Layers")
                 font.bold: true
@@ -38,7 +38,7 @@ Item {
             anchors.top: layersLabel.bottom
             anchors.topMargin: 2
             height : parent.height - layersLabel.height - 3
-            color : Global.actionItemColor
+            color : Global.formBackGround
 //            border.color: "lightgrey"
             radius : 4
 //            border.width: 1

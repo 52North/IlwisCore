@@ -28,10 +28,10 @@ Item {
     function iconSource(name) {
         if ( name === "")
             name = "redbuttonr.png"
-         var iconP = "../../images/" + name
-         return iconP
+        var iconP = "../../images/" + name
+        return iconP
 
-     }
+    }
 
     function addDataSource(filter, sourceName, sourceType){
         if ( coverage){
@@ -73,23 +73,10 @@ Item {
         }
     }
 
-    Rectangle {
-        id : layersLabel
-        width : parent.width + 10
-        height : 18
-        color : Global.alternatecolor3
-        Text{
-            text : qsTr("Layers")
-            font.weight: Font.DemiBold
-            x : 5
-            anchors.verticalCenter: parent.verticalCenter
-        }
-    }
+
     Row {
         width: parent.width
-        anchors.top: layersLabel.bottom
-        anchors.topMargin: 2
-        height : parent.height - layersLabel.height - 5
+        height : parent.height
         spacing : 3
         Rectangle {
             id : layerContainer
@@ -98,77 +85,115 @@ Item {
             color : Global.alternatecolor2
             border.color: "lightgrey"
             border.width: 1
+            Rectangle {
+                id : layersLabel
+                width : 180
+                height : 18
+                color : Global.palegreen
+                Text{
+                    text : qsTr("Layers")
+                    font.bold : true
+                    x : 5
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
             MetaDataLayerList{
+                anchors.top : layersLabel.bottom
+                height : parent.height - layersLabel.height
+                width : parent.width
             }
 
 
         }
         Rectangle{
             width : parent.width - layerContainer.width - 8
-            height : layerContainer.height
+            height : metatdata.height
             color : Global.alternatecolor3
+
+
 
             MetaDataSpatialInfo{
                 id : mdspatialinfo
-                anchors.topMargin: 4
                 anchors.leftMargin: 2
-                anchors.left : parent.left
-                anchors.right: buttons.left
+                width : 250
                 height : parent.height
             }
-
-            OverviewExtentToolbar{
-                id : buttons
-                anchors.right: viewcontainer.left
+            Rectangle {
+                id : overLabel
+                width : overv.width
+                height : 18
+                anchors.left: mdspatialinfo.right
+                anchors.top : parent.top
+                color : Global.palegreen
+                Text{
+                    text : qsTr("Overview")
+                    font.bold : true
+                    x : 5
+                    anchors.verticalCenter: parent.verticalCenter
+                }
             }
-            Rectangle{
-                id : viewcontainer
-                width :parent.width / 2 - buttons.width
-                height : parent.height - 4
-                border.width: 1
-                border.color: "lightgrey"
+            Item {
+                id : overv
+                anchors.left : mdspatialinfo.right
+                anchors.top : overLabel.bottom
                 anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.margins: 3
-                function entireMap() {
-                    if ( layersmeta.currentIndex == 2){
-                        overview.addCommand("setviewextent("+ overview.viewerId + ",entiremap)");
-                        overview.update()
+                height : parent.height - overLabel.height
+
+                OverviewExtentToolbar{
+                    id : buttons
+                    anchors.right: viewcontainer.left
+                    height : parent.height
+
+                }
+                Rectangle{
+                    id : viewcontainer
+                    width :parent.width  - buttons.width
+                    height : parent.height
+                    border.width: 1
+                    border.color: "lightgrey"
+                    anchors.right: parent.right
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: 3
+                    function entireMap() {
+                        if ( layersmeta.currentIndex == 2){
+                            overview.addCommand("setviewextent("+ overview.viewerId + ",entiremap)");
+                            overview.update()
+                        }
                     }
-                }
 
-                onWidthChanged: {
-                    entireMap()
-                }
-                onHeightChanged: {
-                    entireMap()
-                }
-
-                onVisibleChanged: {
-                    if (viewcontainer.visible)
-                        entireMap()
-                }
-
-                OverViewDrawer{
-                    id: overview
-                    anchors.fill: parent
-
-                    Component.onCompleted: {
-                        mouseActions.mapScrollers = layers.maparea().parent.mapScrollers
+                    onWidthChanged: {
                         entireMap()
                     }
+                    onHeightChanged: {
+                        entireMap()
+                    }
+
+                    onVisibleChanged: {
+                        if (viewcontainer.visible)
+                            entireMap()
+                    }
+
+                    OverViewDrawer{
+                        id: overview
+                        anchors.fill: parent
+
+                        Component.onCompleted: {
+                            mouseActions.mapScrollers = layers.maparea().parent.mapScrollers
+                            entireMap()
+                        }
+                    }
+
+
+                    LayerExtentMouseActions{
+                        id : mouseActions
+                        layerManager: manager
+                        drawer : overview
+                        linkedDrawer: renderer
+                        hasPermanence: true
+                        panningDirection: Global.panningAlong
+                    }
+
                 }
-
-
-                LayerExtentMouseActions{
-                    id : mouseActions
-                    layerManager: manager
-                    drawer : overview
-                    linkedDrawer: renderer
-                    hasPermanence: true
-                    panningDirection: Global.panningAlong
-                }
-
             }
 
         }

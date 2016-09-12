@@ -8,11 +8,11 @@ Rectangle {
         var rowBand = (rowIndex % 10) > 4
         var colBand = (columnIndex) % 2 == 1
         if ( rowBand && colBand)
-            return "#EDEBD6"
+            return "#E4EBE5"
         if ( rowBand)
-            return "#F4F3E6"
+            return "#EEF2EE"
         if ( colBand)
-            return "#f7f6ed"
+            return "#F8FAF8"
         return "#fff"
     }
 

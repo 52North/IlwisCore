@@ -30,9 +30,9 @@ Rectangle {
         width : parent.width - 5
         height : parent.height
         y : 2
-        handleDelegate: Controls.SplitHandle{
-            imageHeight: 15
-        }
+//        handleDelegate: Controls.SplitHandle{
+//            imageHeight: 15
+//        }
 
         LayersList{
             id : layerColumn

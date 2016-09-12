@@ -83,7 +83,7 @@ Rectangle {
         width : parent.width - titleArrow.height - 10
         height : 25
         opacity : 0
-        color : "#256E4D"
+        color : Global.darkestgreen
 
 
         ScrollView{
@@ -159,7 +159,7 @@ Rectangle {
             name: "open"
             PropertyChanges {
                 target: t3
-                height: 150
+                height: Math.min(150,consolearea.count * 25 + 5)
             }
             PropertyChanges {
                 target: t3
@@ -171,7 +171,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: commLine
-                height : 160
+                height : Math.min(160,consolearea.count * 25 + 18)
             }
             PropertyChanges {
                 target: consolearea

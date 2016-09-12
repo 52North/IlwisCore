@@ -30,18 +30,24 @@ Item {
         }
     }
 
-    Text {
+    Rectangle {
         id : title
-        text : qsTr("Operations")
-        width : parent.width
-        x : 3
-        font.bold : true
-
+        width : parent.width - 2
+        height : 18
+        color : Global.palegreen
+        Text {
+            text : qsTr("Operations")
+            width : parent.width
+            font.bold: true
+            x : 5
+            anchors.verticalCenter: parent.verticalCenter
+        }
         Controls.ToolTip {
             target : title
             text : qsTr("All operations that are applicable to the selected column")
         }
     }
+
     ListView {
         id : operationlist
         width : parent.width - 3

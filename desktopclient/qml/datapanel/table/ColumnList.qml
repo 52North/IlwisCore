@@ -23,14 +23,18 @@ Item {
         }
     }
 
-    Text {
+    Rectangle {
         id : title
-        text : qsTr("Columns")
-        width : parent.width
-        font.bold: true
-        x : 3
-        font.weight: Font.DemiBold
-
+        width : parent.width - 2
+        height : 18
+        color : Global.palegreen
+        Text {
+            text : qsTr("Columns")
+            width : parent.width
+            font.bold: true
+            x : 5
+            anchors.verticalCenter: parent.verticalCenter
+        }
         Controls.ToolTip {
             target : title
             text : qsTr("All columns available in the table")

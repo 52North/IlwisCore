@@ -10,7 +10,6 @@ import "../../Global.js" as Global
 import "../.." as Base
 
 Rectangle {
-    height : parent.height
     width : 27
     color : Global.alternatecolor1
 

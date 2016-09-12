@@ -9,7 +9,7 @@ Rectangle {
     id : lineDelegate
     width: parent.width
     height: 25
-    color : "#256E4D"
+    color : Global.darkestgreen
     property string consoletext : content
     property string line : lineNumber
     property int listindex : index
@@ -26,9 +26,10 @@ Rectangle {
         width : parent.width
         height : parent.height
         y : 3
+        spacing : 5
         Rectangle{
             id : linenum
-            color : "#256E4D"
+            color : Global.darkestgreen
             height : parent.height
             width : 30
             Text {
@@ -36,25 +37,16 @@ Rectangle {
                 color : "white"
                 x : 3
                 y : 4
-            }
-        }
-        Rectangle{
-            id : marker
-            width : 24
-            height : parent.height
-            color : "#256E4D"
-            Text {
-                text : ">>>"
-                y: 4
-                color : "white"
-            }
-        }
+                width : parent.width
+                horizontalAlignment: Text.AlignRight
 
+            }
+        }
         TextField {
             id : inputField
             text : consoletext
             y:-2
-            width : parent.width - marker.width - linenum.width
+            width : parent.width - linenum.width - 6
             height : parent.height+ 2
             activeFocusOnTab : true
             style: TextFieldStyle {

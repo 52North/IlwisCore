@@ -15,8 +15,6 @@ ListView {
     }
     id : layersList
     model : manager.layers
-    anchors.fill: parent
-    anchors.margins: 4
     delegate: Component{
         Item {
             id : layerRow

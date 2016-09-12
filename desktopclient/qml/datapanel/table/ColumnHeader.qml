@@ -9,7 +9,7 @@ import "../../Global.js" as Global
 
 Rectangle {
     id : header
-    color:  "#d9f2e4"
+    color: Global.darkestgreen
     objectName: uicontext.uniqueName()
     border.color:  Global.headerdark
     width: defaultWidth(styleData.column)
@@ -20,7 +20,7 @@ Rectangle {
         property int count : 0
         text: styleData.value
         font.weight: Font.DemiBold
-        color: styleData.pressed ? "white" : "black"
+        color: styleData.pressed ? Global.lightgreen : "white"
         y : 3
         x : 4
 

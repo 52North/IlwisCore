@@ -25,7 +25,7 @@ Rectangle {
         id : editorsLabel
         width : parent.width
         height : 18
-        color : Global.alternatecolor3
+        color : Global.palegreen
         Text{
             text : qsTr("Property Editor")
             font.bold: true
