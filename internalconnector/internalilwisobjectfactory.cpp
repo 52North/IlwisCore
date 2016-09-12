@@ -421,6 +421,11 @@ IlwisObject *InternalIlwisObjectFactory::createRasterCoverage(const Resource& re
 }
 template<class DomainItemType, class RangeType> Domain* createItemDomain2(const QSqlRecord& rec, const Resource& resource){
     ItemDomain<DomainItemType> *itemdom = new ItemDomain<DomainItemType>(resource);
+    const ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+    ConnectorInterface *connector = factory->createFromResource<>(resource, "internal");
+    itemdom->setConnector(connector,IlwisObject::cmINPUT, IOOptions());
+    itemdom->createTime(Time::now());
+    itemdom->modifiedTime(Time::now());
     itemdom->fromInternal(rec);
     itemdom->name(resource.name());
     RangeType range ;
