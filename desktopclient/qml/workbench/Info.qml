@@ -99,7 +99,7 @@ WorkBenchShifter {
                         height: 100
                         labelText: qsTr("Developers")
                         labelWidth: 100
-                        content: "Martin Schouwenburg(lead),\nHenning Bredel,\nBas Retsios,\nHeinrich Kiessling,\nJohannes Kolbe\nJoão Bonina"
+                        content: "Martin Schouwenburg(lead),\nHenning Bredel,\nBas Retsios,\nHeinrich Kiessling,\nJohannes Kolbe\nJoão Bonina\nWim Feringa(UI)"
                     }
                     Controls.TextAreaLabelPair{
                         width : parent.width

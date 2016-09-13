@@ -3,12 +3,13 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import MasterCatalogModel 1.0
+import "../../Global.js" as Global
 
 Rectangle {
     id : catalogProperties
     width : parent.width
     anchors.margins: 6
-    color : "white"
+    color : currentFolders.currentIndex === index ? "#99CCFF" : index  % 2 == 0 ? Global.lightestgreen: "white"
     border.width: 1
     border.color: "#E6E6E6"
     property alias humannametext : displayString.text

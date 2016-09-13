@@ -66,31 +66,36 @@ Rectangle {
     }
 
     Rectangle {
+
         id : header
         width : parent.width
         height : 24
         color : Global.darkgreen
-        Text {
-            x : 5
-            anchors.verticalCenter: parent.verticalCenter
-            text : displayName
-            color : "white"
-            font.pointSize: 10
-            font.bold: true
-            width : parent.width - typeico.width - 9
-            clip : true
-            elide: Text.ElideMiddle
-        }
         Image {
             id : typeico
             source : iconsource(iconPath)
             width : 20
             height : 20
-            anchors.right: parent.right
-            anchors.rightMargin: 5
+            anchors.left: parent.left
+            anchors.leftMargin: 5
             anchors.verticalCenter: parent.verticalCenter
 
         }
+
+        Text {
+            x : 5
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left : typeico.right
+            anchors.leftMargin: 5
+            text : displayName
+            color : "white"
+            font.pointSize: 10
+            font.bold: true
+            width : parent.width - typeico.width - 10
+            clip : true
+            elide: Text.ElideMiddle
+        }
+
     }
 
     TabView {
