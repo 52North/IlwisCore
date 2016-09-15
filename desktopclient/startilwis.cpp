@@ -237,9 +237,6 @@ QString StartIlwis::buildNumber() const
 
 void StartIlwis::stop()
 {
-    if ( _mastercatalogmodel->currentCatalog()){
-        _mastercatalogmodel->currentCatalog()->viewRef().storeFilters();
-    }
 
     Ilwis::exitIlwis();
     delete _mastercatalogmodel;

@@ -86,6 +86,10 @@ void UIContextModel::exitUI()
     if ( _threadCount > 0) {  // wait until the threads have aborted
         std::this_thread::sleep_for (std::chrono::seconds(3));
     }
+    if ( masterCatalogModel() && masterCatalogModel()->currentCatalog()){
+        masterCatalogModel()->currentCatalog()->viewRef().storeFilters();
+    }
+
 }
 
 ConsoleScriptModel *UIContextModel::consoleScript(int type)
