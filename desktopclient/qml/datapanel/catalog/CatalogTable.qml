@@ -43,10 +43,10 @@ Rectangle {
             delegate :
                 Item {
                 id : imageItem
-                width : 20;height : 20
+                width : 21;height : 21
                 MouseArea {
                     id : mouseArea
-                    width : 20; height : 20
+                    width : 21; height : 21
                     anchors.centerIn: parent
                     property variant image
                     drag.target: image
@@ -89,7 +89,7 @@ Rectangle {
                     id : imageBase
                     x : mouseArea.x
                     y : mouseArea.y
-                    width : 20; height : 20
+                    width : 21; height : 21
                     source : iconSource(styleData.value)
                     fillMode: Image.PreserveAspectFit
                     z : 0
@@ -190,7 +190,7 @@ Rectangle {
 
         rowDelegate: Rectangle {
             id : rowdelegate
-            height : 20
+            height : 23
             color : styleData.selected ? Global.selectedColor : (styleData.alternate? Global.lightestgreen: "white")
         }
 

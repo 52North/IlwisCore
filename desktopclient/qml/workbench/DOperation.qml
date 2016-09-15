@@ -50,8 +50,8 @@ Item{
                 delegate: Component{
                     Image{
                         y : 2
-                        width : 10
-                        height : 10
+                        width : 21
+                        height : 21
                         source : "../images/" + modelData
                     }
                 }

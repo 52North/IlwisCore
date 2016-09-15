@@ -38,7 +38,7 @@ FocusScope {
 
                 delegate: CatalogGridDelegate{}
                 cellWidth: 170 * Global.uiScale
-                cellHeight: 18 * Global.uiScale
+                cellHeight: 22 * Global.uiScale
                 clip : true
                 cacheBuffer: 1000
                 flow: GridView.FlowTopToBottom

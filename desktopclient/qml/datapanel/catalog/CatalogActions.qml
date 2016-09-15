@@ -50,12 +50,13 @@ TabView {
         currentIndex = index
     }
     Component {
-        id : viewOptions
-        CatalogViewOptions{}
-    }
-    Component {
         id : filterOptions
         CatalogFilterOptions{}
+    }
+
+    Component {
+        id : viewOptions
+        CatalogViewOptions{}
     }
     Component {
         id : copyOptions
@@ -67,8 +68,8 @@ TabView {
     }
 
     Component.onCompleted: {
-        addTab(qsTr("Selection"), viewOptions).active = true
         addTab(qsTr("Filter"), filterOptions).active = true
+        addTab(qsTr("Selection"), viewOptions).active = true
         addTab(qsTr("Copy"), copyOptions).active = true
         addTab(qsTr("Refresh"), refreshOptions).active = true
     }

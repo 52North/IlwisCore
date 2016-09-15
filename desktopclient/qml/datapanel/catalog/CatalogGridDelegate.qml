@@ -28,7 +28,7 @@ Item {
      }
     Controls.ToolTip{
         target : iconDelegate
-        text : description
+        text : typeName + (description !== "" ? "\n"+ description : "")
     }
 
     Row {
@@ -38,7 +38,7 @@ Item {
             id : imageBase
             x : 0
             y : 0
-            width :18 * Global.uiScale * 8.5/9.0; height : parent.height * Global.uiScale * 8.5/9.0
+            width : 21 * Global.uiScale; height : 21 * Global.uiScale
             source : iconSource(iconPath)
             fillMode: Image.PreserveAspectFit
         }

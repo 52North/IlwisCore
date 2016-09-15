@@ -80,7 +80,7 @@ MouseArea {
 
     Timer{
         id : showTimer
-        interval: 2000
+        interval: 1500
         onTriggered: {
             toolTip.visible = true
 

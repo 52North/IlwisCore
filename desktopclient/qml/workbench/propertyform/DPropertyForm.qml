@@ -74,8 +74,8 @@ Rectangle {
         Image {
             id : typeico
             source : iconsource(iconPath)
-            width : 20
-            height : 20
+            width : 21
+            height : 21
             anchors.left: parent.left
             anchors.leftMargin: 5
             anchors.verticalCenter: parent.verticalCenter
