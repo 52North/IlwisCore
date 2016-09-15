@@ -203,35 +203,35 @@ void ResourceModel::iconPath(const QString &name)
 QString ResourceModel::iconPath(IlwisTypes tp)
 {
     if ( tp == (itRASTER|itCATALOG))
-        return "raster203d.png";
+        return "raster_set.png";
     if ( tp == (itTABLE|itCATALOG))
         return "catalogTable20.png";
     if ( tp == (itCOVERAGE|itCATALOG))
-        return "folderFeature20.png";
+        return "vector_set.png";
     if ( tp & itRASTER)
-        return "raster20CS1.png";
+        return "raster.png";
     else if ( tp == itPOLYGON)
-        return "polygon20.png";
+        return "vector_fill.png";
     else if ( tp == itLINE)
-        return "polygon20.png";
+        return "vector_line.png";
     else if ( tp == itPOINT)
-        return "polygon20.png";
+        return "vector_point.png";
     else if ( hasType(tp, itFEATURE))
-        return "polygon20.png";
+        return "vector.png";
     else if ( tp & itTABLE)
-        return "table20CS1.png";
+        return "table.png";
     else if ( tp == (itCONVENTIONALCOORDSYSTEM|itLOCATION))
         return "latloncsy20.png";
     else if ( tp == itCONVENTIONALCOORDSYSTEM)
-        return "projectedcsy20.png";
+        return "coordinate.png";
     else if ( tp == itBOUNDSONLYCSY)
         return "boundsonlycsy20.png";
     else if ( tp & itCOORDSYSTEM)
-        return "csy20.png";
+        return "coordinate.png";
     else if ( tp  == (itGEOREF | itLOCATION))
         return "georeftiepoints20.png";
     else if ( tp & itGEOREF)
-        return "georeference20.png";
+        return "georeference.png";
     else if ( tp == itCATALOG)
         return "folder20.png";
     else if ( tp == (itTHEMATICITEM | itITEMDOMAIN))
@@ -255,7 +255,7 @@ QString ResourceModel::iconPath(IlwisTypes tp)
     else if ( tp & itDOMAIN)
         return "domain.png";
     else if ( tp & itREPRESENTATION)
-        return "representation20.png";
+        return "representation.png";
     else if ( hasType(tp,itNUMERICDOMAIN))
         return "valuedom20.png";
     else if ( hasType(tp,itNUMBER))
@@ -263,9 +263,9 @@ QString ResourceModel::iconPath(IlwisTypes tp)
     else if ( hasType(tp,itBOOL))
         return "bool20.png";
     else if ( hasType(tp,itPROJECTION))
-        return "projection20.png";
+        return "projection.png";
     else if ( hasType(tp,itELLIPSOID))
-        return "ellipsoid20.png";
+        return "ellipsoid.png";
     else if ( tp & itSTRING)
         return "text20.png";
     else if ( tp & itWORKFLOW)
