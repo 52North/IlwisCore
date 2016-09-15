@@ -144,7 +144,7 @@ void IlwisObject::name(const QString &nam)
     if ( !connector().isNull()){
         connector()->sourceRef().modifiedTime(Time::now());
         connector()->sourceRef().name(nm);
-        if ( isInternalObject()){
+        if ( isInternalObject() ){
             QString path = context()->persistentInternalCatalog().toString() + "/" + nam;
             connector()->sourceRef().setUrl(path,true);
         }
@@ -505,7 +505,9 @@ bool IlwisObject::isInternalObject() const
     if ( isAnonymous())
         return true;
     if (resource().isValid()){
-            return resource().url().scheme() == "ilwis";
+        QString path = resource().url().toString();
+        bool ok = path.indexOf("ilwis:/") == 0 && path.indexOf("ilwis://system") == -1;
+        return ok;
     }
     return false;
 }
