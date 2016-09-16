@@ -251,7 +251,7 @@ QString ResourceModel::iconPath(IlwisTypes tp)
     else if ( tp == (itPALETTECOLOR | itITEMDOMAIN))
         return "colorpalette20.png";
     else if ( tp == (itNUMERICDOMAIN))
-        return "valuedom20.png";
+        return "domain.png";
     else if ( tp & itDOMAIN)
         return "domain.png";
     else if ( tp & itREPRESENTATION)
@@ -271,7 +271,7 @@ QString ResourceModel::iconPath(IlwisTypes tp)
     else if ( tp & itWORKFLOW)
         return "workflow20.png";
     else if ( tp & itOPERATIONMETADATA)
-        return "operation20.png";
+        return "operation.png";
     else if ( tp & itCOORDINATE)
         return "coord20.png";
     else if ( tp & itPIXEL)
