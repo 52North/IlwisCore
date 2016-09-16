@@ -92,7 +92,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/preferencesmodel.h \
     ilwiscoreui/models/internaldatabasemodel.h \
     ilwiscoreui/models/resourcemanager.h \
-    ilwiscoreui/models/catalogviewmanager.h
+    ilwiscoreui/models/catalogviewmanager.h \
+    ilwiscoreui/propertyeditors/openattributetable.h
 
 SOURCES += \
     ilwiscoreui/models/attributemodel.cpp \
@@ -165,7 +166,8 @@ SOURCES += \
     ilwiscoreui/models/preferencesmodel.cpp \
     ilwiscoreui/models/internaldatabasemodel.cpp \
     ilwiscoreui/models/resourcemanager.cpp \
-    ilwiscoreui/models/catalogviewmanager.cpp
+    ilwiscoreui/models/catalogviewmanager.cpp \
+    ilwiscoreui/propertyeditors/openattributetable.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

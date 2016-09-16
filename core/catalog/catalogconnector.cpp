@@ -171,6 +171,7 @@ std::vector<Resource> loadExplorerData(const std::pair<CatalogExplorer *, IOOpti
 
 void gatherData(std::vector<Resource>& outputItems, const std::vector<Resource>& inputItems){
     std::copy(inputItems.begin(), inputItems.end(), std::back_inserter(outputItems));
+    kernel()->deleteTLS("workingcatalog");
 }
 
 bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &options){
