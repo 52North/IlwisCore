@@ -39,22 +39,13 @@ TabViewStyle {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             Row {
-                width : parent.width
+                width : parent.width - 10
                 anchors.bottom: parent.bottom
                 x : 8
                 height : 35 * Global.uiScale
-                Text {
-                    width : 20
-                    height : 14 * Global.uiScale
-                    text: tabmodel ? "[" + tabmodel.id + "]": "?"
-                    color: tabmodel && tabmodel.selected ? "black" : "#403F3F"
-                    font.pointSize: 8 * Global.uiScale
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 8
-                }
 
                 Text {
-                    width : parent.width
+                    width : parent.width - 25
                     height : 20 * Global.uiScale
                     text: tabmodel ? tabmodel.displayName : "?"
                     color: tabmodel && tabmodel.selected ? "black" : "#403F3F"
@@ -63,8 +54,16 @@ TabViewStyle {
                     font.weight: tabmodel && tabmodel.selected ? Font.DemiBold : Font.Normal
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 2
+                }
 
-
+                Text {
+                    width : 20
+                    height : 14 * Global.uiScale
+                    text: tabmodel ? "[" + tabmodel.id + "]": "?"
+                    color: tabmodel && tabmodel.selected ? "black" : "#403F3F"
+                    font.pointSize: 8 * Global.uiScale
+                    anchors.bottom: parent.bottom
+                    anchors.bottomMargin: 8
                 }
             }
             MouseArea  {
