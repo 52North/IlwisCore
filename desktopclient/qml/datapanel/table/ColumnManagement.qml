@@ -46,6 +46,7 @@ Rectangle {
             title : qsTr("Operations")
             SplitView{
                 id : columnview
+                property string iconName : "../images/display_options"
                 function setModel(cm){
                     //columnlist.columnmodel = cm
                 }
@@ -70,6 +71,7 @@ Rectangle {
         Tab {
             title : qsTr("Statistics")
             id : columnmetadatview
+            active: true
 
             ColumnMetadataList {
                 id : columnmetadatalist
@@ -78,6 +80,7 @@ Rectangle {
         Tab {
             title : qsTr("Charts")
             id : graphpanel
+            active : true
             ChartsPanel{
 
             }

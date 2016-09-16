@@ -18,6 +18,7 @@ Item {
     property alias mouseActions : mouseActions
     property LayerManager manager
     property bool drawerActive : false
+    property string iconName : "../images/metadata_s"
 
     onDrawerActiveChanged: {
         overview.active = drawerActive

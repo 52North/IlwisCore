@@ -12,6 +12,7 @@ SplitView {
     anchors.topMargin: 4
     objectName:  uicontext.uniqueName()
     property ChartModel chart
+    property string iconName : "../images/graph"
 
     onChartChanged: {
          chartpanel.chartData = {labels: chart.xvalues, datasets: chart.datasets(0)}

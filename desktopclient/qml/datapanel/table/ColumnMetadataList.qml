@@ -12,6 +12,7 @@ Item {
     y : 5
     height: parent.height -10
     property var columnmodel
+    property string iconName : "../images/stat"
 
 
     TableView{

@@ -12,6 +12,7 @@ Column {
     id : layersinfo
     width : viewmanager.width
     height: viewmanager.height
+    property string iconName : "../images/info_s"
 
     function iconSource(name) {
         if ( name === "")

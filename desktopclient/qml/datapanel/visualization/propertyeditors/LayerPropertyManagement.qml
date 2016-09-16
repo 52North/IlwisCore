@@ -13,6 +13,7 @@ Rectangle {
     property var renderer
     property int layerIndex : 0
     color : Global.actionItemColor
+    property string iconName : "../images/display_options"
 
     function iconsource(name) {
         if ( name.indexOf("/") !== -1)
