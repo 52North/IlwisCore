@@ -26,9 +26,9 @@ QStringList OpenAttributeTable::attributeTable() const
     if ( attribute()->layer()){
         if(attribute()->layer()->coverage()->hasAttributes() ){
             Resource res;
-            if ( attribute()->layer()->coverage()->ilwisType() == itFEATURE)
-                res = attribute()->layer()->coverage()->resource();
-            else
+//            if ( attribute()->layer()->coverage()->ilwisType() == itFEATURE)
+//                res = attribute()->layer()->coverage()->resource();
+//            else
                 res = attribute()->layer()->coverage()->attributeTable()->resource();
             result.append(QString::number(res.id()));
             result.append(res.url().toString());
