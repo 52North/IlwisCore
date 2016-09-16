@@ -17,6 +17,8 @@ namespace Ilwis {
 class FeatureNode;
 class SPFeatureI;
 class Feature;
+class AttributeTable;
+typedef IlwisData<AttributeTable> IAttributeTable;
 
 typedef std::vector<SPFeatureI> Features;
 
@@ -190,6 +192,7 @@ private:
     std::vector<FeatureInfo> _featureInfo;
     FeatureFactory *_featureFactory;
     FeatureAttributeDefinition _attributeDefinition;
+    IAttributeTable _tbl;
 
     UPGeomFactory _geomfactory;
     std::mutex _loadmutex;
