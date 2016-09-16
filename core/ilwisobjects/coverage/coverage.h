@@ -121,6 +121,7 @@ public:
 
     virtual ITable attributeTable(quint32 level=0) = 0;
     virtual void setAttributes(const ITable &otherTable, const QString& joinColumn=sUNDEF) = 0;
+    virtual bool hasAttributes() const;
 
     bool prepare(const IOOptions& options=IOOptions());
 protected:

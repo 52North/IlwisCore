@@ -102,6 +102,11 @@ void Coverage::name(const QString &nam)
     IlwisObject::name(nam)    ;
 }
 
+bool Coverage::hasAttributes() const
+{
+    return true;
+}
+
 void Coverage::copyTo(IlwisObject *obj)
 {
     IlwisObject::copyTo(obj);
