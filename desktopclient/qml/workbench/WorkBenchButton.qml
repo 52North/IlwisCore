@@ -9,7 +9,7 @@ ToolButton{
     property string iconname
     id : button
     property string label
-    height : parent.width// buttonB.width
+    height : 60
     width : parent.width
 
     checkable: true
@@ -47,9 +47,8 @@ ToolButton{
         font.weight: Font.DemiBold
         font.pointSize: 9 * Global.uiScale
         color : "white"
-
-
-    }
+        opacity : button.height > 70 ? 1 : 0
+   }
 
     style : ButtonStyle{
         background: Rectangle {

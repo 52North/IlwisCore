@@ -16,6 +16,8 @@ Rectangle {
     width :colContainer.width
     color : Global.palegreen
 
+
+
     //signal transitionInfoPane(string pagename)
 
 
@@ -73,7 +75,7 @@ Rectangle {
         Column {
             id : butColumn
             width : 70 * Global.uiScale
-            height : parent.height
+            height : Math.min(1100,parent.height)
             property bool initial : true
             z: buttonB.z + 1
 
@@ -231,6 +233,12 @@ Rectangle {
                 }
             }
 
+        }
+        Rectangle {
+            anchors.top : butColumn.bottom
+            anchors.bottom: colContainer.bottom
+            width : parent.width - 7
+            color : Global.middlegreen
         }
     }
 
