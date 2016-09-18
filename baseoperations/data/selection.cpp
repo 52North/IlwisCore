@@ -206,7 +206,7 @@ quint64 SelectionRaster::createMetadata()
     operation.addInParameter(1,itSTRING,  TR("selection-definition"),TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0, itRASTER, TR("selection"));
-    operation.setKeywords("raster, operation, selection");
+    operation.setKeywords("raster,selection,submap,attribute");
 
     mastercatalog()->addItems({operation});
     return operation.id();

@@ -137,6 +137,7 @@ quint64 Assignment::createMetadata()
     operation.addInParameter(0,itRASTER | itFEATURE , TR("input thing"),TR("input thing"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER | itFEATURE, TR("copy of the object"));
+    operation.setKeywords("internal");
 
     mastercatalog()->addItems({operation});
     return operation.id();

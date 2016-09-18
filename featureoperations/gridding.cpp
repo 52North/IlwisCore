@@ -101,6 +101,7 @@ quint64 Gridding::createMetadata()
     resource.addProperty("pout_1_type", itPOLYGON);
     resource.addProperty("pout_1_name", TR("output polygon coverage"));
     resource.addProperty("pout_1_desc",TR("output polygon coverage"));
+    resource.addProperty("keyword","vector,features");
 
     resource.prepare();
     url += "=" + QString::number(resource.id());

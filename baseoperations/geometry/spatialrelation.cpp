@@ -39,7 +39,7 @@ quint64 SpatialRelationOperation::createMetadata(OperationResource& operation)
 
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itCOLLECTION | itINTEGER, TR("result index collection"));
-    operation.setKeywords("geometry, coordinate, coverage, spatial relation");
+    operation.setKeywords("geometry, vector, spatial relation,features");
 
     mastercatalog()->addItems({operation});
     return operation.id();

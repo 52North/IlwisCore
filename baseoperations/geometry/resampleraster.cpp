@@ -130,7 +130,7 @@ quint64 ResampleRaster::createMetadata()
     operation.addInParameter(2,itSTRING, TR("Resampling method"),TR("The method used to aggregate pixels from the input map in the geometry of the output map") );
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output rastercoverage"), TR("output rastercoverage with the domain of the input map"));
-    operation.setKeywords("raster, geometry, transformation");
+    operation.setKeywords("raster, geometry, transformation,georeference,projection,coordinatesystem");
 
     mastercatalog()->addItems({operation});
     return operation.id();

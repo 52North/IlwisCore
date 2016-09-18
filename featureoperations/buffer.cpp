@@ -159,7 +159,7 @@ quint64 Buffer::createMetadata()
     operation.addInParameter(3, itSTRING, TR("end cap style"), TR("buffer end cap style"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itFEATURE, TR("output buffer coverage"),TR("coverage containing the buffer around the input coverage"));
-    operation.setKeywords("features, operation, buffer");
+    operation.setKeywords("features, buffer, vector");
 
     mastercatalog()->addItems({operation});
     return operation.id();

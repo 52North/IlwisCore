@@ -128,7 +128,7 @@ Ilwis::OperationImplementation::State LinearStretchOperation::prepare(ExecutionC
 quint64 LinearStretchOperation::createMetadata()
 {
     OperationResource operation({"ilwis://operations/linearstretch"});
-    operation.setLongName("rescale input values to an output map");
+    operation.setLongName("Linear stretch");
     operation.setSyntax("linearstretch(raster)");
     operation.setDescription(TR("re-distributes values of an input map over a wider or narrower range of values in an output map. Stretching can for instance be used to enhance the contrast in your map when it is displayed."));
     operation.setInParameterCount({2,3});
@@ -137,6 +137,7 @@ quint64 LinearStretchOperation::createMetadata()
     operation.addInParameter(2, itNUMERIC, TR("number"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0, itRASTER, TR("output rastercoverage"), TR("output rastercoverage stretched"));
+    operation.setKeywords("raster,image processing,numeric,contrast");
 
     mastercatalog()->addItems({operation});
     return operation.id();

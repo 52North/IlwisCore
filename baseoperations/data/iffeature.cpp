@@ -98,7 +98,7 @@ quint64 IfFeature::createMetadata()
     operation.addInParameter(2,itNUMBER | itSTRING | itBOOL | itFEATURE, TR("false choice"),TR("value returned when the boolean input feature is false") );
     operation.setOutParameterCount({1});
     operation.addOutParameter(0, itFEATURE, TR("featurecoverage"), TR("featurecoverage with all features that correspond to the true value in the input having a value"));
-    operation.setKeywords("feature, operation, condition");
+    operation.setKeywords("features,condition,vector,boolean");
 
     mastercatalog()->addItems({operation});
     return operation.id();

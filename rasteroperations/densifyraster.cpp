@@ -175,7 +175,7 @@ quint64 DensifyRaster::createMetadata()
     operation.addInParameter(2,itSTRING , TR("interpolation method"),TR("interpolation method which is used to determine the pixel values in the output map"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("name for the output raster."));
-    operation.setKeywords("densify, raster, map");
+    operation.setKeywords("raster,aggregate,interpolation");
 
     mastercatalog()->addItems({operation});
     return operation.id();

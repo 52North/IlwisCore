@@ -214,7 +214,7 @@ quint64 AggregateTable::createMetadata()
     operation.addValidation(0,1,"columns");
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itTABLE , TR("aggregated table"),TR("new table where the columns have been aggregated"));
-    operation.setKeywords("table,aggregation,column");
+    operation.setKeywords("table,aggregate,column");
 
     mastercatalog()->addItems({operation});
     return operation.id();

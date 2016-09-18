@@ -154,7 +154,7 @@ quint64 Aggregation::createMetadata()
     operation.addValidation(0,1,"columns with domain=numericdomain");
     operation.addValidation(0,2,"columns with domain=numericdomain");
     operation.addOutParameter(0,itTABLE, TR("output table"));
-    operation.setKeywords("table, operation");
+    operation.setKeywords("table,column,aggregate,numeric");
 
     mastercatalog()->addItems({operation});
     return operation.id();

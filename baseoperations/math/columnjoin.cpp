@@ -363,7 +363,7 @@ quint64 ColumnJoin::createMetadata()
     operation.addInParameter(3,itSTRING | itNUMBER, TR("input column name or number"),TR("column with a numerical domain or number"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itTABLE|itCOVERAGE, TR("output table/ coverage"));
-    operation.setKeywords("table or coverage");
+    operation.setKeywords("table,aggregate,column");
     mastercatalog()->addItems({operation});
     return operation.id();
 }

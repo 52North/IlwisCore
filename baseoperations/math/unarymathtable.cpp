@@ -93,6 +93,7 @@ Resource UnaryMathTable::populateMetadata(const QString& item, const QString& lo
     operation.addValidation(0,1,"columns with domain=numericdomain");
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itCOLUMN, "output column name");
+    operation.setKeywords("table,column,math,numeric");
 
     return operation;
 

@@ -115,7 +115,7 @@ quint64 IffRaster::createMetadata()
     operation.setOutParameterCount({1});
     operation.addValidation(0,0,"valuetype=bool");
     operation.addOutParameter(0,itRASTER, TR("output raster coverage"),TR("rastercoverage with all pixels that correspond to the true value in the input having a value"));
-    operation.setKeywords("raster, operation, condition");
+    operation.setKeywords("raster,condition,boolean");
 
     mastercatalog()->addItems({operation});
     return operation.id();

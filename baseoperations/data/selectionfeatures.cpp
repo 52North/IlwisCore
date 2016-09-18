@@ -132,7 +132,7 @@ quint64 SelectionFeatures::createMetadata()
 
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itFEATURE | itCOLLECTION, TR("Selection"),TR("coverage or index were the selection has been applied") );
-    operation.setKeywords("feature, selection");
+    operation.setKeywords("features,selection,submap,attribute,vector");
 
     mastercatalog()->addItems({operation});
     return operation.id();

@@ -156,6 +156,7 @@ quint64 SetValueRange::createMetadata()
     operation.addInParameter(2,itNUMBER , TR("maximum"), TR("maximum of the new value range. If the value is undefined it will be ignored"));
     operation.addOptionalInParameter(3,itNUMBER , TR("resolution"), TR("The distance between the gridlines or (for the secondary grid) the number of cells in a primary cell. -1 if this parameter is not used"));
     operation.setOutParameterCount({0});
+    operation.setKeywords("numeric,valuerange");
 
     mastercatalog()->addItems({operation});
     return operation.id();

@@ -239,7 +239,7 @@ quint64 BinaryMathRaster::createMetadata()
     operation.addValidation(0,0,"domain=numericdomain");
     operation.addValidation(1,1,"domain=numericdomain");
     operation.addOutParameter(0,itRASTER, TR("raster coverage"));
-    operation.setKeywords("raster, operation");
+    operation.setKeywords("raster,numeric,math");
 
     mastercatalog()->addItems({operation});
     return operation.id();

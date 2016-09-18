@@ -169,7 +169,7 @@ quint64 ColumnUnaryOperation::createMetadata()
     operation.addInParameter(3,itSTRING , TR("output column"),TR("output column with a numeric domain. It is optional"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itTABLE, TR("output table"));
-    operation.setKeywords("table, operation");
+    operation.setKeywords("table,operation,statistics,numeric");
 
     mastercatalog()->addItems({operation});
     return operation.id();

@@ -237,7 +237,7 @@ quint64 MovingAverage::createMetadata()
     operation.addInParameter(5,itINTEGER, TR("input y size"),TR("optional y size of the output raster. Only used of the previous parameter was an x size"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output rastercoverage"), TR("output rastercoverage with the domain of the input map"));
-    operation.setKeywords("raster,pointmap");
+    operation.setKeywords("raster,point,interpolation");
     mastercatalog()->addItems({operation});
     return operation.id();
 }

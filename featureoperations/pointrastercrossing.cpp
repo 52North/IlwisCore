@@ -87,7 +87,7 @@ quint64 PointRasterCrossing::createMetadata()
     operation.addInParameter(2,itSTRING, TR("prefix"),TR("optional prefix to create column names, if not present the system will use what is available(domain,/mapnam)"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itPOINT, TR("output point coverage"), TR("output point coverage with the extended attribute table"));
-    operation.setKeywords("raster, point, intersection, cross");
+    operation.setKeywords("raster, point, cross");
 
     mastercatalog()->addItems({operation});
     return operation.id();

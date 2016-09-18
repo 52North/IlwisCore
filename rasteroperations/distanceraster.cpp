@@ -280,7 +280,7 @@ quint64 DistanceRaster::createMetadata()
     //operation.addInParameter(2,itRASTER , TR("thiessenmap"),TR("input Thiessen raster"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("output distance raster."));
-    operation.setKeywords("distance, raster, map");
+    operation.setKeywords("raster,interpolation");
 
     mastercatalog()->addItems({operation});
     return operation.id();

@@ -112,7 +112,7 @@ quint64 NumberCondition::createMetadata()
     operation.addInParameter(2,itNUMBER, TR("second number value"),TR("the first value used in the condition"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itBOOL, TR("valid"), TR("true if condition is met"));
-    operation.setKeywords("condition, number");
+    operation.setKeywords("condition, numeric");
 
     mastercatalog()->addItems({operation});
     return operation.id();

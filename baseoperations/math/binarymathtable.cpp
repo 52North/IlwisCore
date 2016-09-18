@@ -168,7 +168,7 @@ quint64 BinaryMathTable::createMetadata()
     operation.addInParameter(3,itSTRING, TR("operator"),TR("operator (add, substract,divide, multiply) applied to the other 2 input operators"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itCOLUMN, TR("output column"));
-    operation.setKeywords("table, operation");
+    operation.setKeywords("table,column,numeric,math");
 
     mastercatalog()->addItems({operation});
     return operation.id();

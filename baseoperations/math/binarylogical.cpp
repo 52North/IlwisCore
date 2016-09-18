@@ -213,6 +213,7 @@ quint64 BinaryLogical::createMetadata()
     operation.addValidation(0,0,"valuetype=bool");
     operation.addValidation(1,1,"valuetype=bool");
     operation.addOutParameter(0,itRASTER, TR("output rastercoverage"),TR("output rastercoverage with a boolean domain"));
+    operation.setKeywords("raster,math,boolean");
 
     mastercatalog()->addItems({operation});
     return operation.id();

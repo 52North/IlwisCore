@@ -94,7 +94,7 @@ quint64 LinearRasterFilter::createMetadata()
     operation.setOutParameterCount({1});
     operation.addValidation(0,1,"values with select code from filters where type='linear' ");
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("output raster with a numeric domain"));
-    operation.setKeywords("filter,raster,numeric");
+    operation.setKeywords("filter,raster,image processing");
 
     mastercatalog()->addItems({operation});
     return operation.id();

@@ -162,7 +162,7 @@ quint64 PointToRaster::createMetadata()
 {
     OperationResource operation({"ilwis://operations/point2raster"});
     operation.setLongName("Point to raster map");
-    operation.setKeywords("raster,pointmap");
+    operation.setKeywords("raster,point");
     /*
      * the expression can use a pointmap as input and either a georeference or a x/y extent. In the first case the georeference has to be defined
      * outside the application. The coordinates of the input points will be transformed to the coordinate system of the input georeference (which might

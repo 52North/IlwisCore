@@ -123,7 +123,7 @@ quint64 RankOrderRasterFilter::createMetadata()
     operation.addOptionalInParameter(4,itUINT32 , TR("index"),TR("Pixel position to be used, only for the rankXxY user defined rank order filter"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output raster"),TR("output raster with a numeric domain"));
-    operation.setKeywords("filter,raster,numeric");
+    operation.setKeywords("filter,raster,image processing");
 
     mastercatalog()->addItems({operation});
     return operation.id();
