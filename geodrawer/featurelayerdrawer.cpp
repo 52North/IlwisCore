@@ -86,11 +86,16 @@ bool FeatureLayerDrawer::prepare(DrawerInterface::PreparationType prepType, cons
         // for the moment I use the simple setters, in the future this will be representation dependent
         createAttributeSetter(features, setters, rootDrawer());
 
+        features->loadData();
         _featureDrawings.resize(features->featureCount());
         int featureIndex = 0;
+        bool ddd = features->featureCount() > 3500;
         for(const SPFeatureI& feature : features){
             QVariant value =  attr.columnIndex() != iUNDEF ? feature(attr.columnIndex()) : featureIndex;
             IlwisTypes geomtype = feature->geometryType();
+            if ( ddd && featureIndex == 4070){
+                qDebug() << featureIndex << geomtype;
+            }
              _featureDrawings[featureIndex] = setters[geomtype]->setSpatialAttributes(feature,_vertices,_normals);
             const QColor& clr = geomtype == itPOLYGON ? _boundaryColor : _lineColor;
             setters[geomtype]->setColorAttributes(attr,value,clr,_featureDrawings[featureIndex],_colors) ;
