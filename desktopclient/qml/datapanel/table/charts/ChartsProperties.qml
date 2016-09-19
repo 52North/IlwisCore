@@ -55,7 +55,7 @@ Item {
 
             ComboBox{
                 id : xaxis
-                model : table.columns
+                model : table ? table.columns : null
                 width : 150
                 textRole: "attributename"
                 height : 16
