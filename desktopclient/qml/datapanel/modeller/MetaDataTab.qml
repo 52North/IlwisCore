@@ -11,6 +11,7 @@ Rectangle {
     id : modelmanager
     width: parent.width
     height: 62
+    property string iconName : "../images/metadata_s"
 
 
     function showMetaData(item){

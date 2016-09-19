@@ -10,6 +10,7 @@ Rectangle {
     id : modellayers
     width : parent.width
     height : parent.height
+    property string iconName : "../images/layers_s"
 
     function setLayerIndex(index){
         layerColumn.currentIndex = index
