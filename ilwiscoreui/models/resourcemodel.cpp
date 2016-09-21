@@ -233,7 +233,7 @@ QString ResourceModel::iconPath(IlwisTypes tp)
     else if ( tp & itGEOREF)
         return "georeference.png";
     else if ( tp == itCATALOG)
-        return "folder20.png";
+        return "folder.png";
     else if ( tp == (itTHEMATICITEM | itITEMDOMAIN))
         return "thematicdom.png";
     else if ( tp == (itIDENTIFIERITEM | itITEMDOMAIN))
@@ -298,6 +298,14 @@ void ResourceModel::addref()
 QString ResourceModel::modelType() const
 {
     return "resourcemodel";
+}
+
+bool ResourceModel::extendedType() const
+{
+    if ( _item.hasProperty("extendedtype")){
+        return  _item["extendedtype"].toBool();
+    }
+    return false;
 }
 
 Resource &ResourceModel::itemRef()

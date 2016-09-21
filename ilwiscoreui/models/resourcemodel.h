@@ -39,6 +39,7 @@ class ILWISCOREUISHARED_EXPORT ResourceModel : public QObject
     Q_PROPERTY(QString container READ container CONSTANT)
     Q_PROPERTY(bool isSelected READ isSelected WRITE setIsSelected NOTIFY isSelectedChanged)
     Q_PROPERTY(QString keywords READ keywords WRITE keywords NOTIFY keywordsChanged)
+    Q_PROPERTY(bool extendedType READ extendedType CONSTANT)
 
 
 
@@ -95,6 +96,7 @@ public:
     void deref();
     void addref();
     virtual QString modelType() const;
+    bool extendedType() const;
 
 protected:
     QString _displayName;
