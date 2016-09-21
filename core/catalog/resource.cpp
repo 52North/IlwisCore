@@ -60,7 +60,7 @@ Resource::Resource(const Resource &resource) : Identity(resource)
 }
 
 Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
-    _normalizedUrl(QUrl(resourceName)),
+    _normalizedUrl(QUrl(OSHelper::neutralizeFileName(resourceName))),
     _urlQuery(QUrlQuery(resourceName)),
     _size(0),
     _ilwtype(tp),
@@ -73,7 +73,7 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
         prepare();
     int index = resourceName.indexOf(":");
     if ( index != -1 && index < 6) {
-        _normalizedUrl = QUrl(resourceName);
+        _normalizedUrl = QUrl(OSHelper::neutralizeFileName(resourceName));
         stringAsUrl(resourceName, tp, isNew);
     } else {
         //QString url;
@@ -106,7 +106,7 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
                     if ( workingCatalog.isValid()){
                         QUrl url =  workingCatalog->filesystemLocation();
                         if ( url.isValid() && url.scheme() == "file"){
-                            QString filepath = url.toLocalFile() + "/" + resourceName;
+                            QString filepath = OSHelper::neutralizeFileName(url.toLocalFile()) + "/" + resourceName;
                             if (QFileInfo(filepath).exists()){
                                 urltxt = QUrl::fromLocalFile(filepath);
                             }else
@@ -125,7 +125,7 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
     _createTime = Time::now();
     if ( _container ==  INTERNAL_CATALOG_URL ||
          (_container.toString() == "ilwis://operations" && tp == itWORKFLOW)){
-        QString path = context()->persistentInternalCatalog().toString();
+        QString path = OSHelper::neutralizeFileName(context()->persistentInternalCatalog().toString());
         _rawContainer = QUrl(path);
         _rawUrl = QUrl(path + "/" + name());
     }else if ( !_rawUrl.isValid())

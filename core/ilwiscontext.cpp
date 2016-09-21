@@ -115,6 +115,7 @@ void IlwisContext::init(const QString &ilwisDir)
         datalocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/internalcatalog";
     }else
         datalocation = QUrl(datalocation).toLocalFile();
+    datalocation = OSHelper::neutralizeFileName(datalocation);
 
     QDir localDir(datalocation);
 
@@ -128,7 +129,7 @@ void IlwisContext::init(const QString &ilwisDir)
 
     loc = _configuration("users/" + currentUser() + "/workingcatalog",QString(""));
     if ( loc == ""){
-        loc = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +  + "/ilwisdata";
+        loc = OSHelper::neutralizeFileName(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +  + "/ilwisdata");
         QDir datadir(loc);
         datadir.mkpath(loc);
         loc = QUrl::fromLocalFile(loc).toString();
