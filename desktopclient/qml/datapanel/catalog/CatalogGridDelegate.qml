@@ -44,14 +44,23 @@ Item {
         }
 
         Rectangle{
+
             width : 130 * Global.uiScale
             height : iconDelegate.height
             color : isSelected ? Global.selectedColor : "transparent"
             anchors.verticalCenter: imageBase.verticalCenter
-            Text {
 
+
+
+            Text {
+                function getText(){
+//                    if ( extendedType){
+//                        return "~" + displayName
+//                    }
+                    return displayName
+                }
                 id: txt
-                text: displayName
+                text: txt.getText()
                 elide: Text.ElideMiddle
                 color: itemgrid.currentIndex === index ? "blue": "black"
                 width : parent.width
