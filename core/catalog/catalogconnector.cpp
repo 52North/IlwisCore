@@ -192,8 +192,10 @@ bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &optio
     res.waitForFinished();
     std::vector<Resource> items = res.result();
     if ( items.size() > 0){
-        CalcLatLon::calculatelatLonEnvelopes(items, items[0].container().url());
         mastercatalog()->addItems(items);
+        CalcLatLon::calculatelatLonEnvelopes(items, items[0].container().url());
+        mastercatalog()->updateItems(items);
+
     }
     return true;
 }
