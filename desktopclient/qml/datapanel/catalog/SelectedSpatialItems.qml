@@ -10,7 +10,7 @@ import "../../Global.js" as Global
 
 Item {
     width: 200
-    height: 280
+    height: Math.min(thumbgrid.model.length / 2 * thumbgrid.cellHeight, 300)
     property var model
     signal closeGrid()
 
