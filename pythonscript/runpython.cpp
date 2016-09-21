@@ -35,33 +35,54 @@ bool RunPython::execute(ExecutionContext *ctx, SymbolTable &symTable)
             return false;
 
     QString tempPath = context()->cacheLocation().toLocalFile();
-    tempPath += "/python.stdout";
-    QString cmd = QString("f = open(\"%1\", \"w\", encoding=\"utf-8\")").arg(tempPath);
+    QString tempPathOut = tempPath + "/python.stdout";
+    QString tempPathErr = tempPath + "/python.stderr";
+    QString cmd = QString("f = open(\"%1\", \"w\", encoding=\"utf-8\")").arg(tempPathOut);
+    QString cmd2 = QString("f2 = open(\"%1\", \"w\", encoding=\"utf-8\")").arg(tempPathErr);
     PyRun_SimpleString("import sys");
     PyRun_SimpleString("import io");
     PyRun_SimpleString("stdout = sys.stdout");
     PyRun_SimpleString("stderr = sys.stderr");
     PyRun_SimpleString(cmd.toStdString().c_str());
+    PyRun_SimpleString(cmd2.toStdString().c_str());
     PyRun_SimpleString("sys.stdout = f");
+    PyRun_SimpleString("sys.stderr = f2");
     PyRun_SimpleString(_statements.toStdString().c_str());
     PyRun_SimpleString("\n");
     PyRun_SimpleString("sys.stdout.flush()");
+    PyRun_SimpleString("sys.stderr.flush()");
     PyRun_SimpleString("sys.stdout = stdout");
     PyRun_SimpleString("sys.stderr = stderr");
     PyRun_SimpleString("f.close()");
+    PyRun_SimpleString("f2.close()");
 
-
-
-    QFile inputFile(tempPath);
-    if ( inputFile.exists()){
-        if ( inputFile.open(QIODevice::ReadOnly)){
-            QString result(inputFile.readAll());
+    bool hasError = false;
+    QFile errFile(tempPathErr);
+    if ( errFile.exists()){
+        if ( errFile.open(QIODevice::ReadOnly)){
+            QString result(errFile.readAll());
             result.remove("\r\n");
-            ctx->setOutput(symTable,result,"python_output", itSTRING, Resource());
-            inputFile.close();
+            if ( result.trimmed() != ""){
+                ctx->setOutput(symTable,result,"python_error", itSTRING, Resource());
+                hasError = true;
+            }
+            errFile.close();
         }
     }
-    inputFile.remove();
+    errFile.remove();
+    if (!hasError){
+        QFile inputFile(tempPathOut);
+        if ( inputFile.exists()){
+            if ( inputFile.open(QIODevice::ReadOnly)){
+                QString result(inputFile.readAll());
+                result.remove("\r\n");
+                ctx->setOutput(symTable,result,"python_output", itSTRING, Resource());
+                inputFile.close();
+            }
+        }
+        inputFile.remove();
+    }
+
 
 
     return true;
