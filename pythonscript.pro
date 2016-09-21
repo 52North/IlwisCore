@@ -26,9 +26,9 @@ win32:CONFIG(release, debug|release): {
 }
 
 INCLUDEPATH +=  $$PWD/core \
-                $$PWD/../external/python 
+                $$PWD/../external/python35/include
 DEPENDPATH +=   $$PWD/core \
-                $$PWD/../external/python 
+                $$PWD/../external/python35/include
 
 HEADERS += \
     pythonscript/pythonscriptmodule.h \
