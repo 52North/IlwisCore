@@ -28,8 +28,9 @@ WorkBenchShifter {
         height : parent.height - functionBarHeader.height - 15
         Tab{
             title : qsTr("About")
-            Item {
+            Rectangle {
                 anchors.fill: parent
+                color :  Global.lightestgreen
 
                 Column {
                     anchors.fill: parent
@@ -48,10 +49,6 @@ WorkBenchShifter {
                                 smooth: false
                             }
                             Image {
-                                source : "../images/ilwislogobig.png"
-                                smooth : false
-                            }
-                            Image {
                                 source : "../images/52nlogobig.png"
                                 smooth : false
                             }
@@ -59,7 +56,7 @@ WorkBenchShifter {
                     }
                     Text {
                         height : 20
-                        text : "Ilwis 4 " + startilwis.buildType() + " " + startilwis.verionNumber();
+                        text : "Ilwis 4: " + startilwis.buildType() + " " + (startilwis.verionNumber() != "0" ? startilwis.verionNumber() : "")
                         anchors.horizontalCenter: parent.horizontalCenter
                         font.pointSize: 14
                         font.bold : true
@@ -70,7 +67,7 @@ WorkBenchShifter {
                     }
                     Text {
                         height : 15
-                        text : "Build number" + startilwis.buildNumber()
+                        text : "Build number: " + startilwis.buildNumber()
                         anchors.horizontalCenter: parent.horizontalCenter
                         font.pointSize: 10
                         width : parent.width
@@ -112,8 +109,9 @@ WorkBenchShifter {
             }
         }
         Tab{
-            title : qsTr("Help")
+            title : qsTr("Wiki")
             anchors.fill: parent
+
         }
         style: Base.TabStyle1 {
             id : tabstyle

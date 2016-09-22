@@ -99,7 +99,7 @@ Rectangle {
             id : txt
             width : parent.width
             height : 30
-            text : startilwis.buildType() + " " + startilwis.verionNumber()
+            text : startilwis.buildType() + " " + (startilwis.verionNumber() != "0" ? startilwis.verionNumber() : "")
             font.pointSize: 18
             color : "blue"
             anchors.horizontalCenter: parent.horizontalCenter
