@@ -1,0 +1,31 @@
+ILWIS integrates image, vector and thematic data in one unique 
+and powerful package on the desktop. ILWIS delivers a wide 
+range of feautures including import/export, digitizing, editing, 
+analysis and display of data as well as production of 
+quality mapsinformation about the sensor mounting platform
+
+Exclusive rights of use by 52°North Initiative for Geospatial 
+Open Source Software GmbH 2007, Germany
+
+Copyright (C) 2007 by 52°North Initiative for Geospatial
+Open Source Software GmbH
+
+Author: Martin Schouwenburg
+
+Contact: Martin Schouwenburg; m.l.schouwenburg@utwente.nl; 
+tel +31-534874371
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+version 3 as published by the Free Software Foundation 
+(https://www.gnu.org/licenses/gpl-3.0.html)
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+
+Source code:
+
+The source code can be found on https://github.com/52North
