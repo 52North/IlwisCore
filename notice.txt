@@ -1,0 +1,89 @@
+Other libraries used
+
+QT
+
+A cross-platform application framework that is widely used for developing application software that can be run on various software and hardware platforms with little or no change in the underlying codebase
+
+project site: https://www.qt.io/
+source code : https://wiki.qt.io/Get_the_Source
+
+-------------------------------------------------------------------------------
+GEOS 
+
+GEOS (Geometry Engine - Open Source) is a C++ port of the  Java Topology Suite (JTS). As such, it aims to contain the complete functionality of JTS in C++. This includes all the  OpenGIS Simple Features for SQL spatial predicate functions and spatial operators, as well as specific JTS enhanced topology functions.
+
+GEOS is available under the terms of  GNU Lesser General Public License (LGPL), and is a project of  OSGeo.
+
+project site and source access at : http://trac.osgeo.org/geos/
+
+--------------------------------------------------------------------------------
+GDAL
+
+GDAL is a translator library for raster geospatial data formats that is released under an X/MIT style Open Source license by the Open Source Geospatial Foundation. As a library, it presents a single abstract data model to the calling application for all supported formats. It also comes with a variety of useful commandline utilities for data translation and processing.
+
+project site and source access at : http://www.gdal.org/
+
+--------------------------------------------------------------------------------
+
+ILWIS
+
+For the binaries of Ilwis 4 you can receive a complete machine-readable copy of the source code by sending a written request to:
+info@52north.org
+
+52°North Initiative for Geospatial Open Source Software GmbH
+Martin-Luther-King-Weg 24
+48155 Muenster, Germany
+
+---------------------------------------------------------------------------------
+Gnu Scientific library
+
+The GNU Scientific Library (or GSL) is a software library for numerical computations in applied mathematics and science
+
+project site and source access at: https://www.gnu.org/software/gsl/
+---------------------------------------------------------------------------------
+Proj4
+
+Cartographic Projections Library
+
+project site and source access at:https://github.com/OSGeo/proj.4/wiki
+---------------------------------------------------------------------------------
+OpenCV
+
+OpenCV (Open Source Computer Vision) is a library of programming functions mainly aimed at real-time computer vision and image processing
+
+project site : https://en.wikipedia.org/wiki/OpenCV
+source code : https://github.com/opencv/opencv
+---------------------------------------------------------------------------------
+QUods
+
+QOds is a free Qt5/C++11 library to work with .ods (OpenDocument
+Spreadsheet) files.
+
+source code : https://github.com/f35f22fan/QOds
+----------------------------------------------------------------------------------
+Quazip
+
+QuaZIP is a simple C++ wrapper over Gilles Vollant's ZIP/UNZIP package that can be used to access ZIP archives. It uses the Qt toolkit.
+
+source code : http://quazip.sourceforge.net/
+
+----------------------------------------------------------------------------------
+QtXlsxWriter
+
+QtXlsx is a library that can read and write Excel files(.xslx). It doesn't require Microsoft Excel and can be used in any platform that Qt5 supported
+
+project site and source access at:https://github.com/dbzhang800/QtXlsxWriter
+----------------------------------------------------------------------------------
+LibFreeXl
+
+FreeXL is an open source library to extract valid data from within an Excel (.xls) spreadsheet
+
+project site and source access at: https://www.gaia-gis.it/fossil/freexl/index
+
+
+
+
+
+
+
+
