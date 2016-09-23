@@ -116,7 +116,6 @@ void StartIlwis::init() {
         qmlRegisterType<ChartModel>("ChartModel", 1,0,"ChartModel");
         qmlRegisterType<GraphModel>("GraphModel", 1,0,"GraphModel");
         qmlRegisterType<CatalogFilterModel>("CatalogFilterModel", 1,0,"CatalogFilterModel");
-        qmlRegisterType<ConsoleLineModel>("ConsoleLineModel", 1,0,"ConsoleLineModel");
         qmlRegisterType<ConsoleScriptModel>("ConsoleScriptModel", 1,0,"ConsoleScriptModel");
         qmlRegisterType<DataPaneModel>("DataPaneModel", 1,0,"DataPaneModel");
         qmlRegisterType<TabModel>("TabModel", 1,0,"TabModel");
