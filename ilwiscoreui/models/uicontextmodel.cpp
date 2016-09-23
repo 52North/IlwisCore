@@ -192,8 +192,7 @@ void UIContextModel::currentKey(int ev)
     _currentKey += ev;
     int z = 0;
     int p = Qt::Key_L;
-    if ( _currentKey == z)
-        qDebug() << _currentKey ;
+
 }
 
 int UIContextModel::currentKey() const

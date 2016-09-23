@@ -16,7 +16,6 @@ Item {
         onClicked: {
             var info = editor.attributeTable
             if ( info.length == 2){
-                console.debug(info)
                 var filter = "itemid=" + info[0]
                 // try to find a suitable data pane for it
                 datapanesplit.newPanel(filter, "table",info[1],"other")
