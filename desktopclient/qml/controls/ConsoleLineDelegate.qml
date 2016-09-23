@@ -54,7 +54,7 @@ Rectangle {
                  background: Rectangle {
                     width : inputField.width
                     height : inputField.height
-                    color : listindex == consolearea.currentIndex ? Global.alternatecolor3 : Global.alternatecolor2
+                    color : Global.alternatecolor2
                     border.width: 1
                     border.color: asMainEdit ? "grey" : "#eeeeee"
                  }

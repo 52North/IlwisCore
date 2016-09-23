@@ -50,60 +50,95 @@ ApplicationWindow {
 
     Controls.ToolTipLabel{id : toolTip}
 
-    Item {
+    SplitView {
         id : root
         height : parent.height
         width : parent.width
-
-        Rectangle {
-            anchors.left: parent.left
-            anchors.top : parent.top
-            width : xu1.width + 1
-            height : 100
-            color : Global.palegreen
-            border.width: 1
-            border.color : "#b3b3b3"
-        }
+        orientation: Qt.Vertical
+        property int defaultCommLineHeight : 60
 
         Item {
-            id : xu1
-            anchors.left: parent.left
-            anchors.top : parent.top
-            width : dummy.width + 7
-            height : 100
+            id : topArea
+            width : parent.width
+            height : root.height - mainSplit.height
 
-            Rectangle{
-                id : dummy
-                height : 100
-                width : 70 * Global.uiScale
+
+
+            Rectangle {
                 anchors.left: parent.left
                 anchors.top : parent.top
-                color : Global.middlegreen
+                width : xu1.width + 1
+                height : 100
+                color : Global.palegreen
+                border.width: 1
+                border.color : "#b3b3b3"
             }
-        }
-        DropShadow {
-            id: butShadow2
-            anchors.fill: source
-            cached: true
-            horizontalOffset: 4
-            radius: 6
-            samples: 12
-            color: "#80000000"
-            smooth: true
-            opacity: 0.7
-            source: xu1
-        }
-        CommandLineArea {
-            id : commLine
-            width : parent.width
+
+            Item {
+                id : xu1
+                anchors.left: parent.left
+                anchors.top : parent.top
+                width : dummy.width + 7
+                height : 100
+
+                Rectangle{
+                    id : dummy
+                    height : 100
+                    width : 70 * Global.uiScale
+                    anchors.left: parent.left
+                    anchors.top : parent.top
+                    color : Global.middlegreen
+                }
+            }
+            DropShadow {
+                id: butShadow2
+                anchors.fill: source
+                cached: true
+                horizontalOffset: 4
+                radius: 6
+                samples: 12
+                color: "#80000000"
+                smooth: true
+                opacity: 0.7
+                source: xu1
+            }
+            CommandLineArea {
+                id : commLine
+                width : parent.width
+                height: parent.height
+            }
+            states: [
+                State {
+                    name: "collapsed"
+                    PropertyChanges {
+                        target: topArea
+                        height : root.defaultCommLineHeight
+                    }
+
+                },
+                State{
+                    name: "open"
+                    PropertyChanges {
+                        target: topArea
+                        height: 250
+                    }
+                }
+
+            ]
+
+            transitions: [
+                Transition {
+                    NumberAnimation { target: topArea; property: "height"; duration: 300 }
+                }
+            ]
         }
 
 
         MainSplit {
             id : mainSplit
             width: parent.width
-            anchors.top : commLine.bottom
-            anchors.bottom : parent.bottom
+            height : root.height - root.defaultCommLineHeight
+            Layout.fillHeight: true
         }
 
     }

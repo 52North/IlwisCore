@@ -16,28 +16,28 @@ import "workbench" as WorkBench
 
 Item {
     id : commLineRoot
-    height : commLine.height
 
     Row {
         id : commLine
         z: commLineRoot.z + 1
         width: parent.width
-        height: textArea.height + 10
+        height: parent.height
         Rectangle {
             id : aArea
             width : 80 * Global.uiScale
             height : textArea.height
             color : Global.darkestgreen
             Image {
-                anchors.centerIn: parent
+                x : 4
+                y : 4
                 source : "images/ilwis_logo_txt.png"
             }
         }
 
         Control.CommandLine{
             id : textArea
-            Layout.fillWidth: true
             width : parent.width - aArea.width
+            height : parent.height - 10
         }
     }
     DropShadow {

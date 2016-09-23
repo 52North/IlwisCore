@@ -61,7 +61,6 @@ bool RunPython::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( errFile.exists()){
         if ( errFile.open(QIODevice::ReadOnly)){
             QString result(errFile.readAll());
-            result.remove("\r\n");
             if ( result.trimmed() != ""){
                 ctx->setOutput(symTable,result,"python_error", itSTRING, Resource());
                 hasError = true;
@@ -75,7 +74,6 @@ bool RunPython::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if ( inputFile.exists()){
             if ( inputFile.open(QIODevice::ReadOnly)){
                 QString result(inputFile.readAll());
-                result.remove("\r\n");
                 ctx->setOutput(symTable,result,"python_output", itSTRING, Resource());
                 inputFile.close();
             }

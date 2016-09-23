@@ -420,7 +420,6 @@ void OperationCatalogModel::workSpaceChanged()
 QString OperationCatalogModel::executeoperation(quint64 operationid, const QString& parameters, QVariant runparams) {
 
     auto opExpr = OperationExpression::createExpression(operationid, parameters);
-    uicontext()->consoleScript(0)->addLine(opExpr.toPythonExpression());
     try {
         QThread* thread = new QThread;
         thread->setProperty("runparameters",runparams);
