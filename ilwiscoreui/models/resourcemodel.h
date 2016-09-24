@@ -89,6 +89,7 @@ public:
     Q_INVOKABLE bool hasExtendedType(const QString& tp) const;
     Q_INVOKABLE void setUrl(const QUrl &url, bool asRaw);
     Q_INVOKABLE void realizeThumbPath();
+    Q_INVOKABLE void suicide();
 
 
     static QString iconPath(IlwisTypes tp) ;
@@ -97,6 +98,7 @@ public:
     void addref();
     virtual QString modelType() const;
     bool extendedType() const;
+
 
 protected:
     QString _displayName;

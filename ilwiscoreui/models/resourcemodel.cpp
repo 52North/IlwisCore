@@ -308,6 +308,13 @@ bool ResourceModel::extendedType() const
     return false;
 }
 
+void ResourceModel::suicide()
+{
+    setParent(0);
+    // use only when certain
+    delete this;
+}
+
 Resource &ResourceModel::itemRef()
 {
     return _item;
