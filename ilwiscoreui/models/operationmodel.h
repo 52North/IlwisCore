@@ -12,6 +12,7 @@ public:
     Q_PROPERTY(QStringList inParamNames READ inParamNames CONSTANT)
     Q_PROPERTY(QStringList outParamNames READ outParamNames CONSTANT)
     Q_PROPERTY(QString syntax READ syntax CONSTANT)
+    Q_PROPERTY(QString pythonSyntax READ pythonSyntax CONSTANT)
     Q_PROPERTY(QString inParameterCount READ inParameterCount CONSTANT)
     Q_PROPERTY(QString outParameterCount READ outParameterCount CONSTANT)
     Q_PROPERTY(QStringList inParameterIconList READ inParameterIconList CONSTANT)
@@ -35,6 +36,7 @@ public:
     Q_INVOKABLE QString outputparameterDescription(quint32 index) const;
 
     QString syntax() const;
+    QString pythonSyntax() const;
     QString provider() const;
 
     Q_INVOKABLE int maxParameterCount(bool inputCount) const;

@@ -98,6 +98,25 @@ QString OperationModel::syntax() const
     return syn;
 }
 
+QString OperationModel::pythonSyntax() const
+{
+    QString expr("ilwis.do(");
+    expr += "'" + name() + "'";
+    QStringList names = inParamNames();
+    for(int i=0; i < names.size(); ++i){
+        expr += ",";
+        expr += names[i];
+    }
+    expr += ")";
+    names = outParamNames();
+    if ( names.size() == 1) {
+        expr = names[0] + "=" + expr;
+    }else if ( names.size() > 1){
+        expr = "out_tuple=" + expr;
+    }
+    return expr;
+}
+
 QString OperationModel::provider() const
 {
     QString kw =   getProperty("namespace");
