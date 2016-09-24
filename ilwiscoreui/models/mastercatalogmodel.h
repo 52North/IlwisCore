@@ -61,7 +61,7 @@ public:
     Q_INVOKABLE WorkSpaceModel *workspace(const QString& name);
     Q_INVOKABLE void deleteBookmark(quint32 index);
     Q_INVOKABLE void setCatalogMetadata(const QString &displayName, const QString &description);
-    Q_INVOKABLE ResourceModel *id2Resource(const QString& objectid);
+    Q_INVOKABLE ResourceModel *id2Resource(const QString& objectid, QObject *parent=0);
     Q_INVOKABLE QStringList knownCatalogs(bool fileonly=true);
     Q_INVOKABLE void setWorkingCatalog(const QString& path);
     Q_INVOKABLE void refreshCatalog(const QString& path);

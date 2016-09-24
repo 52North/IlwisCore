@@ -674,18 +674,18 @@ QStringList MasterCatalogModel::select(const QString &filter, const QString& pro
     }
 }
 
-ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid)
+ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid, QObject *parent)
 {
     bool ok;
     Resource resource = mastercatalog()->id2Resource(objectid.toULongLong(&ok));
     if (ok && resource.isValid()){
-        ResourceModel *model = new ResourceModel(resource, this);
+        ResourceModel *model = new ResourceModel(resource, parent != 0 ? parent : this);
         return model;
     }else { // might be an anonymous object
         auto obj = mastercatalog()->get(objectid.toULongLong(&ok));
         if ( obj){
             Resource res = obj->resource();
-            ResourceModel *model = new ResourceModel(resource, this);
+            ResourceModel *model = new ResourceModel(resource, parent != 0 ? parent : this);
             return model;
         }
     }
