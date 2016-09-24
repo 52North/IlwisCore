@@ -120,7 +120,7 @@ Item {
         }
         onPressed: {
             var key = uicontext.currentKey
-            if ( key !== Qt.Key_Alt){
+ //           if ( key !== Qt.Key_Alt){
                 image = Qt.createQmlObject('import QtQuick 2.0; Image{
                 id : image
                 width : 20; height : 20
@@ -143,13 +143,13 @@ Item {
                     AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
                 }
             }', mouseArea, "dynamicImage");
-            }else {
-                floatingProps.source = "QuickProps.qml"
-                floatingProps.item.setObject(id)
-                var point = floatingProps.mapFromItem(mouseArea, mouseX, mouseY)
-                floatingProps.item.x = point.x
-                floatingProps.item.y =point.y
-            }
+//            }else {
+//                floatingProps.source = "QuickProps.qml"
+//                floatingProps.item.setObject(id)
+//                var point = floatingProps.mapFromItem(mouseArea, mouseX, mouseY)
+//                floatingProps.item.x = point.x
+//                floatingProps.item.y =point.y
+//            }
         }
     }
 
