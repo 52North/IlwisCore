@@ -33,24 +33,46 @@ Rectangle {
             height: parent.height - 25
             orientation: Qt.Horizontal
 
-            Row {
+            SplitView {
                 width : parent.width - parent.width * 0.333
                 height : parent.height
-                Rectangle {
-                    id : execPoint
-                    height : parent.height
-                    width : 20
-                    color : Global.middlegreen
+                orientation: Qt.Vertical
+                TextArea {
+                    id : oldCode
+                    height :   commLine.state == "collapsed" ? 0 : 40
+                    width : parent.width
+                    readOnly: true
+                    style: TextAreaStyle {
+                         backgroundColor: Global.lightestgreen
+                     }
                 }
                 TextArea {
                     id : inputArea
-                    property int endLastExecutionPosition : 0
-                    property int lastPoint : 0
-                    width : parent.width - execPoint.width
+                    width : parent.width
                     height : parent.height
-                    onTextChanged: {
-                        inputArea.lastPoint = Math.max(lastPoint,inputArea.cursorPosition)
+                    font.pointSize:11
+                    DropArea {
+                        id: canvasDropArea
+                        anchors.fill: parent
+                        enabled: true
+                        onDropped: {
+                            var oper = operations.operation(drag.source.ilwisobjectid)
+                            if ( oper){
+                                inputArea.append(oper.pythonSyntax);
+                            }else {
+                                var obj = mastercatalog.id2Resource(drag.source.ilwisobjectid)
+                                if ( obj){
+                                    var b = inputArea.selectionStart;
+                                    var e = inputArea.selectionEnd;
+                                    inputArea.remove(b,e);
+                                    inputArea.insert(b, obj.name)
+                                    obj.suicide()
+                                }
+                            }
+
+                        }
                     }
+
                 }
             }
             TextArea {
@@ -58,6 +80,7 @@ Rectangle {
                 Layout.fillWidth: true
                 height : parent.height
                 readOnly: true
+                font.pointSize:11
                 style: TextAreaStyle {
                      backgroundColor: Global.lightestgreen
                  }
@@ -68,18 +91,17 @@ Rectangle {
         Row {
             id : inputButtons
             anchors.top: editparts.bottom
-            width : inputArea.width + execPoint.width
+            width : inputArea.width
             height : 25
             Button{
                 width: 100
                 height : 20
                 text : qsTr("Execute")
                 onClicked: {
-                    var script = inputArea.text.substring(inputArea.endLastExecutionPosition)
-                    uicontext.consoleScript(0).countLines(inputArea.text)
-                    uicontext.consoleScript(0).findExecutionLine(inputArea.text,inputArea.lastPoint);
-                    inputArea.endLastExecutionPosition = inputArea.lastPoint
+                    var script = inputArea.text
+                    oldCode.append(script)
                     executeLines(script)
+                    inputArea.text = ""
 
                 }
             }
@@ -92,16 +114,6 @@ Rectangle {
                 width: 100
                 height : 20
                 text : qsTr("Load")
-            }
-            Button{
-                width: 100
-                height : 20
-                text : qsTr("Clear")
-                onClicked: {
-                    inputArea.text = ""
-                    inputArea.endLastExecutionPosition = 0
-                    inputArea.lastPoint = 0
-                }
             }
         }
         Button {
