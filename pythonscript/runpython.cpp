@@ -74,11 +74,16 @@ bool RunPython::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if ( inputFile.exists()){
             if ( inputFile.open(QIODevice::ReadOnly)){
                 QString result(inputFile.readAll());
+                int index = result.lastIndexOf("\r\n");
+                int sz = result.size();
+                if ( index == sz - 2){
+                    result = result.left(sz - 2) ;
+                }
                 ctx->setOutput(symTable,result,"python_output", itSTRING, Resource());
                 inputFile.close();
             }
         }
-        inputFile.remove();
+        //inputFile.remove();
     }
 
 
