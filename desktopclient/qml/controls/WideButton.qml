@@ -10,7 +10,7 @@ Button {
     property string label
     Image {
         id : icon
-        x : 4* Global.uiScale
+        x : 4 + 4* Global.uiScale
         height : 20 * Global.uiScale
         source : image
         anchors.verticalCenter: parent.verticalCenter

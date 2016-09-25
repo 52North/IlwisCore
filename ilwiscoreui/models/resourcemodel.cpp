@@ -254,6 +254,8 @@ QString ResourceModel::iconPath(IlwisTypes tp)
         return "domain.png";
     else if ( tp & itDOMAIN)
         return "domain.png";
+    else if ( tp == itSCRIPT)
+        return "script.png";
     else if ( tp & itREPRESENTATION)
         return "representation.png";
     else if ( hasType(tp,itNUMERICDOMAIN))

@@ -59,7 +59,7 @@ public:
     OperationMetaData();
     OperationMetaData(const Resource& resource);
     ~OperationMetaData();
-    void init();
+    virtual void init();
     IlwisTypes ilwisType() const;
 
     SPOperationParameter newParameter(OperationParameter::ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString& description=sUNDEF, bool optional=false);

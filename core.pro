@@ -135,7 +135,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/workflow/workflowoperationimplementation.cpp \
     core/internaldatabaseconnection.cpp \
     core/catalog/mastercatalogcache.cpp \
-    core/catalog/catalogexplorerworker.cpp
+    core/catalog/catalogexplorerworker.cpp \
+    core/ilwisobjects/operation/script.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -287,7 +288,8 @@ HEADERS += core/kernel.h\
     core/identityinterface.h \
     core/internaldatabaseconnection.h \
     core/catalog/mastercatalogcache.h \
-    core/catalog/catalogexplorerworker.h
+    core/catalog/catalogexplorerworker.h \
+    core/ilwisobjects/operation/script.h
 
 OTHER_FILES += \
     core/resources/referencesystems.csv \

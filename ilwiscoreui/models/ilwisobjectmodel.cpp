@@ -11,8 +11,10 @@
 #include "itemrange.h"
 #include "colorrange.h"
 #include "operationmodel.h"
+#include "operationmetadata.h"
 #include "catalogmodel.h"
 #include "raster.h"
+#include "script.h"
 
 using namespace Ilwis;
 
@@ -644,6 +646,11 @@ QString IlwisObjectModel::getProperty(const QString &propertyname) const
             if ( env.isNull() || !env.isValid())
                 return "unspecified";
             return env.toString();
+        }
+        if ( propertyname == "script"){
+            if ( hasType(_ilwisobject->ilwisType(), itSCRIPT)){
+                return _ilwisobject.as<Script>()->text();
+            }
         }
         if ( propertyname == "pixelsize"){
             return pixSizeString();

@@ -34,13 +34,17 @@ HEADERS += \
     pythonscript/pythonscriptmodule.h \
     pythonscript/runpython.h \
     pythonscript/pythonobjectfactory.h \
-    pythonscript/pythonworkflowconnector.h
+    pythonscript/pythonworkflowconnector.h \
+    pythonscript/pythonscriptconnector.h \
+    pythonscript/pythonscriptcatalogexplorer.h
 
 SOURCES += \
     pythonscript/pythonscriptmodule.cpp \
     pythonscript/runpython.cpp \
     pythonscript/pythonobjectfactory.cpp \
-    pythonscript/pythonworkflowconnector.cpp
+    pythonscript/pythonworkflowconnector.cpp \
+    pythonscript/pythonscriptconnector.cpp \
+    pythonscript/pythonscriptcatalogexplorer.cpp
 
 
 
