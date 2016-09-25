@@ -18,6 +18,7 @@
 #include "ilwiscontext.h"
 #include "runpython.h"
 #include "pythonworkflowconnector.h"
+#include "pythonscriptconnector.h"
 #include "pythonscript/pythonscriptmodule.h"
 
 using namespace Ilwis;
@@ -57,7 +58,7 @@ void PythonScriptModule::prepare()
         }
         QString path = qgetenv("PATH");
         path += ";" + home;
-        bool ok = qputenv("PATH", path.toLatin1());
+        qputenv("PATH", path.toLatin1());
 
         QString checkhome = home + "/python3.dll";
         QFileInfo inf(checkhome);
@@ -74,18 +75,21 @@ void PythonScriptModule::prepare()
             WARN2(ERR_COULD_NOT_LOAD_2,"Python instance","Python scripting unavailable");
             return;
         }
-          commandhandler()->addOperation(RunPython::createMetadata(), RunPython::create);
+        commandhandler()->addOperation(RunPython::createMetadata(), RunPython::create);
 
-          PythonObjectFactory *objfactory = new PythonObjectFactory();
-          objfactory->prepare();
-          kernel()->addFactory(objfactory );
+        PythonObjectFactory *objfactory = new PythonObjectFactory();
+        objfactory->prepare();
+        kernel()->addFactory(objfactory );
 
-          ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
-          if (!factory)
-              return ;
+        ConnectorFactory *factory = kernel()->factory<ConnectorFactory>("ilwis::ConnectorFactory");
+        if (!factory)
+            return ;
 
-          factory->addCreator("fileworkflow","python",PythonScript::PythonWorkflowConnector::create);
-          factory->addCreator("inmemoryworkflow","python",PythonScript::PythonWorkflowConnector::create2);
+        factory->addCreator(itSCRIPT,"python",PythonScript::PythonScriptConnector::create);
+
+        factory->addCreator("fileworkflow","python",PythonScript::PythonWorkflowConnector::create);
+        factory->addCreator("inmemoryworkflow","python",PythonScript::PythonWorkflowConnector::create2);
+        factory->addCreator("script","python",PythonScript::PythonScriptConnector::create);
 
         kernel()->issues()->log("Loaded python script module",IssueObject::itMessage);
     } catch(std::exception ex){
