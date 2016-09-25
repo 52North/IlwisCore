@@ -1,11 +1,21 @@
 #ifndef PYTHONSCRIPTCONNECTOR_H
 #define PYTHONSCRIPTCONNECTOR_H
 
-
-class PythonScriptConnector
+namespace Ilwis{
+namespace PythonScript {
+class PythonScriptConnector : public Ilwis::IlwisObjectConnector
 {
 public:
-    PythonScriptConnector();
+    PythonScriptConnector(const Ilwis::Resource &resource, bool load,const IOOptions& options=IOOptions());
+
+    bool store(IlwisObject *obj, const IOOptions& options = IOOptions() );
+    QString type() const;
+    Ilwis::IlwisObject *create() const;
+    static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
+    QString provider() const;
+    bool loadMetaData(IlwisObject *obj, const Ilwis::IOOptions &options);
 };
+}
+}
 
 #endif // PYTHONSCRIPTCONNECTOR_H
