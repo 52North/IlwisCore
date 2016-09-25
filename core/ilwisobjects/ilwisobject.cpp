@@ -617,6 +617,8 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "Workflow";
     case  itSINGLEOPERATION:
         return "SingleOperation";
+    case  itSCRIPT:
+        return "Script";
     }
 
     return sUNDEF;
@@ -698,6 +700,9 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itSINGLEOPERATION;
     if ( name.compare( "Workflow",Qt::CaseInsensitive) == 0) {
         return  itWORKFLOW;
+    }
+    if ( name.compare( "Script",Qt::CaseInsensitive) == 0) {
+        return  itSCRIPT;
     }
     if ( name.compare( "OperationMetaData",Qt::CaseInsensitive) == 0) {
         return  itOPERATIONMETADATA;
