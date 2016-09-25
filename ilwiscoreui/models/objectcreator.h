@@ -50,6 +50,7 @@ private:
     QString createProjectedCoordinateSystemFromCode(const QVariantMap &parms);
     QString createProjectedCoordinateSystemFromBase(const QVariantMap &parms);
     QString createRasterCoverage(const QVariantMap &parms);
+    QString createScript(const QVariantMap &parms);
 };
 
 #endif // OBJECTCREATOR_H

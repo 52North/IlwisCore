@@ -15,6 +15,7 @@
 #include "mastercatalogmodel.h"
 #include "operationcatalogmodel.h"
 #include "objectcreator.h"
+#include "script.h"
 #include "operationmetadata.h"
 
 using namespace Ilwis;
@@ -22,6 +23,7 @@ using namespace Ilwis;
 ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
 {
     _creators["workflow"] = new IlwisObjectCreatorModel("workflow",TR("Workflow"),itWORKFLOW,"CreateWorkflow.qml", 400, this);
+    _creators["script"] = new IlwisObjectCreatorModel("script",TR("Script"),itSCRIPT,"CreateScript.qml", 400, this);
     _creators["numericdomain" ] = new IlwisObjectCreatorModel("numericdomain",TR("Numeric Domain"),itNUMERICDOMAIN,"CreateNumDom.qml", 250, this);
     _creators["thematicdomain" ] = new IlwisObjectCreatorModel("thematicdomain", TR("Thematic Domain"),itITEMDOMAIN | itTHEMATICITEM,"CreateThematicDom.qml", 520, this);
     _creators["nameidentifierdomain" ] = new IlwisObjectCreatorModel("nameidentifierdomain",TR("Identifier Domain"),itITEMDOMAIN | itIDENTIFIERITEM,"CreateIdentifierDomain.qml", 520, this);
@@ -296,6 +298,26 @@ QString ObjectCreator::createWorkflow(const QVariantMap &parms)
     return QString::number(wf->id());
 }
 
+QString ObjectCreator::createScript(const QVariantMap &parms)
+{
+    Ilwis::IScript script;
+    script.prepare();
+    QString name = parms["name"].toString();
+    script->name(name);
+    QString url = parms["url"].toString();
+    if ( url.indexOf(".py") == -1){
+        url += ".py";
+    }
+    script->resourceRef().setUrl(url);
+    script->resourceRef().setUrl(url, true);
+    script->resourceRef().setDescription(parms["description"].toString());
+    script->resourceRef().addProperty("keyword", parms["keywords"].toString());
+    script->connectTo(parms["url"].toString(),"script","python",IlwisObject::cmOUTPUT);
+    script->store();
+    mastercatalog()->addItems({script->resource()});
+    return QString::number(script->id());
+}
+
 QString ObjectCreator::createObject(const QVariantMap &parms)
 {
     try {
@@ -313,6 +335,8 @@ QString ObjectCreator::createObject(const QVariantMap &parms)
             return createProjectedCoordinateSystem(parms);
     } else if ( type == "rastercoverage"){
         return createRasterCoverage(parms);
+    }else if ( type == "script"){
+        return createScript(parms);
     }
 
 
