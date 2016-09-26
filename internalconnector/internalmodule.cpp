@@ -33,6 +33,7 @@
 #include "internalrepresentation.h"
 #include "internalprojectionconnector.h"
 #include "internalellipsoidconnector.h"
+#include "internalscriptconnector.h"
 #include "ilwiscontext.h"
 
 #include "coverage.h"
@@ -73,6 +74,7 @@ void InternalModule::prepare()
     factory->addCreator(itSINGLEOPERATION,"internal", OperationMetadataConnector::create);
     factory->addCreator(itPROJECTION,"internal", InternalProjectionConnector::create);
     factory->addCreator(itELLIPSOID,"internal", InternalEllipsoidConnector::create);
+    factory->addCreator(itSCRIPT,"internal", InternalScriptConnector::create);
 
     FactoryInterface *projfactory = new ProjectionImplFactory();
     projfactory->prepare();

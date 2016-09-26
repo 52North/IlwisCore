@@ -39,6 +39,7 @@ private:
     IlwisObject *createTable(const Resource &resource, const IOOptions &options) const;
     IlwisObject *createOperationMetaData(const Resource &resource, const Ilwis::IOOptions &options) const;
     IlwisObject *createWorkflow(const Resource &resource, const IOOptions &options) const;
+    IlwisObject *createScript(const Resource &resource, const IOOptions &options) const;
     IlwisObject *createGeoreference(const Resource &resource, const Ilwis::IOOptions &options) const;
     bool createCoverage(const Ilwis::Resource &resource, Coverage *coverage, const Ilwis::IOOptions &options) const;
     IlwisObject *createFeatureCoverage(const Resource &resource, const Ilwis::IOOptions &options) const;
@@ -59,6 +60,7 @@ private:
 
         return obj;
     }
+
 };
 }
 }

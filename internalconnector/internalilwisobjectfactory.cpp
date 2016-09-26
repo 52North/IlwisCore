@@ -64,6 +64,7 @@
 #include "epsg.h"
 #include "catalog.h"
 #include "workflow.h"
+#include "script.h"
 
 
 using namespace Ilwis;
@@ -102,7 +103,9 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
         return createTable(resource,options);
     } else if ( resource.ilwisType() & itWORKFLOW) {
         return createWorkflow(resource, options);
-    } else if ( resource.ilwisType() & itSINGLEOPERATION) {
+    } else if ( resource.ilwisType() & itSCRIPT) {
+        return createScript(resource, options);
+    }  else if ( resource.ilwisType() & itSINGLEOPERATION) {
         return createOperationMetaData(resource, options);
     } else if ( resource.ilwisType() & itGEOREF) {
         return createGeoreference(resource,options);
@@ -204,6 +207,15 @@ IlwisObject *InternalIlwisObjectFactory::createWorkflow(const Resource& resource
     return workflow;
 }
 
+IlwisObject *InternalIlwisObjectFactory::createScript(const Resource& resource, const IOOptions &options) const {
+    if (!hasType(resource.ilwisType(), itSCRIPT)){
+        return nullptr;
+    }
+    Script *script = createFromResource<Script>(resource, options);
+
+    return script;
+}
+
 IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& subtype) const
 {
     switch(type) {
@@ -243,6 +255,8 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new OperationMetaData();
     case itWORKFLOW:
         return new Workflow();
+    case itSCRIPT:
+        return new Script();
     case itREPRESENTATION:
         return new Representation();
     }
@@ -286,6 +300,8 @@ bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
     } else if ( resource.ilwisType() & itCATALOG) {
         return true;
     }  else if ( resource.ilwisType() & itREPRESENTATION) {
+        return true;
+    }  else if ( resource.ilwisType() & itSCRIPT) {
         return true;
     }
 
