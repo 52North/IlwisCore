@@ -8,37 +8,46 @@ import "../../Global.js" as Global
 import "../../controls" as Controls
 
 Item {
-    width : 230
+    width : 200
 
     anchors.topMargin: 3
     property string iconName : "../images/start"
 
     Rectangle {
         id : header
-        width : 520 * Global.uiScale  -2
+        width : 620 * Global.uiScale  -2
         height : 18
         color : Global.palegreen
         x : 2
         Text{
             id :lbl1
-            text : qsTr("Ways to run your python statements")
+            text : qsTr("Run python statements")
             font.bold: true
             x : 3
-            width : 258
+            width : 198
             anchors.verticalCenter: parent.verticalCenter
         }
         Text{
+            id : lbl2
             text : qsTr("Content management")
             font.bold: true
-            width : 258
+            width : 198
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: lbl1.right
-            anchors.leftMargin: 8
+            anchors.leftMargin: 12
+        }
+        Text{
+            text : qsTr("File Management")
+            font.bold: true
+            width : 198
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: lbl2.right
+            anchors.leftMargin: 10
         }
 
     }
     Column {
-        width : 260 * Global.uiScale
+        width : 200 * Global.uiScale
         height : parent.height - header.height
         anchors.top : header.bottom
         anchors.topMargin: 4
@@ -90,7 +99,7 @@ Item {
         }
     }
     Column {
-        width : 260 * Global.uiScale
+        width : 200 * Global.uiScale
         height : parent.height - header.height
         anchors.top : header.bottom
         anchors.topMargin: 4
@@ -141,6 +150,48 @@ Item {
             Controls.ToolTip{
                 target : parent
                 text : qsTr("Clears all the content from the results")
+            }
+        }
+    }
+    Column {
+        width : 200 * Global.uiScale
+        height : parent.height - header.height
+        anchors.top : header.bottom
+        anchors.topMargin: 4
+        anchors.left: buttonRow2.right
+        anchors.leftMargin: 8
+        y: 5 * Global.uiScale
+        x : 5 * Global.uiScale
+        id : buttonRow3
+        spacing : 8
+
+        Controls.WideButton{
+            image : "../images/save.png"
+            label : qsTr("Save")
+            width : buttonRow.width
+            height : 40 * Global.uiScale
+            enabled : true
+
+            onClicked: {
+
+            }
+            Controls.ToolTip{
+                target : parent
+                text : qsTr("saves the script under its current name")
+            }
+        }
+        Controls.WideButton{
+            image : "../images/saveas.png"
+            label : qsTr("Save as...")
+            width : buttonRow.width
+            height : 40 * Global.uiScale
+
+            onClicked: {
+
+            }
+            Controls.ToolTip{
+                target : parent
+                text : qsTr("saves the script under a new name")
             }
         }
     }
