@@ -19,8 +19,10 @@
 
 namespace Ilwis{
 class FeatureCoverage;
+class Script;
 
 typedef IlwisData<FeatureCoverage> IFeatureCoverage;
+typedef IlwisData<Script> IScript;
 }
 
 using namespace Ilwis;
@@ -64,6 +66,7 @@ public:
     Q_INVOKABLE QString type2typeName(const QString& tp) const;
     Q_INVOKABLE QStringList formatList(const QString &query, const QString& ilwtype) const;
     Q_INVOKABLE QObject *getItem(const QString &name, QObject *parent);
+    Q_INVOKABLE QString consoleScriptId() const;
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
     QList<VisualAttributeEditor *> propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;
@@ -92,7 +95,6 @@ public:
     qint64 addMapPanel(const QString &filter, const QString &side, const QString url);
     QStringList formatList() const;
 
-
 signals:
     void activeSplitChanged();
     void currentWorkSpaceChanged();
@@ -117,6 +119,7 @@ private:
     WorkSpaceModel *_currentWorkSpace = 0;
     std::vector<ConsoleScriptModel *> _consoles;
     IFeatureCoverage _worldMap;
+    Ilwis::IScript _consoleScript; // script that used for console use
 
     static std::unique_ptr<UIContextModel>_uicontext;
 

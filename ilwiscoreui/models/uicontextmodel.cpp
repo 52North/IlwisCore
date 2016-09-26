@@ -23,6 +23,8 @@
 #include "consolescriptmodel.h"
 #include "dataformat.h"
 #include "oshelper.h"
+#include "operationmetadata.h"
+#include "script.h"
 #include "ilwiscontext.h"
 
 using namespace Ilwis;
@@ -255,6 +257,8 @@ void UIContextModel::prepare()
     Ilwis::kernel()->addFactory(factory);
     QString worldmp = OSHelper::createFileUrlFromParts(ilwisloc, "/resources/country_boundaries.ilwis");
     _worldMap.prepare(worldmp);
+    _consoleScript.prepare();
+    _consoleScript->name("consolescript.py");
 }
 
 bool UIContextModel::abort() const
@@ -398,6 +402,14 @@ QObject *UIContextModel::getItem(const QString& name,QObject *parent)
         item = parent->findChild<QQuickItem *>(name);
 
     return item;
+}
+
+QString UIContextModel::consoleScriptId() const
+{
+    if ( _consoleScript.isValid()){
+        return QString::number(_consoleScript->id());
+    }
+    return QString::number(iUNDEF);
 }
 
 QString UIContextModel::worldmapCommand(const QString& id) const
