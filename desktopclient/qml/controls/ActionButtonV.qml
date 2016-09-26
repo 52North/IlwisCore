@@ -7,6 +7,7 @@ import "../Global.js" as Global
 Button{
     property string iconsource
     property string buttontext;
+    property string backColor : "white"
 
     id : addContainer
     Image {
@@ -25,7 +26,7 @@ Button{
     style : ButtonStyle{
         background: Rectangle {
             anchors.fill: parent
-            color : control.pressed ? Global.palegreen : "white"
+            color : control.pressed ? Global.palegreen : backColor
         }
     }
 
