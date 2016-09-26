@@ -32,21 +32,6 @@ Item {
                 y : 4
                 source : "images/ilwis_logo_txt.png"
             }
-            Controls.ActionButtonV{
-                width : 100
-                height :20
-                anchors.verticalCenter: parent.verticalCenter
-                text : "Python console"
-                anchors.right: parent.right
-                anchors.rightMargin: 4
-                backColor: Global.lightgreen
-
-                onClicked: {
-                    var id = uicontext.consoleScriptId()
-                    bigthing.newCatalog("itemid=" + id, "script", "ilwis://internalcatalog/consolescript.py", "other")
-                }
-
-            }
         }
 
     }

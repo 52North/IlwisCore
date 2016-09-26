@@ -112,6 +112,22 @@ Rectangle {
                 }
 
             }
+            WorkBenchButton {
+                id : consoleBut
+                iconname : "console.png"
+                label: qsTr("Python")
+                checkable: false
+
+                function mouseClicked() {
+                    var id = uicontext.consoleScriptId()
+                    bigthing.newCatalog("itemid=" + id, "script", "ilwis://internalcatalog/consolescript.py", "other")
+                }
+
+                Controls.ToolTip {
+                    target: prop
+                    text: qsTr("Opens the Python console to enter python script commands")
+                }
+            }
 
             WorkBenchButton{
                 id : prop

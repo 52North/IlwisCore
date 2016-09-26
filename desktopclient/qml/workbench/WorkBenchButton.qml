@@ -53,7 +53,7 @@ ToolButton{
     style : ButtonStyle{
         background: Rectangle {
             anchors.fill: parent
-            color : ((control.pressed || checked) ? Global.darkgreen : Global.middlegreen)
+            color : ((control.pressed || (checked & checkable)) ? Global.darkgreen : Global.middlegreen)
         }
     }
     states: [
