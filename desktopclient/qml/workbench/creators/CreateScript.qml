@@ -154,20 +154,19 @@ Controls.DropableItem{
                         }
 
                         var name = nameedit.content
-                        var url = textid.text + '/' + name + '.ilwis'
+                        if ( name.indexOf(".py") == -1)
+                            name = name + ".py"
                         var createInfo = {
                             type : "script",
                             name : name,
                             keywords : keywords,
                             description : descedit.content,
-                            url : mastercatalog.currentUrl
+                            url : mastercatalog.currentUrl + "/" + name
                         }
                         var ilwisid = objectcreator.createObject(createInfo)
-                        if (resource){
-                            var filter = "itemid=" + resource.id
-                            operations.refresh()
-                            bigthing.newCatalog(filter, "script",resource.url,"other")
-                        }
+                        var filter = "itemid=" + ilwisid
+                        operations.refresh()
+                        bigthing.newCatalog(filter, "script", mastercatalog.currentUrl + "/" + name,"other")
                     }
                 }
             }
