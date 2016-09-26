@@ -50,17 +50,16 @@ ApplicationWindow {
 
     Controls.ToolTipLabel{id : toolTip}
 
-    SplitView {
+    Column {
         id : root
         height : parent.height
         width : parent.width
-        orientation: Qt.Vertical
-        property int defaultCommLineHeight : 60
+        property int defaultCommLineHeight : 48
 
         Item {
             id : topArea
             width : parent.width
-            height : root.height - mainSplit.height
+            height : root.defaultCommLineHeight
 
 
 
@@ -102,35 +101,10 @@ ApplicationWindow {
                 opacity: 0.7
                 source: xu1
             }
-            CommandLineArea {
-                id : commLine
+            TopArea{
                 width : parent.width
                 height: parent.height
             }
-            states: [
-                State {
-                    name: "collapsed"
-                    PropertyChanges {
-                        target: topArea
-                        height : root.defaultCommLineHeight
-                    }
-
-                },
-                State{
-                    name: "open"
-                    PropertyChanges {
-                        target: topArea
-                        height: 250
-                    }
-                }
-
-            ]
-
-            transitions: [
-                Transition {
-                    NumberAnimation { target: topArea; property: "height"; duration: 300 }
-                }
-            ]
         }
 
 
