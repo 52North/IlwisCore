@@ -48,25 +48,7 @@ Item {
     SplitView {
         anchors.fill: parent
         orientation: Qt.Vertical
-        Row {
-            id :a1
-            width : parent.width
-            height : 80
-            //AreaHeader { id: tabheader0;labeltext: "Output"}
-            Item {
-                id : tabheader0; width : 34; height : parent.height;
-                AreaHeader { labeltext: "Output"}
-            }
-            TextArea {
-                id : outputArea
-                height :   parent.height
-                width : parent.width - tabheader2.width
-                readOnly: true
-                style: TextAreaStyle {
-                    backgroundColor: Global.lightestgreen
-                }
-            }
-        }
+
         Row {
             id : a2
             width : parent.width
@@ -104,6 +86,25 @@ Item {
                     }
                 }
 
+            }
+        }
+        Row {
+            id :a1
+            width : parent.width
+            height : 80
+            //AreaHeader { id: tabheader0;labeltext: "Output"}
+            Item {
+                id : tabheader0; width : 34; height : parent.height;
+                AreaHeader { labeltext: "Output"}
+            }
+            TextArea {
+                id : outputArea
+                height :   parent.height
+                width : parent.width - tabheader2.width
+                readOnly: true
+                style: TextAreaStyle {
+                    backgroundColor: Global.lightestgreen
+                }
             }
         }
         Row {
