@@ -58,5 +58,6 @@ typedef std::vector<double> Factors;
 
 Q_DECLARE_METATYPE(Indices)
 Q_DECLARE_METATYPE(Factors)
+Q_DECLARE_METATYPE(Ilwis::Symbol)
 
 #endif // SYMBOLTABLE_H
