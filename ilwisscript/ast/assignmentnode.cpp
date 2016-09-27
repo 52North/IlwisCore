@@ -235,14 +235,15 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
 
                     ctx->_results.push_back(result);
 
-            } else {
-                sym = symbols.getSymbol(result,SymbolTable::gaREMOVEIFANON);
-                tp = sym.isValid() ? sym._type : itUNKNOWN;
-                if ( tp == itUNKNOWN) {
-                    tp = Domain::ilwType(val);
+                } else {
+                    tp = sym.isValid() ? sym._type : itUNKNOWN;
+                    if ( tp == itUNKNOWN) {
+                        tp = Domain::ilwType(val);
+                    }
+                    result.remove(".ilwis"); // dont need that here
+                    ctx->addOutput(symbols,_expression->value(),result, tp, Resource());
                 }
-            }
-            //ctx->addOutput(symbols,_expression->value(),result, tp, Resource());
+                //ctx->addOutput(symbols,_expression->value(),result, tp, Resource());
 
         }
     }
