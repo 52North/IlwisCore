@@ -42,7 +42,9 @@ Item {
         executeLines(script)
     }
     function runSelected(){
-
+        var script = inputArea.selectedText
+        logArea.append(script)
+        executeLines(script)
     }
 
     SplitView {
@@ -75,11 +77,16 @@ Item {
                         }else {
                             var obj = mastercatalog.id2Resource(drag.source.ilwisobjectid)
                             if ( obj){
-                                var b = inputArea.selectionStart;
-                                var e = inputArea.selectionEnd;
-                                inputArea.remove(b,e);
-                                inputArea.insert(b, obj.url)
+                                if ( obj.typeName === "script"){
+                                   bigthing.changeCatalog("itemid=" + obj.id, "script", obj.url);
+                                }else {
+                                    var b = inputArea.selectionStart;
+                                    var e = inputArea.selectionEnd;
+                                    inputArea.remove(b,e);
+                                    inputArea.insert(b, obj.url)
+                                }
                                 obj.suicide()
+
                             }
                         }
 
