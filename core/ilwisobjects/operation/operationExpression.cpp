@@ -535,7 +535,7 @@ QString OperationExpression::toString(bool rightsideonly) const
 
 QString OperationExpression::toPythonExpression() const
 {
-    QString expr("ilwis.do(");
+    QString expr("ilwis.Engine.do(");
     QStringList parts = parm(0).value().split("=");
     if ( parts.size() == 2){
         QString output = parts[0];

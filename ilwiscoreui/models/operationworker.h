@@ -22,10 +22,10 @@ public slots:
 
 signals:
     void finished();
+    void operationResults(QVariantList values);
 
 private:
    OperationExpression _expression;
-   QString _result;
 
 };
 }
