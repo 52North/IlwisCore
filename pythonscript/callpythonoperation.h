@@ -4,6 +4,7 @@
 namespace Ilwis{
 
 class OperationMetaData;
+typedef IlwisData<OperationMetaData> IMetaData;
 
 namespace PythonScript {
 class CallPythonOperation : public OperationImplementation
@@ -22,7 +23,9 @@ private:
     NEW_OPERATION(CallPythonOperation);
 
     static std::map<QString, QString> _pythonoperations;
-    QString _pythonText;
+    static bool _pathsAdded;
+    QFileInfo _pythonFile;
+    Resource _pythonMetadata;
 };
 }
 }

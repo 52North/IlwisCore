@@ -15,6 +15,7 @@ using namespace Ilwis;
 using namespace PythonScript;
 
 std::map<QString, QString> CallPythonOperation::_pythonoperations;
+bool CallPythonOperation::_pathsAdded = false;
 
 REGISTER_OPERATION(CallPythonOperation)
 
@@ -34,46 +35,74 @@ bool CallPythonOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED){
             return false;
         }
-      PyObject *pGlobal = PyDict_New();
 
-      //Create a new module object
-      PyObject *pNewMod = PyModule_New("pythonscriptmodule");
+  //  PyRun_SimpleString("import sys\n");
+  //  QString path = "sys.path.append(\"" + _pythonFile.absolutePath() + "\")";
+    //PyRun_SimpleString(path.toLatin1());//the folder where the pythonTest.py is located
 
-      Py_Initialize();
-      PyModule_AddStringConstant(pNewMod, "__file__", "");
+    QString basname = _pythonFile.baseName();
+    PyObject  *pName = PyUnicode_FromString(basname.toLatin1());//creates new reference so you have to DECREF if
 
-      //Get the dictionary object from my module so I can pass this to PyRun_String
-      PyObject *pLocal = PyModule_GetDict(pNewMod);
+    PyObject *pModule = PyImport_Import(pName);//import module pythonTest.py. New reference
 
-      //Define my function in the newly created module
-      PyObject *pValue = PyRun_String(_pythonText.toLatin1(), Py_file_input, pGlobal, pLocal);
-      Py_DECREF(pValue);
+    PyObject *pDict = PyModule_GetDict(pModule);//borowed reference so no DECREF
 
-      //Get a pointer to the function I just defined
-      PyObject *pFunc = PyObject_GetAttrString(pNewMod, _expression.name().toLatin1());
+      ///function call and return test
+      QString operName =_expression.name(true);
+      PyObject *pFunc = PyDict_GetItemString(pDict, operName.toLatin1());//borowed reference. choose file is the name of the funcion
 
-      //Build a tuple to hold my arguments (just the number 4 in this case)
+      //Build a tuple to hold my arguments
       std::vector<PyObject *> values;
       PyObject *pArgs = PyTuple_New(_expression.parameterCount());
-      for(int i=1; i<= _expression.parameterCount(); ++i){
-        PyObject *pValue = PyLong_FromLong(4);
+      for(int i=0; i< _expression.parameterCount(); ++i){
+        Parameter parm = _expression.parm(i);
+        PyObject *pValue;
+        if ( hasType(parm.valuetype(), itINTEGER)){
+            pValue = PyLong_FromLong(_expression.parm(i).value().toLong());
+        }else if ( hasType(parm.valuetype(),itFLOAT | itDOUBLE|itDATETIME)){
+            pValue = PyFloat_FromDouble(_expression.input<double>(i));
+        } else{
+           QByteArray byteArray = parm.value().toUtf8();
+           const char *cString = byteArray.constData();
+           pValue = PyUnicode_FromString(cString);
+        }
+
         PyTuple_SetItem(pArgs, i, pValue);
         values.push_back(pValue);
       }
 
+
+
       //Call my function, passing it the number four
-      pValue = PyObject_CallObject(pFunc, pArgs);
+      PyObject *pValue = PyObject_CallObject(pFunc, pArgs);
+
+      if (PyLong_Check(pValue)) {
+          long v = PyLong_AsLong(pValue);
+          QVariant v1;
+          v1.setValue(v);
+          ctx->setOutput(symTable, QVariant(v1), sUNDEF, itINTEGER, Resource());
+      }else if ( PyFloat_Check(pValue)){
+          double v = PyLong_AsLong(pValue);
+          ctx->setOutput(symTable, QVariant(v), sUNDEF, itDOUBLE, Resource());
+      }else if (PyUnicode_Check(pValue)){
+         // PyObject* temp = PyUnicode_AsASCIIString(pValue);
+          //char* c_str = PyByteArray_AsString(temp);
+          auto str = QString::fromStdString(PyBytes_AsString(PyUnicode_AsUTF8String(const_cast<PyObject*>(pValue))));
+          ctx->setOutput(symTable, QVariant(str), sUNDEF, itSTRING, Resource());
+      }
+
+
       Py_DECREF(pArgs);
 
-      //printf("Returned val: %ld\n", PyLong_AsLong(pValue));
       for(auto *p : values)
         Py_DECREF(p);
 
-      Py_XDECREF(pFunc);
-      Py_DECREF(pNewMod);
-      Py_Finalize();
+      Py_XDECREF(pValue);
+      Py_XDECREF(pModule);
+      Py_XDECREF(pName);
 
-      return 0;
+     // Py_Finalize();
+
 
     return true;
 }
@@ -85,25 +114,37 @@ Ilwis::OperationImplementation *CallPythonOperation::create(quint64 metaid, cons
 
 Ilwis::OperationImplementation::State CallPythonOperation::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
+    if ( !_pathsAdded){
+        _pathsAdded = true;
+        PyRun_SimpleString("import sys\n");
+        std::set<QString> seen;
+        for(auto kvp : _pythonoperations){
+            if (seen.find(kvp.second) == seen.end()){
+                seen.insert(kvp.second);
+                QFileInfo inf(kvp.second);
+                QString path = "sys.path.append(\"" + inf.absolutePath() + "\")";
+                PyRun_SimpleString(path.toLatin1());//the folder where the pythonTest.py is located
+            }
+        }
+
+    }
     QString operName =_expression.name(true);
     auto iter = _pythonoperations.find(operName);
     if ( iter == _pythonoperations.end()){
         kernel()->issues()->log(TR("Couldn't find operation ") + operName);
         return sPREPAREFAILED;
     }
-    QFileInfo fileinf = (*iter).second;
-    if (!fileinf.exists()){
-        kernel()->issues()->log(TR("Couldn't find python file ") + fileinf.absoluteFilePath());
+    _pythonFile = (*iter).second;
+    if (!_pythonFile.exists()){
+        kernel()->issues()->log(TR("Couldn't find python file ") + _pythonFile.absoluteFilePath());
+        return sPREPAREFAILED;
+    }
+    _pythonMetadata = mastercatalog()->name2Resource(operName, itSINGLEOPERATION);
+    if ( !_pythonMetadata.isValid()){
+        kernel()->issues()->log(TR("Couldn't find operation ") + operName);
         return sPREPAREFAILED;
     }
 
-    QFile file(fileinf.absoluteFilePath());
-    if (!file.open(QFile::ReadOnly)){
-        kernel()->issues()->log(TR("Couldn't open python file ") + fileinf.absoluteFilePath());
-        return sPREPAREFAILED;
-    }
-
-    _pythonText = file.readAll();
 
     return sPREPARED;
 }
