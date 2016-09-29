@@ -116,6 +116,8 @@ QString IssueObject::type2String() const{
         return "Message";
     case itDebug:
         return "Debug";
+    case itRESULT:
+        return "Result";
     }
     return "Text";
 }
@@ -172,16 +174,18 @@ quint64 IssueLogger::log(const QString &message, int it)
     }
 #endif
 
-    _issues.enqueue(IssueObject(message, it, _issueId));
-    if ( _lastmessage == message)
-        return _issueId;
-    IssueObject& obj = _issues.back();
-    if ( _logFileRegular.is_open()) {
-        obj.stream(_logFileRegular, IssueObject::lmREGULAR);
-    }
-    if ( hasType(context()->runMode(),rmCOMMANDLINE)){
-        if ( it == IssueObject::itError)
-            std::cerr << message.toStdString() << "\n";
+    IssueObject obj(message, it, _issueId);
+    if ( obj.type() != IssueObject::itRESULT){ // results are not stored permanently
+        _issues.enqueue(obj);
+        if ( _lastmessage == message)
+            return _issueId;
+        if ( _logFileRegular.is_open()) {
+            obj.stream(_logFileRegular, IssueObject::lmREGULAR);
+        }
+        if ( hasType(context()->runMode(),rmCOMMANDLINE)){
+            if ( it == IssueObject::itError)
+                std::cerr << message.toStdString() << "\n";
+        }
     }
     emit updateIssues(obj);
 
