@@ -204,7 +204,7 @@ QString TypeHelper::type2name(IlwisTypes t)
         return "representation";
     case itSCRIPT:
         return "script";
-    // nonilwisobjects
+        // nonilwisobjects
     case itENVELOPE:
         return "envelope";
     case itBOOL:
@@ -236,7 +236,7 @@ QString TypeHelper::type2name(IlwisTypes t)
     case itVALUERANGE:
         return "valuerange";
     case itSTRING:
-        return "sing";
+        return "string";
     case itDATE:
         return "date";
     case itTIME:
@@ -282,7 +282,7 @@ QString TypeHelper::type2name(IlwisTypes t)
     case itDATETIME:
         return "datetime";
     case itINTEGER:
-        return "int";
+        return "integer";
     case itPOSITIVEINTEGER:
         return "uint";\
     case itNUMBER:
@@ -299,5 +299,118 @@ QString TypeHelper::type2name(IlwisTypes t)
         return "column";
     }
     return sUNDEF;
+
+}
+
+IlwisTypes TypeHelper::name2type(const QString &dname)
+{
+
+    QString name = dname.toLower();
+    int index;
+    if ( (index = name.indexOf("::")) != -1){
+        name = dname.right(name.size() - index - 2);
+    }
+
+    if ( name =="ilwisobject")
+        return  itILWISOBJECT;
+    if ( name =="rastercoverage")
+        return  itRASTER;
+    if ( name == "polygoncoverage")
+        return  itPOLYGON;
+    if ( name == "linecoverage")
+        return  itLINE;
+    if ( name == "pointcoverage")
+        return  itPOINT;
+    if ( name == "featurecoverage")
+        return  itFEATURE;
+    if ( name == "coverage")
+        return  itCOVERAGE;
+    if ( name.mid(0,10) == "itemdomain") // contains template construct, so different comparison
+        return  itITEMDOMAIN;
+    if ( name == "numericdomain")
+        return  itNUMERICDOMAIN;
+    if ( name == "TextDomain")
+        return  itTEXTDOMAIN;
+    if ( name == "colordomain")
+        return  itCOLORDOMAIN;
+    if ( name == "domain")
+        return  itDOMAIN;
+    if ( name == "coordinatesystem")
+        return  itCOORDSYSTEM;
+    if ( name == "conventionalcoordinatesystem")
+        return  itCONVENTIONALCOORDSYSTEM;
+    if ( name == "boundsonlycoordinatesystem")
+        return  itBOUNDSONLYCSY;
+    if ( name == "georeference")
+        return  itGEOREF;
+    if ( name == "Table")
+        return  itTABLE;
+    if ( name == "flattable")
+        return  itFLATTABLE;
+    if ( name == "attributetable")
+        return  itATTRIBUTETABLE;
+    if ( name == "projection")
+        return  itPROJECTION;
+    if ( name == "ellipsoid")
+        return  itELLIPSOID;
+    if ( name == "geodeticdatum")
+        return  itGEODETICDATUM;
+    if ( name == "catalog")
+        return  itCATALOG;
+    if ( name == "singleoperation")
+        return  itSINGLEOPERATION;
+    if ( name == "workflow") {
+        return  itWORKFLOW;
+    }
+    if ( name == "script") {
+        return  itSCRIPT;
+    }
+    if ( name == "operationmetaData") {
+        return  itOPERATIONMETADATA;
+    }
+    if ( name == "catalog")
+        return  itCATALOG;
+    if ( name == "representation")
+        return  itREPRESENTATION;
+    if ( name == "column")
+        return  itCOLUMN;
+    if ( name == "string")
+        return itSTRING;
+    // standard c++ types
+    if ( name == "int")
+        return  itINT32;
+    if ( name == "long")
+        return  itINT32;
+    if ( name == "unsigned int")
+        return  itUINT32;
+    if ( name == "unsigned long")
+        return  itUINT32;
+    if ( name == "short")
+        return  itUINT16;
+    if ( name == "unsigned short")
+        return  itUINT16;
+    if ( name == "char")
+        return  itINT8;
+    if ( name == "unsigned char")
+        return  itUINT8;
+    if ( name == "double")
+        return  itDOUBLE;
+    if ( name == "float")
+        return  itFLOAT;
+    if ( name == "bool")
+        return  itBOOL;
+    if ( name == "integer")
+        return  itINTEGER;
+    if ( name == "positiveinteger")
+        return  itPOSITIVEINTEGER;
+    if ( name == "char const *")
+        return  itSTRING;
+    if ( name == "char *")
+        return  itSTRING;
+
+
+
+    return itUNKNOWN;
+
 
 }

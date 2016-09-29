@@ -98,6 +98,7 @@ public:
     static QString type2HumanReadable(IlwisTypes type);
 
     static QString type2name(IlwisTypes t);
+    static IlwisTypes name2type(const QString& name);
 };
 }
 
