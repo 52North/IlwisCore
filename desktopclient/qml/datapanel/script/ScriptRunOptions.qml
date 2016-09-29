@@ -170,7 +170,8 @@ Item {
             label : qsTr("Save")
             width : buttonRow.width
             height : 40 * Global.uiScale
-            enabled : true
+            enabled : tabmodel && tabmodel.displayName === "Python Console" ? false : true
+            opacity : enabled ? 1.0 : 0.5
 
             onClicked: {
 

@@ -100,7 +100,7 @@ QString OperationModel::syntax() const
 
 QString OperationModel::pythonSyntax() const
 {
-    QString expr("ilwis.do(");
+    QString expr("ilwis.Engine.do(");
     expr += "'" + name() + "'";
     QStringList names = inParamNames();
     for(int i=0; i < names.size(); ++i){

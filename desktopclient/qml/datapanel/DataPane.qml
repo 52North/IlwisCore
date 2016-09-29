@@ -107,7 +107,7 @@ Rectangle {
 
             if ( tabview ){
                 var oldType = tabview.getTab(tabview.currentIndex).item.panelType
-                if ( oldType === "catalog" || oldType == "operationcatalog"){
+                if ( oldType === "catalog" || oldType === "operationcatalog" || oldType === "scriptpanel"){
                     tabview.removeTab(tabview.currentIndex)
                     var newPanel = sidePanel.createPanel(tabview.currentIndex,filter,outputtype, url)
                     if ( newPanel){
