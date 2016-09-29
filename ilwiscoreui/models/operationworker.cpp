@@ -30,20 +30,17 @@ void OperationWorker::process(){
             if ( ctx._results.size() > 0){
                 for(auto resultName : ctx._results){
                     Symbol symbol = tbl.getSymbol(resultName);
-                    if ( hasType(symbol._type, itNUMBER)){
-                        _result += symbol._var.toDouble();
-                    }else if ( hasType(symbol._type, itSTRING)){
-                        _result += symbol._var.toString();
-                    }else if ( hasType(symbol._type, (itCOVERAGE | itTABLE))){
-                        if ( symbol._type == itRASTER){
-                            IRasterCoverage raster = symbol._var.value<IRasterCoverage>();
-                            if ( raster.isValid())
-                                _result = raster->resource().url().toString();
-                        }else if(symbol._type == itTABLE){
-                            ITable table = symbol._var.value<ITable>();
-                            if(table.isValid())
-                                _result = table->resource().url().toString();
-                        }
+                    if ( hasType(symbol._type, itINTEGER)){
+                        QVariantList varList = symbol._var.value<QVariantList>();
+                        QString num = QString::number(varList[0].toInt());
+                        kernel()->issues()->log(num, IssueObject::itRESULT);
+                    }else if ( hasType(symbol._type, itDOUBLE)){
+                        QVariantList varList = symbol._var.value<QVariantList>();
+                        QString num = QString::number(varList[0].toDouble());
+                        kernel()->issues()->log(num, IssueObject::itRESULT);
+                    }  else if ( hasType(symbol._type, itSTRING)){
+                        QVariantList varList = symbol._var.value<QVariantList>();
+                        kernel()->issues()->log(varList[0].toString(), IssueObject::itRESULT);
                     }
                 }
             }
