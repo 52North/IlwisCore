@@ -310,6 +310,15 @@ OperationResource::OperationResource(const QUrl &inurl, const IlwisTypes &type, 
     addProperty("namespace",nmspace);
 }
 
+OperationResource::OperationResource(const QUrl &urlNorm, const QUrl &urlRaw, const QString &nmspace) : Resource(urlNorm,urlRaw,itSINGLEOPERATION)
+{
+    prepare();
+    int index = urlRaw.toString().lastIndexOf("/");
+    QString rcontainer = urlRaw.toString().left(index);
+    _rawContainer = rcontainer;
+    addProperty("namespace",nmspace);
+}
+
 void OperationResource::setLongName(const QString &longname)
 {
     addProperty("longname",longname);

@@ -12,6 +12,7 @@ public:
     enum UIElement{ueNONE=0, ueCOMBO=1, ueLIST=2};
     OperationResource(const QUrl& url, const QString& nmspace="ilwis");
     OperationResource(const QUrl& url, const IlwisTypes &type, const QString& nmspace="ilwis");
+    OperationResource(const QUrl& urlNorm, const QUrl& urlRaw, const QString& nmspace="ilwis");
     void setLongName(const QString& longname);
     void setSyntax(const QString& syntax);
     void setInParameterNameFromSyntax(const QString& syntax);
@@ -24,6 +25,7 @@ public:
     void setKeywords(const QString &words);
     void addValidation(quint32 parent, quint32 child, const QString &validationCondition);
 };
+
 
 class KERNELSHARED_EXPORT OperationParameter : public Identity
 {
