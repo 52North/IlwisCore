@@ -84,7 +84,7 @@ CommandHandler::CommandHandler(QObject *parent) :
 }
 
 CommandHandler::~CommandHandler(){
-   _commands.clear();
+    _commands.clear();
 }
 
 bool CommandHandler::execute(const QString& command, ExecutionContext *ctx) {
@@ -113,7 +113,7 @@ bool CommandHandler::execute(const QString &command, ExecutionContext *ctx, Symb
     if ( id != i64UNDEF) {
         QScopedPointer<OperationImplementation> oper(create( expr));
         if ( !oper.isNull() && oper->isValid()) {
-        return oper->execute(ctx, symTable);
+            return oper->execute(ctx, symTable);
         }
     }
     return false;
@@ -208,12 +208,17 @@ quint64 CommandHandler::findOperationId(const OperationExpression& expr) const {
                         }
                     }
                 }
-                if (found)
+                if (found){
+                    auto iter = values.find("stuboperation");
+                    if ( iter != values.end()){
+                        itemid = (*iter).second.toULongLong();
+                    }
                     return itemid;
+                }
             }
         }
     }
-    ERROR2(ERR_NO_INITIALIZED_2,"metadata",expr.name());
+    kernel()->issues()->log(TR("Could not find correct operation.Do parameters (types) match the expected types for") + expr.name() + " ?");
     return i64UNDEF;
 }
 
