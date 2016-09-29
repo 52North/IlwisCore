@@ -713,6 +713,8 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
         return  itREPRESENTATION;
     if ( name.compare( "Column",Qt::CaseInsensitive) == 0)
         return  itCOLUMN;
+    if ( name.compare( "string",Qt::CaseInsensitive) == 0)
+        return  itSTRING;
     // standard c++ types
     if ( name.compare( "int",Qt::CaseInsensitive) == 0)
         return  itINT32;
