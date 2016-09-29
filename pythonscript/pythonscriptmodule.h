@@ -26,6 +26,9 @@ public:
 private:
 
 
+    void loadPythonOperations(quint64 id);
+    void loadOperations(const QFileInfo &pyFileInfo, quint64 id);
+    bool splitLine(QString line, QString &front, QString &back, bool toLower = false);
 signals:
 };
 }
