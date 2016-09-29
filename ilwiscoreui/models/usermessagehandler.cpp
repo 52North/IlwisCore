@@ -9,7 +9,10 @@ UserMessageHandler::UserMessageHandler(QObject *parent) :
     QList<IssueObject> issues;
     kernel()->issues()->copy(issues);
     for(auto issue : issues)
-        addMessage(issue);
+        if ( issue.type() != IssueObject::itRESULT)
+            _messages.insert(0, new MessageModel(issue, this));
+        else
+            _results.insert(0, new MessageModel(issue, this));
 }
 
 QMLMessageList UserMessageHandler::messages()
@@ -17,10 +20,28 @@ QMLMessageList UserMessageHandler::messages()
     return  QQmlListProperty<MessageModel>(this, _messages);
 }
 
+QString UserMessageHandler::results()
+{
+    QString all;
+   for(int i =0; i < _results.size(); ++i){
+       if ( all != "")
+           all += "\n";
+        all += _results[i]->message();
+   }
+   return all;
+}
+
 void UserMessageHandler::addMessage(const IssueObject& issue)
 {
-    _messages.insert(0, new MessageModel(issue, this));
-    emit messageChanged();
+    if ( issue.type() != IssueObject::itRESULT){
+        _messages.insert(0, new MessageModel(issue, this));
+        emit messageChanged();
+    }
+    else {
+        _results.insert(0, new MessageModel(issue, this));
+        emit resultsChanged();
+    }
+
     emit messageIconChanged();
 }
 
@@ -43,6 +64,13 @@ void UserMessageHandler::resetColor(int index)
         emit messageChanged();
         emit messageIconChanged();
     }
+}
+
+void UserMessageHandler::clearResults()
+{
+    _results.clear();
+   emit resultsChanged();
+   emit messageIconChanged();
 }
 
 //---------------------------------------------------
@@ -110,6 +138,8 @@ QColor MessageModel::color() const
         return "green";
     case IssueObject::itDebug:
         return "blue";
+    case IssueObject::itRESULT:
+        return "black";
     default:
         return "";
     }
@@ -126,6 +156,8 @@ QString MessageModel::messageIcon() const
         return "message_large_critical.png";
     case IssueObject::itCritical:
         return "message_large_critical.png";
+    case IssueObject::itRESULT:
+        return "message_large_result.png";
     default:
         return "message.png";
 

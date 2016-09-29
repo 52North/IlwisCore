@@ -44,24 +44,29 @@ class ILWISCOREUISHARED_EXPORT UserMessageHandler : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QMLMessageList messages READ messages NOTIFY messageChanged)
+    Q_PROPERTY(QString results READ results NOTIFY resultsChanged)
     Q_PROPERTY(QString messageIcon READ messageIcon NOTIFY messageIconChanged)
 
 public:
     explicit UserMessageHandler(QObject *parent = 0);
 
     QMLMessageList messages();
+    QString results();
     QString messageIcon() const;
     Q_INVOKABLE void resetColor(int index);
+    Q_INVOKABLE void clearResults() ;
 
 signals:
     void messageChanged();
     void messageIconChanged();
+    void resultsChanged();
 
 public slots:
     void addMessage(const Ilwis::IssueObject &issue);
 
 private:
    QList<MessageModel *> _messages;
+    QList<MessageModel *> _results;
 
 };
 
