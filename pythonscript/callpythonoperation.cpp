@@ -8,8 +8,11 @@
 #include "operationmetadata.h"
 #include "commandhandler.h"
 #include "operation.h"
+#include "raster.h"
 #include "tranquilizer.h"
 #include "callpythonoperation.h"
+#include "pythonapi_object.h"
+#include "pythonapi_ilwisobject.h"
 
 using namespace Ilwis;
 using namespace PythonScript;
@@ -78,6 +81,7 @@ bool CallPythonOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
       if (PyLong_Check(pValue)) {
           long v = PyLong_AsLong(pValue);
+
           QVariant v1;
           v1.setValue(v);
           ctx->setOutput(symTable, QVariant(v1), sUNDEF, itINTEGER, Resource());
@@ -89,6 +93,22 @@ bool CallPythonOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
           //char* c_str = PyByteArray_AsString(temp);
           auto str = QString::fromStdString(PyBytes_AsString(PyUnicode_AsUTF8String(const_cast<PyObject*>(pValue))));
           ctx->setOutput(symTable, QVariant(str), sUNDEF, itSTRING, Resource());
+      }else {
+//          typedef struct {
+//            PyObject_HEAD
+//            void *ptr; // This is the pointer to the actual C++ instance
+//            void *ty;  // swig_type_info originally, but shouldn't matter
+//            int own;
+//            PyObject *next;
+//          } SwigPyObject;
+//          SwigPyObject *swigptr = reinterpret_cast<SwigPyObject *>(pValue);
+          pythonapi::IlwisObject *obj = reinterpret_cast<pythonapi::IlwisObject *>(pValue);
+          quint64 id = obj->ilwisID();
+
+          IRasterCoverage ras;
+          ras.prepare(id);
+
+
       }
 
 
