@@ -45,6 +45,7 @@ bool SetPolygonBoundaryWidth::execute(ExecutionContext *ctx, SymbolTable &symTab
             UPDrawer& drawer = rootdrawer->drawer(_code, _type)    ;
             drawer->setAttribute("boundarywidth", _boundarywidth);
         }
+        rootdrawer->redraw();
         return true;
     }catch(const VisualizationError& err){
     }

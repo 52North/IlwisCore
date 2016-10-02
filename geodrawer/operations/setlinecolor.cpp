@@ -45,6 +45,7 @@ bool SetLineColor::execute(ExecutionContext *ctx, SymbolTable &symTable)
             UPDrawer& drawer = rootdrawer->drawer(_code, _type)    ;
             drawer->setAttribute("linecolor", QVariant(_lineColor));
         }
+        rootdrawer->redraw();
         return true;
     }catch(const VisualizationError& err){
     }

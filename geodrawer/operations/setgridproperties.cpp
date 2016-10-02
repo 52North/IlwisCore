@@ -41,7 +41,7 @@ bool SetGridProperties::execute(ExecutionContext *ctx, SymbolTable &symTable)
             griddrawer->setAttribute("gridcelldistance", qVariantFromValue(_distance));
         if ( _opacity != -1)
             griddrawer->setAttribute("gridlineopacity", qVariantFromValue(_opacity));
-
+        rootdrawer->redraw();
         return true;
 
     } catch(const VisualizationError& err){

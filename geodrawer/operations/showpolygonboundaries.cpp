@@ -45,6 +45,7 @@ bool ShowPolygonBoundaries::execute(ExecutionContext *ctx, SymbolTable &symTable
             UPDrawer& drawer = rootdrawer->drawer(_code, _type)    ;
             drawer->setAttribute("polygonboundaries", _boundaryVisibility);
         }
+        rootdrawer->redraw();
         return true;
     }catch(const VisualizationError& err){
     }

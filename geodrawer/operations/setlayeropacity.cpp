@@ -37,7 +37,7 @@ bool SetLayerOpacity::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
     _drawer->setAttribute("opacity", _alpha);
-
+    _rootDrawer->redraw();
     return true;
 }
 

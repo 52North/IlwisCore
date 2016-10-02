@@ -52,6 +52,7 @@ bool SetViewExtent::execute(ExecutionContext *ctx, SymbolTable &symTable)
             rootdrawer->applyEnvelopeZoom(_newExtents);
         }
     }
+    rootdrawer->redraw();
 
     return true;
 }

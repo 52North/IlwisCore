@@ -45,7 +45,7 @@ bool SetRepresentation::execute(ExecutionContext *ctx, SymbolTable &symTable)
         var2.setValue(_representation);
         if(!_rootDrawer->drawerAttribute(_layerCode,"visualattribute|representation|" + _attributeName,var2))
             return false;
-
+        _rootDrawer->redraw();
         return true;
     }catch(const ErrorObject& ){
     }
