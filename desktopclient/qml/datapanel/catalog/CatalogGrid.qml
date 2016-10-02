@@ -15,7 +15,7 @@ FocusScope {
     property color backgroundColor: "white"
     Rectangle {
         anchors.fill :parent
-        color : catalogSplit.backgroundCatalogColor
+        color : "white"
 
         ScrollView {
             id : catalogGrid
