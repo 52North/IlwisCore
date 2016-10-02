@@ -43,7 +43,7 @@ bool ClearDrawers::execute(ExecutionContext *ctx, SymbolTable &symTable)
     RootDrawer *rootdrawer = static_cast<RootDrawer *>(_rootDrawer);
 
     rootdrawer->prepare(DrawerInterface::ptRESET, IOOptions());
-
+    rootdrawer->redraw();
     return true;
 }
 
