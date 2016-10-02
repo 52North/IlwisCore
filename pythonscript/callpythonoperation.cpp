@@ -9,6 +9,8 @@
 #include "commandhandler.h"
 #include "operation.h"
 #include "raster.h"
+#include "featurecoverage.h"
+#include "table.h"
 #include "tranquilizer.h"
 #include "callpythonoperation.h"
 #include "pythonapi_object.h"
@@ -32,6 +34,20 @@ CallPythonOperation::CallPythonOperation(quint64 metaid, const Ilwis::OperationE
 
 }
 
+template<class T> bool saveResult(quint64 id,ExecutionContext *ctx, SymbolTable &symTable){
+    T obj;
+    obj.prepare(id);
+    QVariant v1;
+    v1.setValue(obj);
+    if ( obj.isValid()){
+        ctx->setOutput(symTable, QVariant(v1), obj->name(), obj->ilwisType(), obj->resource());
+    }else{
+        kernel()->issues()->log(TR("No valid object in python operation "));
+        return false;
+    }
+    return true;
+}
+
 bool CallPythonOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
 {
     if (_prepState == sNOTPREPARED)
@@ -39,8 +55,8 @@ bool CallPythonOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
             return false;
         }
 
-  //  PyRun_SimpleString("import sys\n");
-  //  QString path = "sys.path.append(\"" + _pythonFile.absolutePath() + "\")";
+    //  PyRun_SimpleString("import sys\n");
+    //  QString path = "sys.path.append(\"" + _pythonFile.absolutePath() + "\")";
     //PyRun_SimpleString(path.toLatin1());//the folder where the pythonTest.py is located
 
     QString basname = _pythonFile.baseName();
@@ -50,14 +66,14 @@ bool CallPythonOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     PyObject *pDict = PyModule_GetDict(pModule);//borowed reference so no DECREF
 
-      ///function call and return test
-      QString operName =_expression.name(true);
-      PyObject *pFunc = PyDict_GetItemString(pDict, operName.toLatin1());//borowed reference. choose file is the name of the funcion
+    ///function call and return test
+    QString operName =_expression.name(true);
+    PyObject *pFunc = PyDict_GetItemString(pDict, operName.toLatin1());//borowed reference. choose file is the name of the funcion
 
-      //Build a tuple to hold my arguments
-      std::vector<PyObject *> values;
-      PyObject *pArgs = PyTuple_New(_expression.parameterCount());
-      for(int i=0; i< _expression.parameterCount(); ++i){
+    //Build a tuple to hold my arguments
+    std::vector<PyObject *> values;
+    PyObject *pArgs = PyTuple_New(_expression.parameterCount());
+    for(int i=0; i< _expression.parameterCount(); ++i){
         Parameter parm = _expression.parm(i);
         PyObject *pValue;
         if ( hasType(parm.valuetype(), itINTEGER)){
@@ -65,71 +81,70 @@ bool CallPythonOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
         }else if ( hasType(parm.valuetype(),itFLOAT | itDOUBLE|itDATETIME)){
             pValue = PyFloat_FromDouble(_expression.input<double>(i));
         } else{
-           QByteArray byteArray = parm.value().toUtf8();
-           const char *cString = byteArray.constData();
-           pValue = PyUnicode_FromString(cString);
+            QByteArray byteArray = parm.value().toUtf8();
+            const char *cString = byteArray.constData();
+            pValue = PyUnicode_FromString(cString);
         }
 
         PyTuple_SetItem(pArgs, i, pValue);
         values.push_back(pValue);
-      }
+    }
 
 
 
-      //Call my function, passing it the number four
-      PyObject *pValue = PyObject_CallObject(pFunc, pArgs);
+    //Call my function, passing it the number four
+    PyObject *pValue = PyObject_CallObject(pFunc, pArgs);
 
-      if (PyLong_Check(pValue)) {
-          long v = PyLong_AsLong(pValue);
+    bool ok = true;
+    if ( pValue){
+        QVariant v1;
 
-          QVariant v1;
-          v1.setValue(v);
-          ctx->setOutput(symTable, QVariant(v1), sUNDEF, itINTEGER, Resource());
-      }else if ( PyFloat_Check(pValue)){
-          double v = PyLong_AsLong(pValue);
-          ctx->setOutput(symTable, QVariant(v), sUNDEF, itDOUBLE, Resource());
-      }else if (PyUnicode_Check(pValue)){
-         // PyObject* temp = PyUnicode_AsASCIIString(pValue);
-          //char* c_str = PyByteArray_AsString(temp);
-          auto str = QString::fromStdString(PyBytes_AsString(PyUnicode_AsUTF8String(const_cast<PyObject*>(pValue))));
-          ctx->setOutput(symTable, QVariant(str), sUNDEF, itSTRING, Resource());
-      }else {
-//          typedef struct {
-//            PyObject_HEAD
-//            void *ptr; // This is the pointer to the actual C++ instance
-//            void *ty;  // swig_type_info originally, but shouldn't matter
-//            int own;
-//            PyObject *next;
-//          } SwigPyObject;
-//          SwigPyObject *swigptr = reinterpret_cast<SwigPyObject *>(pValue);
-          pythonapi::IlwisObject *obj = reinterpret_cast<pythonapi::IlwisObject *>(pValue);
-          quint64 id = obj->ilwisID();
+        IlwisTypes expectedType = _pythonMetadata["pout_1_type"].toULongLong();
+        if ( hasType(expectedType, itILWISOBJECT)){
+            quint64 id = PyLong_AsUnsignedLongLong(pValue);
+            if (hasType(expectedType, itRASTER)){
+                ok = saveResult<IRasterCoverage>(id,ctx, symTable);
+            } else if (hasType(expectedType, itFEATURE)){
+                ok = saveResult<IFeatureCoverage>(id,ctx, symTable);
+            }else if (hasType(expectedType, itTABLE)){
+                ok =  saveResult<ITable>(id,ctx, symTable);
+            }
+        }else if (PyLong_Check(pValue)) {
+            long v = PyLong_AsLong(pValue);
+            v1.setValue(v);
+            ctx->setOutput(symTable, QVariant(v1), sUNDEF, itINTEGER, Resource());
 
-          IRasterCoverage ras;
-          ras.prepare(id);
-
-
-      }
+        }else if ( PyFloat_Check(pValue)){
+            double v = PyLong_AsLong(pValue);
+            ctx->setOutput(symTable, QVariant(v), sUNDEF, itDOUBLE, Resource());
+        }else if (PyUnicode_Check(pValue)){
+            auto str = QString::fromStdString(PyBytes_AsString(PyUnicode_AsUTF8String(const_cast<PyObject*>(pValue))));
+            ctx->setOutput(symTable, QVariant(str), sUNDEF, itSTRING, Resource());
+        }else {
+            kernel()->issues()->log(TR("Unexpected type returned from python operation") + QString(pValue->ob_type->tp_doc));
+            ok = false;
+        }
+    }
 
 
-      Py_DECREF(pArgs);
+    Py_DECREF(pArgs);
 
-      for(auto *p : values)
+    for(auto *p : values)
         Py_DECREF(p);
 
-      Py_XDECREF(pValue);
-      Py_XDECREF(pModule);
-      Py_XDECREF(pName);
+    Py_XDECREF(pValue);
+    Py_XDECREF(pModule);
+    Py_XDECREF(pName);
 
-     // Py_Finalize();
+    // Py_Finalize();
 
 
-    return true;
+    return ok;
 }
 
 Ilwis::OperationImplementation *CallPythonOperation::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {
-   return new CallPythonOperation(metaid,expr);
+    return new CallPythonOperation(metaid,expr);
 }
 
 Ilwis::OperationImplementation::State CallPythonOperation::prepare(ExecutionContext *ctx, const SymbolTable &)
