@@ -139,13 +139,13 @@ QString AttributeModel::icon()
         return "";
     IlwisTypes tp = _coldefinition.datadef().domain()->valueType();
     if ( hasType(tp,itNUMBER)){
-        return "valuedom20.png";
+        return "numericdomain.png";
     }
     if ( hasType(itDOMAINITEM, tp)){
-        return "itemdom20.png";
+        return "itemdomain.png";
     }
     if ( hasType(itSTRING, tp)){
-        return "textdom20.png";
+        return "textdomain.png";
     }
     return "";
 
