@@ -47,7 +47,7 @@ bool RemoveDrawer::execute(ExecutionContext *ctx, SymbolTable &symTable)
         rootdrawer->removeDrawer(_drawercode,true);
     else
         rootdrawer->removeDrawer(_drawerOrder,_drawerType);
-
+    rootdrawer->redraw();
     return true;
 }
 
