@@ -60,6 +60,7 @@ bool AddDrawer::execute(ExecutionContext *ctx, SymbolTable &symTable)
         drawer = Geodrawer::DrawerFactory::create<>(_drawerCode, rootdrawer, rootdrawer, IOOptions());
         rootdrawer->addDrawer(drawer,drawer->drawerType(),drawer->defaultOrder());
     }
+    rootdrawer->redraw();
     return true;
 }
 
