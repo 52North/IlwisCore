@@ -20,11 +20,11 @@
 #include "tableoperations/sortcolumn.h"
 #include "tableoperations/convertcolumndomain.h"
 #include "tableoperations/tableoperationfactory.h"
-#include "consolescriptmodel.h"
 #include "dataformat.h"
 #include "oshelper.h"
 #include "operationmetadata.h"
 #include "script.h"
+#include "scriptmodel.h"
 #include "ilwiscontext.h"
 
 using namespace Ilwis;
@@ -36,8 +36,6 @@ UIContextModel::UIContextModel(QObject *parent) :
     QObject(parent)
 {
     _abort.store(false);
-
-    _consoles.push_back(new ConsoleScriptModel(this)); // console of mainwindow
 
 }
 
@@ -93,11 +91,21 @@ void UIContextModel::exitUI()
     }
 
 }
-
-ConsoleScriptModel *UIContextModel::consoleScript(int type)
+ScriptModel *UIContextModel::scriptModel(const QString& fileorid, QObject *parent)
 {
-    if ( type < _consoles.size()){
-        return _consoles[type];
+    if ( fileorid == "")
+        return new ScriptModel(_consoleScript, parent);
+    bool ok;
+    IScript scr;
+    quint64 id = fileorid.toULongLong(&ok);
+    if ( ok){
+        scr.prepare(id)    ;
+    }else {
+        Resource res(fileorid, itSCRIPT);
+        scr.prepare(res);
+    }
+    if ( scr.isValid()){
+        return new ScriptModel(scr, parent);
     }
     return 0;
 }

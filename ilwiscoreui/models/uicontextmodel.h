@@ -14,6 +14,7 @@
 #include "tablemodel.h"
 #include "workspacemodel.h"
 #include "chartmodel.h"
+#include "scriptmodel.h"
 #include "drawers/layersviewcommandinterface.h"
 
 
@@ -31,7 +32,6 @@ class PropertyEditorObjectVisualizationModel;
 class VisualAttributeEditor;
 class LayerManager;
 class CoverageLayerModel;
-class ConsoleScriptModel;
 class VisualAttributeModel;
 class MasterCatalogModel;
 
@@ -58,7 +58,7 @@ public:
     Q_INVOKABLE ChartModel *chartModel(const QString& objectname, TableModel *tbl);
     Q_INVOKABLE QString uniqueName();
     Q_INVOKABLE void exitUI();
-    Q_INVOKABLE ConsoleScriptModel* consoleScript(int type);
+    Q_INVOKABLE ScriptModel* scriptModel(const QString& fileorid, QObject *parent);
     Q_INVOKABLE QString moduleData() const;
     Q_INVOKABLE QString typeName2typeId(const QString& nm) const;
     Q_INVOKABLE QString worldmapCommand(const QString &id) const;
@@ -117,7 +117,6 @@ private:
     QStringList _colorNames;
     std::map<QString, QColor> _colorCodes;
     WorkSpaceModel *_currentWorkSpace = 0;
-    std::vector<ConsoleScriptModel *> _consoles;
     IFeatureCoverage _worldMap;
     Ilwis::IScript _consoleScript; // script that used for console use
 
