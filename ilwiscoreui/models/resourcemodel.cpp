@@ -235,13 +235,13 @@ QString ResourceModel::iconPath(IlwisTypes tp)
     else if ( tp == itCATALOG)
         return "folder.png";
     else if ( tp == (itTHEMATICITEM | itITEMDOMAIN))
-        return "thematicdom.png";
+        return "itemdomain.png";
     else if ( tp == (itIDENTIFIERITEM | itITEMDOMAIN))
-        return "iddom20.png";
+        return "itemdomain.png";
     else if ( tp == (itNUMERICITEM | itITEMDOMAIN))
-        return "intervaldom20.png";
+        return "itemdomain.png";
     else if ( tp == (itINDEXEDITEM | itITEMDOMAIN))
-        return "indexeddom20.png";
+        return "itemdomain.png";
     else if ( tp == (itTIMEITEM | itITEMDOMAIN))
         return "timeintervaldom20.png";
     else if ( tp == (itTIME | itDOMAIN))
@@ -251,7 +251,11 @@ QString ResourceModel::iconPath(IlwisTypes tp)
     else if ( tp == (itPALETTECOLOR | itITEMDOMAIN))
         return "colorpalette20.png";
     else if ( tp == (itNUMERICDOMAIN))
-        return "domain.png";
+        return "numericdomain.png";
+    else if ( tp & itITEMDOMAIN)
+        return "itemdomain.png";
+    else if ( tp & itTEXTDOMAIN)
+        return "textdomain.png";
     else if ( tp & itDOMAIN)
         return "domain.png";
     else if ( tp == itSCRIPT)
