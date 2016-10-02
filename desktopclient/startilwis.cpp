@@ -15,6 +15,8 @@
 #include "datadefinition.h"
 #include "columndefinition.h"
 #include "table.h"
+#include "operationmetadata.h"
+#include "script.h"
 #include "models/catalogfiltermodel.h"
 #include "models/mastercatalogmodel.h"
 #include "models/operationmodel.h"
@@ -42,7 +44,6 @@
 #include "models/columnmodel.h"
 #include "models/graphmodel.h"
 #include "models/chartmodel.h"
-#include "models/consolescriptmodel.h"
 #include "models/tabmodel.h"
 #include "models/datapanemodel.h"
 #include "models/objectcreator.h"
@@ -57,6 +58,7 @@
 #include "ilwiscoreui/tableoperations/tableoperation.h"
 #include "keyfilter.h"
 #include "startilwis.h"
+#include "scriptmodel.h"
 #include "../core/buildnumber.h"
 
 StartIlwis::StartIlwis()
@@ -116,7 +118,6 @@ void StartIlwis::init() {
         qmlRegisterType<ChartModel>("ChartModel", 1,0,"ChartModel");
         qmlRegisterType<GraphModel>("GraphModel", 1,0,"GraphModel");
         qmlRegisterType<CatalogFilterModel>("CatalogFilterModel", 1,0,"CatalogFilterModel");
-        qmlRegisterType<ConsoleScriptModel>("ConsoleScriptModel", 1,0,"ConsoleScriptModel");
         qmlRegisterType<DataPaneModel>("DataPaneModel", 1,0,"DataPaneModel");
         qmlRegisterType<TabModel>("TabModel", 1,0,"TabModel");
         qmlRegisterType<SidePanelModel>("SidePanelModel", 1,0,"SidePanelModel");
@@ -129,6 +130,7 @@ void StartIlwis::init() {
         qmlRegisterType<EdgePropObject>("EdgePropObject", 1,0,"EdgePropObject");
         qmlRegisterType<PreferencesModel>("PreferencesModel",1,0,"PreferencesModel");
         qmlRegisterType<InternalDatabaseModel>("InternalDatabaseModel",1,0,"InternalDatabaseModel");
+        qmlRegisterType<ScriptModel>("ScriptModel",1,0,"ScriptModel");
 
         _mastercatalogmodel = new MasterCatalogModel(ctx);
         _formbuilder = new ApplicationFormExpressionParser();
