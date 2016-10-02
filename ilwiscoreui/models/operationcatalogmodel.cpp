@@ -26,7 +26,6 @@
 #include "workspacemodel.h"
 #include "uicontextmodel.h"
 #include "ilwiscontext.h"
-#include "consolescriptmodel.h"
 #include "operationworker.h"
 #include "dataformat.h"
 #include "operationcatalogmodel.h"
