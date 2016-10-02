@@ -67,7 +67,6 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/workspacemodel.h \
     ilwiscoreui/models/graphmodel.h \
     ilwiscoreui/models/chartmodel.h \
-    ilwiscoreui/models/consolescriptmodel.h \
     ilwiscoreui/models/datapanemodel.h \
     ilwiscoreui/models/tabmodel.h \
     ilwiscoreui/models/operationworker.h \
@@ -93,7 +92,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/internaldatabasemodel.h \
     ilwiscoreui/models/resourcemanager.h \
     ilwiscoreui/models/catalogviewmanager.h \
-    ilwiscoreui/propertyeditors/openattributetable.h
+    ilwiscoreui/propertyeditors/openattributetable.h \
+    ilwiscoreui/models/scriptmodel.h
 
 SOURCES += \
     ilwiscoreui/models/attributemodel.cpp \
@@ -141,7 +141,6 @@ SOURCES += \
     ilwiscoreui/models/workspacemodel.cpp \
     ilwiscoreui/models/graphmodel.cpp \
     ilwiscoreui/models/chartmodel.cpp \
-    ilwiscoreui/models/consolescriptmodel.cpp \
     ilwiscoreui/models/datapanemodel.cpp \
    ilwiscoreui/models/tabmodel.cpp \
     ilwiscoreui/models/operationworker.cpp \
@@ -167,7 +166,8 @@ SOURCES += \
     ilwiscoreui/models/internaldatabasemodel.cpp \
     ilwiscoreui/models/resourcemanager.cpp \
     ilwiscoreui/models/catalogviewmanager.cpp \
-    ilwiscoreui/propertyeditors/openattributetable.cpp
+    ilwiscoreui/propertyeditors/openattributetable.cpp \
+    ilwiscoreui/models/scriptmodel.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
