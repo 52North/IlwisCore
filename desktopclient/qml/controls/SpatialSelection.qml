@@ -37,7 +37,7 @@ Item {
 
 
     Rectangle{
-        id : operList
+        id : worldmapcontainer
         width : parent.width
         height : 250
         anchors.top: mapLabel.bottom
@@ -75,7 +75,7 @@ Item {
             }
             LayerExtentMouseActions{
                 id : mouseActions
-                layerManager: operList.manager
+                layerManager: worldmapcontainer.manager
                 drawer : worldmap
             }
             Controls.ToolTip{
@@ -90,8 +90,8 @@ Item {
 
 
     Component.onCompleted: {
-        operList.manager = uicontext.createLayerManager(objectName)
-        worldmap.setManager(operList.manager)
+        worldmapcontainer.manager = uicontext.createLayerManager(objectName)
+        worldmap.setManager(worldmapcontainer.manager)
     }
 }
 

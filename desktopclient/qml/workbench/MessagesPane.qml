@@ -111,7 +111,7 @@ WorkBenchShifter {
                     height : 24
                     Button{
                         id : clearResultButton
-                        text : qsTr("Clear error/warning status")
+                        text : qsTr("Clear results")
                         anchors.verticalCenter: parent.verticalCenter
                         height : 20
                         width: parent.width - 20

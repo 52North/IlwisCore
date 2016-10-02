@@ -3,7 +3,6 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
 import MasterCatalogModel 1.0
-import ConsoleScriptModel 1.0
 import UIContextModel 1.0
 import TabModel 1.0
 import "../../Global.js" as Global
@@ -25,7 +24,7 @@ Item {
     }
 
     function executeLines(txt){
-          var result = uicontext.consoleScript(0).run(txt)
+          var result = script.run(txt)
           outputArea.append(result )
     }
 

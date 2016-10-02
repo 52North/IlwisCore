@@ -81,12 +81,12 @@ Rectangle {
                     sourceComponent: Component {
                         Item{
                             width : 100
-                            height : 16
+                            height : 21
                             Image{
                                 id : domicon
                                 source : iconSource(icon)
-                                width : 16
-                                height : 16
+                                width : 21
+                                height : 21
                             }
 
                             Text {
@@ -95,7 +95,7 @@ Rectangle {
                                 anchors.left : domicon.right
                                 anchors.leftMargin: 2
                                 width : 100
-                                height : 14
+                                height : 21
                                 MouseArea{
                                     anchors.fill: parent
                                     onClicked: {
