@@ -13,15 +13,7 @@ TabModel::TabModel(const QString &url, const QString &componentUrl, QObject *par
 {
     QString path = QUrl(url).path();
     QStringList parts = path == "" ?  url.split("/") : path.split("/");
-    if ( componentUrl.indexOf("/MapPanel.qml")!= -1){
-        _displayName = "Map View";
-    }else{
-        _displayName = parts[parts.size() - 1];
-        if ( _displayName == "consolescript.py"){
-            _displayName = "Python Console";
-        }
-    }
-
+     _displayName = parts[parts.size() - 1];
     ++_id;
 }
 
