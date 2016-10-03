@@ -12,7 +12,7 @@ public:
     Script();
     Script(const Resource& resource);
 
-    QString text() const;
+    QString text() ;
     void text(const QString& txt);
 
     IlwisTypes ilwisType() const;

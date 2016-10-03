@@ -17,8 +17,11 @@ Script::Script(const Resource &resource): OperationMetaData(resource)
 
 }
 
-QString Script::text() const
+QString Script::text()
 {
+    if (!connector()->dataIsLoaded()) {
+        connector()->loadData(this);
+    }
     return _text;
 }
 
