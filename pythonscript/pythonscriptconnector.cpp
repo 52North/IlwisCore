@@ -22,10 +22,14 @@ bool PythonScriptConnector::loadMetaData(IlwisObject *obj, const Ilwis::IOOption
 {
     if (!obj)
             return false;
-    Script *script = static_cast<Script *>(obj);
+    return true;
+}
+
+bool PythonScriptConnector::loadData(IlwisObject* obj, const IOOptions& options) {
     QFile file(_resource.url(true).toLocalFile());
     if (file.open(QFile::ReadOnly | QFile::Text)){
         QString text = file.readAll();
+        Script *script = static_cast<Script *>(obj);
         script->text(text);
         _binaryIsLoaded = true;
         file.close();

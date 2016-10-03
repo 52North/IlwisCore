@@ -14,6 +14,7 @@ public:
     static ConnectorInterface *create(const Ilwis::Resource &resource, bool load=true,const IOOptions& options=IOOptions());
     QString provider() const;
     bool loadMetaData(IlwisObject *obj, const Ilwis::IOOptions &options);
+    bool loadData(IlwisObject *, const IOOptions &options = IOOptions());
 };
 }
 }
