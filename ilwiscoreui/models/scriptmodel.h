@@ -13,15 +13,17 @@ class ILWISCOREUISHARED_EXPORT ScriptModel : public ResourceModel
     Q_OBJECT
 
     Q_PROPERTY(QString text READ text WRITE text NOTIFY textChanged)
+    Q_PROPERTY(bool isDefaultConsole READ isDefaultConsole CONSTANT)
 public:
     explicit ScriptModel(QObject *parent = 0);
     ScriptModel(const Ilwis::IScript &script, QObject *parent);
 
     Q_INVOKABLE void store() const;
-    Q_INVOKABLE void storeAs(const QString& file);
+    Q_INVOKABLE QString storeAs(const QString& file);
     Q_INVOKABLE void setScriptfromFile(const QString& filename);
     QString text() const;
     void text(const QString& txt);
+    bool isDefaultConsole() const;
 
 
 
