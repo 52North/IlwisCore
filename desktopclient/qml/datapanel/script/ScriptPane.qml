@@ -16,7 +16,12 @@ Rectangle {
     property ScriptModel script : uicontext.scriptModel("", scriptView)
 
     onScriptChanged: {
-        scriptArea.scriptText = script.text
+        if ( script){
+            if ( tabmodel){
+                scriptArea.scriptText = script.text
+                tabmodel.displayName = script.displayName
+            }
+        }
     }
 
     property string panelType : "scriptpanel"

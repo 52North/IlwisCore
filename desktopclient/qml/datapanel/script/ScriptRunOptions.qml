@@ -112,7 +112,7 @@ Item {
 
         Controls.WideButton{
             image : "../images/deleteC.png"
-            label : qsTr("Clear console")
+            label : qsTr("Clear Console")
             width : buttonRow.width
             height : 40 * Global.uiScale
 
@@ -140,7 +140,7 @@ Item {
         }
         Controls.WideButton{
             image : "../images/deleteO.png"
-            label : qsTr("Clear results")
+            label : qsTr("Clear Output")
             width : buttonRow.width
             height : 40 * Global.uiScale
 
@@ -170,10 +170,12 @@ Item {
             label : qsTr("Save")
             width : buttonRow.width
             height : 40 * Global.uiScale
-            enabled : tabmodel && tabmodel.displayName === "Python Console" ? false : true
+            enabled : script && script.isDefaultConsole ? false : true
             opacity : enabled ? 1.0 : 0.5
 
             onClicked: {
+                script.text = scriptArea.scriptText
+                script.store()
 
             }
             Controls.ToolTip{
@@ -182,18 +184,37 @@ Item {
             }
         }
         Controls.WideButton{
+            id : saveAsBut
             image : "../images/saveas.png"
             label : qsTr("Save as...")
             width : buttonRow.width
             height : 40 * Global.uiScale
 
             onClicked: {
-
+                var sname = newName.content
+                if ( sname != "" && script){
+                    script.text = scriptArea.scriptText
+                    var id = script.storeAs(sname)
+                    var obj = mastercatalog.id2Resource(id)
+                    if ( obj){
+                        if ( obj.typeName === "script"){
+                           bigthing.changeCatalog("itemid=" + obj.id, "script", obj.url);
+                        }
+                    }
+                }
             }
             Controls.ToolTip{
                 target : parent
                 text : qsTr("saves the script under a new name")
             }
         }
+        Controls.TextEditLabelPair{
+            id : newName
+            labelText: qsTr("New Name");
+            labelWidth: 65
+            width : saveAsBut.width
+            height : 18
+        }
+
     }
 }

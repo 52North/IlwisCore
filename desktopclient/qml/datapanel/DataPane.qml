@@ -151,8 +151,9 @@ Rectangle {
                 var data= newPanel.displayName
                 var tab = tabview.addTab(data, component)
                 tab.active = true
-                id = tab.item.addDataSource(filter, url, outputtype)
                 tab.item.tabmodel = newPanel
+                id = tab.item.addDataSource(filter, url, outputtype)
+
             }
             if ( allNew){
                 lefttab.state = "fullsize"
