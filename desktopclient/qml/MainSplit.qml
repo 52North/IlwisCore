@@ -57,6 +57,7 @@ Rectangle {
 
         WorkBench.WorkBench{
             id : workBench
+            datapanel: dataPanel
             state : "invisible"
         }
 

@@ -21,6 +21,7 @@ Rectangle {
     objectName : "datapane_container_mainui"
     height : parent.height
     property int activeSplit : 2
+    property var activeItem
 
     /*
      * Signal, thrown if a tab is closed
@@ -124,6 +125,7 @@ Rectangle {
                                 insertetTab.item.addDataSource(filter, url, outputtype)
                                 insertetTab.item.tabmodel = newPanel
                                 datapane.select(sidePanel.side === "left", tabview.currentIndex, true)
+                                activeItem = insertetTab.item
                             }
                         }
                         return newPanel
@@ -153,6 +155,7 @@ Rectangle {
                 tab.active = true
                 tab.item.tabmodel = newPanel
                 id = tab.item.addDataSource(filter, url, outputtype)
+                activeItem = tab.item
 
             }
             if ( allNew){

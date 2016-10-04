@@ -21,6 +21,21 @@ Controls.DropableItem{
     property bool isNew : true
 
     Item {
+        id : topItem
+
+        function currentCatalogCorrectUrl(){ // must be a file location
+            var panel = datapanel.activeItem
+            if ( !panel)
+                return ""
+            if ( panel.panelType === "catalog"){
+                var url = panel.currentCatalog.url
+                if ( url.indexOf("file://") !== 0) {
+                    return ""
+                }
+                return url
+            }
+            return ""
+        }
         anchors.fill: parent
         Column {
             id : workflowItems
@@ -32,55 +47,6 @@ Controls.DropableItem{
                 labelText: qsTr("Name")
                 labelWidth: 100
                 width : parent.width
-            }
-            Item {
-                id: urledit
-                width : parent.width
-                height : 20
-                Text {
-                    id : urlLabel
-                    text : qsTr("Path")
-                    height : parent.height
-                    width : 100
-                    font.bold: true
-                }
-                TextField{
-                    id : textid
-                    anchors.left : urlLabel.right
-                    anchors.right : urlButton.left
-                    height : parent.height
-                    text : textid.urlText(mastercatalog.currentCatalog.url)
-
-                    function urlText(txt){ // must be a file location
-                        if ( txt.indexOf("file://") !== 0) {
-                            return ""
-                        }
-                        return txt
-                    }
-
-                    style: TextFieldStyle {
-                        background: Rectangle {
-                            radius: 3
-                            width : parent.width
-                            height: parent.height
-                            border.color: Global.edgecolor
-                            border.width: 1
-                            color : "white"
-                        }
-                    }
-                }
-                Button {
-                    id: urlButton
-                    height : parent.height
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    onClicked: fileDialog.open()
-                    Text {
-                        text: qsTr("Browse")
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-                }
             }
             Controls.TextAreaLabelPair{
                 id : descedit
@@ -175,19 +141,31 @@ Controls.DropableItem{
                 height : 1
                 color : Global.edgecolor
             }
-            Row{
+            Item{
                 anchors.right: parent.right
                 height : 22
-                width : 110
-                spacing : 5
+                width : parent.width
+                Text {
+                    width : 250
+                    height : parent.height
+                    text : qsTr("Location can't be used for writing")
+                    anchors.right: createButton.left
+                    anchors.rightMargin: 8
+                    opacity : topItem.currentCatalogCorrectUrl() === "" ? 1 : 0
+                    color : "red"
+
+                }
 
                 Button {
                     id : createButton
                     text : qsTr("Create & Open")
-                    width : parent.width
+                    width : 110
                     height : 18
-                    enabled: nameedit.content.length > 0 && textid.text.length > 0
+                    anchors.right: parent.right
+
+                    enabled: nameedit.content.length > 0 && topItem.currentCatalogCorrectUrl() !== ""
                     onClicked: {
+
                         var keywords = ""
                         for( var i=0; i < keyitems.model.length; ++i){
                             var item = keyitems.model[i]
@@ -203,7 +181,7 @@ Controls.DropableItem{
                         }
 
                         var name = nameedit.content
-                        var url = textid.text + '/' + name + '.ilwis'
+                        var url = topItem.currentCatalogCorrectUrl() + '/' + name + '.ilwis'
                         var createInfo = {
                             type : "workflow",
                             name : name,
@@ -225,19 +203,6 @@ Controls.DropableItem{
                 }
             }
         }
-    }
-
-    FileDialog {
-        id: fileDialog
-        title: "Choose a file to save the workflow"
-        selectFolder: true
-        onAccepted: {
-            textid.text = fileDialog.fileUrl
-        }
-        onRejected: {
-        }
-
-        Component.onCompleted: visible = false
     }
 }
 

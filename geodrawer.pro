@@ -74,7 +74,8 @@ SOURCES += \
     geodrawer/operations/setgridproperties.cpp \
     geodrawer/operations/setlayeropacity.cpp \
     geodrawer/rasteritemimage.cpp \
-    geodrawer/operations/cleardrawers.cpp
+    geodrawer/operations/cleardrawers.cpp \
+    geodrawer/operations/showcoverage.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
@@ -125,7 +126,8 @@ HEADERS += \
     geodrawer/operations/setgridproperties.h \
     geodrawer/operations/setlayeropacity.h \
     geodrawer/rasteritemimage.h \
-    geodrawer/operations/cleardrawers.h
+    geodrawer/operations/cleardrawers.h \
+    geodrawer/operations/showcoverage.h
 
 
 OTHER_FILES = geodrawer/qmldir

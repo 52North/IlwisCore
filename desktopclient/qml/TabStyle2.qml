@@ -74,6 +74,7 @@ TabViewStyle {
                 onClicked : {
                     currentIndex = styleData.index
                     datapane.select(side == 1, currentIndex, true)
+                    dataPanel.activeItem = control.getTab(currentIndex).item
                     datatabview.sideChange()
 
                 }

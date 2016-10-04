@@ -12,6 +12,7 @@ Rectangle {
     property string lastPage
     property int rightMargin : 18 // creates space for potential scrollbars
     property var currentpage : null
+    property var datapanel : null
 
      function transitionInfoPane(newpage,visstate) {
          var oldpage = currentpage
