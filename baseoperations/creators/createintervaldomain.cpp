@@ -133,7 +133,7 @@ quint64 CreateIntervalDomain::createMetadata()
     resource.addOptionalInParameter(4, itDOMAIN, TR("Parent domain"), TR("optional indication of a parent domain"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itITEMDOMAIN, TR("output domain"), TR("The newly created domain"));
-    resource.setKeywords("domain, create, interval, itemdomain");
+    resource.setKeywords("domain, create, interval, itemdomain,internal");
 
     mastercatalog()->addItems({resource});
     return resource.id();

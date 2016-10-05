@@ -199,7 +199,7 @@ quint64 Ilwis::BaseOperations::CreateProjectedCoordinateSystem::createMetadata()
     resource.addOptionalInParameter(4, itSTRING,TR("Envelope"), TR("Optional envelope limiting the bounds of the coordinate system"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itCONVENTIONALCOORDSYSTEM, TR("output coordinatesystem"), TR("The newly created projected coordinatesystem"));
-    resource.setKeywords("coordinatesystem, create, projection");
+    resource.setKeywords("coordinatesystem, create, projection,internal");
 
     mastercatalog()->addItems({resource});
     return resource.id();

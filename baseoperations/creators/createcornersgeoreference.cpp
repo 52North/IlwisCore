@@ -134,7 +134,7 @@ quint64 CreateCornersGeoreference::createMetadata()
     resource.addInParameter(7, itSTRING,TR("Description"), TR("Extra information about the new georeference"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itGEOREF, TR("output georeference"), TR("The newly created georeference"));
-    resource.setKeywords("georeference, create, geometry");
+    resource.setKeywords("georeference, create, geometry, internal");
 
     mastercatalog()->addItems({resource});
     return resource.id();

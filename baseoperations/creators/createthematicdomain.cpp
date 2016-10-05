@@ -109,7 +109,7 @@ quint64 CreateThematicDomain::createMetadata()
     resource.addOptionalInParameter(3, itDOMAIN, TR("Parent domain"), TR("optional indication of a parent domain"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itITEMDOMAIN, TR("output domain"), TR("The newly created domain"));
-    resource.setKeywords("domain, create, thematic, itemdomain");
+    resource.setKeywords("domain, create, thematic, itemdomain, internal");
 
     mastercatalog()->addItems({resource});
     return resource.id();

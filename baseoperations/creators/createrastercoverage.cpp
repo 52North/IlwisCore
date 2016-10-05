@@ -283,7 +283,7 @@ quint64 CreateRasterCoverage::createMetadata()
     resource.addOptionalInParameter(5, itBOOL,TR("Auto resample"), TR("Checking this option will automatically resample all bands to the input georeference"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itRASTER, TR("raster coverage"), TR("The newly created raster"));
-    resource.setKeywords("raster,create");
+    resource.setKeywords("raster,create,internal");
 
     mastercatalog()->addItems({resource});
     return resource.id();
