@@ -317,7 +317,9 @@ void OperationCatalogModel::prepare(const IOOptions& opt){
 
     if ( opt.contains("globaloperationscatalog")){
         _isGlobalOperationsCatalog = opt["globaloperationscatalog"].toBool();
-        _view.filter("basefilter", "(type=" + QString::number(itSINGLEOPERATION) + " or type=" + QString::number(itWORKFLOW) + ")");
+        QString filter = "(type=" + QString::number(itSINGLEOPERATION) + " or type=" + QString::number(itWORKFLOW) + ")";
+        //filter += " and not (catalogitemproperties.propertyname='keyword' and catalogitemproperties.propertyvalue like '%internal%'))";
+        _view.filter("basefilter", filter);
     }
     _refresh  = true;
     gatherItems();
@@ -373,6 +375,9 @@ void OperationCatalogModel::gatherItems() {
 
     for(const Resource& resource : items){
         OperationModel *operation = new OperationModel(resource, this);
+        QString kws = resource["keyword"].toString();
+        if ( kws.indexOf("internal") != -1)
+            continue;
         _allItems.push_back(operation);
         QString keysstring = operation->resource()["keyword"].toString();
         QStringList keys = keysstring.split(",");
