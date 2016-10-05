@@ -418,20 +418,29 @@ void OperationCatalogModel::workSpaceChanged()
  */
 QString OperationCatalogModel::executeoperation(quint64 operationid, const QString& parameters, QVariant runparams) {
 
-    auto opExpr = OperationExpression::createExpression(operationid, parameters);
     try {
-        QThread* thread = new QThread;
-        thread->setProperty("runparameters",runparams);
-        OperationWorker* worker = new OperationWorker(opExpr);
-        worker->moveToThread(thread);
-        thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
-        thread->connect(thread, &QThread::started, worker, &OperationWorker::process);
-        thread->connect(worker, &OperationWorker::finished, thread, &QThread::quit);
-        thread->connect(worker, &OperationWorker::finished, worker, &OperationWorker::deleteLater);
-        thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-        thread->start();
+        IOperationMetaData metadata;
+        metadata.prepare(operationid);
+        auto opExpr = OperationExpression::createExpression(operationid, parameters);
+        if ( metadata.isValid()){
+            if ( metadata->resource().hasProperty("runinmainthread")){ // some operations may not run in a different thread. particular operations that invoke methods from the qml which must run in the mainthread
+                OperationWorker::run(opExpr);
+            }else {
+                QThread* thread = new QThread;
+                thread->setProperty("runparameters",runparams);
+                OperationWorker* worker = new OperationWorker(opExpr);
+                worker->moveToThread(thread);
+                thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
+                thread->connect(thread, &QThread::started, worker, &OperationWorker::process);
+                thread->connect(worker, &OperationWorker::finished, thread, &QThread::quit);
+                thread->connect(worker, &OperationWorker::finished, worker, &OperationWorker::deleteLater);
+                thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+                thread->start();
 
-        return "TODO";
+                return "TODO";
+
+            }
+        }
     } catch (const ErrorObject& err){
         emit error(err.message());
     }
