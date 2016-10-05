@@ -83,6 +83,7 @@ quint64 ShowCoverage::createMetadata()
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itINTEGER , TR("View id"),TR("Id of the view that is opened. The id can be used in subsequent visualization operations"));
     operation.setKeywords("visualization");
+    operation.addProperty("runinmainthread",true); // this operation invokes a qml method so it must run in the main thread
 
     mastercatalog()->addItems({operation});
     return operation.id();
