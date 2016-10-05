@@ -359,7 +359,7 @@ qint64 UIContextModel::addMapPanel(const QString& filter, const QString& side, c
         QVariant ret;
         bool ok = QMetaObject::invokeMethod(datapane,"newPanel",Q_RETURN_ARG(QVariant,ret ),Q_ARG(QVariant, filter),Q_ARG(QVariant,"coverage"),Q_ARG(QVariant,url),Q_ARG(QVariant,side));
         if ( ok)
-            ret.toLongLong();
+            return ret.toLongLong();
     }
     return -1;
 }
