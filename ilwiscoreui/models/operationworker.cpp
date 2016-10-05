@@ -14,15 +14,10 @@ OperationWorker::OperationWorker(const OperationExpression &opExpr) :_expression
 {
 }
 
-void OperationWorker::process(){
+void OperationWorker::run(const OperationExpression &expression){
     try {
-        QThread *thread = QThread::currentThread();
-        QVariant var = thread->property("workingcatalog");
-        if ( var.isValid()){
-            ICatalog cat = var.value<ICatalog>();
-            kernel()->setTLS("workingcatalog", new QVariant(var));
-        }
-        Operation op(_expression);
+
+        Operation op(expression);
         SymbolTable tbl;
         ExecutionContext ctx;
 
@@ -49,9 +44,19 @@ void OperationWorker::process(){
         }else {
             qDebug() << "operation failed";
         }
-        emit finished();
     }catch(const ErrorObject& err){
 
     }
+
+}
+
+void OperationWorker::process(){
+    QThread *thread = QThread::currentThread();
+    QVariant var = thread->property("workingcatalog");
+    if ( var.isValid()){
+        kernel()->setTLS("workingcatalog", new QVariant(var));
+    }
+    run(_expression);
+
     emit finished();
 }

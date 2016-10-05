@@ -17,6 +17,7 @@ class OperationWorker : public QObject{
 public:
     OperationWorker(const OperationExpression& opExpr);
 
+    static void run(const OperationExpression &expression);
 public slots:
     void process();
 
