@@ -83,8 +83,7 @@ Ilwis::OperationImplementation::State SetLineColor::prepare(ExecutionContext *ct
     else if ( type == "pre"){
         _type = DrawerInterface::dtPRE;
     }else{
-        ERROR2(ERR_ILLEGAL_VALUE_2,TR("parameter"), type);
-        return sPREPAREFAILED;
+        _type = DrawerInterface::dtMAIN;
     }
 
     _lineColor = QColor(_expression.input<QString>(2));

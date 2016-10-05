@@ -83,8 +83,7 @@ Ilwis::OperationImplementation::State ShowPolygonBoundaries::prepare(ExecutionCo
     else if ( type == "pre"){
         _type = DrawerInterface::dtPRE;
     }else{
-        ERROR2(ERR_ILLEGAL_VALUE_2,TR("parameter"), type);
-        return sPREPAREFAILED;
+       _type = DrawerInterface::dtMAIN;
     }
 
     _boundaryVisibility = _expression.input<bool>(2);

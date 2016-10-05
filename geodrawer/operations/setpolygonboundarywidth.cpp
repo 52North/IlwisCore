@@ -83,8 +83,7 @@ Ilwis::OperationImplementation::State SetPolygonBoundaryWidth::prepare(Execution
     else if ( type == "pre"){
         _type = DrawerInterface::dtPRE;
     }else{
-        ERROR2(ERR_ILLEGAL_VALUE_2,TR("parameter"), type);
-        return sPREPAREFAILED;
+        _type = DrawerInterface::dtMAIN;
     }
 
     _boundarywidth = _expression.input<double>(2);
