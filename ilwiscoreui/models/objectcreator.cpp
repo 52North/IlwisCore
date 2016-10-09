@@ -377,9 +377,9 @@ QString ObjectCreator::createRasterCoverage(const QVariantMap& parms){
     expr += ",";
     expr += "\"" + parms["bands"].toString() + "\"";
     expr += ",";
-    expr += "\"" + parms["stackdefinition"].toString() + "\"";
-    expr += ",";
     expr += parms["stackdomain"].toString();
+    expr += ",";
+    expr += "\"" + parms["stackdefinition"].toString() + "\"";
     expr += ",";
     expr += parms["autoresample"].toBool() ? "yes" : "no";
 
