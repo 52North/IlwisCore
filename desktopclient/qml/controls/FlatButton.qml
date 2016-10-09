@@ -8,7 +8,8 @@ import "../Global.js" as Global
 
 Button {
     property string icon
-    property string label
+    property alias label : buttxt.text
+    property alias tooltip : ttip.text
 
     y : 2
     width : 62
@@ -22,10 +23,15 @@ Button {
         anchors.horizontalCenter: parent.horizontalCenter
     }
     Text {
+        id : buttxt
         anchors.top : plaatje.bottom
         text : label
         color : "white"
         anchors.horizontalCenter: parent.horizontalCenter
+    }
+    ToolTip{
+        id : ttip
+        target : parent
     }
 
     style : ButtonStyle{

@@ -42,6 +42,7 @@ Item {
                 Controls.FlatButton{
                     icon : "../images/newcatalog_left.png"
                     label : qsTr("Left")
+                    tooltip: qsTr("Creates a new catalog in the left panel with the content\n of the last active catalog")
                     onClicked: {
                         bigthing.newCatalog("container='" + mastercatalog.currentUrl +"'","catalog",mastercatalog.currentUrl, "left")
                     }
@@ -49,6 +50,7 @@ Item {
                 Controls.FlatButton{
                     icon : "../images/newcatalog_right.png"
                     label : qsTr("Right")
+                     tooltip: qsTr("Creates a new catalog in the right panel with the content\n of the last active catalog")
                     onClicked: {
                         onClicked: {
                             bigthing.newCatalog("container='" + mastercatalog.currentUrl +"'","catalog",mastercatalog.currentUrl, "right")
@@ -57,27 +59,8 @@ Item {
                 }
                 Controls.FlatButton{
                     icon : "../images/bookmark.png"
-                    label : qsTr("Operations")
-                    onClicked: {
-                        var url = "ilwis://operations"
-                        mastercatalog.selectedBookmark(url)
-                        var filter = mastercatalog.filter(url)
-                        bigthing.changeCatalog(filter,"catalog", url)
-                    }
-                }
-                Controls.FlatButton{
-                    icon : "../images/bookmark.png"
-                    label : qsTr("System")
-                    onClicked: {
-                        var url = "ilwis://system"
-                        mastercatalog.selectedBookmark(url)
-                        var filter = mastercatalog.filter(url)
-                        bigthing.changeCatalog(filter,"catalog", url)
-                    }
-                }
-                Controls.FlatButton{
-                    icon : "../images/bookmark.png"
                     label : qsTr("Temporary")
+                    tooltip : qsTr("Catalog that holds objects that are only available this session.\nThey will not be available in when ilwis is restarted")
                     onClicked: {
                         var url = "ilwis://internalcatalog"
                         mastercatalog.selectedBookmark(url)
@@ -87,7 +70,30 @@ Item {
                 }
                 Controls.FlatButton{
                     icon : "../images/bookmark.png"
+                    label : qsTr("System")
+                    tooltip : qsTr("Catalog that shows all system objects in ilwis\n System objects are read-only objects that are always available")
+                    onClicked: {
+                        var url = "ilwis://system"
+                        mastercatalog.selectedBookmark(url)
+                        var filter = mastercatalog.filter(url)
+                        bigthing.changeCatalog(filter,"catalog", url)
+                    }
+                }
+                Controls.FlatButton{
+                    icon : "../images/bookmark.png"
+                    label : qsTr("Operations")
+                    tooltip : qsTr("Catalog that shows all available operations and workflows in ilwis")
+                    onClicked: {
+                        var url = "ilwis://operations"
+                        mastercatalog.selectedBookmark(url)
+                        var filter = mastercatalog.filter(url)
+                        bigthing.changeCatalog(filter,"catalog", url)
+                    }
+                }
+                Controls.FlatButton{
+                    icon : "../images/bookmark.png"
                     label : qsTr("Bookmark 1")
+                    tooltip : mastercatalog.getUrl("bookmark 3")
                     onClicked: {
                         var url = "bookmark 3"
                         var filter = mastercatalog.filter(url)
@@ -101,6 +107,7 @@ Item {
                 Controls.FlatButton{
                     icon : "../images/bookmark.png"
                     label : qsTr("Bookmark 2")
+                    tooltip : mastercatalog.getUrl("bookmark 4")
                     onClicked: {
                         var url = "bookmark 4"
                         var filter = mastercatalog.filter(url)
@@ -114,6 +121,7 @@ Item {
                 Controls.FlatButton{
                     icon : "../images/bookmark.png"
                     label : qsTr("Bookmark 3")
+                    tooltip : mastercatalog.getUrl("bookmark 5")
                     onClicked: {
                         var url = "bookmark 5"
                         var filter = mastercatalog.filter(url)
