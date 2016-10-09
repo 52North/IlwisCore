@@ -140,13 +140,14 @@ void createCatalog(const IRasterCoverage& raster){
     resCatalog.setExtendedType(resCatalog.extendedType() | itRASTER);
     mastercatalog()->addItems({resCatalog});
     std::vector<Resource> bands;
-    for(int band=0; band < raster->size().zsize(); ++band){
+    RasterStackDefinition defs = raster->stackDefinition();
+    for(quint32 band=0; band < raster->size().zsize(); ++band){
         Resource resBand = raster->resource();
         resBand.newId();
         resBand.createTime(Time::now());
         resBand.modifiedTime(Time::now());
         QUrl newUrl = resBand.url().toString();
-        QString newName = resBand.name() + "_" + QString::number(band);
+        QString newName = resBand.name() + "_" + defs.index(band);
         resBand.setUrl(newUrl.toString() + "/" + newName);
         resBand.code("band="+QString::number(band));
         bands.push_back(resBand);
