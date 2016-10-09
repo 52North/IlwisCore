@@ -39,14 +39,14 @@ bool CreateRasterCoverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
     initialize(_outputRaster->size().linearSize());
     PixelIterator pout(_outputRaster);
     for(auto& band : _bands){
-        PixelIterator pin(band);
         for(double value : band){
             *pout = value;
-//            if(!trq()->update(1))
-//                return false;
+            if(!trq()->update(1))
+                return false;
             ++pout;
         }
     }
+
 
 
     QVariant value;
@@ -93,10 +93,13 @@ bool CreateRasterCoverage::parseStackDefintionTimeCase(const QString& stackDef){
 }
 
 bool CreateRasterCoverage::parseStackDefintionNumericCase(const QString& stackDef){
-    bool ok;
-    int nr = stackDef.toUInt(&ok);
+    bool ok, ok2=true;
+    std::vector<double> items;
+    QString dd = stackDef;
+    int nr = dd.toInt(&ok);
     if ( !ok){
         QStringList parts = stackDef.split(",");
+
         if ( (parts.size() == 1 || parts.size() == 2) && stackDef.indexOf("..") > 0){
             QStringList parts2 = parts[0].split("..");
             if ( parts2.size() == 2){
@@ -112,66 +115,95 @@ bool CreateRasterCoverage::parseStackDefintionNumericCase(const QString& stackDe
                     res = parts[2].toDouble(&ok);
                     if (!ok && res <= 0) return false;
                 }
-                _stackValueNumbers.resize((1 + mmax - mmin)/res);
+                items.resize((1 + mmax - mmin)/res);
                 double val = mmin;
-                for(int i=0; i < _stackValueNumbers.size(); ++i){
-                    _stackValueNumbers[i] = val;
+                for(int i=0; i < items.size(); ++i){
+                    items[i] = val;
                     val += res;
                 }
-                return true;
 
             }
         }else {
-            _stackValueNumbers.resize(parts.size());
-            for(int i=0; i < _stackValueNumbers.size(); ++i){
-                _stackValueNumbers[i] = parts[i].toDouble(&ok);
-                if (!ok) return false;
+            items.resize(parts.size());
+            for(int i=0; i < items.size(); ++i){
+                items[i] = parts[i].toDouble(&ok);
+                if (!ok) {
+                    ok2= false;
+                    break;
+                }
             }
-            return true;
         }
 
     }else {
-        _stackValueNumbers.resize(nr);
+
+        items.resize(nr);
         for(int i=0; i < nr; ++i)
-            _stackValueNumbers[i] = i;
-        return true;
+            items[i] = i;
     }
-    return false;
+    if  (ok2){
+        int n = 0;
+        if ( items.size() > _bands.size() && _bands.size() != 0){
+            n = _bands.size();
+        }else if ( items.size() <= _bands.size())
+            n = items.size();
+        else
+            return false;
+        _stackValueNumbers.clear();
+        for(int i=0; i < n;++i)
+            _stackValueNumbers.push_back(items[i]);
+    }
+    return ok2;
 }
 
 bool CreateRasterCoverage::parseStackDefintion(const QString& stacDef){
     QString stackDef = stacDef;
     stackDef.remove('\"');
+    std::vector<QString> items;
+    bool ok = true;
     if ( _stackDomain->ilwisType() == itNUMERICDOMAIN){
         if ( hasType(_stackDomain->valueType(), itINTEGER | itFLOAT | itDOUBLE)){
-            return parseStackDefintionNumericCase(stackDef);
+            ok = parseStackDefintionNumericCase(stackDef);
         }else if ( hasType(_stackDomain->valueType(), itDATETIME)){
             //TODO
         }
+        return ok;
     }else if ( _stackDomain->ilwisType() == itITEMDOMAIN){
         IItemDomain itemdomain = _stackDomain.as<ItemDomain<DomainItem>>();
         if ( stackDef == ""){ // all items
 
             for(auto item : itemdomain){
-                _stackValueStrings.push_back(item->name());
+                items.push_back(item->name());
             }
         }else {
             QStringList parts = stackDef.split(",");
             for(const QString& part : parts){
                 if ( itemdomain->contains(part)){
-                    _stackValueStrings.push_back(part);;
+                    items.push_back(part);;
                 }else {
-                    return false;
+                    ok = false;
                 }
             }
         }
     } else if ( _stackDomain->ilwisType() == itTEXTDOMAIN){
         QStringList parts = stackDef.split(",");
         for(auto item : parts){
-            _stackValueStrings.push_back(item);
+            items.push_back(item);
         }
+     }
+
+    if  (ok){
+        int n = 0;
+        if ( items.size() > _bands.size() && _bands.size() != 0){
+            n = _bands.size();
+        }else if ( items.size() < _bands.size())
+            n = items.size();
+        else
+            return false;
+        _stackValueStrings.clear();
+        for(int i=0; i < n;++i)
+            _stackValueStrings.push_back(items[i]);
     }
-    return true;
+    return ok;
 
 }
 
@@ -250,6 +282,13 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
     else
          _outputRaster->setDataDefintions(_domain, _stackValueStrings, _stackDomain);
 
+    for(quint32 i=0; i < _ranges.size(); ++i){
+        if ( i < _outputRaster->size().zsize()){
+           _outputRaster->datadefRef(i).range(_ranges[i]);
+        }
+
+    }
+
     return sPREPARED;
 }
 
@@ -278,8 +317,8 @@ quint64 CreateRasterCoverage::createMetadata()
     resource.addInParameter(0, itGEOREF,TR("Georeference"), TR("Geometry of the new rastercoverage"));
     resource.addInParameter(1, itDOMAIN|itSTRING,TR("Domain"), TR("Domain used by the raster coverage"));
     resource.addInParameter(2, itSTRING, TR("Bands"), TR("parameter defining a the bands that will be copied to the new raster coverage, Note that the bands maybe empty in which case an empty raster will be created"));
-    resource.addOptionalInParameter(3, itSTRING|itINTEGER,TR("Stack defintion"), TR("Content of the stack, numbers, elements of item domain or sets of numbers"));
-    resource.addOptionalInParameter(4, itDOMAIN,TR("Stack domain"), TR("Option Domain of the z direction (stack), default is 'count'"));
+    resource.addOptionalInParameter(3, itDOMAIN,TR("Stack domain"), TR("Option Domain of the z direction (stack), default is 'count'"));
+    resource.addOptionalInParameter(4, itSTRING|itINTEGER,TR("Stack defintion"), TR("Content of the stack, numbers, elements of item domain or sets of numbers"));
     resource.addOptionalInParameter(5, itBOOL,TR("Auto resample"), TR("Checking this option will automatically resample all bands to the input georeference"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itRASTER, TR("raster coverage"), TR("The newly created raster"));
