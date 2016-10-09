@@ -313,6 +313,15 @@ QString MasterCatalogModel::getUrl(const QString &id)
         Resource res = mastercatalog()->id2Resource(objid);
         if ( res.isValid())
             return res.url().toString();
+    }else {
+        if (id.indexOf("bookmark") == 0){
+            int nr = id.split(" ")[1].toInt() ;
+            if ( nr < _bookmarks.size()){
+                auto resource = _bookmarks[nr]->resource();
+                if ( resource.isValid())
+                    return resource.url().toString();
+            }
+        }
     }
     return "";
 }
@@ -672,6 +681,30 @@ QStringList MasterCatalogModel::select(const QString &filter, const QString& pro
         }
         return resourceList;
     }
+}
+
+QString MasterCatalogModel::filter(const QString &source) const
+{
+    QString filter = "container='" + source + "'";
+    if (source.indexOf("bookmark") == 0){
+        int nr = source.split(" ")[1].toInt();
+        if ( nr < _bookmarks.size()){
+            auto resource = _bookmarks[nr]->resource();
+            filter = "container='" + resource.url().toString() + "'";
+            if ( resource.hasProperty("filter")){
+                filter = resource["filter"].toString();
+            }
+        }else
+            return "";
+    }else {
+        Resource res = mastercatalog()->name2Resource(source, itCATALOG);
+        if ( res.isValid()){
+            if ( res.hasProperty("filter")){
+                filter = res["filter"].toString();
+            }
+        }
+    }
+    return filter;
 }
 
 ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid, QObject *parent)
