@@ -196,9 +196,8 @@ Column {
                     cursorShape: Qt.ArrowCursor
                     onClicked: {
                         currentFolders.currentIndex = index;
-
                         mastercatalog.selectedBookmark(url)
-                        var filter = "container='" + url + "'"
+                        var filter = mastercatalog.filter(url)//"container='" + url + "'"
                         bigthing.changeCatalog(filter,"catalog", url)
 
                     }
