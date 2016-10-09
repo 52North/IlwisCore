@@ -54,7 +54,7 @@ ApplicationWindow {
         id : root
         height : parent.height
         width : parent.width
-        property int defaultCommLineHeight : 48
+        property int defaultCommLineHeight : 60
 
         Item {
             id : topArea
