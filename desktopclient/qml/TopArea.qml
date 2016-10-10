@@ -40,7 +40,7 @@ Item {
                     source : "images/ilwis_logo_txt.png"
                 }
                 Controls.FlatButton{
-                    icon : "../images/newcatalog_left.png"
+                    icon : "../images/newcatalog_left_white.png"
                     label : qsTr("Left")
                     tooltip: qsTr("Creates a new catalog in the left panel with the content\n of the last active catalog")
                     onClicked: {
@@ -48,7 +48,7 @@ Item {
                     }
                 }
                 Controls.FlatButton{
-                    icon : "../images/newcatalog_right.png"
+                    icon : "../images/newcatalog_right_white.png"
                     label : qsTr("Right")
                      tooltip: qsTr("Creates a new catalog in the right panel with the content\n of the last active catalog")
                     onClicked: {
