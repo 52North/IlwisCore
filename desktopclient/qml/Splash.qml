@@ -5,92 +5,35 @@ import StartIlwis 1.0
 
 
 Rectangle {
-    anchors.fill : parent
+    id : container
     property int count : 0
-    color : "transparent"
+    width : 0
+    height : 0
     Timer {
-        interval: 1000; running: true; repeat: true
+         running: true
         onTriggered: {
-              first.state = "end"
+            console.debug("boem")
+            state = "end"
         }
     }
 
-    StartBlock{
+    property int time : 2000
+    state : "begin"
+
+    Image{
         id : first
-        x :  0 //rootwindow.width / 4
-        y : 0 //rootwindow.height / 4
-        width : 272
-        height : 201
-        color : "red"
-        endX : rootwindow.width / 2 - first.width
-        endY : rootwindow.height / 2  - first.height
-        Image {
-            anchors.fill: parent
-            source: "images/lefttop.png"
-        }
-
-
-        onRotationChanged: {
-            if ( count != 0 && rotation == 0){
-                rootwindow.initIlwis()
-            }
-            ++count
-        }
-    }
-
-    StartBlock{
-        x : rootwindow.width - first.width
-        y : 0
-        width : first.width
-        height : first.height
-        color : "blue"
-        endX : rootwindow.width / 2
-        endY : rootwindow.height / 2 - first.height
-        state : first.state
-        Image {
-            anchors.fill: parent
-            source: "images/righttop.png"
-        }
-
+        width : parent.width
+        height : parent.height
+        source : "images/splash.png"
 
     }
 
-    StartBlock{
-        x : rootwindow.width - first.width
-        y : rootwindow.height - first.height
-        width : first.width
-        height : first.height
-        color : "green"
-        endX : rootwindow.width / 2
-        endY : rootwindow.height / 2
-        state : first.state
-        Image {
-            anchors.fill: parent
-            source: "images/rightbottom.PNG"
-        }
-    }
-
-    StartBlock{
-        x : 0
-        y : rootwindow.height - first.height
-        width : first.width
-        height : first.height
-        color : "yellow"
-        endX : rootwindow.width / 2 - first.width
-        endY : rootwindow.height / 2
-        state : first.state
-        Image {
-            anchors.fill: parent
-            id: name
-            source: "images/leftbottom.png"
-        }
-    }
 
     Column {
         id : message
         z : 100
         y : 50 + parent.height / 2
-        x : 280
+        x : 40
         height : 60
         width : parent.width / 2
         opacity : first.opacity
@@ -113,6 +56,35 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
         }
     }
+    states : [
+        State {
+            name : "end"
+            PropertyChanges {target: container ; width : 543 }
+            PropertyChanges {target: container ; height : 401}
+             PropertyChanges {target: message ; opacity : 1}
+
+        },
+        State {
+            name : "begin"
+            PropertyChanges {target: container ; width : 0 }
+            PropertyChanges {target: container ; height : 0}
+            PropertyChanges {target: message ; opacity : 0}
+        }
+    ]
+    transitions: [
+        Transition {
+            NumberAnimation { properties: "width"; duration : time ; easing.type: Easing.InOutCubic }
+            NumberAnimation { properties: "height"; duration : time ; easing.type: Easing.InOutCubic }
+            NumberAnimation { properties: "opacity"; duration : time ; easing.type: Easing.InQuart}
+
+            onRunningChanged: {
+                if ((state == "end") && (!running)) {
+                    rootwindow.initIlwis()
+                }
+            }
+        }
+    ]
 }
+
 
 

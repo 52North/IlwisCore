@@ -4,8 +4,8 @@ import QtQuick.Window 2.1
 import StartIlwis 1.0
 
 Window {
-    width: 1040
-    height: 800
+    width: 543
+    height: 401
     title: qsTr("Ilwis 4")
     id : rootwindow
     visible: true
@@ -21,7 +21,6 @@ Window {
 
     Loader{
         id : windowloader
-        anchors.fill: parent
         source : "Splash.qml"
     }
 }
