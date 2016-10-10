@@ -30,6 +30,7 @@ class ILWISCOREUISHARED_EXPORT IlwisObjectModel : public ResourceModel
     Q_PROPERTY(QQmlListProperty<AttributeModel> attributes READ attributes CONSTANT)
     Q_PROPERTY(QQmlListProperty<DomainItemModel> domainitems READ domainitems CONSTANT)
     Q_PROPERTY(QQmlListProperty<ProjectionParameterModel> projectionItems READ projectionItems CONSTANT)
+    Q_PROPERTY(QVariantList layerInfo READ layerInfo NOTIFY layerInfoChanged)
     Q_PROPERTY(QStringList quickProps READ quickProps CONSTANT)
 
 
@@ -63,10 +64,12 @@ public:
     Q_INVOKABLE CatalogModel *catalog(const QString& id);
     Q_INVOKABLE void unload();
     Q_INVOKABLE QString copy(const QString& newUrl, const QString& format, const QString& provider);
+    Q_INVOKABLE void recalcLayers();
 
 
     bool isValid() const;
     Ilwis::IIlwisObject object() const;
+    QVariantList layerInfo() const;
 
 protected:
     QList<AttributeModel *> _attributes;
@@ -75,6 +78,7 @@ protected:
     const Ilwis::Resource &itemRef() const;
 signals:
     void readOnlyChanged();
+    void layerInfoChanged();
 private slots:
     QString valueType() const;
 private:

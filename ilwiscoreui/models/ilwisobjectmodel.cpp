@@ -14,6 +14,7 @@
 #include "operationmetadata.h"
 #include "catalogmodel.h"
 #include "raster.h"
+#include "pixeliterator.h"
 #include "script.h"
 
 using namespace Ilwis;
@@ -870,6 +871,28 @@ QString IlwisObjectModel::copy(const QString &newUrl, const QString &format, con
     return "error";
 }
 
+void IlwisObjectModel::recalcLayers()
+{
+    if ( _ilwisobject.isValid()){
+        if ( _ilwisobject->ilwisType() == itRASTER)    {
+            IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+            if ( raster->datadef().domain()->ilwisType() == itNUMERICDOMAIN){
+                for(quint32 i=0; i < raster->size().zsize(); ++i){
+                    PixelIterator bandIter = raster->band(i);
+                    double vmin = 1e308,vmax = -1e308;
+                    for(;bandIter != bandIter.end(); ++bandIter){
+                        vmin = std::min(*bandIter, vmin);
+                        vmax = std::max(*bandIter, vmax);
+                    }
+                    NumericRange *nrange = new NumericRange(vmin, vmax,raster->datadef().range<NumericRange>()->resolution());
+                    raster->datadefRef(i).range(nrange);
+                }
+            }
+        }
+    }
+    emit layerInfoChanged();
+}
+
 bool IlwisObjectModel::isValid() const
 {
     return _ilwisobject.isValid();
@@ -878,6 +901,41 @@ bool IlwisObjectModel::isValid() const
 IIlwisObject IlwisObjectModel::object() const
 {
     return _ilwisobject;
+}
+
+QVariantList IlwisObjectModel::layerInfo() const
+{
+    try {
+    QVariantList results;
+    if ( _ilwisobject.isValid()){
+        if ( _ilwisobject->ilwisType() == itRASTER)    {
+            IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+            QVariantMap mp;
+            for(quint32 i=0; i < raster->size().zsize(); ++i){
+                QString name = raster->name() + " " + raster->stackDefinition().index(i);
+                if ( raster->datadefRef(i).range()){
+                    QString range = raster->datadefRef(i).range()->toString();
+                    QString rangelist;
+                    QStringList parts = range.split(":");
+                    if ( parts.size() == 2){
+
+                        QStringList names = parts[1].split("|");
+                        for(auto name : names ){
+                            if ( rangelist != "")
+                                rangelist += " ";
+                            rangelist += name;
+                        }
+                    }
+                    mp["name"] = name;
+                    mp["range"] = rangelist;
+                    results.append(mp);
+                }
+            }
+        }
+    }
+    return results;
+    }catch(const ErrorObject&){}
+    return QVariantList();
 }
 
 QString IlwisObjectModel::value2string(const QVariant &value, const QString &attrName)
