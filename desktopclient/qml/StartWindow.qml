@@ -10,7 +10,7 @@ Window {
     id : rootwindow
     visible: true
     flags: Qt.FramelessWindowHint | Qt.WA_TranslucentBackground
-    color: "#00000000"
+    color: "transparent"
 
 
     function initIlwis() {
