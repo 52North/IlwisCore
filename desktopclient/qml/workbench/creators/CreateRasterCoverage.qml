@@ -175,15 +175,21 @@ Controls.DropableItem{
                             delegate :  Text { height : 16; text : path}
                         }
                         onDropped : {
-                            var id = drag.source.ilwisobjectid
-                            var obj = mastercatalog.id2object(id, rasterlist)
-                            var grfurl = obj.getProperty("georeferenceurl");
-                            if ( obj && obj.typeName === "rastercoverage"){
-                                if ( grfvalue.content === ""){
-                                     grfvalue.content = grfurl
+                            var idstring = drag.source.ids
+                            if ( idstring && idstring === "")
+                                idstring = drag.source.ilwisobjectid
+                            var ids = idstring.split("|")
+                            for(var i=0; i < ids.length; ++i ){
+                                var id = ids[i]
+                                var obj = mastercatalog.id2object(id, rasterlist)
+                                var grfurl = obj.getProperty("georeferenceurl");
+                                if ( obj && obj.typeName === "rastercoverage"){
+                                    if ( grfvalue.content === ""){
+                                        grfvalue.content = grfurl
+                                    }
+                                    if (resampleCB.checked || mastercatalog.isCompatible(grfvalue.content, grfurl, "georeference"))
+                                        rasters.append({path : obj.url})
                                 }
-                                if (resampleCB.checked || mastercatalog.isCompatible(grfvalue.content, grfurl, "georeference"))
-                                    rasters.append({path : obj.url})
                             }
                         }
                     }
