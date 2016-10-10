@@ -15,6 +15,11 @@
 #include "catalogmodel.h"
 #include "raster.h"
 #include "pixeliterator.h"
+#include "ilwiscontext.h"
+#include "tranquilizer.h"
+#include "desktoptranquilizer.h"
+#include "abstractfactory.h"
+#include "tranquilizerfactory.h"
 #include "script.h"
 
 using namespace Ilwis;
@@ -875,21 +880,22 @@ void IlwisObjectModel::recalcLayers()
 {
     if ( _ilwisobject.isValid()){
         if ( _ilwisobject->ilwisType() == itRASTER)    {
-            IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
-            if ( raster->datadef().domain()->ilwisType() == itNUMERICDOMAIN){
-                for(quint32 i=0; i < raster->size().zsize(); ++i){
-                    PixelIterator bandIter = raster->band(i);
-                    double vmin = 1e308,vmax = -1e308;
-                    for(;bandIter != bandIter.end(); ++bandIter){
-                        vmin = std::min(*bandIter, vmin);
-                        vmax = std::max(*bandIter, vmax);
-                    }
-                    NumericRange *nrange = new NumericRange(vmin, vmax,raster->datadef().range<NumericRange>()->resolution());
-                    raster->datadefRef(i).range(nrange);
-                }
-            }
+            QThread* thread = new QThread;
+            CalcRangesWorker* worker = new CalcRangesWorker(_ilwisobject->id());
+            worker->moveToThread(thread);
+            thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
+            thread->connect(thread, &QThread::started, worker, &CalcRangesWorker::process);
+            thread->connect(worker, &CalcRangesWorker::finished, thread, &QThread::quit);
+            thread->connect(worker, &CalcRangesWorker::finished, worker, &CalcRangesWorker::deleteLater);
+            thread->connect(worker, &CalcRangesWorker::finished, this, &IlwisObjectModel::recalcDone);
+            thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+            thread->start();
         }
     }
+
+}
+
+void IlwisObjectModel::recalcDone() {
     emit layerInfoChanged();
 }
 
@@ -991,4 +997,37 @@ QString IlwisObjectModel::value2string(const QVariant &value, const QString &att
 
     return QString::number(value.toDouble(), 'f', 3);
 
+}
+//---------------------------------------------------------------------------------
+CalcRangesWorker::CalcRangesWorker(quint64 rasterid) : _rasterid(rasterid){
+
+}
+
+void CalcRangesWorker::process()
+{
+    QThread *thread = QThread::currentThread();
+    QVariant var = thread->property("workingcatalog");
+    if ( var.isValid()){
+        kernel()->setTLS("workingcatalog", new QVariant(var));
+    }
+    UPTranquilizer trq(Tranquilizer::create(Ilwis::context()->runMode()));
+
+    IRasterCoverage raster;
+    raster.prepare(_rasterid);
+    if ( raster.isValid()){
+        trq->prepare("Raster values","calculating numeric ranges of layers",raster->size().zsize());
+        for(quint32 i=0; i < raster->size().zsize(); ++i){
+            PixelIterator bandIter = raster->band(i);
+            double vmin = 1e308,vmax = -1e308;
+            for(;bandIter != bandIter.end(); ++bandIter){
+                vmin = Ilwis::min(*bandIter, vmin);
+                vmax = Ilwis::max(*bandIter, vmax);
+            }
+            NumericRange *nrange = new NumericRange(vmin, vmax,raster->datadef().range<NumericRange>()->resolution());
+            raster->datadefRef(i).range(nrange);
+            if(!trq->update(1))
+                return;
+        }
+    }
+    emit finished();
 }

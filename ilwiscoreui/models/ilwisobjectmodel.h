@@ -12,6 +12,24 @@
 class OperationModel;
 class CatalogModel;
 
+namespace Ilwis {
+
+class CalcRangesWorker : public QObject{
+    Q_OBJECT
+public:
+    CalcRangesWorker(quint64 rasterid);
+
+public slots:
+    void process();
+
+signals:
+    void finished();
+
+private:
+   quint64 _rasterid;
+
+};
+}
 class ILWISCOREUISHARED_EXPORT IlwisObjectModel : public ResourceModel
 {
     Q_OBJECT
@@ -71,6 +89,8 @@ public:
     Ilwis::IIlwisObject object() const;
     QVariantList layerInfo() const;
 
+public slots:
+    void recalcDone();
 protected:
     QList<AttributeModel *> _attributes;
     void resetAttributeModel(const QString &attributeName);
