@@ -1,6 +1,7 @@
 #ifndef ERRORHANDLING_H
 #define ERRORHANDLING_H
 
+#include <QObject>
 #include <QDateTime>
 #include <QQueue>
 #include <fstream>
