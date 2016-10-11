@@ -768,7 +768,7 @@ GeoReference *InternalIlwisObjectFactory::createGrfFromCode(const Resource& reso
         if ( kvp.first == "envelope"){
             QString coordstring = kvp.second;
             QStringList coords = coordstring.split(" ");
-            if (!coords.size() == 4)
+            if (coords.size()!= 4)
                 return 0;
             bool ok1, ok2;
             env += Coordinate(coords[0].toDouble(&ok1), coords[1].toDouble(&ok2));
