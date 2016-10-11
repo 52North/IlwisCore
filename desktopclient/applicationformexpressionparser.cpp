@@ -45,7 +45,9 @@ ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::
     }
     else if ( parm._dataType == itBOOL){
         parm._fieldType = ftRADIOBUTTON;
-        parm._choiceList = {"!yes", "no"};
+        QStringList lst = {"!yes", "no"};
+        parm._choiceList = lst;
+
     }
     else
         parm._fieldType = ftTEXTEDIT;
