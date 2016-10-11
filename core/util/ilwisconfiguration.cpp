@@ -1,4 +1,5 @@
 #include <QDesktopServices>
+#include <iostream>
 #include "kernel.h"
 #include "errmessages.h"
 #include "ilwisconfiguration.h"
