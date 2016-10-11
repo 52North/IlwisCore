@@ -131,7 +131,7 @@ bool Contains::contains(const geos::geom::Geometry *geomCoverage, const geos::ge
 }
 
 OperationImplementation::State Contains::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (!SpatialRelationOperation::prepare(ctx, sym) == sPREPARED)
+    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
         return sPREPAREFAILED;
     _relation = Contains::contains;
     return sPREPARED;
@@ -161,7 +161,7 @@ bool Covers::covers(const geos::geom::Geometry *geomCoverage, const geos::geom::
 }
 
 OperationImplementation::State Covers::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (!SpatialRelationOperation::prepare(ctx, sym) == sPREPARED)
+    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
         return sPREPAREFAILED;
     _relation = Covers::covers;
     return sPREPARED;
@@ -192,7 +192,7 @@ bool CoveredBy::coveredBy(const geos::geom::Geometry *geomCoverage, const geos::
 }
 
 OperationImplementation::State CoveredBy::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (!SpatialRelationOperation::prepare(ctx, sym) == sPREPARED)
+    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
         return sPREPAREFAILED;
     _relation = CoveredBy::coveredBy;
     return sPREPARED;
@@ -224,7 +224,7 @@ bool Touches::touches(const geos::geom::Geometry *geomCoverage, const geos::geom
 }
 
 OperationImplementation::State Touches::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (!SpatialRelationOperation::prepare(ctx, sym) == sPREPARED)
+    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
         return sPREPAREFAILED;
     _relation = Touches::touches;
     return sPREPARED;
@@ -255,7 +255,7 @@ bool Intersects::intersects(const geos::geom::Geometry *geomCoverage, const geos
 }
 
 OperationImplementation::State Intersects::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (!SpatialRelationOperation::prepare(ctx, sym) == sPREPARED)
+    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
         return sPREPAREFAILED;
     _relation = Intersects::intersects;
     return sPREPARED;
@@ -286,7 +286,7 @@ bool Disjoint::disjoint(const geos::geom::Geometry *geomCoverage, const geos::ge
 }
 
 OperationImplementation::State Disjoint::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (!SpatialRelationOperation::prepare(ctx, sym) == sPREPARED)
+    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
         return sPREPAREFAILED;
     _relation = Disjoint::disjoint;
     return sPREPARED;
@@ -318,7 +318,7 @@ bool Within::within(const geos::geom::Geometry *geomCoverage, const geos::geom::
 }
 
 OperationImplementation::State Within::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (!SpatialRelationOperation::prepare(ctx, sym) == sPREPARED)
+    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
         return sPREPAREFAILED;
     _relation = Within::within;
     return sPREPARED;
@@ -350,7 +350,7 @@ bool Equals::equals(const geos::geom::Geometry *geomCoverage, const geos::geom::
 }
 
 OperationImplementation::State Equals::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (!SpatialRelationOperation::prepare(ctx, sym) == sPREPARED)
+    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
         return sPREPAREFAILED;
     _relation = Equals::equals;
     return sPREPARED;
@@ -381,7 +381,7 @@ bool Crosses::crosses(const geos::geom::Geometry *geomCoverage, const geos::geom
 }
 
 OperationImplementation::State Crosses::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (!SpatialRelationOperation::prepare(ctx, sym) == sPREPARED)
+    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
         return sPREPAREFAILED;
     _relation = Crosses::crosses;
     return sPREPARED;
@@ -412,7 +412,7 @@ bool Overlaps::overlaps(const geos::geom::Geometry *geomCoverage, const geos::ge
 }
 
 OperationImplementation::State Overlaps::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (!SpatialRelationOperation::prepare(ctx, sym) == sPREPARED)
+    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
         return sPREPAREFAILED;
     _relation = Overlaps::overlaps;
     return sPREPARED;
