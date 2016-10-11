@@ -170,7 +170,7 @@ void AttributeTable::column(const quint32 columnIndex, const std::vector<QVarian
         ERROR1(ERR_NO_INITIALIZED_1,name());
         return ;
     }
-    if ( !columnIndex == iUNDEF)
+    if ( columnIndex != iUNDEF)
         return ;
 
     FeatureIterator iter(_features, _level);
