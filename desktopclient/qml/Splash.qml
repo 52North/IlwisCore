@@ -12,7 +12,6 @@ Rectangle {
     Timer {
          running: true
         onTriggered: {
-            console.debug("boem")
             state = "end"
         }
     }
