@@ -263,10 +263,24 @@ void UIContextModel::prepare()
     factory->registerTableOperation("sortcolumn",Ilwis::Desktop::SortColumn::create);
     factory->registerTableOperation("convertcolumndomain",Ilwis::Desktop::ConvertColumnDomain::create);
     Ilwis::kernel()->addFactory(factory);
-    QString worldmp = OSHelper::createFileUrlFromParts(ilwisloc, "/resources/country_boundaries.ilwis");
-    _worldMap.prepare(worldmp);
-    _consoleScript.prepare();
-    _consoleScript->name("consolescript.py");
+    QString rawUrlWorldMap = OSHelper::createFileUrlFromParts(ilwisloc, "/resources/country_boundaries.ilwis");
+
+    QString url = QString("ilwis://system/coverages/country_boundaries.ilwis");
+    Resource mapResource(url, rawUrlWorldMap, itFEATURE);
+    mapResource.code("coverage:country_boundaries");
+    mapResource.name("Country Boundaries", false);
+    mapResource.setDescription(TR("Boundary map of all the nations in the world in LatLon Wgs84 projection"));
+
+
+    url = QString("ilwis://system/scripts/consolescript.py");
+    Resource scriptResource(url, itSCRIPT);
+    scriptResource.code("script:console");
+    scriptResource.name("Console", false);
+    scriptResource.setDescription(TR("Generic scrupt resource that functions as backend script for the console when no specific script is called for"));
+
+    mastercatalog()->addItems({mapResource, scriptResource}) ;
+    _consoleScript.prepare(scriptResource);
+    _worldMap.prepare(mapResource);
 }
 
 bool UIContextModel::abort() const
