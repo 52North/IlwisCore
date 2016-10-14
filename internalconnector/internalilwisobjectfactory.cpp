@@ -869,14 +869,14 @@ IlwisObject *InternalIlwisObjectFactory::createEllipsoid(const Resource& resourc
     if ( code == sUNDEF) // meant for new projections which will be initialized later (e.g by the streaming connector)
         ell = createFromResource<Ellipsoid>(resource, options);
     else if ( code != sUNDEF) {
-        query = QString("Select * from ellipsoid where code = '%1'").arg(code);
+        query = QString("Select * from ellipsoid where lower(code) = '%1'").arg(code.toLower());
 
         QUrlQuery queryItem(resource.url());
         if ( queryItem.hasQueryItem("wkt")) {
 
             QString wkt = queryItem.queryItemValue("wkt");
             if ( wkt != "") {
-                query = QString("Select * from ellipsoid where wkt = '%1'").arg(wkt);
+                query = QString("Select * from ellipsoid where lower(wkt) = '%1'").arg(wkt.toLower());
             }
 
         }
