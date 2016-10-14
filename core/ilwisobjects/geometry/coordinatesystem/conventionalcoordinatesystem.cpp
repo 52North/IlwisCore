@@ -247,7 +247,7 @@ bool ConventionalCoordinateSystem::prepare(const QString &parms)
 
     QString ell = proj4["ellps"];
     if ( ell != sUNDEF) {
-        _ellipsoid.prepare("code=" + ell);
+        _ellipsoid.prepare("code=ellipsoid:" + ell);
     } else {
         _ellipsoid.prepare();
         QString laxis = proj4["a"];
