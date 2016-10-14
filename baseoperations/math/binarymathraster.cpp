@@ -145,7 +145,7 @@ bool BinaryMathRaster::prepareCoverageCoverage() {
     NumericRange *newRange = constructRangeFrom(nrange1, nrange2);
 
     IDomain dom;
-    dom.prepare("value");
+    dom.prepare("code=domain:value");
     _outputGC->datadefRef().domain(dom);
     _outputGC->datadefRef().range(newRange);
 
