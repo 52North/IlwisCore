@@ -7,7 +7,7 @@ namespace Ilwis {
 class Ellipsoid;
 
 typedef IlwisData<Ilwis::Ellipsoid> IEllipsoid;
-#define WGS84RESOURCE QString("ilwis://system/ellipsoid?code=WE")
+#define WGS84RESOURCE QString("ilwis://system/ellipsoids/WE")
 
 class KERNELSHARED_EXPORT Ellipsoid : public IlwisObject
 {
