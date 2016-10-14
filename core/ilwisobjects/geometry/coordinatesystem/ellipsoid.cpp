@@ -234,7 +234,10 @@ void Ellipsoid::setEllipsoid( double a, double invf){
              QSqlRecord rec = db.record();
              double maxis = rec.field("majoraxis").value().toDouble();
              double invflat = rec.field("invflattening").value().toDouble();
-             if ( std::abs(maxis - a) < 0.01 && std::abs(invflat - invf) < 0.0000001){
+             if ( a == 6378137 && invf == 0){ // special case that is basically an error but is assumed to refered to the wgs84 ellipsoid
+                 fromInternal(rec);
+                 return;
+             }else if ( std::abs(maxis - a) < 0.01 && std::abs(invflat - invf) < 0.0000001){
                  fromInternal(rec);
                  return;
              }
@@ -252,7 +255,7 @@ void Ellipsoid::setEllipsoid( double a, double invf){
 
 void Ellipsoid::fromInternal(const QSqlRecord& rec ){
     IlwisObject::fromInternal(rec);
-    name(rec.field("name").value().toString()); // override the one from IlwisObject::fromInternal()
+//    name(rec.field("name").value().toString()); // override the one from IlwisObject::fromInternal()
     setWKTName(rec.field("wkt").value().toString());
     setAuthority(rec.field("authority").value().toString());
     double invf = rec.field("invflattening").value().toDouble();;
