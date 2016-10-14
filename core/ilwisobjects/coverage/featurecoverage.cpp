@@ -197,7 +197,7 @@ FeatureInterface *FeatureCoverage::createNewFeature(IlwisTypes tp) {
     if ( !coordinateSystem().isValid())
         throw FeatureCreationError(TR("No coordinate system set"));
 
-    if ( isReadOnly()){
+    if ( isReadOnly() && connector()->dataIsLoaded()){
         throw FeatureCreationError(TR("Readonly feature coverage, no creation allowed"));
     }
     changed(true);
