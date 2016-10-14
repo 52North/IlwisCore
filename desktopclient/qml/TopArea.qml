@@ -28,17 +28,23 @@ Item {
             width : parent.width
             height : parent.height - 6
             color : Global.darkestgreen
-            Row {
-                width : parent.width - x
-                height : parent.height - 2
-                spacing: 4
+            Image {
+                width : 54
                 anchors.verticalCenter: parent.verticalCenter
+                source : "images/ilwis_logo_txt.png"
                 x : 5
-                Image {
-                    width : 54
-                    anchors.verticalCenter: parent.verticalCenter
-                    source : "images/ilwis_logo_txt.png"
-                }
+            }
+
+            Row {
+                id : buttonRow
+                width : childrenRect.width
+                height : parent.height - 2
+
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right : parent.right
+                anchors.rightMargin: 6 * Global.uiScale
+                spacing: 4
+                opacity : 0.26
                 Controls.FlatButton{
                     icon : "../images/newcatalog_left_white.png"
                     label : qsTr("Left")
@@ -50,7 +56,7 @@ Item {
                 Controls.FlatButton{
                     icon : "../images/newcatalog_right_white.png"
                     label : qsTr("Right")
-                     tooltip: qsTr("Creates a new catalog in the right panel with the content\n of the last active catalog")
+                    tooltip: qsTr("Creates a new catalog in the right panel with the content\n of the last active catalog")
                     onClicked: {
                         onClicked: {
                             bigthing.newCatalog("container='" + mastercatalog.currentUrl +"'","catalog",mastercatalog.currentUrl, "right")
@@ -132,8 +138,25 @@ Item {
                         }
                     }
                 }
-
             }
+            MouseArea {
+                width : childrenRect.width + 2
+                height : parent.height
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right : parent.right
+                anchors.rightMargin: 6 * Global.uiScale
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: {
+                    buttonRow.opacity = 1
+                }
+                onExited: {
+                   if ( mouseY >= height || mouseY <= 1)
+                        buttonRow.opacity = 0.26
+                }
+                z : -1
+            }
+
         }
 
     }
