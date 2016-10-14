@@ -128,6 +128,9 @@ bool IlwisObject::merge(const IlwisObject *, int )
 
 bool IlwisObject::prepare(const Ilwis::IOOptions &) {
     _valid = true;
+    if ( resource().url().toString().indexOf("ilwis://system/") == 0){
+        _readOnly = true;
+    }
 
     return true;
 }
@@ -150,7 +153,8 @@ void IlwisObject::name(const QString &nam)
         }
     }
     if ( wasAnonymous && !isAnonymous()) // anonymous objects are not in the master table. If they now have a 'real' name it must be added to the mastercatalog
-        mastercatalog()->addItems({resource()});
+        if ( !isSystemObject()) // we dont add system objects this way
+            mastercatalog()->addItems({resource()});
 }
 
 QString IlwisObject::name() const
@@ -427,9 +431,9 @@ bool IlwisObject::fromInternal(const QSqlRecord &rec)
         return false;
     changed(true);
 
-    name(rec.field("code").value().toString()); // name and code are the same here
-    setDescription(rec.field("description").value().toString());
     code(rec.field("code").value().toString());
+    IlwisObject::name(rec.field("name").value().toString());
+    setDescription(rec.field("description").value().toString());
    //setConnector(0);
 
     return true;
@@ -493,11 +497,16 @@ void IlwisObject::copyTo(IlwisObject *obj)
 }
 
 bool IlwisObject::isSystemObject() const {
+    if ( code() == sUNDEF)
+        return false;
+
     InternalDatabaseConnection db;
     QString query = QString("Select linkedtable from codes where code = '%1'").arg(code());
-    bool ok = db.next();
-    ok &= db.exec(query);
-    return ok;
+    bool ok = db.exec(query);
+    if ( ok)
+        return ok;
+    QString path = resource().url().toString();
+    return path.indexOf("ilwis://system/") == 0;
 }
 
 bool IlwisObject::isInternalObject() const
