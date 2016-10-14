@@ -153,6 +153,8 @@ void IlwisContext::init(const QString &ilwisDir)
     mastercatalog()->addContainer(QUrl("ilwis://system/ellipsoids"));
     mastercatalog()->addContainer(QUrl("ilwis://system/projections"));
     mastercatalog()->addContainer(QUrl("ilwis://system/datums"));
+    mastercatalog()->addContainer(QUrl("ilwis://system/coverages"));
+    mastercatalog()->addContainer(QUrl("ilwis://system/scripts"));
 
 
     if (!hasType(_runMode, rmDESKTOP)){
