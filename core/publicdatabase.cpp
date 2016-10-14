@@ -456,7 +456,7 @@ bool PublicDatabase::fillEllipsoidRecord(const QStringList& parts, QSqlQuery &sq
         QString stmt = QString("INSERT INTO ellipsoid VALUES(%1)").arg(parms);
         if(!doQuery(stmt, sqlPublic))
             return false;
-        stmt = QString("INSERT INTO codes VALUES('ellipsoid_%1', 'ellipsoid')").arg(parts[0]);
+        stmt = QString("INSERT INTO codes VALUES('%1', 'ellipsoid')").arg(parts[0]);
         return doQuery(stmt, sqlPublic);
     }
     kernel()->issues()->log(TR(ERR_INVALID_RECORD_SIZE_IN).arg("ellipsoids.csv"),IssueObject::itCritical);
