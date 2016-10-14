@@ -508,7 +508,8 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         auto query = QString("select code from %1 where wkt like '%%2%'").arg(table, wkt);
         InternalDatabaseConnection db(query);
         if ( db.next()) {
-            QString res = QString("ilwis://system/%1?code=%2").arg(table,db.value(0).toString());
+            QString folder = table + QString("s");
+            QString res = QString("ilwis://system/%1/%2").arg(folder,db.value(0).toString());
             return res;
         }else {
             kernel()->issues()->log(TR(ERR_FIND_SYSTEM_OBJECT_1).arg(wkt));
@@ -516,16 +517,16 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         }
     } else if ( name.indexOf("code=epsg:")== 0 ) {
         auto code = name.right(name.size() - 5);
-        return QString("ilwis://system/projectedcsy?code=%1").arg(code);
+        return QString("ilwis://system/coordinatesystems/%1").arg(code);
 
     } else if ( name.left(11) == "code=proj4:") {
         auto code = name.right(name.size() - 5);
-        return QString("ilwis://projection/code=%1").arg(code);
+        return QString("ilwis://projections/%1").arg(code);
     } else if ( name.left(12) == "code=domain:") {
         QString shortname = name.mid(name.indexOf(":") + 1);
         if ( shortname == "text" || shortname == "color" || shortname == "colorpalette")
-            return QString("ilwis://system/domains/code=domain:%1").arg(shortname);
-        return QString("ilwis://system/domain?code=%1").arg(shortname);
+            return QString("ilwis://system/domains/%1").arg(shortname);
+        return QString("ilwis://system/domains/%1").arg(shortname);
     }else if ( name.left(12) == "code=georef:") {
         QString shortname = name.mid(name.indexOf(":") + 1);
         return QString("ilwis://system/georefs/%1").arg(shortname);
@@ -534,11 +535,17 @@ QUrl MasterCatalog::name2url(const QString &name, IlwisTypes tp) const{
         return QString("ilwis://system/coordinatesystems/%1").arg(shortname);
     }else if ( name.left(9) == "code=rpr:") {
         QString shortname = name.mid(name.indexOf(":") + 1);
-        return QString("ilwis://system/representation?code=%1").arg(shortname);
-    }if ( name.indexOf("code=ellipsoid:") == 0) {
+        return QString("ilwis://system/representations/%1").arg(shortname);
+    }else if ( name.indexOf("code=ellipsoid:") == 0) {
         QString shortname = name.mid(name.indexOf(":") + 1);
-        return QString("ilwis://system/ellipsoid?code=%1").arg(shortname);
-    }
+        return QString("ilwis://system/ellipsoids/%1").arg(shortname);
+    }else if ( name.indexOf("code=coverage:") == 0) {
+            QString shortname = name.mid(name.indexOf(":") + 1);
+            return QString("ilwis://system/coverages/%1").arg(shortname);
+    } else if ( name.indexOf("code=script:") == 0) {
+        QString shortname = name.mid(name.indexOf(":") + 1);
+        return QString("ilwis://system/scripts/%1").arg(shortname);
+}
     QString tt =  name.left(12);
     if ( context()->workingCatalog().isValid()) { // thirde case -- use the working catalog to extend the path
         auto resolvedName = context()->workingCatalog()->resolve(name, tp);
