@@ -212,7 +212,7 @@ QString ObjectCreator::createProjectedCoordinateSystemFromBase(const QVariantMap
         InternalDatabaseConnection db("Select code from projection where name='" + proj + "'");
         if ( db.next()){
             QString code = db.value(0).toString();
-            projection.prepare("ilwis://system/projection?code=" + code);
+            projection.prepare("ilwis://system/projections/" + code);
         }
     }
     if ( !projection.isValid()){
