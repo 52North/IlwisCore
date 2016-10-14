@@ -193,7 +193,7 @@ public:
     void setBandDefinition(double bandIndex, const DataDefinition &def);
     RasterStackDefinition& stackDefinitionRef() ;
     const RasterStackDefinition& stackDefinition() const;
-    template<class T=double> void setDataDefintions(const IDomain& rasterDomain, const std::vector<T>& elements, const IDomain& stackDomain=IDomain("code=count")){
+    template<class T=double> void setDataDefintions(const IDomain& rasterDomain, const std::vector<T>& elements, const IDomain& stackDomain=IDomain("code=domain:count")){
         datadefRef() = DataDefinition(rasterDomain);
         for ( int layer = 0; layer < size().zsize(); ++layer)
             datadefRef(layer) = {rasterDomain};
