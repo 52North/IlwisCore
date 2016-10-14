@@ -160,7 +160,7 @@ bool InternalModule::createSpecialDomains() {
         while (itemdomainTable.next()) {
              QSqlRecord rec = itemdomainTable.record();
              QString code = rec.value("code").toString();
-             QString url = QString("ilwis://system/domains/code=domain:%1").arg(code);
+             QString url = QString("ilwis://system/domains/%1").arg(code);
              Resource res(url, itITEMDOMAIN);
              res.code(code);
              res.name(rec.value("name").toString());
@@ -181,7 +181,7 @@ bool InternalModule::createPcs(InternalDatabaseConnection &db) {
             QSqlRecord rec = db.record();
             QString code = rec.value("code").toString();
             QString name = rec.value("name").toString();
-            QString url = QString("ilwis://system/projectedcsy?code=%1").arg(code);
+            QString url = QString("ilwis://system/coordinatesystems/%1").arg(code);
             Resource resource(url, itCONVENTIONALCOORDSYSTEM);
             resource.code(code);
             resource.name(name, false);
@@ -207,7 +207,7 @@ bool InternalModule::createItems(InternalDatabaseConnection &db, const QString& 
             QString code = rec.value("code").toString();
             IlwisTypes extType = rec.value("extendedtype").toLongLong();
             QString table = internalname == "" ? sqltable : internalname;
-            QString url = QString("ilwis://system/%1?code=%2").arg(table,code);
+            QString url = QString("ilwis://system/%1/%2").arg(folder,code);
             Resource resource(url, type);
             if ( hasType(type, itNUMERICDOMAIN | itREPRESENTATION)) // for valuedomain name=code
                 resource.name(rec.value("code").toString(), false);
