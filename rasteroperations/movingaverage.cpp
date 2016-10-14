@@ -186,7 +186,7 @@ Ilwis::OperationImplementation::State MovingAverage::prepare(ExecutionContext *c
         limDist = _expression.parm(3).value().toDouble();
     }
     _needCoordinateTransformation = _inputgrf->coordinateSystem() != _inputfeatures->coordinateSystem();
-    IDomain dom("code=value");
+    IDomain dom("code=domain:value");
     _outputraster = IRasterCoverage(outputName);
     _outputraster->datadefRef().domain(dom);
     _outputraster->coordinateSystem(_inputgrf->coordinateSystem());
