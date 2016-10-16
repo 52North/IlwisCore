@@ -432,9 +432,11 @@ bool IlwisObject::fromInternal(const QSqlRecord &rec)
     changed(true);
 
     code(rec.field("code").value().toString());
-    IlwisObject::name(rec.field("name").value().toString());
+    auto v = rec.field("name").value().toString();
+    if ( v == "")
+        v = code();
+    IlwisObject::name(v);
     setDescription(rec.field("description").value().toString());
-   //setConnector(0);
 
     return true;
 }
