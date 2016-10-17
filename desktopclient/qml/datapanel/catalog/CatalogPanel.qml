@@ -26,29 +26,40 @@ Item {
 
     signal catalogChanged()
 
-    function showObject(objectid){
+    function showObject(objectids){
         var filter
-        if ( objectid === -1){ // case for  .. one step back
+        if ( objectids === -1){ // case for  .. one step back
             var container = currentCatalog.container
             filter = "container='" + container + "'"
             datapanesplit.changePanel(filter, "catalog", container)
         }else { // we want the object
-            var type = mastercatalog.id2type(objectid)
-            if ( !type) // unknow type, we can not show it
-                return
-            var newPanel = null
-            var resource = mastercatalog.id2Resource(objectid,newPanel)
-            if ( resource.typeName === "catalog" || resource.hasExtendedType("catalog")){ // object as container case
-                filter = "container='" + resource.url + "'"
-                newPanel = datapanesplit.changePanel(filter, "catalog",resource.url)
-            }else { // object as 'real' data case
-                filter = "itemid=" + resource.id
-                // try to find a suitable data pane for it
-                newPanel =datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
-                if ( newPanel == null){ // we dont have a seperate pane for it so it is an object with only metadata to show
-                    mastercatalog.setSelectedObjects(objectid, newPanel)
-                    bigthing.getWorkbenchPane("objectproperties","visible");
+            var newTab = null
+            var ids = objectids.split("|")
+            for ( var i=0; i < objectids.length; ++i) {
+                var type = mastercatalog.id2type(ids[i])
+                if ( !type) // unknow type, we can not show it
+                    continue
+
+
+                var resource = mastercatalog.id2Resource(ids[i],0)
+                if ( resource.typeName === "catalog" || resource.hasExtendedType("catalog")){ // object as container case
+                    filter = "container='" + resource.url + "'"
+                    newTab = datapanesplit.changePanel(filter, "catalog",resource.url)
+                }else { // object as 'real' data case
+                    filter = "itemid=" + resource.id
+                    // try to find a suitable data pane for it
+                    console.debug(resource.typeName )
+                    if ( newTab && resource.typeName.indexOf("coverage")!== -1){
+                        newTab.item.addDataSource(filter,resource.name,resource.typeName)
+                    }else {
+                        newTab = datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
+                    }
+                    if ( newTab == null){ // we dont have a seperate pane for it so it is an object with only metadata to show
+                        mastercatalog.setSelectedObjects(ids[i])
+                        bigthing.getWorkbenchPane("objectproperties","visible");
+                    }
                 }
+                resource.suicide()
             }
 
         }

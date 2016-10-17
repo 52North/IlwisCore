@@ -105,6 +105,7 @@ Rectangle {
 
             var sidePanel = datapane.activeSide
             var tabview = sidePanel.tabview
+            var insertetTab
 
             if ( tabview ){
                 var oldType = tabview.getTab(tabview.currentIndex).item.panelType
@@ -116,7 +117,7 @@ Rectangle {
                         if (component.status === Component.Ready){
                             mastercatalog.currentUrl = url
                             var data= newPanel.displayName
-                            var insertetTab = tabview.insertTab(tabview.currentIndex, data, component)
+                            insertetTab = tabview.insertTab(tabview.currentIndex, data, component)
                             insertetTab.active = true
                             if ( insertetTab && insertetTab.item){
                                 var ind = tabview.currentIndex
@@ -128,48 +129,48 @@ Rectangle {
                                 activeItem = insertetTab.item
                             }
                         }
-                        return newPanel
                     }
                 }else {
                     datapanesplit.newPanel(filter,outputtype,url,"other")
                 }
             }
 
-            return null
+            return insertetTab
         }
 
         function newPanel(filter,outputtype, url,side) {
             var id = -1
+            var insertetTab
             var allNew = datapane.leftSide.tabCount === 0 && datapane.rightSide.tabCount === 0
             var newPanel = datapane.createPanel(filter,outputtype, url, side)
-            if ( !newPanel)
-                return id
-            var component = Qt.createComponent(newPanel.componentUrl)
-            if (component.status === Component.Error)
-                console.log("Error loading component:", component.errorString());
-            var sidePanel = datapane.activeSide
-            var tabview = sidePanel.tabview
-            if ( tabview){
-                var data= newPanel.displayName
-                var tab = tabview.addTab(data, component)
-                tab.active = true
-                tab.item.tabmodel = newPanel
-                id = tab.item.addDataSource(filter, url, outputtype)
-                activeItem = tab.item
+            if ( newPanel){
+                var component = Qt.createComponent(newPanel.componentUrl)
+                if (component.status === Component.Error)
+                    console.log("Error loading component:", component.errorString());
+                var sidePanel = datapane.activeSide
+                var tabview = sidePanel.tabview
+                if ( tabview){
+                    var data= newPanel.displayName
+                    insertetTab = tabview.addTab(data, component)
+                    insertetTab.active = true
+                    insertetTab.item.tabmodel = newPanel
+                    id = insertetTab.item.addDataSource(filter, url, outputtype)
+                    activeItem = insertetTab.item
 
+                }
+                if ( allNew){
+                    lefttab.state = "fullsize"
+                }else if ( datapane.leftSide.tabCount === 1 && datapane.rightSide.tabCount === 1){ // one of them was new, so halfsize
+                    lefttab.state ="halfsize"
+                    righttab.state = "halfsize"
+                } //else we dont do anything, leave it as it is
+                if ( sidePanel.side == "left"){
+                    lefttab.currentIndex = sidePanel.tabCount - 1
+                }else{
+                    righttab.currentIndex = sidePanel.tabCount - 1
+                }
             }
-            if ( allNew){
-                lefttab.state = "fullsize"
-            }else if ( datapane.leftSide.tabCount === 1 && datapane.rightSide.tabCount === 1){ // one of them was new, so halfsize
-                lefttab.state ="halfsize"
-                righttab.state = "halfsize"
-            } //else we dont do anything, leave it as it is
-            if ( sidePanel.side == "left"){
-                lefttab.currentIndex = sidePanel.tabCount - 1
-            }else{
-                righttab.currentIndex = sidePanel.tabCount - 1
-            }
-            return id
+            return insertetTab
 
         }
 

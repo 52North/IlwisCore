@@ -87,6 +87,11 @@ Rectangle {
                 label : qsTr("Open selected coverages\nin selected panel")
                 width : buttonRow.buttonWidth
                 height : 40 * Global.uiScale
+                onClicked: {
+                    var ids = mastercatalog.selectedIds()
+
+                    showObject(ids);
+                }
             }
             Controls.WideButton{
                 image : "../images/openfloat20.png"
