@@ -33,18 +33,29 @@ TabView {
 
 
     function tabClicked(index){
-        if ( currentIndex === index){
-            var tab = getTab(currentIndex)
-            if ( tab){
-                if ( catalogView.state == "maxed"){
-                    catalogView.state = "sized"
-                }
-                else{
-                    catalogView.state = ""
-                    catalogView.state = "maxed"
-                }
+        console.debug(index,currentIndex,catalogView.state)
+        if ( index !== 3) {
+            if ( catalogView.state == ""){
+                catalogView.state = "sized"
             }
+            else if ( currentIndex === index){
+                var tab = getTab(index)
+                if ( tab){
+                    if ( catalogView.state == "maxed"){
+                        catalogView.state = "sized"
+                    }else if ( catalogView.state == "sized" ){
+                        catalogView.state = "maxed"
+                    }
+                    else{
+                        console.debug("c")
+                        catalogView.state = "maxed"
+                    }
+                }
 
+            }else{
+                if (catalogView.state == "maxed")
+                    catalogView.state = "sized"
+            }
         }
 
         currentIndex = index

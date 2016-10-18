@@ -11,7 +11,7 @@ import "../../controls" as Controls
 DropArea {
     id : catalogViewsArea
     width : parent.width
-    state : "maxed"
+    state : ""
 
 
     onDropped: {

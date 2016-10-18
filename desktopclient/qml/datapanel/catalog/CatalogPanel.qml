@@ -48,7 +48,6 @@ Item {
                 }else { // object as 'real' data case
                     filter = "itemid=" + resource.id
                     // try to find a suitable data pane for it
-                    console.debug(resource.typeName )
                     if ( newTab && resource.typeName.indexOf("coverage")!== -1){
                         newTab.item.addDataSource(filter,resource.name,resource.typeName)
                     }else {

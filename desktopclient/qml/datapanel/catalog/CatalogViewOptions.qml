@@ -8,6 +8,7 @@ import UIContextModel 1.0
 import "../../Global.js" as Global
 import "../../controls" as Controls
 
+
 Rectangle {
     anchors.fill: parent
     color : catalogSplit.backgroundCatalogColor
@@ -84,12 +85,11 @@ Rectangle {
 
             Controls.WideButton{
                 image : "../images/opensingle20.png"
-                label : qsTr("Open selected coverages\nin selected panel")
+                label : qsTr("Open selected coverages\nin new panel")
                 width : buttonRow.buttonWidth
                 height : 40 * Global.uiScale
                 onClicked: {
                     var ids = mastercatalog.selectedIds()
-
                     showObject(ids);
                 }
             }
@@ -98,6 +98,33 @@ Rectangle {
                 label : qsTr("Open selected coverages\nin floating panels")
                 width : buttonRow.buttonWidth
                 height : 40* Global.uiScale
+                onClicked: {
+                    var objectids = mastercatalog.selectedIds()
+                    var qml = "import QtQuick 2.1; import QtQuick.Window 2.1;import \"..\" as FW;"
+                    qml += "FW.FloatingWindow { id: floatingWindow } ";
+                    var window = Qt.createQmlObject(qml, centerItem)
+
+                    window.height = centerItem.activeItem.height
+                    window.width = centerItem.activeItem.width
+                    window.show();
+                    var ids = objectids.split("|")
+                    for ( var i=0; i < ids.length; ++i) {
+                        var resource = mastercatalog.id2Resource(ids[i],0)
+                        if ( resource){
+                            console.debug(resource.typeName)
+                            if ( resource.typeName.indexOf("coverage") !== -1)
+                                window.datapanel = "visualization/MapPanel.qml"
+                            else if (resource.typeName === "table")
+                                window.datapanel = "table/TablePane.qml"
+                            else if (resource.typeName === "table")
+                                window.datapanel = "table/TablePane.qml"
+                            else if (resource.typeName === "workflow")
+                                window.datapanel = "modeller/ModellerDataPane.qml"
+                            window.addDataSource("itemid=" + ids[i],resource.url, resource.typeName)
+                            resource.suicide()
+                        }
+                    }
+                }
             }
             GroupBox {
                 id : keyChanges
