@@ -14,6 +14,12 @@ Window {
         }
     }
 
+    function addDataSource(filter,outputtype, url){
+        if ( content.item){
+            content.item.addDataSource(filter,outputtype, url)
+        }
+    }
+
     Loader {
         id : content
         width : parent.width
