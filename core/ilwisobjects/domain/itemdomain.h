@@ -110,8 +110,29 @@ public:
         if ( tp1 != tp2)
             return false;
         IlwisData<ItemDomain<D>> itemdom = dom.as<ItemDomain<D>>();
-        if ( itemdom->theme() ==sUNDEF && !parent().isValid())
-            return false;
+        if ( itemdom->theme() ==sUNDEF && !parent().isValid()){
+            IlwisData<ItemDomain<D>> me;
+            me.prepare(id());
+            ItemIterator<D> iter(me);
+            while(iter != iter.end()){
+                ItemIterator<D> iter2(itemdom);
+                bool ok = false;
+                while(iter2 != iter2.end()){
+                    D *v1 = *iter;
+                    D *v2 = *iter2;
+                    if ( v1->name() == v2->name())        {
+                        ok = true;
+                        break;
+                    }
+                    ++iter2;
+                }
+                if(!ok){
+                    return false;
+                }
+                ++iter;
+            }
+            return true;
+        }
         if ( parent().isValid() ){
             if (parent()->isCompatibleWith(obj) )
                 return true;
