@@ -93,3 +93,35 @@ void GeometryHelper::setCoordinateSystem(geos::geom::Geometry* geom, Ilwis::Coor
     geom->setUserData(csy);
 }
 
+std::vector<geos::geom::CoordinateSequence *> GeometryHelper::geometry2coords(const geos::geom::Geometry *geom){
+    std::vector<geos::geom::CoordinateSequence *> result;
+    auto type = geom->getGeometryTypeId();
+    if ( type == geos::geom::GEOS_LINESTRING)    {
+        result.push_back(geom->getCoordinates());
+    }else if(type == geos::geom::GEOS_LINEARRING){
+        geos::geom::CoordinateSequence *seq = geom->getCoordinates();
+        result.push_back(seq);
+    }else if ( type == geos::geom::GEOS_POINT){
+        result.push_back(geom->getCoordinates());
+    }else if ( type == geos::geom::GEOS_POLYGON){
+        const geos::geom::Polygon *pol = dynamic_cast<const geos::geom::Polygon *>(geom);
+        const geos::geom::LineString *exterior = pol->getExteriorRing();
+        result.push_back(exterior->getCoordinates());
+
+        for(int i=0; i < pol->getNumInteriorRing() ; ++i){
+            const geos::geom::LineString *inner = pol->getInteriorRingN(i);
+            result.push_back(inner->getCoordinates());
+        }
+    }else if ( type ==geos::geom::GEOS_MULTILINESTRING ||  type ==geos::geom::GEOS_MULTIPOINT ||  type ==geos::geom::GEOS_MULTIPOLYGON ) {
+        int n = geom->getNumGeometries();
+        for(int i=0; i < n; ++i){
+            std::vector<geos::geom::CoordinateSequence *> subgeoms = geometry2coords(geom->getGeometryN(i));
+            for(int j=0; j < subgeoms.size(); ++j){
+                result.push_back(subgeoms[j]);
+            }
+        }
+    }
+
+    return result;
+}
+

@@ -45,6 +45,7 @@ class KERNELSHARED_EXPORT GeometryHelper{
             }
             return outputPoints;
         }
+        static std::vector<geos::geom::CoordinateSequence *> geometry2coords(const geos::geom::Geometry *geom);
 };
 
 typedef std::unique_ptr<geos::geom::Geometry> UPGeometry;
