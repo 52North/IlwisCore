@@ -21,7 +21,8 @@ HEADERS += \
     featureoperations/rastertopoint.h \
     featureoperations/pointrastercrossing.h \
     featureoperations/transformcoordinates.h \
-    featureoperations/buffer.h
+    featureoperations/buffer.h \
+    featureoperations/polygon2line.h
 
 SOURCES += \
     featureoperations/featureoperationsmodule.cpp \
@@ -29,7 +30,8 @@ SOURCES += \
     featureoperations/rastertopoint.cpp \
     featureoperations/pointrastercrossing.cpp \
     featureoperations/transformcoordinates.cpp \
-    featureoperations/buffer.cpp
+    featureoperations/buffer.cpp \
+    featureoperations/polygon2line.cpp
 
 OTHER_FILES += \ 
     featureoperations/featureoperations.json
