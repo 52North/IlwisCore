@@ -5,7 +5,7 @@ import "../controls" as Controls
 
 Item{
     id : currentOperation
-    height : 35;
+    height : 45;
     width : parent.width;
 
     Controls.ToolTip{
@@ -16,9 +16,9 @@ Item{
     Rectangle {
         anchors.fill: parent
         color: operationsList.currentIndex === index ? Global.selectedColor : index  % 2 == 0 ? Global.lightestgreen: "white"
-        Row {
+        Column {
             id : operationName
-            height : 17
+            height : parent.height
             width : parent.width - 4
             x : 4
             spacing : 4
@@ -28,9 +28,19 @@ Item{
                 text : displayName
                 width : parent.width - outputIcons.width
                 height : 17
-                y : 5
+                y : 3
                 x : 5
                 font.pointSize: 12
+            }
+            Text {
+                id : pytsyntax
+                text : pythonSyntax
+                width : parent.width - outputIcons.width
+                height : 17
+                font.pointSize: 8
+                font.italic: true
+                opacity : 0.5
+                elide: Text.ElideMiddle
             }
 
         }
