@@ -60,7 +60,6 @@ void Polygon2Line::extractBoundary(const UPGeometry& g, quint32& record){
         }
 
         if ( geometry){
-            qDebug() << geometry->getCoordinates()->size();
             SPFeatureI outfeature = _outputfeatures->newFeature(geometry);
             if (_singleId){
                 outfeature->setCell(0,0);
