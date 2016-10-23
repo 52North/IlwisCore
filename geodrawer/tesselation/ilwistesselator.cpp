@@ -65,37 +65,40 @@ std::vector<std::vector<float> > IlwisTesselator::getContours(const geos::geom::
 
     bool conversionNeeded = csyRoot != csyGeom;
     const geos::geom::Polygon *polygon = dynamic_cast<const geos::geom::Polygon *>(geometry);
-    const geos::geom::LineString *outerRing = polygon->getExteriorRing();
-    std::vector<std::vector<float>> contours(1);
-    contours[0].resize(outerRing->getNumPoints() * 2);
+    if (polygon){
+        const geos::geom::LineString *outerRing = polygon->getExteriorRing();
+        std::vector<std::vector<float>> contours(1);
+        contours[0].resize(outerRing->getNumPoints() * 2);
 
-    auto addCoord = [&](const geos::geom::Coordinate& crd, int index, int i) {
-        if ( conversionNeeded){
-            Coordinate crdTransformed = csyRoot->coord2coord(csyGeom,crd);
-            contours[index][i] = crdTransformed.x;
-            contours[index][i+1] = crdTransformed.y;
-        } else{
-           contours[index][i] = crd.x;
-           contours[index][i+1] = crd.y;
+        auto addCoord = [&](const geos::geom::Coordinate& crd, int index, int i) {
+            if ( conversionNeeded){
+                Coordinate crdTransformed = csyRoot->coord2coord(csyGeom,crd);
+                contours[index][i] = crdTransformed.x;
+                contours[index][i+1] = crdTransformed.y;
+            } else{
+                contours[index][i] = crd.x;
+                contours[index][i+1] = crd.y;
+            }
+        };
+
+        for(int i = 0 ; i < outerRing->getNumPoints(); ++i){
+            const geos::geom::Coordinate& crd = outerRing->getCoordinateN(i);
+            addCoord(crd, 0, i * 2);
         }
-    };
-
-    for(int i = 0 ; i < outerRing->getNumPoints(); ++i){
-        const geos::geom::Coordinate& crd = outerRing->getCoordinateN(i);
-        addCoord(crd, 0, i * 2);
-    }
-    if ( polygon->getNumInteriorRing() > 0){
-        contours.resize(polygon->getNumInteriorRing() + 1);
-        for(int i = 0; i < polygon->getNumInteriorRing(); ++i){
-            const geos::geom::LineString *innerRing = polygon->getInteriorRingN(i);
-            contours[i + 1].resize(innerRing->getNumPoints() * 2); // contours[0] is outer ring
-            for(int j = 0 ; j < innerRing->getNumPoints(); ++j){
-                const geos::geom::Coordinate& crd = innerRing->getCoordinateN(j);
-                addCoord(crd, i+1, j * 2);
+        if ( polygon->getNumInteriorRing() > 0){
+            contours.resize(polygon->getNumInteriorRing() + 1);
+            for(int i = 0; i < polygon->getNumInteriorRing(); ++i){
+                const geos::geom::LineString *innerRing = polygon->getInteriorRingN(i);
+                contours[i + 1].resize(innerRing->getNumPoints() * 2); // contours[0] is outer ring
+                for(int j = 0 ; j < innerRing->getNumPoints(); ++j){
+                    const geos::geom::Coordinate& crd = innerRing->getCoordinateN(j);
+                    addCoord(crd, i+1, j * 2);
+                }
             }
         }
+        return contours;
     }
-    return contours;
+    return std::vector<std::vector<float>>();
 }
 
 void IlwisTesselator::tesselateInternal(const std::vector<std::vector<float> > &contours, Raw objectid, QVector<QVector3D> &points, std::vector<VertexIndex> &indices)
