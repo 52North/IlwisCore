@@ -221,7 +221,7 @@ void OperationCatalogModel::fillByName(QList<ResourceModel*>& currentOperations)
     auto &currentList = currentOperations.size() > 0 ? currentOperations : _allItems;
     QList<ResourceModel *> tempList;
     for(ResourceModel * resource : currentList){
-        if ( resource->name().indexOf(_nameFilter) != -1){
+        if ( resource->displayName().toLower().indexOf(_nameFilter.toLower()) != -1){
             tempList.push_back(resource);
         }
     }
