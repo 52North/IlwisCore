@@ -60,6 +60,32 @@ bool MasterCatalog::prepare()
     return true;
 }
 
+std::vector<Resource> MasterCatalog::addContainerContent(const QString& container, const std::vector<Resource> &items){
+    std::set<QString> usedContainers;
+    std::vector<Resource> toBeAdded;
+    QString query = "container='" + container +"'";
+
+    if ( context()->initializationFinished()){
+        std::vector<Resource> existingItems = select(query);
+        for(const Resource& res : items){
+            auto iter = std::find(existingItems.begin(),existingItems.end(), res);
+            if (iter != existingItems.end()){ // an new item comes
+                existingItems.erase(iter);
+            }else{
+                toBeAdded.push_back(res);
+            }
+        }
+        if ( existingItems.size() > 0){
+            removeItems(existingItems);
+        }
+        addItems(toBeAdded);
+    }else{
+        addItems(items);
+        return items;
+    }
+
+    return toBeAdded;
+}
 
 bool MasterCatalog::addContainer(const QUrl &inlocation, bool forceScan)
 {

@@ -763,7 +763,7 @@ void MasterCatalogModel::refreshCatalog(const QString& path)
     thread->connect(worker, &CatalogWorker3::finished, thread, &QThread::quit);
     thread->connect(worker, &CatalogWorker3::finished, worker, &CatalogWorker3::deleteLater);
     thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-    thread->connect(worker, &CatalogWorker3::updateContainer, _currentCatalog, &CatalogModel::updateContainer);
+    thread->connect(worker, &CatalogWorker3::updateContainer, _currentCatalog, &CatalogModel::containerContentChanged);
     thread->start();
 
 }

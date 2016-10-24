@@ -56,6 +56,7 @@ public:
      * @return true if the adding of the container was succesfull
      */
     bool addContainer(const QUrl &location, bool forceScan=false);
+    std::vector<Resource> addContainerContent(const QString &container, const std::vector<Resource> &items);
 
     /**
      * Adds a list of Resources to the MasterCatalog
@@ -202,6 +203,7 @@ public:
 
 #endif
     static const QString MASTERCATALOG;
+
 signals:
     void contentChanged(const UrlSet& locs);
 private:

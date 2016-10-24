@@ -140,8 +140,9 @@ bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &o
 
         IOOptions iooptions = options.isEmpty() ? ioOptions() : options;
         std::vector<Resource> items = explorer->loadItems(iooptions);
-        cat->addItemsPrivate(items);
-        mastercatalog()->addItems(items);
+        auto addedItems = mastercatalog()->addContainerContent(source().url().toString(), items);
+        cat->addItemsPrivate(addedItems);
+        mastercatalog()->addItems(addedItems);
 
 
 
@@ -192,9 +193,12 @@ bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &optio
     res.waitForFinished();
     std::vector<Resource> items = res.result();
     if ( items.size() > 0){
-        mastercatalog()->addItems(items);
-        CalcLatLon::calculatelatLonEnvelopes(items, items[0].container().url());
-        mastercatalog()->updateItems(items);
+        auto addedItems = mastercatalog()->addContainerContent(source().url().toString(), items);
+        if ( addedItems.size() > 0){
+            CalcLatLon::calculatelatLonEnvelopes(addedItems, addedItems[0].container().url());
+            mastercatalog()->updateItems(addedItems);
+        }
+
 
     }
     return true;

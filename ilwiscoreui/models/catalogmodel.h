@@ -64,6 +64,7 @@ public:
 
     static CatalogModel::CatalogType locationTypePart(const Ilwis::Resource &resource);
     static int getCatalogType(const Ilwis::Resource &res, int predefineds = CatalogModel::ctUNKNOWN);
+
 protected:
 
     Ilwis::CatalogView _view;
@@ -86,8 +87,7 @@ private:
     void fillNameFilter();
     void fillKeywordFilter();
 public slots:
-    void refreshContent(const QUrl& url);
-    void updateContainer();
+     void containerContentChanged();
 signals:
     void selectionChanged();
     void contentChanged();

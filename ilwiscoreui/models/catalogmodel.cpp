@@ -94,11 +94,15 @@ void CatalogModel::scanContainer(bool threading, bool forceScan)
             thread->connect(worker, &CatalogWorker2::finished, thread, &QThread::quit);
             thread->connect(worker, &CatalogWorker2::finished, worker, &CatalogWorker2::deleteLater);
             thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-            thread->connect(worker, &CatalogWorker2::updateContainer, this, &CatalogModel::updateContainer);
+            thread->connect(worker, &CatalogWorker2::updateContainer, this, &CatalogModel::containerContentChanged);
             thread->start();
         }
-    }else
+    }else{
         mastercatalog()->addContainer(resource().url(), forceScan);
+        if ( forceScan)
+            emit containerContentChanged();
+    }
+
 
 }
 
@@ -344,22 +348,15 @@ MasterCatalogModel *CatalogModel::getMasterCatalogModel()
 }
 
 
-void CatalogModel::refreshContent(const QUrl &url)
-{
-    _refresh = false;
-    for(auto *resource : _allItems){
-        if ( resource->url() == url.toString())    {
-            _refresh = true;
-            break;
-        }
-    }
-    if ( _refresh){
-        emit contentChanged();
-        emit coveragesChanged();
-    }
-}
+//void CatalogModel::updateWorkingCatalog()
+//{
+//     if ( context()->workingCatalog().isValid()){
+//        context()->workingCatalog()->loadData(context()->workingCatalog().ptr())    ;
+//        containerContentChanged();
+//     }
+//}
 
-void CatalogModel::updateContainer()
+void CatalogModel::containerContentChanged()
 {
     _refresh = true;
     emit contentChanged();
