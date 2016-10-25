@@ -33,7 +33,8 @@ SOURCES += \
     rasteroperations/polygontoraster.cpp\
     rasteroperations/filter/timesat_nrs.cpp \
     rasteroperations/densifyraster.cpp \
-    rasteroperations/distanceraster.cpp
+    rasteroperations/distanceraster.cpp \
+    rasteroperations/line2raster.cpp
 
 
 HEADERS += \
@@ -54,7 +55,8 @@ HEADERS += \
     rasteroperations/polygontoraster.h\
     rasteroperations/filter/timesat_nrs.h \
     rasteroperations/densifyraster.h \
-    rasteroperations/distanceraster.h
+    rasteroperations/distanceraster.h \
+    rasteroperations/line2raster.h
 
 
 OTHER_FILES += \ 
