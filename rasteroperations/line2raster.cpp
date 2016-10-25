@@ -73,13 +73,7 @@ Ilwis::OperationImplementation *Line2Raster::create(quint64 metaid, const Ilwis:
 
 Ilwis::OperationImplementation::State Line2Raster::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
-    // according to syntax specification the first input parameter will be  the name of the featurecoverage
-    // used in this operation. Usually this will be a full url ( eg.g file://d:/somedata/mycoverage.shp
-    // remember Ilwis-objects uses urls for locations, not file paths
     QString features = _expression.parm(0).value();
-    // The first (and only) output parameter is the name of the output object. There is no need to do this as
-    // an url because output objects only exist in memory. You can save them to a file or put them in a database
-    // but that is not specified at this step. The name is just used for reference and recognition
     QString outputName = _expression.parm(0,false).value();
 
     // if the input feature coverage is not valid, we abort. No operation possible
@@ -87,56 +81,23 @@ Ilwis::OperationImplementation::State Line2Raster::prepare(ExecutionContext *ctx
         ERROR2(ERR_COULD_NOT_LOAD_2,features,"");
         return sPREPAREFAILED;
     }
-
-    // in the first variant of the operation we only have two parameters, the georef case
-    // note that the georef might have a different coordinate system as the input featurecoverage
-    // this means that the coordinates in the input are in a different system as the coordinate in the
-    // output. This means that we have to translate input coordinate to output coordinates. we will do this later
-    if ( _expression.parameterCount() == 2){ // the georef case
-        QString georefname = _expression.parm(1).value();
-        if (!_inputgrf.prepare(georefname, itGEOREF)) {
-            ERROR2(ERR_COULD_NOT_LOAD_2,georefname,"");
-            return sPREPAREFAILED;
-        }
-
-    }else if ( _expression.parameterCount() == 3){
-        // in the second case we have to create a standalone georeference. On the one hand this is a little bit more
-        // complicated, on the other hand we are certain that the coordinate in input and output are in the same system
-        // so no transformations needed. The georeference will always be of the "corners" type
-        bool ok;
-        // retrieve the x and y size of the to be created georeference
-        int xsize = _expression.parm(1).value().toULong(&ok);
-        if ( !ok){
-           ERROR2(ERR_ILLEGAL_VALUE_2,TR("parameter"),_expression.parm(1).value());
-           return sPREPAREFAILED;
-        }
-        int ysize = _expression.parm(2).value().toULong(&ok);
-        if ( !ok){
-           ERROR2(ERR_ILLEGAL_VALUE_2,TR("parameter"),_expression.parm(2).value());
-           return sPREPAREFAILED;
-        }
-        // initialize the georeference, with name, bounding box, coordinatesystem and envelope
-        IGeoReference grf(outputName);
-        grf->create("corners");
-        grf->size(Size<>(xsize, ysize,1)); // sets the bounding box
-        grf->coordinateSystem(_inputfeatures->coordinateSystem());
-        grf->envelope(_inputfeatures->envelope());
-        grf->compute(); // all members are set, now the initialization can take place
-        _inputgrf = grf;
+    QString georefname = _expression.parm(1).value();
+    if (!_inputgrf.prepare(georefname, itGEOREF)) {
+        ERROR2(ERR_COULD_NOT_LOAD_2,georefname,"");
+        return sPREPAREFAILED;
     }
 
-    // we handle the domain a little but simplistic. In reality the domain has to be extracted from the featurecoverage
-    // but that complicates things for this example. We choose a value domain to support rUNDEF.
-    IDomain dom("value");
-    // initialize the output rastercoverage.
-    _outputraster = IRasterCoverage(outputName);
-    _outputraster->datadefRef().domain(dom);
-    _outputraster->coordinateSystem(_inputgrf->coordinateSystem());
-    // we need to set the envelope of the output raster. For this we need to convert the envelope of the input to the output. If the
-    // coordinatesystem of both coverage are the same this is ofcourse a simple copy, else a real coordinate transformation will be done
+    DataDefinition datadef =  _inputfeatures->attributeDefinitions().columndefinition(COVERAGEKEYCOLUMN).datadef();
+   // initialize the output rastercoverage.
+   _outputraster = IRasterCoverage(outputName);
+   _outputraster->datadefRef() = datadef;
+
     Envelope env = _inputgrf->coordinateSystem()->convertEnvelope(_inputfeatures->coordinateSystem(), _inputfeatures->envelope());
     _outputraster->envelope(env);
     _outputraster->georeference(_inputgrf);
+
+
+
 
     return sPREPARED;
 }
@@ -153,12 +114,12 @@ quint64 Line2Raster::createMetadata()
      * coordinate system as the input featurecoverage and an x and y size (in pixels) as defined by the parameters. In effect a new Corners georeference
      * will be created on the fly
     */
-    operation.setSyntax("line2raster(inputlinecoverage,targetgeoref | xsize[,ysize])");
+    operation.setSyntax("line2raster(inputlinecoverage,targetgeoref )");
     operation.setDescription(TR("translates a the points of a featurecoverage to pixels in a rastermap"));
     /*
      * so the expression has either 2 input parameters. A featurecoverage and georeference. Or 3 parameters, a featurecoverage, x extent (in pixels) and y extent (in pixels)
     */
-    operation.setInParameterCount({2,3});
+    operation.setInParameterCount({2});
     /*
      * for the input type itLINE is specified. All coverages of the type itPOINT are featurecoverage and in effect the (aggregated) type itFEATURE is the
      * logical combination itFEATURE = itPOINT | itLINE | itPOLYGON
@@ -168,14 +129,11 @@ quint64 Line2Raster::createMetadata()
      * There are two possible types of parameters here. It is either a georeference in the case of the 2 parameter variant or an integer for the x size
      * in the case of the three parameter variant
      */
-    operation.addInParameter(1,itGEOREF | itINTEGER, TR("input georeference or x size"),TR("the parameter can either be a georeference or the x extent of the the to be created raster"));
+    operation.addInParameter(1,itGEOREF, TR("input georeference"),TR("The georeference of the to be created rastermap"));
     /*
      * third parameter will only be there when the size of the input map will be given as an x/y pair
      */
-    operation.addInParameter(2,itINTEGER, TR("input y size"),TR("optional y size of the output raster. Only used of the previous parameter was an x size"));
-    /*
-     * The operation will have only one output parameter a raster
-     */
+
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER, TR("output rastercoverage"), TR("output rastercoverage with the domain of the input map"));
     operation.setKeywords("raster,line,vector");
