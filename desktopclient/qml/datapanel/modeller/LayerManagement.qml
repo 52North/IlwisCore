@@ -33,7 +33,7 @@ Rectangle {
 
     SplitView {
         id : layerprops
-        property var layernames : ["Definition view","Operational view","Template view", "Workflow view"]
+        property var layernames : ["Conceptual view","Application view","Analysis view", "Workflow view"]
         width : parent.width - 5
         height : parent.height
         y : 2
