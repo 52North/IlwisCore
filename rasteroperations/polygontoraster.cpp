@@ -107,7 +107,7 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
         }
         updateTranquilizer(y,1);
     }
-    _outputraster->setAttributes(_inputfeatures->attributeTable().as<AttributeTable>()->toTable(_outputraster->name()));
+    _outputraster->setAttributes(_inputfeatures->attributeTable().as<AttributeTable>()->copyTable(_outputraster->name()));
 
     QVariant value;
     value.setValue<IRasterCoverage>(_outputraster);
