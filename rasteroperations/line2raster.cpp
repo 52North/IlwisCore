@@ -9,6 +9,7 @@
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "vertexiterator.h"
+#include "bresenham.h"
 #include "line2raster.h"
 
 using namespace Ilwis;
@@ -41,23 +42,30 @@ bool Line2Raster::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     // loop over all features
     // the 'feature' object is actually something of the SPFeatureI class which is a simple wrapper for a featureinterface
-    bool sameCsy = _inputfeatures->coordinateSystem() == _outputraster->coordinateSystem();
+
     PixelIterator pixOut(_outputraster);
-    quint32 colIndex = _inputfeatures->attributeDefinitions().columnIndex(COVERAGEKEYCOLUMN);
+    Bresenham br(_outputraster->georeference(), _inputfeatures->coordinateSystem());
+    double mmin=1e308, mmax=-1e308;
     for(auto feature :  _inputfeatures){
         if ( feature->geometryType() != itLINE)
             continue;
 
-        VertexIterator vertIter(feature->geometry());
-        while(vertIter != ::end(vertIter)){
-            Coordinate crd = *vertIter;
-            if (!sameCsy)
-                crd = _outputraster->coordinateSystem()->coord2coord(_inputfeatures->coordinateSystem(), crd);
-            Pixel pix =
-            pix = _outputraster->georeference()->coord2Pixel(crd);
+        VertexIterator vertStart(feature->geometry());
+        VertexIterator vertEnd = ::end(vertStart);
+        std::vector<Pixel> result = br.rasterize(vertStart, vertEnd);
+        for(const Pixel& pix : result){
             pixOut = pix;
-            *pixOut = feature->cell(colIndex).toDouble();
+            double v = feature->cell(_primaryColumnIndex).toDouble();
+            mmin = Ilwis::min(mmin, v);
+            mmax = Ilwis::max(mmax, v);
+            *pixOut = v;
+
         }
+    }
+    if ( hasType(_outputraster->datadef().domain()->ilwisType(), itNUMERICDOMAIN)){
+        double prec = _datadef.range()->as<NumericRange>()->resolution();
+        NumericRange *rng = new NumericRange(mmin, mmax, prec);
+        _outputraster->datadefRef().range(rng);
     }
 
     QVariant value;
@@ -86,18 +94,28 @@ Ilwis::OperationImplementation::State Line2Raster::prepare(ExecutionContext *ctx
         ERROR2(ERR_COULD_NOT_LOAD_2,georefname,"");
         return sPREPAREFAILED;
     }
-
-    DataDefinition datadef =  _inputfeatures->attributeDefinitions().columndefinition(COVERAGEKEYCOLUMN).datadef();
+    if ( (_primaryColumnIndex = _inputfeatures->attributeDefinitions().columnIndex(FEATUREVALUECOLUMN)) != iUNDEF){
+        _datadef = _inputfeatures->attributeDefinitions().columndefinition(FEATUREVALUECOLUMN).datadef();
+    }else if ( (_primaryColumnIndex =_inputfeatures->attributeDefinitions().columnIndex(COVERAGEKEYCOLUMN)) != iUNDEF){
+        _datadef = _inputfeatures->attributeDefinitions().columndefinition(COVERAGEKEYCOLUMN).datadef();
+    }else {
+        kernel()->issues()->log(TR("No suitable primary key column found"));
+        return sPREPAREFAILED;
+    }
    // initialize the output rastercoverage.
-   _outputraster = IRasterCoverage(outputName);
-   _outputraster->datadefRef() = datadef;
+     _outputraster.prepare();
+    if (outputName != sUNDEF)
+         _outputraster->name(outputName);
 
-    Envelope env = _inputgrf->coordinateSystem()->convertEnvelope(_inputfeatures->coordinateSystem(), _inputfeatures->envelope());
+    _outputraster->coordinateSystem(_inputgrf->coordinateSystem());
+    auto env = _inputgrf->coordinateSystem()->convertEnvelope(_inputfeatures->coordinateSystem(), _inputfeatures->envelope());
     _outputraster->envelope(env);
     _outputraster->georeference(_inputgrf);
-
-
-
+    std::vector<double> indexes = {0};
+    _outputraster->setDataDefintions(_datadef.domain(),indexes);
+    if ( _inputfeatures->attributeDefinitions().columnIndex(COVERAGEKEYCOLUMN) != iUNDEF){
+        _outputraster->setAttributes(_inputfeatures->attributeTable());
+    }
 
     return sPREPARED;
 }

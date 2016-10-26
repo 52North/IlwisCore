@@ -22,6 +22,8 @@ private:
     IFeatureCoverage _inputfeatures;
     IRasterCoverage _outputraster;
     IGeoReference _inputgrf;
+    qint32 _primaryColumnIndex = iUNDEF;
+    DataDefinition _datadef;
 
     NEW_OPERATION(Line2Raster);
 };
