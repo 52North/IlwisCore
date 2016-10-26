@@ -46,7 +46,7 @@ public:
     Record& recordRef(quint32 n);
     const Record& record(quint32 n) const;
 
-    ITable toTable(const QString& name=sUNDEF) const;
+    ITable copyTable(const QString& name=sUNDEF) const;
     void featureCoverage(FeatureCoverage* f);
 
 

@@ -84,6 +84,7 @@ public:
 
     bool canUse(const IlwisObject *obj, bool strict=false) const ;
 
+    ITable copyTable(const QString &nm) const;
 protected:
     bool isColumnIndexValid(quint32 index) const{
         bool ok =  index != iUNDEF ;

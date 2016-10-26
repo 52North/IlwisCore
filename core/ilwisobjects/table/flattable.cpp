@@ -326,6 +326,24 @@ IlwisObject *FlatTable::clone()
     }
     return 0;
 }
+ITable FlatTable::copyTable(const QString &nm) const
+{
+    QString  url;
+    if ( nm.indexOf(ANONYMOUS_PREFIX) == 0){
+        url = INTERNAL_CATALOG + "/" + Identity::newAnonymousName();
+    }else
+        url = INTERNAL_CATALOG + "/" + (nm != sUNDEF ? name() : nm);
+    IFlatTable tbl;
+    tbl.prepare(url);
+    for(int i=0; i < columnCount(); ++i){
+        tbl->addColumn(columndefinition(i));
+    }
+    int i = 0;
+    for(auto record : _datagrid){
+         tbl->record(i++, record);
+    }
+    return tbl;
+}
 
 bool FlatTable::canUse(const IlwisObject *obj, bool strict) const
 {
