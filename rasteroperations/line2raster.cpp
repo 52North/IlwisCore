@@ -114,7 +114,8 @@ Ilwis::OperationImplementation::State Line2Raster::prepare(ExecutionContext *ctx
     std::vector<double> indexes = {0};
     _outputraster->setDataDefintions(_datadef.domain(),indexes);
     if ( _inputfeatures->attributeDefinitions().columnIndex(COVERAGEKEYCOLUMN) != iUNDEF){
-        _outputraster->setAttributes(_inputfeatures->attributeTable());
+
+        _outputraster->setAttributes(_inputfeatures->attributeTable()->copyTable(outputName != sUNDEF ? outputName : sUNDEF));
     }
 
     return sPREPARED;
