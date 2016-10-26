@@ -10,19 +10,24 @@
 #include "geos/geom/CoordinateSequence.h"
 #include "coordinate.h"
 #include "vertexiterator.h"
+#include "coordinatesystem.h"
 #include "bresenham.h"
 
 using namespace Ilwis;
 
-Bresenham::Bresenham(const IGeoReference& grf) : _targetGrf(grf){
+Bresenham::Bresenham(const IGeoReference& grf, const ICoordinateSystem& csy) : _targetGrf(grf), _sourceCsy(csy){
 
 }
 
 std::vector<Pixel> Bresenham::rasterize(const VertexIterator &iterStart, const VertexIterator &iterEnd)
 {
+    bool convertNeeded = _sourceCsy.isValid() && _sourceCsy != _targetGrf->coordinateSystem();
     VertexIterator iter = iterStart;
     std::vector<Pixel> result;
     Coordinate crd1 = *iter, crd2 ;
+    if (convertNeeded){
+        crd1 =  _targetGrf->coordinateSystem()->coord2coord(_sourceCsy, crd1);
+    }
     quint32 subcount = 0;
     const Size<> sz (_targetGrf->size());
     while( (++iter) != iterEnd ){
@@ -32,6 +37,9 @@ std::vector<Pixel> Bresenham::rasterize(const VertexIterator &iterStart, const V
             ++subcount;
         }
         crd2 = *iter;
+        if (convertNeeded){
+            crd2 =  _targetGrf->coordinateSystem()->coord2coord(_sourceCsy, crd2);
+        }
         std::vector<Pixel> line  = makePixelLine(crd1, crd2, _valid, sz, subcount);
         if (!_valid)
             return std::vector<Pixel>();
