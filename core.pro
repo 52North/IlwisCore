@@ -136,7 +136,10 @@ SOURCES += core/kernel.cpp \
     core/internaldatabaseconnection.cpp \
     core/catalog/mastercatalogcache.cpp \
     core/catalog/catalogexplorerworker.cpp \
-    core/ilwisobjects/operation/script.cpp
+    core/ilwisobjects/operation/script.cpp \
+    core/ilwisobjects/operation/model/model.cpp \
+    core/ilwisobjects/operation/model/analysispattern.cpp \
+    core/ilwisobjects/operation/model/applicationsetup.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -289,7 +292,10 @@ HEADERS += core/kernel.h\
     core/internaldatabaseconnection.h \
     core/catalog/mastercatalogcache.h \
     core/catalog/catalogexplorerworker.h \
-    core/ilwisobjects/operation/script.h
+    core/ilwisobjects/operation/script.h \
+    core/ilwisobjects/operation/model/model.h \
+    core/ilwisobjects/operation/model/analysispattern.h \
+    core/ilwisobjects/operation/model/applicationsetup.h
 
 OTHER_FILES += \
     core/resources/referencesystems.csv \
