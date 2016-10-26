@@ -35,7 +35,8 @@ HEADERS += \
     internalconnector/projections/cylindsinusinterrupt2.h \
     internalconnector/internalprojectionconnector.h \
     internalconnector/internalellipsoidconnector.h \
-    internalconnector/internalscriptconnector.h
+    internalconnector/internalscriptconnector.h \
+    internalconnector/internalmodelconnector.h
 
 SOURCES += \
     internalconnector/internalmodule.cpp \
@@ -56,7 +57,8 @@ SOURCES += \
     internalconnector/projections/cylindsinusinterrupt2.cpp \
     internalconnector/internalprojectionconnector.cpp \
     internalconnector/internalellipsoidconnector.cpp \
-    internalconnector/internalscriptconnector.cpp
+    internalconnector/internalscriptconnector.cpp \
+    internalconnector/internalmodelconnector.cpp
 
 OTHER_FILES += \
     internalconnector/internalconnector.json

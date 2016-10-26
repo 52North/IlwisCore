@@ -6,7 +6,7 @@
 
 #include "ilwiscoreui_global.h"
 
-class ScenarioDesignerModel;
+class ModelDesigner;
 
 class ILWISCOREUISHARED_EXPORT ScenarioBuilderModel : public QObject
 {
@@ -14,7 +14,7 @@ class ILWISCOREUISHARED_EXPORT ScenarioBuilderModel : public QObject
 public:
     explicit ScenarioBuilderModel(QObject *parent = 0);
 
-    Q_INVOKABLE ScenarioDesignerModel * create();
+    Q_INVOKABLE ModelDesigner * create();
 
 private:
 

@@ -66,6 +66,7 @@ const quint64 itWORKSPACE = 2 * itWORKFLOW;            //72057594037927936
 const quint64 itLATLON = 2 * itWORKSPACE;               //144115188075855872
 const quint64 itCOLUMN = 2 * itLATLON;                //288230376151711744
 const quint64 itSCRIPT = 2 * itCOLUMN;                // 576460752303423488
+const quint64 itMODEL = 2 * itSCRIPT;                 // 1152921504606846976
 
 const quint64 itCOVERAGE = itPOINT | itRASTER | itPOLYGON | itLINE ; //15
 const quint64 itFEATURE = itPOINT | itPOLYGON | itLINE; //7

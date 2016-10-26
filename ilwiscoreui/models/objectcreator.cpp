@@ -318,6 +318,10 @@ QString ObjectCreator::createScript(const QVariantMap &parms)
     return QString::number(script->id());
 }
 
+QString ObjectCreator::createModel(const QVariantMap &parms){
+    return QString::number(i64UNDEF);
+}
+
 QString ObjectCreator::createObject(const QVariantMap &parms)
 {
     try {
@@ -337,6 +341,8 @@ QString ObjectCreator::createObject(const QVariantMap &parms)
         return createRasterCoverage(parms);
     }else if ( type == "script"){
         return createScript(parms);
+    }else if ( type == "model"){
+        return createModel(parms);
     }
 
 

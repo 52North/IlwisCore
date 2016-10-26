@@ -9,12 +9,12 @@ namespace Ilwis{
 }
 class WorkflowModel;
 
-class ILWISCOREUISHARED_EXPORT ScenarioDesignerModel : public QObject
+class ILWISCOREUISHARED_EXPORT ModelDesigner : public QObject
 {
     Q_OBJECT
 public:
-    explicit ScenarioDesignerModel(QObject *parent = 0);
-    ~ScenarioDesignerModel();
+    explicit ModelDesigner(QObject *parent = 0);
+    ~ModelDesigner();
 
     Q_INVOKABLE WorkflowModel *workflow(const QString& idname);
     Q_INVOKABLE WorkflowModel* addWorkflow(const QString& source);

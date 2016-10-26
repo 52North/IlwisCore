@@ -6,17 +6,17 @@
 
 using namespace Ilwis;
 
-ScenarioDesignerModel::ScenarioDesignerModel(QObject *parent) : QObject(parent)
+ModelDesigner::ModelDesigner(QObject *parent) : QObject(parent)
 {
 
 }
 
-ScenarioDesignerModel::~ScenarioDesignerModel()
+ModelDesigner::~ModelDesigner()
 {
 
 }
 
-WorkflowModel *ScenarioDesignerModel::workflow(const QString &idname)
+WorkflowModel *ModelDesigner::workflow(const QString &idname)
 {
     if ( idname == "first_workflow_model"){ // special case atm
         if ( _workflows.size() == 0)
@@ -31,7 +31,7 @@ WorkflowModel *ScenarioDesignerModel::workflow(const QString &idname)
     return 0;
 }
 
-WorkflowModel *ScenarioDesignerModel::addWorkflow(const QString& source)
+WorkflowModel *ModelDesigner::addWorkflow(const QString& source)
 {
     std::vector<Resource> res = Ilwis::mastercatalog()->select(source);
     if ( res.size() == 1){

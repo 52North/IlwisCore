@@ -64,7 +64,10 @@
 #include "epsg.h"
 #include "catalog.h"
 #include "workflow.h"
+#include "analysispattern.h"
+#include "applicationsetup.h"
 #include "script.h"
+#include "model.h"
 
 
 using namespace Ilwis;
@@ -105,7 +108,9 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
         return createWorkflow(resource, options);
     } else if ( resource.ilwisType() & itSCRIPT) {
         return createScript(resource, options);
-    }  else if ( resource.ilwisType() & itSINGLEOPERATION) {
+    }  else if ( resource.ilwisType() & itMODEL) {
+        return createModel(resource, options);
+    } else if ( resource.ilwisType() & itSINGLEOPERATION) {
         return createOperationMetaData(resource, options);
     } else if ( resource.ilwisType() & itGEOREF) {
         return createGeoreference(resource,options);
@@ -216,6 +221,16 @@ IlwisObject *InternalIlwisObjectFactory::createScript(const Resource& resource, 
     return script;
 }
 
+IlwisObject *InternalIlwisObjectFactory::createModel(const Resource &resource, const IOOptions &options) const
+{
+    if (!hasType(resource.ilwisType(), itMODEL)){
+        return nullptr;
+    }
+    Model *model = createFromResource<Model>(resource, options);
+
+    return model;
+}
+
 IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& subtype) const
 {
     switch(type) {
@@ -259,6 +274,8 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new Script();
     case itREPRESENTATION:
         return new Representation();
+    case itMODEL:
+        return new Model();
     }
     if ( type & itFEATURE)
         return new FeatureCoverage();
@@ -302,6 +319,8 @@ bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
     }  else if ( resource.ilwisType() & itREPRESENTATION) {
         return true;
     }  else if ( resource.ilwisType() & itSCRIPT) {
+        return true;
+    } else if ( resource.ilwisType() & itMODEL) {
         return true;
     }
 

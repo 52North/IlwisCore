@@ -57,6 +57,8 @@ QString TypeHelper::type2HumanReadable(IlwisTypes t)
         return TR("Representation");
     case itSCRIPT:
         return TR("Script");
+    case itMODEL:
+        return TR("Model");
 
         // nonilwisobjects
     case itENVELOPE:
@@ -204,6 +206,8 @@ QString TypeHelper::type2name(IlwisTypes t)
         return "representation";
     case itSCRIPT:
         return "script";
+    case itMODEL:
+        return "model";
         // nonilwisobjects
     case itENVELOPE:
         return "envelope";
@@ -364,6 +368,9 @@ IlwisTypes TypeHelper::name2type(const QString &dname)
     }
     if ( name == "script") {
         return  itSCRIPT;
+    }
+    if ( name == "model") {
+        return  itMODEL;
     }
     if ( name == "operationmetaData") {
         return  itOPERATIONMETADATA;

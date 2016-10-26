@@ -11,7 +11,7 @@ ScenarioBuilderModel::ScenarioBuilderModel(QObject *parent) : QObject(parent)
 
 }
 
-ScenarioDesignerModel *ScenarioBuilderModel::create()
+ModelDesigner *ScenarioBuilderModel::create()
 {
-    return new ScenarioDesignerModel();
+    return new ModelDesigner();
 }
