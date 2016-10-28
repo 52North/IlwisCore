@@ -111,7 +111,7 @@ Item {
             tab = addTab(qsTr("Layers Info"), layersinfo)
             tab.active = true
             tab = addTab(qsTr("Metadata"), metadata)            
-            tab.active = true // we need to be active as layers maybe added to it
+            tab.active = true // we need to be active as layers may be added to it
         }
 
         style: DataPanel.ButtonBarTabViewStyle{}

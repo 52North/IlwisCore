@@ -20,6 +20,8 @@ Item {
     property bool drawerActive : false
     property string iconName : "../images/metadata_s"
 
+    property variant subscription
+
     onDrawerActiveChanged: {
         overview.active = drawerActive
     }
@@ -144,8 +146,15 @@ Item {
                     id : buttons
                     anchors.right: viewcontainer.left
                     height : parent.height
-
                 }
+
+                function entireMap() {
+                    //if ( layersmeta.currentIndex == 2){
+                        overview.addCommand("setviewextent("+ overview.viewerId + ",entiremap)");
+                        overview.update()
+                    //}
+                }
+
                 Rectangle{
                     id : viewcontainer
                     width :parent.width  - buttons.width
@@ -165,38 +174,65 @@ Item {
                     onWidthChanged: {
                         entireMap()
                     }
-                    onHeightChanged: {
-                        entireMap()
-                    }
 
                     onVisibleChanged: {
                         if (viewcontainer.visible)
                             entireMap()
                     }
+                    onHeightChanged: {
+                        entireMap()
+                    }
+
+
+                    Connections {
+                        target: manager
+                        onLatlonEnvelopeChanged :{
+                            viewcontainer.entireMap()
+                        }
+                    }
+
+                    Connections {
+                        target: layers.drawer()
+                        onViewEnvelopeChanged :{
+                            viewcontainer.entireMap()
+                            // the envelope has changed, so the selectiondraw should be repainted according to the new overview envelope
+                            var selenvelope = overview.attributeOfDrawer("selectiondrawer","envelope");
+
+                            if (selenvelope !== "")
+                                newZoomExtent(selenvelope)
+                        }
+                    }
+
 
                     OverViewDrawer{
                         id: overview
                         anchors.fill: parent
 
+                        function selectionDrawerUpdate (topic, data) {
+                            if (!manager.hasSelectionDrawer)
+                                manager.hasSelectionDrawer = true
+                            newZoomExtent(data.envelope)
+                        }
+
                         Component.onCompleted: {
                             mouseActions.mapScrollers = layers.maparea().parent.mapScrollers
                             entireMap()
+                            subscription = layerview.subscribe(layerview.selectiondrawertopicoverview, selectionDrawerUpdate )
+                            mouseActions.subscription = layerview.selectiondrawertopic // subscription
                         }
                     }
-
 
                     LayerExtentMouseActions{
                         id : mouseActions
                         layerManager: manager
                         drawer : overview
-                        linkedDrawer: renderer
+                        zoomToExtents: false
                         hasPermanence: true
                         panningDirection: Global.panningAlong
+                        selectiondrawerColor: "basic"
                     }
-
                 }
             }
-
         }
     }
 }

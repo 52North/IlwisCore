@@ -13,7 +13,7 @@
 #include "models/layermanager.h"
 #include "drawers/drawerinterface.h"
 #include "cleardrawers.h"
-#include "../rootdrawer.h"
+#include "rootdrawer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;

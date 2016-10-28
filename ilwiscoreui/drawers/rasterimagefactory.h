@@ -2,6 +2,7 @@
 #define RASTERIMAGEFACTORY_H
 
 #include "ilwiscoreui_global.h"
+#include "drawerinterface.h"
 
 namespace Ilwis {
 class RasterCoverage;

@@ -49,20 +49,27 @@ Rectangle {
         if (scrollerRightThumbPos + offset > viewportMax) // try to keep the scrolling positions limited to upper/bottom positions
             offset =  viewportMax - scrollerRightThumbPos;
 
+
         if ( (scrollerLeftThumbPos + offset) >= 0 && (scrollerRightThumbPos + offset) <= viewportMax){
-            viewportHorizontalScrollPosition += offset
-            if ( oldPosition == -10000){
+
+            if ( oldPosition === -10000){
                 oldPosition = viewportHorizontalScrollPosition // keep for the scroller draggable button
             }
 
+            viewportHorizontalScrollPosition += offset
+
             var relx = viewportHorizontalScrollPosition / marea.width
             var oldRelx = oldPosition / marea.width
+
             var difrelx = relx - oldRelx;
+
+
             currentPosition = currentPosition + maxSize * difrelx
             if ( currentPosition > maxSize - currentSize)
                 currentPosition = maxSize - currentSize
             if ( (currentPosition) < 0)
                 currentPosition = 0
+
             scrolled(currentPosition)
             oldPosition = viewportHorizontalScrollPosition
         }
@@ -124,7 +131,6 @@ Rectangle {
                 if ( oldPosition == -10000){
                     oldPosition = viewportHorizontalScrollPosition
                 }
-
 
                 var relx = viewportHorizontalScrollPosition / marea.width
                 var oldRelx = oldPosition / marea.width

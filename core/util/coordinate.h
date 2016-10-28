@@ -41,6 +41,14 @@ public:
     bool operator ==(const geos::geom::Coordinate &pnt) const;
     bool operator !=(const Ilwis::Coordinate &pnt);
     virtual QString toString(int decimals=2, bool use3D = false) const;
+
+    QVariantMap toMap() const{
+        QVariantMap mp;
+        mp["x"] = x;
+        mp["y"] = y;
+        mp["z"] = z;
+        return mp;
+    }
 };
 
 class KERNELSHARED_EXPORT LatLon : public Ilwis::Coordinate {

@@ -29,11 +29,6 @@ win32{
 # Input
 SOURCES += \
     geodrawer/geodrawer_plugin.cpp \
-    geodrawer/rootdrawer.cpp \
-    geodrawer/simpledrawer.cpp \
-    geodrawer/complexdrawer.cpp \
-    geodrawer/basedrawer.cpp \
-    geodrawer/spatialdatadrawer.cpp \
     geodrawer/layerdrawer.cpp \
     geodrawer/drawingcolor.cpp \
     geodrawer/featurelayerdrawer.cpp \
@@ -47,7 +42,6 @@ SOURCES += \
     geodrawer/tesselation/sweep.c \
     geodrawer/tesselation/tess.c \
     geodrawer/tesselation/ilwistesselator.cpp \
-    geodrawer/selectiondrawer.cpp \
     geodrawer/layersview.cpp \
     geodrawer/layersrenderer.cpp \
     geodrawer/operations/adddrawer.cpp \
@@ -70,20 +64,15 @@ SOURCES += \
     geodrawer/operations/representationattributefillcolor.cpp \
     geodrawer/operations/setrepresentation.cpp \
     geodrawer/operations/setbackgroundcolor.cpp \
-    geodrawer/griddrawer.cpp \
     geodrawer/operations/setgridproperties.cpp \
     geodrawer/operations/setlayeropacity.cpp \
     geodrawer/rasteritemimage.cpp \
     geodrawer/operations/cleardrawers.cpp \
-    geodrawer/operations/showcoverage.cpp
+    geodrawer/operations/showcoverage.cpp \
+    geodrawer/drawercolorsets.cpp
 
 HEADERS += \
     geodrawer/geodrawer_plugin.h \
-    geodrawer/rootdrawer.h \
-    geodrawer/simpledrawer.h \
-    geodrawer/complexdrawer.h \
-    geodrawer/basedrawer.h \
-    geodrawer/spatialdatadrawer.h \
     geodrawer/layerdrawer.h \
     geodrawer/drawingcolor.h \
     geodrawer/featurelayerdrawer.h \
@@ -99,7 +88,6 @@ HEADERS += \
     geodrawer/tesselation/tess.h \
     geodrawer/tesselation/tesselator.h \
     geodrawer/tesselation/ilwistesselator.h \
-    geodrawer/selectiondrawer.h \
     geodrawer/layersview.h \
     geodrawer/layersrenderer.h \
     geodrawer/operations/adddrawer.h \
@@ -122,12 +110,12 @@ HEADERS += \
     geodrawer/operations/representationattributefillcolor.h \
     geodrawer/operations/setrepresentation.h \
     geodrawer/operations/setbackgroundcolor.h \
-    geodrawer/griddrawer.h \
     geodrawer/operations/setgridproperties.h \
     geodrawer/operations/setlayeropacity.h \
     geodrawer/rasteritemimage.h \
     geodrawer/operations/cleardrawers.h \
-    geodrawer/operations/showcoverage.h
+    geodrawer/operations/showcoverage.h \
+    geodrawer/drawercolorsets.h
 
 
 OTHER_FILES = geodrawer/qmldir
@@ -143,7 +131,8 @@ DEPENDPATH += $$PWD/../IlwisCore/ilwiscoreui
 
 INCLUDEPATH +=  core/ilwisobjects/domain \
                 ilwiscoreui \
-                ilwiscoreui\models
+                ilwiscoreui\models \
+                ilwiscoreui\drawers
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscoreui
@@ -184,6 +173,7 @@ INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
                 $$ILWISCORE/core/catalog \
                 $$ILWISCORE/core/ilwisobjects/domain \
                 $$ILWISCORE/ilwiscoreui/models \
+                $$ILWISCORE/ilwiscoreui/drawers \
                 $$ILWISCORE \
                 $$BOOST
 win32{
@@ -221,3 +211,6 @@ linux{
 
     INSTALLS += qmldir target dependencies
 }
+
+DISTFILES += \
+    geodrawer/selectiondrawer.js

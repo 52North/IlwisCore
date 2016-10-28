@@ -50,7 +50,6 @@ SelectionDrawer::~SelectionDrawer()
 
 bool SelectionDrawer::draw(const IOOptions &)
 {
-
     if ( !isActive())
         return false;
 
@@ -85,7 +84,6 @@ bool SelectionDrawer::draw(const IOOptions &)
     _shaders.disableAttributeArray(_vboColor);
 
     _shaders.release();
-
 
      return true;
 }
@@ -297,5 +295,6 @@ void SelectionDrawer::cleanUp()
     SimpleDrawer::cleanUp();
    // rootDrawer()->applyEnvelopeZoom(envelope());
 }
+
 
 

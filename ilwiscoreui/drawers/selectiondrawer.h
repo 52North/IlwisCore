@@ -9,14 +9,14 @@
 namespace Ilwis{
 
 namespace Geodrawer{
-class SelectionDrawer : public SimpleDrawer
+class ILWISCOREUISHARED_EXPORT SelectionDrawer : public SimpleDrawer
 {
 public:
     SelectionDrawer(DrawerInterface* parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
     ~SelectionDrawer();
 
     bool draw(const IOOptions& options=IOOptions()) ;
-    bool prepare(PreparationType prepType, const IOOptions& options);
+    bool prepare(DrawerInterface::PreparationType prepType, const IOOptions& options);
 
     void setAttribute(const QString& attrName, const QVariant& attrib);
     bool drawerAttribute(const QString &drawername, const QString& attrName, const QVariant& attrib);

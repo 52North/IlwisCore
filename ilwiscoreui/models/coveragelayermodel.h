@@ -4,7 +4,8 @@
 #include <QQmlListProperty>
 #include "ilwisobjectmodel.h"
 #include "propertyeditors/attributeeditor.h"
-#include "drawers/drawerinterface.h"
+//#include "drawers/drawerinterface.h"
+#include "drawers/rootdrawer.h"
 #include "ilwiscoreui_global.h"
 
 class LayerManager;
@@ -42,6 +43,8 @@ public:
     void updateAttribute(const QString& attrName, const QString& rprTxt);
     void drawer(Ilwis::Geodrawer::DrawerInterface *drw);
     Ilwis::ICoverage coverage() const;
+    Ilwis::Geodrawer::RootDrawer *rootDrawer();
+    const Ilwis::Geodrawer::RootDrawer *rootDrawer() const;
 
 signals:
     void visualAttributesChanged();
@@ -58,6 +61,7 @@ private:
     void resetVisualAttributeModel(const QString &attributeName);
 
     Ilwis::Geodrawer::DrawerInterface *_drawer = 0;
+    Ilwis::Geodrawer::RootDrawer *_rootDrawer = 0;
     QList<VisualAttributeModel *> _visualAttributes;
     quint32 _layerIndex;
     int _activeAttribute = 0;

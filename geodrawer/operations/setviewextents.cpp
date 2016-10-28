@@ -14,7 +14,7 @@
 #include "drawers/drawerinterface.h"
 #include "../layerdrawer.h"
 #include "setviewextents.h"
-#include "../rootdrawer.h"
+#include "rootdrawer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
@@ -45,7 +45,7 @@ bool SetViewExtent::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
 
     if ( _entiremap){
-        rootdrawer->applyEnvelopeView(rootdrawer->coverageEnvelope(), true);
+        rootdrawer->applyEnvelopeView(rootdrawer->coverageEnvelope(), true, true);
     }else{
         double area = _newExtents.area();
         if ( area > 1){

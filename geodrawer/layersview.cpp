@@ -97,10 +97,10 @@ void LayersView::addCommand(const QString &expression)
 void LayersView::setManager(LayerManager *manager)
 {
     _manager = manager;
-    auto *root = privateRootDrawer();
+    /*auto *root = privateRootDrawer();
     if ( root && _manager){
         _manager->setScreenGeoReference(root->screenGrf());
-    }
+    }*/
 }
 
 QString LayersView::layerInfo(const QString& pixelpair) const
@@ -127,7 +127,7 @@ QVariantMap LayersView::zoomEnvelope() const
     QVariantMap vmap;
     auto *root = privateRootDrawer();
     if ( root){
-        _manager->setScreenGeoReference(root->screenGrf());
+        //_manager->setScreenGeoReference(root->screenGrf());
         Envelope zoomenv = root->zoomEnvelope();
         vmap["minx"] = zoomenv.min_corner().x;
         vmap["miny"] = zoomenv.min_corner().y;
@@ -143,7 +143,7 @@ QVariantMap LayersView::viewEnvelope() const
     QVariantMap vmap;
     auto *root = privateRootDrawer();
     if ( root){
-        _manager->setScreenGeoReference(root->screenGrf());
+        //_manager->setScreenGeoReference(root->screenGrf());
         Envelope viewenv = root->viewEnvelope();
         vmap["minx"] = viewenv.min_corner().x;
         vmap["miny"] = viewenv.min_corner().y;
@@ -269,7 +269,7 @@ void LayersView::synchronizeEnded()
             QObject *obj = uicontext()->rootObject()->findChild<QObject *>(name);
             if (obj){
                 QVariant returnedValue;
-                QMetaObject::invokeMethod(obj,"updateItem",Q_RETURN_ARG(QVariant, returnedValue));
+                QMetaObject::invokeMethod(obj,"clbkSynchronizeEnded",Q_RETURN_ARG(QVariant, returnedValue));
             }
         }
     }
@@ -308,6 +308,7 @@ Ilwis::Geodrawer::DrawerInterface *LayersView::rootDrawer() const
     if ( !layer)
         return 0;
     return layer->drawer()->rootDrawer();
+    //return layer->rootDrawer();
 }
 
 QString LayersView::currentCoordinate() const

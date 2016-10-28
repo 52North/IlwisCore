@@ -8,6 +8,7 @@ import TabModel 1.0
 import "./propertyeditors" as LayerManagement
 import "../../controls" as Controls
 import "../../Global.js" as Global
+import "../../pubsub.js" as PubSub
 //import GeoDrawer 1.0
 
 
@@ -23,6 +24,22 @@ Item {
     objectName: uicontext.uniqueName()
     property LayerManager manager
     property bool canSeparate : true
+
+    property string selectiondrawertopic : "main"
+    property string selectiondrawertopicoverview : "overview"
+
+
+    function subscribe (topic, func) {
+        return PubSub.subscribe( topic, func );
+    }
+
+    function publish(topic, data) {
+        return PubSub.publish(topic, data);
+    }
+
+    function unsubscribe(topic, token) {
+        PubSub.unsubscribe( token );
+    }
 
     function iconsource(name) {
         if ( name.indexOf("/") !== -1)
@@ -46,7 +63,7 @@ Item {
 
     function transfer(datapanel){
         layers.transfer(datapanel)
-        viewmanager.transfer(datapanel)
+        viewmanager.transfer(datapanel)        
     }
 
     Action {
@@ -87,13 +104,9 @@ Item {
     Action {
         id : zoomOutClicked
         onTriggered : {
-            console.log("zoomOutClicked onTriggered 0")
             if ( manager){
-                console.log("zoomOutClicked onTriggered 1")
                 var envelope = layers.drawer().attributeOfDrawer("rootdrawer","zoomenvelope");
-                console.log("zoomOutClicked onTriggered 2")
                 Global.calcZoomOutEnvelope(envelope, layers, viewmanager,0.707)
-                console.log("zoomOutClicked onTriggered 3")
             }
         }
     }
@@ -117,12 +130,12 @@ Item {
                 viewmanager.newZoomExtent(envelope)
             }
         }
-        Connections {
+        /*Connections {
             target: viewmanager
             onZoomEnded :{
                 viewmanager.newZoomExtent(envelope)
             }
-        }
+        }*/
         Layers{
 
             width : parent.width
@@ -163,7 +176,7 @@ Item {
     }
 
     Component.onCompleted: {
-         manager = uicontext.createLayerManager(objectName)
+        manager = uicontext.createLayerManager(objectName)
         layers.setManager(manager)
 
     }

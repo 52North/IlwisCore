@@ -16,10 +16,7 @@ DropArea {
     function entireMap() {
         renderer.addCommand("setviewextent("+ renderer.viewerId + ",entiremap)");
         renderer.update()
-
     }
-
-
 
     function transfer(datapanel){
         var layers = datapanel.manager.layers;
@@ -32,13 +29,19 @@ DropArea {
 
     onDropped: {
         var resource = mastercatalog.id2Resource(drag.source.ilwisobjectid, dropArea)
-        addDataSource(resource.url, resource.name, resource.typeName)
+        addDataSource(resource.url, resource.name, resource.typeName)       
     }
 
     Connections {
         target: mouseActions
         onZoomEnded :{
             zoomEnded(envelope)
+
+            renderer.addCommand("removedrawer(" + renderer.viewerId + ",selectiondrawer, post)")
+            renderer.update()
+
+            renderer.addCommand("adddrawer(" + renderer.viewerId + ",selectiondrawer, colorless)")
+            renderer.update()
         }
     }
 
@@ -53,15 +56,27 @@ DropArea {
             anchors.margins: 1
             objectName : "layers_" + uicontext.uniqueName()
 
+            function finalizeDraw(){
+                if (!manager.hasSelectionDrawer) {
+                    manager.hasSelectionDrawer = true
+                    renderer.addCommand("adddrawer(" + renderer.viewerId + ",selectiondrawer, colorless)")
+                }                
+            }
+
+            Component.onCompleted: {
+                renderer.associate(objectName,"drawEnded")
+            }
+
             LayerExtentMouseActions{
                 id : mouseActions
                 layerManager: manager
                 drawer : renderer
-                linkedDrawer: renderer
+                zoomToExtents: true
+                hasPermanence: true
                 showInfo: true
                 panningDirection: Global.panningReverse
-            }
-
+                selectiondrawerColor: "basic"
+            }           
         }
     }
 }

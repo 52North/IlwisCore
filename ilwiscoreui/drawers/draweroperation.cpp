@@ -26,18 +26,23 @@ DrawerOperation::~DrawerOperation()
 {
 
 }
-DrawerInterface *DrawerOperation::getRootDrawer(){
+DrawerInterface *DrawerOperation::getRootDrawer(const quint64 index){
     bool ok;
-    quint64 viewerId = _expression.input<QString>(0).toULongLong(&ok);
+    quint64 viewerId = _expression.input<QString>(index).toULongLong(&ok);
     if (!ok){
-        ERROR1(TR("Invalid viewer id %1"), _expression.input<QString>(0));
+        ERROR1(TR("Invalid viewer id %1"), _expression.input<QString>(index));
         return 0;
     }
     auto *viewer = uicontext()->viewer(viewerId);
     if (!viewer){
-        ERROR1(TR("Invalid viewer id %1"), _expression.input<QString>(0));
+        ERROR1(TR("Invalid viewer id %1"), _expression.input<QString>(index));
         return 0;
     }
     return viewer->rootDrawer();
+}
+
+DrawerInterface *DrawerOperation::getRootDrawer(){
+
+    return getRootDrawer(0);
 }
 

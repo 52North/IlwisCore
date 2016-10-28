@@ -102,6 +102,8 @@ void SubGridDrawer::setAttribute(const QString &attrName, const QVariant &attrib
        _lineColor = attrib.value<QColor>();
    else if ( attrName == "gridcelldistance"){
        _cellDistance = attrib.toDouble();
+       //_rootDrawer->prepare(Ilwis::Geodrawer::DrawerInterface::ptGEOMETRY,Ilwis::IOOptions());
+       _prepared |= DrawerInterface::ptGEOMETRY;
    }
 }
 

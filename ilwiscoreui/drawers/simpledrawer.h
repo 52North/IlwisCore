@@ -9,7 +9,7 @@ namespace Ilwis{
 
 namespace Geodrawer{
 
-class SimpleDrawer : public BaseDrawer
+class ILWISCOREUISHARED_EXPORT SimpleDrawer : public BaseDrawer
 {
 public:
     SimpleDrawer(const QString &name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);

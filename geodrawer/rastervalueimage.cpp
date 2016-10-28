@@ -2,7 +2,6 @@
 #include <QOpenGLTexture>
 #include "raster.h"
 #include "pixeliterator.h"
-#include "rootdrawer.h"
 #include "factory.h"
 #include "abstractfactory.h"
 #include "drawers/rasterimagefactory.h"

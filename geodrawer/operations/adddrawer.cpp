@@ -13,9 +13,10 @@
 #include "models/layermanager.h"
 #include "drawers/drawerinterface.h"
 #include "../layerdrawer.h"
+#include "../drawercolorsets.h"
 #include "adddrawer.h"
 
-#include "../rootdrawer.h"
+#include "rootdrawer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
@@ -46,7 +47,7 @@ bool AddDrawer::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     Geodrawer::DrawerInterface *drawer;
     if ( _coverage.isValid())    {
-        LayerDrawer *ldrawer = DrawerFactory::create<LayerDrawer>(_coverage->ilwisType(), rootdrawer, rootdrawer, IOOptions());
+        LayerDrawer *ldrawer = DrawerFactory::create<LayerDrawer>(_coverage->ilwisType(), rootdrawer, rootdrawer, _options /* IOOptions() */);
         if ( !ldrawer){
             return ERROR2(ERR_NO_INITIALIZED_2,"Drawer",_coverage->name());
         }
@@ -57,7 +58,7 @@ bool AddDrawer::execute(ExecutionContext *ctx, SymbolTable &symTable)
         QVariant var = qVariantFromValue((void *)ldrawer);
         ctx->addOutput(symTable,var,"layerdrawer",_coverage->ilwisType(), Resource());
     }else if ( _drawerCode != ""){
-        drawer = Geodrawer::DrawerFactory::create<>(_drawerCode, rootdrawer, rootdrawer, IOOptions());
+        drawer = Geodrawer::DrawerFactory::create<>(_drawerCode, rootdrawer, rootdrawer, _options /*IOOptions()*/ );
         rootdrawer->addDrawer(drawer,drawer->drawerType(),drawer->defaultOrder());
     }
     rootdrawer->redraw();
@@ -76,10 +77,12 @@ Ilwis::OperationImplementation::State AddDrawer::prepare(ExecutionContext *ctx, 
         return sPREPAREFAILED;
 
      _rootDrawer =  (DrawerInterface *)  (*iter).second.value<void *>();
-    if ( _expression.parameterCount() == 4){
+    int parameterCount = _expression.parameterCount();
+    if ( parameterCount == 4){
         QString url = _expression.input<QString>(1);
         QString filter = _expression.input<QString>(2);
         QString tpname = _expression.input<QString>(3);
+
         IlwisTypes tp = IlwisObject::name2Type(tpname);
         if ( !hasType(tp , itCOVERAGE)){
             ERROR2(ERR_ILLEGAL_VALUE_2,TR("dataype for layer drawer"), tpname)    ;
@@ -96,8 +99,7 @@ Ilwis::OperationImplementation::State AddDrawer::prepare(ExecutionContext *ctx, 
             _coverage.prepare(res[0]);
         }else{
            _coverage.prepare(filter, tp);
-        }
-
+        }        
 
         if ( !_coverage.isValid()){
             kernel()->issues()->log(QString("Could not open as %1, %2").arg(tpname).arg(url));
@@ -110,11 +112,17 @@ Ilwis::OperationImplementation::State AddDrawer::prepare(ExecutionContext *ctx, 
              return sPREPAREFAILED;
          }
         //_coverage->loadData();
-    }else {
+    } else {
+        if (parameterCount == 3) {
+            QString colorset = _expression.input<QString>(2);
+            if (colorset.size() > 0) {
+                DrawerColorsets cs;
+                _options.addOption("areacolor", cs[colorset].area);
+                _options.addOption("bordercolor",cs[colorset].border);
+            }
+        }
         _drawerCode = _expression.input<QString>(1);
     }
-
-
 
     return sPREPARED;
 }
@@ -122,13 +130,16 @@ Ilwis::OperationImplementation::State AddDrawer::prepare(ExecutionContext *ctx, 
 quint64 AddDrawer::createMetadata()
 {
     OperationResource operation({"ilwis://operations/adddrawer"});
-    operation.setSyntax("adddrawer(viewid, drawername[,!datasource,!typename])");
+    operation.setSyntax("adddrawer(viewid, drawername[,!datasource,!typename][,!areacolor,!drawtarget])");
     operation.setDescription(TR("adds a new drawer to the layerview identified by viewid"));
-    operation.setInParameterCount({2,4});
+    operation.setInParameterCount({2,3,4,6});
     operation.addInParameter(0,itINTEGER , TR("view id"),TR("id of the view to which this drawer has to be added"));
     operation.addInParameter(1,itSTRING , TR("Drawer name/code"),TR("The name of the drawer or the type of drawer will be selected based on this parameter"));
     operation.addOptionalInParameter(2,itSTRING , TR("Data source"),TR("The url that is used to retrieve the data for this layer"));
     operation.addOptionalInParameter(3,itSTRING , TR("Data source typename"),TR("which data type is represented by this url"));
+
+    operation.addOptionalInParameter(4,itSTRING , TR("Area Color"),TR("Area colorset name for this selection drawer"));
+
     operation.setOutParameterCount({0});
     operation.setKeywords("visualization");
 

@@ -9,7 +9,7 @@
 #include "rootdrawer.h"
 #include "spatialdatadrawer.h"
 #include "griddrawer.h"
-#include "layersrenderer.h"
+//#include "layersrenderer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
@@ -29,10 +29,30 @@ RootDrawer::~RootDrawer()
     cleanUp();
 }
 
+bool RootDrawer::shouldOverride(SpatialDataDrawer *datadrawer) {
+
+    if (drawerCount(ComplexDrawer::dtMAIN) == 0)
+        return true;
+
+    // if the new envelope contains the existing envelope....
+    //if (datadrawer->envelope().contains(_viewEnvelope.min_corner()) && datadrawer->envelope().contains(_viewEnvelope.max_corner()))
+    //    return true;
+    // todo: there are more cases to take care of here, i.e., partial overlaps (maybe), or others...
+
+    //if (datadrawer->envelope().contains(_viewEnvelope.min_corner()) && datadrawer->envelope().contains(_viewEnvelope.max_corner()))
+
+    if (_viewEnvelope.contains(datadrawer->envelope().min_corner()) && _viewEnvelope.contains(datadrawer->envelope().max_corner()))
+        return false;
+
+    return true;
+}
+
 void RootDrawer::addSpatialDrawer(DrawerInterface *newdrawer, bool overrule)
 {
-    overrule = drawerCount(ComplexDrawer::dtMAIN) == 0 || overrule;
     SpatialDataDrawer *datadrawer = dynamic_cast<SpatialDataDrawer *>(newdrawer);
+
+    overrule = drawerCount(ComplexDrawer::dtMAIN) == 0 || overrule || shouldOverride(datadrawer) ;
+
     if ( overrule && datadrawer && datadrawer->coverage().isValid()) {
         ICoordinateSystem cs = datadrawer->coverage()->coordinateSystem();
         Envelope envelope =  envelope2RootEnvelope(cs, datadrawer->envelope());
@@ -40,9 +60,9 @@ void RootDrawer::addSpatialDrawer(DrawerInterface *newdrawer, bool overrule)
         bool setViewEnv =  envelope != viewEnv;
         viewEnv += envelope;
         _coverageRect = datadrawer->envelope();
-        if ( setViewEnv)
+        if ( setViewEnv) {
             applyEnvelopeView(viewEnv, true);
-
+        }
     }
     return ComplexDrawer::addDrawer(newdrawer);
 }
@@ -71,7 +91,7 @@ Envelope RootDrawer::coverageEnvelope() const
     return _coverageRect;
 }
 
-void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
+void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule, bool overrideZoom)
 {
     if ( !_coverageRect.isValid() || _coverageRect.isNull()){
         return;
@@ -87,7 +107,7 @@ void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
     double h = viewRect.ylength() - 1;
     _aspectRatioCoverage = w / h;
     double deltax = 0, deltay = 0;
-    Envelope env;
+
     if ( _aspectRatioCoverage <= 1.0) { // coverage is higher than it is wide)
         double pixwidth = (double)_pixelAreaSize.ysize() * _aspectRatioCoverage;
         if ( pixwidth > _pixelAreaSize.xsize()) {
@@ -97,10 +117,9 @@ void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
         double fractioOffWidth = 1.0 - (_pixelAreaSize.xsize() - pixwidth) / (double)_pixelAreaSize.xsize();
         double crdWidth = w / fractioOffWidth;
         deltax = (crdWidth - w) / 2.0;
-
-        _zoomRect = Envelope(Coordinate(viewRect.min_corner().x - deltax,viewRect.min_corner().y  - deltay/2.0,0),
+        if (_zoomRect.isNull() || !_zoomRect.isValid() || overrideZoom) // initialize the zoomRect for the first time, OR if explicitly defined to do so
+            _zoomRect = Envelope(Coordinate(viewRect.min_corner().x - deltax,viewRect.min_corner().y  - deltay/2.0,0),
                              Coordinate(viewRect.max_corner().x + deltax,viewRect.max_corner().y  + deltay/2.0,0));
-
     } else {
         double pixheight = _pixelAreaSize.xsize() / _aspectRatioCoverage;
         if ( pixheight > _pixelAreaSize.ysize()){
@@ -110,14 +129,20 @@ void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule)
         double fractionOfHeight = 1.0 - std::abs(_pixelAreaSize.ysize() - pixheight)/(double)_pixelAreaSize.ysize();
         double crdHeight = h / fractionOfHeight;
         deltay = (crdHeight - h)/ 2.0;
-        _zoomRect = Envelope(Coordinate(viewRect.min_corner().x - deltax /2.0,viewRect.min_corner().y  - deltay,0),
+        if (_zoomRect.isNull() || !_zoomRect.isValid() || overrideZoom) // initialize the zoomRect for the first time, OR if explicitly defined to do so
+            _zoomRect = Envelope(Coordinate(viewRect.min_corner().x - deltax /2.0,viewRect.min_corner().y  - deltay,0),
                              Coordinate(viewRect.max_corner().x + deltax /2.0,viewRect.max_corner().y  + deltay,0));
     }
-
     viewPoint(_zoomRect.center(), true);
-
     setMVP();
 
+    if ( hasDrawer("griddrawer",DrawerInterface::dtPOST)){
+            drawer("griddrawer",DrawerInterface::dtPOST)->unprepare(DrawerInterface::ptGEOMETRY);
+    }
+}
+
+void RootDrawer::applyEnvelopeView(const Envelope &viewRect, bool overrule){
+    applyEnvelopeView(viewRect, overrule, false);
 }
 
 void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
@@ -128,7 +153,6 @@ void RootDrawer::applyEnvelopeZoom(const Envelope &zoomRect)
     Envelope envelope = zoomRect;
     if ( _zoomRect.isValid()) {
     // zooming never changes the shape of the mapwindow so any incomming zoom rectangle must conform to the shape of the existing mapwindow
-
         double factCur = (_zoomRect.xlength() - 1.0) / (_zoomRect.ylength() - 1.0);
         double factIn = (zoomRect.xlength() - 1.0) / (zoomRect.ylength() - 1.0);
         double delta = std::abs(factCur - factIn);
@@ -279,7 +303,6 @@ bool RootDrawer::prepare(DrawerInterface::PreparationType prepType, const IOOpti
     if ( hasType(prepType, DrawerInterface::ptGEOMETRY) && !isPrepared(DrawerInterface::ptGEOMETRY)){
         if (!hasDrawer("GridDrawer", DrawerInterface::dtPOST)){
             drawer("GridDrawer", DrawerInterface::dtPOST)->prepare(DrawerInterface::ptALL, options);
-
         }
     }
     return true;
@@ -366,6 +389,13 @@ QVariant RootDrawer::attribute(const QString &attrNme) const
         QVariant var = qVariantFromValue(_backgroundColor);
         return var;
     }
+
+    // test.
+    if ( attrName == "viewenvelope"){
+        QVariant var = qVariantFromValue(_viewEnvelope);
+        return var;
+    }
+
     return QVariant();
 }
 

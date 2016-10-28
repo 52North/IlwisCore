@@ -15,7 +15,7 @@ namespace Geodrawer{
 
 class VisualAttribute;
 
-class SpatialDataDrawer : public ComplexDrawer
+class ILWISCOREUISHARED_EXPORT SpatialDataDrawer : public ComplexDrawer
 {
 public:
     SpatialDataDrawer(const QString& name, DrawerInterface* parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);

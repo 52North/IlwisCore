@@ -245,10 +245,7 @@ void SpatialDataDrawer::setAttribute(const QString &key, const QVariant &attrib)
                     VisualAttribute& attr = _visualProperties[parts[2]];
                     attr.domain(dom);
                 }
-
             }
-
-
         }
     }
 }
