@@ -56,7 +56,8 @@ class KERNELSHARED_EXPORT GridBlock {
 public:
     enum Pivot{pLEFTUP, pCENTER};
 
-    GridBlock(BlockIterator& biter);
+    GridBlock();
+    GridBlock(BlockIterator *biter);
     double& operator()(qint32 x, qint32 y, qint32 z=0);
     double operator()(qint32 x, qint32 y, qint32 z=0) const;
     Size<> size() const;
@@ -65,9 +66,11 @@ public:
     const BlockIterator& iterator() const;
     bool isValid() const;
     Pixel position() const;
+    void setValue(double v);
     std::vector<double> toVector(Pivot pivot = pCENTER) const;
+
 private:
-    BlockIterator& _iterator;
+    BlockIterator* _iterator;
     std::vector<quint32> _internalBlockNumber;
     std::vector<quint32> _offsets;
     quint32 _blockYSize;
@@ -105,6 +108,15 @@ private:
 };
 
 
+}
+
+inline Ilwis::CellIterator begin(Ilwis::GridBlock& block) {
+    return Ilwis::CellIterator(&block, false);
+}
+
+inline Ilwis::CellIterator end(Ilwis::GridBlock& block) {
+    Ilwis::CellIterator iter(&block, true);
+    return iter;
 }
 
 #endif // BLOCKITERATOR_H

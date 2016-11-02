@@ -80,17 +80,21 @@ bool Ilwis::operator!=(const CellIterator& iter1, const CellIterator& iter2) {
 
 
 //--------------------------------------------------------
-GridBlock::GridBlock(BlockIterator& iter) :
+GridBlock::GridBlock() : _iterator(0){
+
+}
+
+GridBlock::GridBlock(BlockIterator *iter) :
     _iterator(iter)
 {
     // for efficiency the blocks and offsets are precalculated at the cost of some memory
     // when calculating the linear postions only very basic operations are needed then
     if (! isValid())
         return ;
-    int ysize = iter._raster->size().ysize();
-    _blockYSize = iter._raster->_grid->maxLines();
-    _blockXSize = iter._raster->_grid->size().xsize();
-    _XYSize = iter._raster->_grid->size().xsize() * iter._raster->_grid->size().ysize();
+    int ysize = iter->_raster->size().ysize();
+    _blockYSize = iter->_raster->_grid->maxLines();
+    _blockXSize = iter->_raster->_grid->size().xsize();
+    _XYSize = iter->_raster->_grid->size().xsize() * iter->_raster->_grid->size().ysize();
     _internalBlockNumber.resize(ysize);
     _offsets.resize(ysize);
     qint32 base = 0;
@@ -101,19 +105,19 @@ GridBlock::GridBlock(BlockIterator& iter) :
         _offsets[i] = base;
         base += _blockXSize;
     }
-    _bandOffset = iter._raster->_grid->blocksPerBand();
+    _bandOffset = iter->_raster->_grid->blocksPerBand();
 }
 
 double& GridBlock::operator ()(qint32 x, qint32 y, qint32 z)
 {
     if ( !isValid())
         throw ErrorObject(TR("Using invalid pixeliterator, are all data sources accessible?"));
-    if ( _iterator._outside != rILLEGAL) {
-        _iterator._outside = rILLEGAL;
+    if (_iterator->_outside != rILLEGAL) {
+       _iterator->_outside = rILLEGAL;
     }
 
     actualPosition(x,y,z);
-    double &v = _iterator._raster->_grid->value(_internalBlockNumber[y ] + _bandOffset * z, _offsets[y] + x);
+    double &v =_iterator->_raster->_grid->value(_internalBlockNumber[y ] + _bandOffset * z, _offsets[y] + x);
     return v;
 
 }
@@ -122,26 +126,26 @@ double GridBlock::operator ()(qint32 x, qint32 y, qint32 z) const
 {
     if ( !isValid())
         throw ErrorObject(TR("Using invalid pixeliterator, are all data sources accessible?"));
-    if ( _iterator._outside != rILLEGAL) {
-        _iterator._outside = rILLEGAL;
+    if (_iterator->_outside != rILLEGAL) {
+       _iterator->_outside = rILLEGAL;
     }
 
     actualPosition(x,y,z);
-    double v = _iterator._raster->_grid->value(_internalBlockNumber[y ] + _bandOffset * z, _offsets[y] +  x);
+    double v =_iterator->_raster->_grid->value(_internalBlockNumber[y ] + _bandOffset * z, _offsets[y] +  x);
     return v;
 
 }
 
 void GridBlock::actualPosition(qint32& x, qint32& y, qint32& z) const
 {
-    x = std::max(0, std::min(_iterator._x + x, _iterator._endx));
-    y = std::max(0, std::min(_iterator._y + y, _iterator._endy));
-    z = std::max(0, std::min(_iterator._z + z, _iterator._endz));
+    x = std::max(0, std::min(_iterator->_x + x,_iterator->_endx));
+    y = std::max(0, std::min(_iterator->_y + y,_iterator->_endy));
+    z = std::max(0, std::min(_iterator->_z + z,_iterator->_endz));
 }
 
 Size<> GridBlock::size() const
 {
-    return _iterator.blockSize();
+    return _iterator->blockSize();
 }
 
 CellIterator GridBlock::begin()
@@ -156,22 +160,22 @@ CellIterator GridBlock::end()
 
 const BlockIterator &GridBlock::iterator() const
 {
-    return _iterator;
+    return *_iterator;
 }
 
 bool GridBlock::isValid() const
 {
-    return _iterator.isValid();
+    return _iterator->isValid();
 }
 
 Pixel GridBlock::position() const
 {
-    return _iterator.position();
+    return _iterator->position();
 }
 
 std::vector<double> GridBlock::toVector(Pivot pivot) const{
-    const Size<>& size = _iterator.blockSize();
-    Pixel leftup(-size.xsize() /2,-size.ysize()/2,-size.zsize()/2);
+    const Size<>& size =_iterator->blockSize();
+    Pixel leftup(-(size.xsize() /2),-(size.ysize()/2),-(size.zsize()/2));
     Pixel rightdown(size.xsize() /2,size.ysize()/2,size.zsize()/2);
     if ( pivot == pLEFTUP){
         leftup = Pixel(0,0,0);
@@ -193,16 +197,15 @@ std::vector<double> GridBlock::toVector(Pivot pivot) const{
 //----------------------------------------------------------------------------------------------
 BlockIterator::BlockIterator(IRasterCoverage raster, const Size<> &sz, const BoundingBox &box, const Size<>& stepsize) :
     PixelIterator(raster,box),
-    _block(*this),
+    _block(this),
     _blocksize(sz),
     _stepsizes(stepsize.isValid() ? stepsize : sz)
 
 {
 }
 
-BlockIterator::BlockIterator(quint64 endpos) : PixelIterator(endpos), _block(*this)
+BlockIterator::BlockIterator(quint64 endpos) : PixelIterator(endpos)
 {
-
 }
 
 BlockIterator& BlockIterator::operator ++()
