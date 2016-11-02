@@ -3,7 +3,6 @@
 #include <QtGui/QOpenGLShaderProgram>
 #include <QtGui/QOpenGLContext>
 #include <QDir>
-#include "rootdrawer.h"
 #include "table.h"
 #include "layerdrawer.h"
 #include "drawingcolor.h"
@@ -101,6 +100,7 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
 
         bool needPrepare = false;
         LayersView *gdrawer = static_cast<LayersView *>(item);
+
         _viewPortSize =  QSize(gdrawer->width(), gdrawer->height());
         _windowSize = gdrawer->window()->size();
         _rootDrawer->pixelAreaSize(_viewPortSize);
@@ -154,10 +154,8 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
         }
         if ( needPrepare){
             _rootDrawer->prepare(Ilwis::Geodrawer::DrawerInterface::ptALL,Ilwis::IOOptions());
-           emit synchronizeDone();
+            emit synchronizeDone();
         }
-
-
     } catch ( const ErrorObject& ){
 
     } catch ( const std::exception ex){
@@ -167,7 +165,6 @@ void LayersRenderer::synchronize(QQuickFramebufferObject *item)
 
 void LayersRenderer::handleRendererAttributes(const QString& code, const QVariant& value){
     if ( code == "saveimage")    {
-        //QString path = value.toString();
         _saveImagePath = value.toString();
     }
 }

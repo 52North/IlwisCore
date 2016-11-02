@@ -14,8 +14,9 @@ public:
     DrawerOperation(quint64 metaid, const Ilwis::OperationExpression &expr);
 protected:
     DrawerInterface *_rootDrawer = 0;
-    quint64 _viewid = i64UNDEF;
+    quint64 _viewid = i64UNDEF; // what is this used for?????
     DrawerInterface * getRootDrawer();
+    DrawerInterface * getRootDrawer(const quint64 index);
 };
 }
 }

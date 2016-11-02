@@ -12,7 +12,7 @@ import "../.." as Base
 
 LayersView {
 
-    objectName : "overview_mainui"
+    objectName : "overview_mainui_"  + uicontext.uniqueName()
     active : false
 
     Component.onCompleted: {
@@ -21,19 +21,20 @@ LayersView {
         renderer.associate(objectName,"drawEnded")
     }
 
+
     function finalizeDraw(){
-        if ( layersmeta.currentIndex == 2){
+        //if ( layersmeta.currentIndex == 2){
             if (metatdata.manager && !metatdata.manager.hasSelectionDrawer){
                 coverage.addCommand("adddrawer(" + coverage.viewerId + ",selectiondrawer)")
                 metatdata.manager.hasSelectionDrawer = true
             }
-            if ( metatdata.manager && layerview.manager){
+            /*if ( metatdata.manager && layerview.manager){
                 var envelope = renderer.attributeOfDrawer("selectiondrawer","envelope")
                 var env = {envelope : envelope, preserveaspectration : false}
                 overview.setAttribute("selectiondrawer", env )
                 overview.update()
-            }
-        }
+            }*/
+        //}
 
     }
 }

@@ -93,7 +93,16 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/resourcemanager.h \
     ilwiscoreui/models/catalogviewmanager.h \
     ilwiscoreui/propertyeditors/openattributetable.h \
-    ilwiscoreui/models/scriptmodel.h
+    ilwiscoreui/models/scriptmodel.h \
+    ilwiscoreui/drawers/basedrawer.h \
+    ilwiscoreui/drawers/complexdrawer.h \
+    ilwiscoreui/drawers/rootdrawer.h \
+    ilwiscoreui/drawers/simpledrawer.h \
+    ilwiscoreui/drawers/DrawerInterface.h \
+    ilwiscoreui/drawers/spatialdatadrawer.h \
+    ilwiscoreui/drawers/griddrawer.h \
+    ilwiscoreui/drawers/selectiondrawer.h
+
 
 SOURCES += \
     ilwiscoreui/models/attributemodel.cpp \
@@ -142,7 +151,7 @@ SOURCES += \
     ilwiscoreui/models/graphmodel.cpp \
     ilwiscoreui/models/chartmodel.cpp \
     ilwiscoreui/models/datapanemodel.cpp \
-   ilwiscoreui/models/tabmodel.cpp \
+    ilwiscoreui/models/tabmodel.cpp \
     ilwiscoreui/models/operationworker.cpp \
     ilwiscoreui/models/objectcreator.cpp \
     ilwiscoreui/models/ilwisobjectcreatormodel.cpp \
@@ -167,7 +176,14 @@ SOURCES += \
     ilwiscoreui/models/resourcemanager.cpp \
     ilwiscoreui/models/catalogviewmanager.cpp \
     ilwiscoreui/propertyeditors/openattributetable.cpp \
-    ilwiscoreui/models/scriptmodel.cpp
+    ilwiscoreui/models/scriptmodel.cpp \
+    ilwiscoreui/drawers/spatialdatadrawer.cpp \
+    ilwiscoreui/drawers/griddrawer.cpp \
+    ilwiscoreui/drawers/basedrawer.cpp \
+    ilwiscoreui/drawers/complexdrawer.cpp \
+    ilwiscoreui/drawers/rootdrawer.cpp \
+    ilwiscoreui/drawers/simpledrawer.cpp \
+    ilwiscoreui/drawers/selectiondrawer.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

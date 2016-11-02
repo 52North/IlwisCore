@@ -12,7 +12,7 @@ MouseArea {
     hoverEnabled: true
     property LayerManager layerManager
     property LayersView drawer
-    property LayersView linkedDrawer
+    property bool zoomToExtents : true
     property MapScrollers mapScrollers
     property bool showInfo : false
     property bool hasPermanence : false
@@ -21,6 +21,8 @@ MouseArea {
     property int panningPrevMouseX : -1
     property int panningPrevMouseY : -1
     property int panningDirection : Global.panningReverse
+    property string selectiondrawerColor : "basic"
+    property string subscription
     signal zoomEnded(string envelope)
 
     Controls.FloatingRectangle{
@@ -28,7 +30,6 @@ MouseArea {
     }
 
     onPressed:  {
-        //console.log("onPressed...")
         if ( layerview.tabmodel){
             if (!layerview.tabmodel.selected)
                 layerview.tabmodel.selectTab()
@@ -36,21 +37,20 @@ MouseArea {
         if ( layerManager.zoomInMode ){
             if ( !zoomStarted){
                 drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
-                if (drawer.viewerId !== linkedDrawer.viewerId)
-                    linkedDrawer.addCommand("removedrawer(" + linkedDrawer.viewerId + ",selectiondrawer,post)");
                 layerManager.hasSelectionDrawer = false
             }
 
-            if ( !layerManager.hasSelectionDrawer){
+            if ( !layerManager.hasSelectionDrawer){ // overview
                 var position = {initialx: mouseX, initialy:mouseY}
                 layerManager.hasSelectionDrawer = true
-                drawer.addCommand("adddrawer(" + drawer.viewerId + ",selectiondrawer)")
+
+                drawer.addCommand("adddrawer(" + drawer.viewerId + ",selectiondrawer, "+ selectiondrawerColor +")")
                 drawer.setAttribute("selectiondrawer", position)
                 drawer.update()
             }
             zoomStarted = true
-
         }
+
         if ( layerManager.panningMode ){
             panningStarted = true
             panningPrevMouseX = mouseX
@@ -66,8 +66,13 @@ MouseArea {
           var mposition = mouseX + "|" + mouseY
           floatrect.text = drawer.layerInfo(mposition)
         }
-
     }
+
+    function panMapArea(dX, dY) {
+        mapScrollers.vscroller.scroll(panningDirection * dY, true)
+        mapScrollers.hscroller.scroll(panningDirection * dX, true)
+    }
+
     onPositionChanged: {
         if (!layerManager.panningMode) {
             cursorShape = Qt.ArrowCursor
@@ -80,29 +85,47 @@ MouseArea {
 
         var mposition = mouseX + "|" + mouseY
         drawer.currentCoordinate = mposition
+
+        var dX = mouseX - panningPrevMouseX
+        var dY = mouseY - panningPrevMouseY
+
         if ( (zoomStarted || panningStarted) && layerManager.hasSelectionDrawer){
             var position;
-            if (!panningStarted) {
+
+            if (!panningStarted) { // zooming.....
                 position = {currentx: mouseX, currenty:mouseY}
                 drawer.setAttribute("selectiondrawer", position)
                 drawer.copyAttribute("selectiondrawer","envelope");
             }
             else {
-                position = {initialx: mouseX - 40, initialy: mouseY + 40}
-                drawer.setAttribute("selectiondrawer", position)
-                position = {currentx: mouseX + 40, currenty:mouseY - 40}
-                drawer.setAttribute("selectiondrawer", position)
-                //console.log("drag na overview")
-                drawer.copyAttribute("selectiondrawer","envelope");
+                var selDrawerEnvelope = drawer.attributeOfDrawer("selectiondrawer","envelope");
+
+                var x1,x2,y1,y2
+                var parts = selDrawerEnvelope.split(" ")
+                x1 = parseFloat(parts[0])
+                y1 = parseFloat(parts[1])
+                x2 = parseFloat(parts[2])
+                y2 = parseFloat(parts[3])
+
+                var screenpos = {x: mouseX, y: mouseY, z: 0}
+                var georefScreenPos = layerManager.screen2Coord(screenpos)
+
+                if (georefScreenPos.x >= x1 && georefScreenPos.x <= x2 && georefScreenPos.y >= y1 && georefScreenPos.y <= y2) {
+                    panMapArea(dX, dY)
+
+                    var nx1 = x1 + dX
+                    var nx2 = x2 + dX
+                    var ny1 = y1 - dY
+                    var ny2 = y2 - dY
+
+                    var newenvelope = nx1 + " " + ny1 + " " + nx2 + " " + ny2
+                    viewmanager.newZoomExtent(newenvelope)
+                    layerview.publish( subscription, { envelope: newenvelope, options : false} )
+                    panningPrevMouseX = mouseX
+                    panningPrevMouseY = mouseY
+                }
             }
             drawer.update()
-        }
-        if (panningStarted) {
-            // todo: probably can be fine tuned, thus providing a smoother panning
-            mapScrollers.vscroller.scroll(panningDirection * (mouseY - panningPrevMouseY))
-            mapScrollers.hscroller.scroll(panningDirection * (mouseX - panningPrevMouseX))
-            panningPrevMouseX = mouseX
-            panningPrevMouseY = mouseY
         }
         if ( showInfo && floatrect.opacity > 0){
             floatrect.x = mouseX
@@ -114,7 +137,19 @@ MouseArea {
     onReleased: {
         if ( layerManager.zoomInMode && layerManager.hasSelectionDrawer){
             var envelope = drawer.attributeOfDrawer("selectiondrawer","envelope");
-            linkedDrawer.addCommand("setviewextent("+ linkedDrawer.viewerId + "," + envelope + ")");
+            //var pixelarea = drawer.attributeOfDrawer("rootdrawer","pixelarea");
+
+            if (zoomToExtents)
+                drawer.addCommand("setviewextent("+ drawer.viewerId + "," + envelope + ")");
+
+            var options
+            if (!zoomToExtents)
+                options = true // TODO: create some sort of options array here, instead....
+            else
+                options = false
+
+            layerview.publish(subscription, { envelope: envelope, options : options} )
+
             if ( envelope !== "" && !hasPermanence){
                 layerManager.hasSelectionDrawer = false
                 drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
@@ -126,7 +161,6 @@ MouseArea {
             }
             zoomEnded(envelope)
             zoomStarted = false
-            linkedDrawer.update()
         }
         if ( layerManager.panningMode ){
             panningStarted = false

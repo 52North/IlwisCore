@@ -11,24 +11,28 @@ Item {
 
     property alias vscroller : vscroller
     property alias hscroller : hscroller
+    property string subscription
+
+    signal scrolled(string envelope)
 
     Controls.HScrollBar{
         anchors.bottom : parent.bottom
         id :hscroller
-        objectName: uicontext.uniqueName()
+        objectName: "hscrollbar" + uicontext.uniqueName()
 
-        function updateItem(){
+        function clbkSynchronizeEnded(){
             var envView = maparea.drawer.viewEnvelope
             maxSize = envView.maxx - envView.minx
             var envZoom = maparea.drawer.zoomEnvelope
             oldPosition = -10000
             currentSize = envZoom.maxx - envZoom.minx
-            if ( currentPosition < 0)
+
+            if ( currentPosition < 0) {
                 currentPosition = 0
+            }
             else{
                 currentPosition = envZoom.minx - envView.minx
             }
-
             return 0
         }
 
@@ -41,14 +45,15 @@ Item {
             envZoom.maxx = newPos2
             maparea.drawer.zoomEnvelope = envZoom
 
+            parent.scrolled(envZoom.minx + " " + envZoom.miny + " " + envZoom.maxx + " " + envZoom.maxy)
         }
     }
     Controls.VScrollBar{
         anchors.right : parent.right
         id :vscroller
-        objectName: uicontext.uniqueName()
+        objectName: "vscrollbar" + uicontext.uniqueName()
 
-        function updateItem(){
+        function clbkSynchronizeEnded(){
             var envView = maparea.drawer.viewEnvelope
             maxSize = envView.maxy - envView.miny
             var envZoom = maparea.drawer.zoomEnvelope
@@ -59,7 +64,6 @@ Item {
             else{
                 currentPosition = envView.maxy - envZoom.maxy
             }
-
             return 0
         }
 
@@ -72,6 +76,7 @@ Item {
             envZoom.maxy = newPos1
             maparea.drawer.zoomEnvelope = envZoom
 
+            parent.scrolled(envZoom.minx + " " + envZoom.miny + " " + envZoom.maxx + " " + envZoom.maxy)
         }
     }
     Component.onCompleted: {

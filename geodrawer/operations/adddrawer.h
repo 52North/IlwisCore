@@ -1,6 +1,8 @@
 #ifndef ADDDRAWER_H
 #define ADDDRAWER_H
 
+#include "iooptions.h"
+
 namespace Ilwis {
 namespace Geodrawer {
 
@@ -21,6 +23,7 @@ public:
 private:
     ICoverage _coverage;
     QString _drawerCode;
+    IOOptions _options;
 
     NEW_OPERATION(AddDrawer);
 };

@@ -50,10 +50,11 @@ Rectangle {
             offset =  viewportMax - scrollerBottomThumbPos;
 
         if ( (scrollerTopThumbPos + offset) >= 0 && (scrollerBottomThumbPos + offset) <= viewportMax){
-            viewportVerticalScrollPosition += offset
-            if ( oldPosition == -10000){
+
+            if ( oldPosition === -10000){
                 oldPosition = viewportVerticalScrollPosition // keep for the scroller draggable button
             }
+            viewportVerticalScrollPosition += offset
 
             var rely = viewportVerticalScrollPosition / marea.height
             var oldRely = oldPosition / marea.height

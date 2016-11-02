@@ -56,6 +56,24 @@ public:
     }
 
 
+    Location(const QVariantMap& l){
+        bool ok;
+        double x = l["x"].toDouble(&ok);
+        if (ok){
+            double y = l["y"].toDouble(&ok);
+            if (ok){
+                double z = l["z"].toDouble(&ok);
+                if (ok){
+                    this->x = (CrdType)x;
+                    this->y = (CrdType)y;
+                    this->z = (CrdType)z;
+                    return;
+                }
+            }
+        }
+    }
+
+
     Location(const std::vector<CrdType>& v) : Location() {
         if ( v.size() < 2) {
             *this = Location<CrdType>();

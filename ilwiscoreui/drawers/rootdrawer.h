@@ -6,6 +6,7 @@
 #include <QObject>
 #include "kernel.h"
 #include "ilwisdata.h"
+#include "spatialdatadrawer.h"
 #include "complexdrawer.h"
 
 class QQuickFramebufferObject;
@@ -19,7 +20,9 @@ typedef IlwisData<GeoReference> IGeoReference;
 
 namespace Geodrawer{
 
-class RootDrawer : public ComplexDrawer
+class DrawerInterface;
+
+class ILWISCOREUISHARED_EXPORT RootDrawer : public ComplexDrawer
 {
     Q_OBJECT
 public:
@@ -31,7 +34,8 @@ public:
 
     Envelope viewEnvelope() const;
     Envelope zoomEnvelope() const;
-    Envelope coverageEnvelope() const;
+    Envelope coverageEnvelope() const;    
+    void applyEnvelopeView(const Envelope &viewRect, bool overrule, bool overrideZoom);
     void applyEnvelopeView(const Envelope& viewRect, bool overrule);
     void applyEnvelopeZoom(const Envelope& zoomRect);
     void pixelAreaSize(const Size<> &size);
@@ -44,7 +48,7 @@ public:
 
     void viewPoint(const Coordinate &viewCenter, bool setEyePoint=false);
     void cleanUp();
-    bool prepare(PreparationType prepType, const IOOptions& options);
+    bool prepare(DrawerInterface::PreparationType prepType, const IOOptions& options);
 
     double aspectRatioView() const;
     double zoomScale() const;
@@ -83,10 +87,12 @@ private:
     bool _is3D = false;
     const QQuickFramebufferObject *_frameBufferObject;
 
-    bool _useGeoref = false;
+    //bool _useGeoref = false;
 
     Envelope envelope2RootEnvelope(const ICoordinateSystem& csSource, const Envelope& env);
     void setMVP();
+
+    bool shouldOverride(SpatialDataDrawer *datadrawer);
 
 
 };

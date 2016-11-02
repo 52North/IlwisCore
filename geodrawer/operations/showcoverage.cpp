@@ -15,7 +15,7 @@
 #include "../layerdrawer.h"
 #include "showcoverage.h"
 
-#include "../rootdrawer.h"
+#include "rootdrawer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;

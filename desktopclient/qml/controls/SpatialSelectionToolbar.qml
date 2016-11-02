@@ -33,6 +33,7 @@ Rectangle {
         onTriggered : {
             if ( worldmapcontainer.manager){
                 var envelope = worldmap.attributeOfDrawer("rootdrawer","zoomenvelope");
+                console.log("SpatialSelectionToolbar.qml: zoomOutClicked: envelope= " + envelope)
                 Global.calcZoomOutEnvelope(envelope, worldmap, worldmapcontainer.manager,0.707)
             }
         }

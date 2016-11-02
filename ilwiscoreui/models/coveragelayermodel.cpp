@@ -163,6 +163,16 @@ Ilwis::ICoverage CoverageLayerModel::coverage() const
     return ICoverage();
 }
 
+Geodrawer::RootDrawer *CoverageLayerModel::rootDrawer()
+{
+    return _rootDrawer;
+}
+
+const Geodrawer::RootDrawer *CoverageLayerModel::rootDrawer() const
+{
+    return _rootDrawer;
+}
+
 void CoverageLayerModel::addVisualAttribute(VisualAttributeModel *attr)
 {
     _visualAttributes.append(attr);

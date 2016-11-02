@@ -22,6 +22,7 @@ using namespace Ilwis;
 LayerManager::LayerManager(QObject *parent) :
     QObject(parent)
 {
+
 }
 
 LayerManager::LayerManager(QObject *parent, UIContextModel *context) : QObject(parent), _uicontext(context)
@@ -113,10 +114,6 @@ void LayerManager::setHasSelectionDrawer(bool yesno)
     _hasSelectionDrawer = yesno;
 }
 
-void LayerManager::setScreenGeoReference(const IGeoReference &grf)
-{
-    _screenGrf = grf;
-}
 
 void LayerManager::moveLayer(int index, LayerManager::LayerMovement type)
 {
@@ -132,10 +129,6 @@ void LayerManager::moveLayer(int index, LayerManager::LayerMovement type)
     }
 }
 
-IGeoReference LayerManager::screenGrf() const
-{
-    return _screenGrf;
-}
 
 void LayerManager::setLayerListName(const QString name)
 {
@@ -156,6 +149,7 @@ Ilwis::Geodrawer::DrawerInterface *LayerManager::rootDrawer()
 {
     if ( _layers.size() > 1){
         return (Geodrawer::DrawerInterface *)(_layers[1]->drawer()->rootDrawer());
+        //return (Geodrawer::DrawerInterface *)(_layers[1]->rootDrawer());
     }
     return 0;
 }
@@ -164,8 +158,19 @@ const Geodrawer::DrawerInterface *LayerManager::rootDrawer() const
 {
     if ( _layers.size() > 1){
         return (Geodrawer::DrawerInterface *)(_layers[1]->drawer()->rootDrawer());
+        //return (Geodrawer::DrawerInterface *)(_layers[1]->rootDrawer());
     }
     return 0;
+}
+
+const IGeoReference LayerManager::screenGrf() const
+{
+
+    if (_layers.size() > 1)
+        return _layers[1]->drawer()->rootDrawer()->screenGrf();
+        //return _layers[1]->rootDrawer()->screenGrf();
+    else
+        return IGeoReference();
 }
 
 void LayerManager::layersView(LayersViewCommandInterface *view)
@@ -267,18 +272,18 @@ QVariantMap LayerManager::coord2Screen(const QVariantMap &var) const
 {
     Envelope env(var);
 
-    BoundingBox bb = _screenGrf->coord2Pixel(env);
+    BoundingBox bb = screenGrf()->coord2Pixel(env);
 
     return bb.toMap();
 }
 
-QVariantMap LayerManager::screen2Coord(const QVariantMap &var)
+QVariantMap LayerManager::screen2Coord(const QVariantMap &var) const
 {
-    BoundingBox bb(var);
+    Pixeld p(var);
 
-    Envelope env = _screenGrf->pixel2Coord(bb);
+    Coordinate c = screenGrf()->pixel2Coord(p);
 
-    return env.toMap();
+    return c.toMap();
 }
 
 void LayerManager::init()

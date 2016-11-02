@@ -41,7 +41,7 @@ public:
     Q_INVOKABLE CoverageLayerModel* layer(quint32 layerIndex);
     Q_INVOKABLE void refresh();
     QVariantMap coord2Screen(const QVariantMap &var) const;
-    Q_INVOKABLE QVariantMap screen2Coord(const QVariantMap &var);
+    Q_INVOKABLE QVariantMap screen2Coord(const QVariantMap &var) const;
 
     void addVisualizationModel(CoverageLayerModel* model);
     void addDataSource(const QUrl& url, IlwisTypes tp, Ilwis::Geodrawer::DrawerInterface *drawer);
@@ -52,8 +52,7 @@ public:
     bool hasSelectionDrawer() const;
     void setHasSelectionDrawer(bool yesno);
     void setScreenGeoReference(const Ilwis::IGeoReference& grf);
-    void moveLayer(int index, LayerMovement type);
-    Ilwis::IGeoReference screenGrf() const;
+    void moveLayer(int index, LayerMovement type);    
     QString currentCoordinate() const;
     void setCurrentCoordinate(const QString& var);
     QString currentLatLon() const;
@@ -61,6 +60,7 @@ public:
     ResourceModel *coordinateSystem() const;
     Ilwis::Geodrawer::DrawerInterface *rootDrawer();
     const Ilwis::Geodrawer::DrawerInterface *rootDrawer() const;
+    const Ilwis::IGeoReference screenGrf() const;
 
     void layersView(LayersViewCommandInterface* view);
     QQmlListProperty<CoverageLayerModel> layers();
@@ -85,7 +85,6 @@ private:
     QList<LayerInfoItem *> _layerInfoItems;
     QList<CoverageLayerModel *> _layers;
     UIContextModel *_uicontext;
-    Ilwis::IGeoReference _screenGrf;
     bool _zoomInMode = false;
     bool _panningMode = false;
     bool _hasSelectionDrawer = false;

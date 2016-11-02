@@ -68,10 +68,9 @@ struct ILWISCOREUISHARED_EXPORT VertexColorI {
 };
 
 class RootDrawer;
-class DrawerInterface;
 
 class ILWISCOREUISHARED_EXPORT DrawerInterface : public QObject, public IdentityInterface{
-public:
+public://class DrawerInterface;
     enum PreparationType{ptNONE=0,ptRENDER=1,ptGEOMETRY=2,ptINITOPENGL=4,ptUI=8,pt3D=16,ptANIMATION=32,
                          ptRESTORE=64,ptOFFSCREENSTART=128,ptOFFSCREENEND=256,
                          ptREDRAW=512,ptNEWCSY=1024,ptMVP=2048,ptSHADERS=4096, ptRESET=8192,ptALL=4294967295};
@@ -82,9 +81,9 @@ public:
     virtual ~DrawerInterface();
 
     virtual bool draw(const IOOptions& options=IOOptions()) = 0;
-    virtual bool prepare(PreparationType prepType, const IOOptions& options) = 0;
-    virtual void unprepare(PreparationType prepType) = 0;
-    virtual bool isPrepared(quint32 type=ptALL) const = 0;
+    virtual bool prepare(DrawerInterface::PreparationType prepType, const IOOptions& options) = 0;
+    virtual void unprepare(DrawerInterface::PreparationType prepType) = 0;
+    virtual bool isPrepared(quint32 type=DrawerInterface::ptALL) const = 0;
 
     virtual RootDrawer* rootDrawer() = 0;
     virtual const RootDrawer* rootDrawer() const = 0;
@@ -98,7 +97,7 @@ public:
     virtual bool isSelected() const = 0;
     virtual void selected(bool yesno) = 0;
     virtual void cleanUp() = 0;
-    virtual QColor color(const IRepresentation& rpr, double value, ColorValueMeaning cvm = cvmTRUEVALUE) = 0;
+    virtual QColor color(const IRepresentation& rpr, double value, DrawerInterface::ColorValueMeaning cvm = DrawerInterface::cvmTRUEVALUE) = 0;
 
     virtual std::vector<QVariant> attributes(const QString& attrNames) const = 0;
     virtual QVariant attribute(const QString& attrName) const = 0;
@@ -106,13 +105,13 @@ public:
     virtual void setAttribute(const QString& attrName, const QVariant& attrib)  = 0;
     virtual bool drawerAttribute(const QString& drawercode, const QString& attrName, const QVariant& attrib)  = 0;
     virtual void resetVisualProperty(const QString &propertyName, const IRepresentation &rpr) = 0;
-    virtual std::unique_ptr<DrawerInterface>& drawer(const QString& code, DrawerInterface::DrawerType drawerType = dtMAIN) = 0;
-    virtual const std::unique_ptr<DrawerInterface>& drawer(const QString& code, DrawerInterface::DrawerType drawerType = dtMAIN) const = 0;
+    virtual std::unique_ptr<DrawerInterface>& drawer(const QString& code, DrawerInterface::DrawerType drawerType = DrawerInterface::dtMAIN) = 0;
+    virtual const std::unique_ptr<DrawerInterface>& drawer(const QString& code, DrawerInterface::DrawerType drawerType = DrawerInterface::dtMAIN) const = 0;
 
     virtual QVariant execute(const QString& operationName, const QVariantMap& parameters) = 0;
 
     virtual quint32 defaultOrder() const = 0;
-    virtual DrawerType drawerType()  const = 0;
+    virtual DrawerInterface::DrawerType drawerType()  const = 0;
 
     virtual void redraw() = 0;
 };

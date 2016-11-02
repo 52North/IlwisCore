@@ -43,6 +43,7 @@ Rectangle {
         onTriggered : {
             if ( renderer.manager){
                 var envelope = renderer.attributeOfDrawer("rootdrawer","zoomenvelope");
+                console.log("CatalogMAp.qml: zoomOutClicked: envelope= " + envelope)
                 Global.calcZoomOutEnvelope(envelope, renderer, renderer.manager,0.707)
             }
         }
@@ -52,6 +53,7 @@ Rectangle {
         id : entireClicked
         onTriggered : {
             var envelope = renderer.attributeOfDrawer("rootdrawer","coverageenvelope");
+            console.log("SpatialSelectionToolbar.qml: entireCLicked: envelope= " + envelope)
             if ( envelope !== ""){
                 renderer.addCommand("setviewextent("+ renderer.viewerId + "," + envelope + ")");
             }

@@ -10,7 +10,6 @@
 #include "drawingcolor.h"
 #include <QtGui/QOpenGLContext>
 #include "drawers/drawerfactory.h"
-#include "rootdrawer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;

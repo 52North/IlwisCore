@@ -14,7 +14,7 @@
 #include "models/layermanager.h"
 #include "drawers/drawerinterface.h"
 #include "setrepresentation.h"
-#include "../rootdrawer.h"
+#include "rootdrawer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;

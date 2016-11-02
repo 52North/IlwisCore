@@ -5,6 +5,7 @@
 #include <QtGui/QOpenGLFunctions>
 #include <QtGui/QOpenGLShaderProgram>
 #include "iooptions.h"
+#include "drawers/DrawerInterface.h"
 #include "drawers/drawerinterface.h"
 #include "box.h"
 #include "identity.h"
@@ -12,15 +13,13 @@
 namespace Ilwis {
 namespace Geodrawer{
 
-class RootDrawer;
+//class RootDrawer;
 
-class BaseDrawer : public DrawerInterface, public Ilwis::Identity
+class ILWISCOREUISHARED_EXPORT BaseDrawer : public DrawerInterface, public Ilwis::Identity
 {
        Q_OBJECT
 public:
     enum Containment { cINSIDE, cOUTSIDE, cUNKNOWN};
-
-
 
     RootDrawer* rootDrawer() ;
     const RootDrawer *rootDrawer() const;
@@ -51,7 +50,7 @@ public:
     void resetVisualProperty(const QString &propertyName, const IRepresentation &rpr);
     QVariant execute(const QString& operationName, const QVariantMap& parameters);
 
-    QColor color(const IRepresentation& rpr,double value, DrawerInterface::ColorValueMeaning cvm = cvmTRUEVALUE);
+    QColor color(const IRepresentation& rpr,double value, DrawerInterface::ColorValueMeaning cvm = DrawerInterface::cvmTRUEVALUE);
     quint32 defaultOrder() const;
     float alpha() const;
     void alpha(float alp);
@@ -65,8 +64,8 @@ protected:
     BaseDrawer(const QString &name, DrawerInterface *parentDrawer, RootDrawer *rootdrawer, const IOOptions &options);
     void valid(bool yesno);
     bool prepare(DrawerInterface::PreparationType prepType, const IOOptions& opt);
-    void unprepare(PreparationType prepType);
-    bool isPrepared(quint32 type=ptALL) const;
+    void unprepare(DrawerInterface::PreparationType prepType);
+    bool isPrepared(quint32 type=DrawerInterface::ptALL) const;
     bool draw(const IOOptions&) const;
     //bool moveGeometry2GPU(const std::vector<VertexPosition> &vertices, const std::vector<VertexColor> &colors);
 
@@ -84,8 +83,8 @@ protected:
     QString _fragmentShader;
 
 private:
-    std::unique_ptr<DrawerInterface>& drawer(const QString& code, DrawerInterface::DrawerType drawerType = dtMAIN);
-    const std::unique_ptr<DrawerInterface>& drawer(const QString& code, DrawerInterface::DrawerType drawerType = dtMAIN) const;
+    std::unique_ptr<DrawerInterface>& drawer(const QString& code, DrawerInterface::DrawerType drawerType = DrawerInterface::dtMAIN);
+    const std::unique_ptr<DrawerInterface>& drawer(const QString& code, DrawerInterface::DrawerType drawerType = DrawerInterface::dtMAIN) const;
 
     bool _active = true; // unless defined otherwise, the drawer is active
     bool _valid = false;

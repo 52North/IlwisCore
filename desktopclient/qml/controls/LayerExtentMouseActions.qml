@@ -56,7 +56,6 @@ MouseArea {
             if ( envelope !== "" ){
                 layerManager.hasSelectionDrawer = false
                 drawer.addCommand("removedrawer(" + drawer.viewerId + ",selectiondrawer,post)");
-
             }
             zoomEnded(envelope)
             zoomStarted = false

@@ -14,7 +14,7 @@
 #include "drawers/drawerinterface.h"
 #include "../layerdrawer.h"
 #include "removedrawer.h"
-#include "../rootdrawer.h"
+#include "rootdrawer.h"
 
 using namespace Ilwis;
 using namespace Geodrawer;
