@@ -135,9 +135,6 @@ SOURCES += core/kernel.cpp \
     core/catalog/mastercatalogcache.cpp \
     core/catalog/catalogexplorerworker.cpp \
     core/ilwisobjects/operation/script.cpp \
-    core/ilwisobjects/operation/model/model.cpp \
-    core/ilwisobjects/operation/model/analysispattern.cpp \
-    core/ilwisobjects/operation/model/applicationsetup.cpp \
     core/geos/include/geos/algorithm/ConvexHull.inl \
     core/geos/include/geos/geom/Coordinate.inl \
     core/geos/include/geos/geom/CoordinateArraySequenceFactory.inl \
@@ -444,7 +441,10 @@ SOURCES += core/kernel.cpp \
     core/geos/src/util/Profiler.cpp \
     core/geos/src/inlines.cpp \
     core/util/ilwiscoordinate.cpp \
-    core/util/ilwisangle.cpp
+    core/util/ilwisangle.cpp \
+    core/ilwisobjects/operation/modeller/analysispattern.cpp \
+    core/ilwisobjects/operation/modeller/applicationsetup.cpp \
+    core/ilwisobjects/operation/modeller/model.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -596,9 +596,6 @@ HEADERS += core/kernel.h\
     core/catalog/mastercatalogcache.h \
     core/catalog/catalogexplorerworker.h \
     core/ilwisobjects/operation/script.h \
-    core/ilwisobjects/operation/model/model.h \
-    core/ilwisobjects/operation/model/analysispattern.h \
-    core/ilwisobjects/operation/model/applicationsetup.h \
     core/geos/include/geos/algorithm/distance/DiscreteHausdorffDistance.h \
     core/geos/include/geos/algorithm/distance/DistanceToPoint.h \
     core/geos/include/geos/algorithm/distance/PointPairDistance.h \
@@ -964,7 +961,12 @@ HEADERS += core/kernel.h\
     core/geos/include/geos.h \
     core/geos/src/operation/valid/IndexedNestedRingTester.h \
     core/util/ilwiscoordinate.h \
-    core/util/ilwisangle.h
+    core/util/ilwisangle.h \
+    core/ilwisobjects/operation/modeller/analysispattern.h \
+    core/ilwisobjects/operation/modeller/applicationsetup.h \
+    core/ilwisobjects/operation/modeller/edgepropobject.h \
+    core/ilwisobjects/operation/modeller/model.h \
+    core/ilwisobjects/operation/modeller/nodepropobject.h
 
 OTHER_FILES += \
     core/resources/referencesystems.csv \
