@@ -99,7 +99,7 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/drawers/DrawerInterface.h \
     ilwiscoreui/drawers/spatialdatadrawer.h \
     ilwiscoreui/drawers/griddrawer.h \
-    ilwiscoreui/drawers/selectiondrawer.h
+    ilwiscoreui/drawers/selectiondrawer.h \
     ilwiscoreui/models/workflow/modeldesigner.h \
     ilwiscoreui/models/workflow/modelbuilder.h \
     ilwiscoreui/models/workflow/analysismodel.h \
@@ -183,7 +183,7 @@ SOURCES += \
     ilwiscoreui/drawers/complexdrawer.cpp \
     ilwiscoreui/drawers/rootdrawer.cpp \
     ilwiscoreui/drawers/simpledrawer.cpp \
-    ilwiscoreui/drawers/selectiondrawer.cpp
+    ilwiscoreui/drawers/selectiondrawer.cpp \
     ilwiscoreui/models/workflow/modeldesigner.cpp \
     ilwiscoreui/models/workflow/modelbuilder.cpp \
     ilwiscoreui/models/workflow/analysismodel.cpp \
