@@ -70,22 +70,24 @@ Rectangle {
         tabPosition: Qt.BottomEdge
 
         function tabClicked(index){
+            var newState = datapane.state
             if ( currentIndex === index){
                 if ( modelmanager.height <= 60){
-                    datapane.state = "smaller"
+                    newState = "smaller"
                 }
                 else{
-                    datapane.state = "bigger"
+                    newState = "bigger"
                 }
             }
             currentIndex = index
+            datapane.changeDataPane(index, newState)
         }
 
         Tab {
             id : conceptView
             title: qsTr("Conceptual View")
             active: true
-            Concepts.ConceptualView{}
+            Concepts.ManagerConceptualView{}
 
         }
 
@@ -93,20 +95,20 @@ Rectangle {
             id : applicationView
             active: true
             title: qsTr("Application View")
-            Apps.ApplicationView{}
+            Apps.ManagerApplicationView{}
         }
 
         Tab{
             id : analysisView
             active: true
             title: qsTr("Analysis View")
-            Analysis.AnalysisView{}
+            Analysis.ManagerAnalysisView{}
         }
         Tab{
             id : workflowView
             active: true
             title: qsTr("Workflow View")
-            WorkFlow.WorkflowView{}
+            WorkFlow.ManagerWorkflowView{}
         }
 
 

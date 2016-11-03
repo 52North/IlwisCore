@@ -32,21 +32,6 @@ Rectangle {
     function showRunForm(parms) {
         var validValues = [], parameterindex, action;
 
-//        if (operationFormScrollView.appForm.currentAppForm != null ) {
-//            validValues = operationFormScrollView.appForm.currentAppForm.formresult.split('|')
-//            for (var i = 0; i < (parms.parameterIndexes && parms.parameterIndexes.length); i++) {
-//                parameterindex = parms.parameterIndexes[i].split('|');
-//                action = parameterindex[1];
-//                parameterindex = parameterindex[0];
-
-//                if (action === 'insert') {
-//                    validValues.splice(parameterindex, 0, "")
-//                } else if (action === 'remove') {
-//                    validValues.splice(parameterindex, 1)
-//                }
-//            }
-//            validValues = validValues.slice(0, canvas.workflow.getInputParameterCount())
-//        }
         var form = formbuilder.index2Form(parms.workflowid, true, false, [], parms.operationNames, validValues)
         operationid = parms.workflowid
 
@@ -55,9 +40,7 @@ Rectangle {
         operationFormScrollView.appForm.opacity = 1
         saveButtonEnabled = false
         conditionIds = ""
-        canvas.workflow.resetParameterEntrySet()
-
-    }
+      }
 
       function showForm(propertyIndex, parms)  {
           var operationForm = parms ? parms.type !== "runform" : (propertyIndex !== 0)

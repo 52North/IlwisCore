@@ -7,6 +7,10 @@ import ModelBuilder 1.0
 import ModelDesigner 1.0
 import "./workflow" as WorkFlow
 import "../../Global.js" as Global
+import "./analysisview" as Analysis
+import "./conceptualview" as Concepts
+import "./applicationview" as Apps
+import "./workflow" as WorkFlow
 
 Item {
     id: modellerDataPane
@@ -151,7 +155,7 @@ Item {
         datapane.setSelectedOperationId(metaid)
     }
 
-    ModellerErrorView {
+     ModellerErrorView {
         height: 0
         id : errorview
         width : parent.width
@@ -196,6 +200,11 @@ Item {
             width : parent.width
             height : parent.height - 300
 
+            function changeDataPane(index, newState){
+                datapane.state = newState
+                modellerDataPane.datapaneChanged(index)
+            }
+
             function asignConstantInputData(vertexIndex, parameterIndex, value){
                 workflowView.asignConstantInputData(vertexIndex, parameterIndex, value)
             }
@@ -203,18 +212,10 @@ Item {
                 workflowView.workflow.setSelectedOperationId(metaid)
             }
 
-            WorkFlow.WorkflowCanvas {
-                id: workflowView
-                state : "visible"
-                transform : Scale{
-                    id : tform
-                }
-            }
-
-
-            ModellerDefinitionView{ id : conceptualView}
-            ModellerTemplateBuilder{ id : applicationView}
-            ModellerOperationalView{ id : analysisView}
+            WorkFlow.ModellerWorkflowView { id: workflowView }
+            Analysis.ModellerAnalysisView{ id : analysisView}
+            Apps.ModellerApplicationView{ id : applicationView}
+            Concepts.ModellerConceptualView{ id : conceptualView}
 
             states: [
                 State { name: "smaller"
