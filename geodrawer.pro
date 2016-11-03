@@ -143,9 +143,6 @@ win32{
     BOOST=../external
     SHAREDEXT=dll
     PREFIXSHARED=
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
-    INCLUDEPATH += $$PWD/../external/geos
-    DEPENDPATH += $$PWD/../external/geos
 }
 linux{
     BOOST=/usr/include
@@ -162,6 +159,7 @@ linux{
 INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
                 $$ILWISCORE/core/ilwisobjects/geometry \
                 $$ILWISCORE/core/util \
+                $$ILWISCORE/core/geos/include \
                 $$ILWISCORE/core/ilwisobjects/geometry/geodeticdatum \
                 $$ILWISCORE/core/ilwisobjects/geometry/projection \
                 $$ILWISCORE/core/ilwisobjects/geometry/coordinatesystem \

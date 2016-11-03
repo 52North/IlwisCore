@@ -8,9 +8,9 @@
 #include "geos/geom/Point.h"
 #include "geos/geom/Polygon.h"
 #ifdef Q_OS_WIN
-#include "geos/geom/PrecisionModel.inl"
-#include "geos/geom/Envelope.inl"
-#include "geos/geom/Coordinate.inl"
+#include "geos/geom/PrecisionModel.h"
+#include "geos/geom/Envelope.h"
+#include "geos/geom/Coordinate.h"
 #endif
 #include "geos/geom/CoordinateArraySequence.h"
 #include "geos/geom/GeometryFactory.h"

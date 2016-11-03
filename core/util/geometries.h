@@ -3,9 +3,9 @@
 
 #include <type_traits>
 #include "geos/geom/Coordinate.h"
-#include "angle.h"
+#include "ilwisangle.h"
 #include "location.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "box.h"
 
 

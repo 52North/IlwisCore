@@ -4,7 +4,7 @@
 #include <QSqlError>
 #include "kernel.h"
 #include "geos/geom/Coordinate.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "location.h"
 #include "internalmodule.h"
 #include "ilwisdata.h"

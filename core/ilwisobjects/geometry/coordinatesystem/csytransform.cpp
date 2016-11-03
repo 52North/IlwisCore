@@ -3,7 +3,7 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "location.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "box.h"
 #include "coordinatesystem.h"
 #include "csytransform.h"

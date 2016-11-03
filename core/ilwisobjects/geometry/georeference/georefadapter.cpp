@@ -1,5 +1,5 @@
 #include "kernel.h"
-#include "angle.h"
+#include "ilwisangle.h"
 #include "geometries.h"
 #include "georefadapter.h"
 

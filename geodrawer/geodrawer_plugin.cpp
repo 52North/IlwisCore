@@ -7,7 +7,7 @@
 #include "geometries.h"
 #include "iooptions.h"
 #include "drawers/drawerfactory.h"
-#include "selectiondrawer.h"
+#include "drawers/selectiondrawer.h"
 #include "layersview.h"
 
 void GeodrawerPlugin::registerTypes(const char *uri)

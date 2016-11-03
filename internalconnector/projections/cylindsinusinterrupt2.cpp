@@ -8,7 +8,7 @@
 #include "ilwisobject.h"
 #include "ilwisdata.h"
 #include "geos/geom/Coordinate.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "location.h"
 #include "ellipsoid.h"
 #include "geodeticdatum.h"

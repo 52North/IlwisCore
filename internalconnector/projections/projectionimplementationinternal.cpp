@@ -6,9 +6,9 @@
 #include "ilwis.h"
 #include "geos/geom/Coordinate.h"
 #ifdef Q_OS_WIN
-#include "geos/geom/Coordinate.inl"
+#include "geos/geom/Coordinate.h"
 #endif
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "location.h"
 #include "ilwisobject.h"
 #include "ilwisdata.h"

@@ -11,7 +11,7 @@
 #include "symboltable.h"
 #include "attributetable.h"
 #include "ilwisoperation.h"
-#include "geos/geos/geom/Envelope.inl"
+#include "geos/geom/Envelope.h"
 #include "bresenham.h"
 #include "vertexiterator.h"
 #include "polygontoraster.h"

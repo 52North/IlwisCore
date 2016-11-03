@@ -9,12 +9,12 @@
 #include "geos/geom/Coordinate.h"
 #include "geos/io/WKTReader.h"
 #ifdef Q_OS_WIN
-#include "geos/io/WKTReader.inl"
+#include "geos/io/WKTReader.h"
 #endif
 #include "geos/io/WKTWriter.h"
 #include "geos/io/ParseException.h"
 #include "coverage.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "location.h"
 #include "geometries.h"
 #include "coordinatesystem.h"

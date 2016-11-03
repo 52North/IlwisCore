@@ -61,9 +61,6 @@ win32{
     BOOST=../external
     SHAREDEXT=dll
     PREFIXSHARED=
-    LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
-    INCLUDEPATH += $$PWD/../external/geos
-    DEPENDPATH += $$PWD/../external/geos
 }
 linux{
     BOOST=/usr/include
@@ -97,6 +94,7 @@ INCLUDEPATH +=  ../IlwisCore/core/ilwisobjects \
                 ../IlwisCore/core/ilwisobjects/operation/modeller \
                 ../IlwisCore/core/ilwisobjects/representation \
                 ../IlwisCore/core/catalog \
+                ../IlwisCore/core/geos/include \
                 ../IlwisCore/core/ilwisobjects/domain \
                 ../IlwisCore/ilwiscoreui \
                 ../IlwisCore/ilwiscoreui/models \

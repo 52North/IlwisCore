@@ -9,7 +9,7 @@
 #include <math.h>
 #include "kernel.h"
 #include "geos/geom/Coordinate.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "location.h"
 #include "ilwisdata.h"
 #include "representation.h"

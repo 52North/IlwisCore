@@ -43,6 +43,10 @@ Rectangle {
       }
 
       function showForm(propertyIndex, parms)  {
+          if ( parms){
+              console.debug(parms.type)
+          }
+
           var operationForm = parms ? parms.type !== "runform" : (propertyIndex !== 0)
           if ( operationForm ){
               if ( parms){

@@ -2,7 +2,7 @@
 #define GEOMETRYHELPER_H
 
 #include <complex>
-#include "angle.h"
+#include "ilwisangle.h"
 
 namespace geos {
 namespace geom {

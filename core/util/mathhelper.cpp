@@ -1,8 +1,8 @@
 #include "kernel.h"
-#include "angle.h"
+#include "ilwisangle.h"
 #include "geos/geom/Coordinate.h"
 #include "numericrange.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "eigen3/Eigen/Dense"
 #include "mathhelper.h"
 

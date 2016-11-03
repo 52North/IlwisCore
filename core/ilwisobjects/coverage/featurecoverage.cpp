@@ -15,7 +15,7 @@
 #include "geos/algorithm/locate/SimplePointInAreaLocator.h"
 #include "geos/geom/Point.h"
 #ifdef Q_OS_WIN
-#include "geos/geom/PrecisionModel.inl"
+#include "geos/geom/PrecisionModel.h"
 #endif
 #include "geos/geom/GeometryFactory.h"
 #include "geos/io/ParseException.h"

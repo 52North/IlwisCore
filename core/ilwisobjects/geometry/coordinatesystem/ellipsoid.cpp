@@ -4,7 +4,7 @@
 #include <QSqlField>
 
 #include "kernel.h"
-#include "angle.h"
+#include "ilwisangle.h"
 #include "geometries.h"
 #include "ilwisdata.h"
 #include "ilwiscontext.h"

@@ -2,7 +2,7 @@
 #define Point_H
 
 #include <QSize>
-#include "angle.h"
+#include "ilwisangle.h"
 
 namespace Ilwis {
 

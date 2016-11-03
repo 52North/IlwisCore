@@ -4,7 +4,7 @@
 #include "symboltable.h"
 #include "geos/geom/Coordinate.h"
 #include "geos/geom/Geometry.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "operationnode.h"
 #include "expressionnode.h"
 #include "featurecoverage.h"

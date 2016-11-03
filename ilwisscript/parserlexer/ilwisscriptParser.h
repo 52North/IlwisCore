@@ -181,7 +181,7 @@ has the callable functions (rules) shown below,
 #include "parametersNode.h"
 #include "selectornode.h"
 #include "geos/geom/Coordinate.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "selectnode.h"
 #include "termnode.h"
 #include "variableNode.h"

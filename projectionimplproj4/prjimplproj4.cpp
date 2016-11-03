@@ -4,7 +4,7 @@
 #include "kernel.h"
 #include "ilwis.h"
 #include "geos/geom/Coordinate.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "location.h"
 #include "ilwisobject.h"
 #include "ilwisdata.h"

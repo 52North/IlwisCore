@@ -6,7 +6,7 @@
 #include "columndefinition.h"
 #include "connectorinterface.h"
 #include "geos/geom/Coordinate.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "attributedefinition.h"
 #include "table.h"
 #include "selectabletable.h"

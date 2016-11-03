@@ -81,7 +81,9 @@ void StartIlwis::init() {
 
     try{
         QQmlContext *ctx =_engine->rootContext();
-        Ilwis::initIlwis(Ilwis::rmDESKTOP);
+        if(!Ilwis::initIlwis(Ilwis::rmDESKTOP)){
+            exit(-1);
+        }
 
         QFileInfo ilwisroot = context()->ilwisFolder();
         QString qmlpluginpath = ilwisroot.absoluteFilePath() + "/extensions/ui";

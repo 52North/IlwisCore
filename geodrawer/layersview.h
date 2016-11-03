@@ -45,7 +45,7 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "geos/geom/Coordinate.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "symboltable.h"
 #include "operationExpression.h"
 #include "drawers/layersviewcommandinterface.h"

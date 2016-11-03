@@ -3,8 +3,8 @@
 #include "geos/algorithm/locate/SimplePointInAreaLocator.h"
 #include "geos/geom/Point.h"
 #ifdef Q_OS_WIN
-#include "geos/geom/Envelope.inl"
-//#include "geos/geom/PrecisionModel.inl" // already included in featurecoverage.cpp
+#include "geos/geom/Envelope.h"
+//#include "geos/geom/PrecisionModel.h" // already included in featurecoverage.cpp
 #endif
 #include "geos/geom/GeometryFactory.h"
 #include "tranquilizer.h"

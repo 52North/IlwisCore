@@ -1,7 +1,7 @@
 #include "coverage.h"
 #include "location.h"
 #include "geos/geom/Coordinate.h"
-#include "coordinate.h"
+#include "ilwiscoordinate.h"
 #include "box.h"
 #include "coordinatesystem.h"
 #include "georeference.h"
