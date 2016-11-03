@@ -58,13 +58,18 @@ WorkflowModel *ModelDesigner::addWorkflow(const QString& filter)
         if (_model.isValid()){
             std::vector<Resource> res = Ilwis::mastercatalog()->select(filter);
             if ( res.size() == 1){
-                auto *wfm = new WorkflowModel(res[0], this);
                 IWorkflow wf;
                 wf.prepare(res[0]);
-                _model->addWorklfow(wf);
-                _workflowmodels.push_back(wfm);
-                return wfm;
+                if (wf.isValid() && _model->addWorklfow(wf)){
+                    auto *wfm = new WorkflowModel(res[0], this);
+                    _workflowmodels.push_back(wfm);
+                    emit workflowCountChanged();
+                    return wfm;
+                }
+                Ilwis::kernel()->issues()->log(QString(TR("workflow couldnt be added, maybe a duplicate?")).arg(filter),Ilwis::IssueObject::itWarning);
+                return 0;
             }else {
+
                 Ilwis::kernel()->issues()->log(QString(TR("workflow %1 doesnt exist")).arg(filter),Ilwis::IssueObject::itWarning);
             }
         }
