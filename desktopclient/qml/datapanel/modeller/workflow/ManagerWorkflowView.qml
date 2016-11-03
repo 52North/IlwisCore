@@ -55,12 +55,10 @@ Rectangle {
         }
 
         function stepMode() {
-            if ( workflows.currentIndex == 3){
-                if ( model){
-                    var wf = model.workflow(0) // atm we assume one workflow per scenario
-                    if ( wf !== null)
-                        return wf.gotoStepMode()
-                }
+            if ( model){
+                var wf = model.workflow(workflows.currentIndex) // atm we assume one workflow per scenario
+                if ( wf)
+                    return wf.gotoStepMode()
             }
         }
 
@@ -73,9 +71,11 @@ Rectangle {
             width : 130
             anchors.left: parent.left
             onCurrentIndexChanged: {
-                if (!editor.item){
-                    if ( currentIndex == 3){
-                        editor.source = "WorkFlowForms.qml"
+                if ( modellerDataPane.model){
+                    var wf = modellerDataPane.model.workflow(currentIndex)
+                    console.debug("a", currentIndex, wf, workflowView)
+                    if ( wf && workflowView){
+                        workflowView.workflow = wf
                     }
                 }
             }
@@ -105,6 +105,9 @@ Rectangle {
                 }
             }
         }
+    }
+    Component.onCompleted: {
+        editor.source = "WorkFlowForms.qml"
     }
 }
 

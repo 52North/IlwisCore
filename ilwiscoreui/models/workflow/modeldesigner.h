@@ -35,6 +35,7 @@ public:
     Q_PROPERTY(QStringList workflowNames READ workflowNames CONSTANT)
     Q_PROPERTY(QStringList analysisNames READ analysisNames CONSTANT)
     Q_PROPERTY(QStringList applicationNames READ applicationNames CONSTANT)
+    Q_PROPERTY(WorkflowModel *currentWorkflow READ currentWorkflow WRITE currentWorkflow NOTIFY workflowChanged)
 
 
     qint32 workflowCount() const;
@@ -69,6 +70,7 @@ signals:
     void applicationCountChanged();
     void analysisCountChanged();
     void conceptCountChanged();
+    void workflowChanged();
 
 public slots:
 
@@ -77,12 +79,15 @@ private:
     std::vector<ApplicationModel*> _appmodels;
     std::vector<AnalysisModel*> _analysismodels;
     std::vector<ConceptModel *> _conceptmodels;
+    WorkflowModel *_currentWorkflow = 0;
     IModel _model;
 
     QStringList workflowNames() const;
     QStringList applicationNames() const;
     QStringList analysisNames() const;
     QStringList conceptNames() const;
+    WorkflowModel *currentWorkflow();
+    void currentWorkflow(WorkflowModel *wf);
 };
 
 #endif // MODELLERMODEL_H

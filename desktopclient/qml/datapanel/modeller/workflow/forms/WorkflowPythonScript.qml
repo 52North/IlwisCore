@@ -17,9 +17,11 @@ Item {
     }
 
     function getScriptText() {
-        var wf = modellerDataPane.model.workflow(0) // atm we assume one workflow per scenario
-        if ( wf !== null){
-            return wf.generateScript("python",workflow.parameters())
+        if ( modellerDataPane.model){
+            var wf = modellerDataPane.model.currentWorkflow // atm we assume one workflow per scenario
+            if ( wf !== null){
+                return wf.generateScript("python",workflow.parameters())
+            }
         }
         return "";
     }

@@ -29,7 +29,8 @@ Item {
                 modellerDataPane.model = modelbuilder.createModel(modellerDataPane)
                 var resource = mastercatalog.id2Resource(filter.split('=')[1],modellerDataPane);
                 workflowView.workflow = model.addWorkflow(filter);
-                manager.setLayerIndex(3)
+                model.currentWorkflow = workflowView.workflow
+                //manager.setLayerIndex(3)
                 if (resource) {
                    workflowView.drawFromWorkflow()
                 }
@@ -246,6 +247,13 @@ Item {
             height : 340
             anchors.left: parent.left
             anchors.right: parent.right
+
         }
+    }
+    Component.onCompleted: {
+        manager.workflowView= workflowView
+        manager.analysView = analysisView
+        manager.applicationView= applicationView
+        manager.conceptView= conceptualView
     }
 }

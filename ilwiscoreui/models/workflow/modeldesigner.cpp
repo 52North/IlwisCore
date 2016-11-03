@@ -122,6 +122,21 @@ QStringList ModelDesigner::conceptNames() const
     return QStringList();
 }
 
+WorkflowModel *ModelDesigner::currentWorkflow()
+{
+    return _currentWorkflow;
+}
+
+void ModelDesigner::currentWorkflow(WorkflowModel *cwf)
+{
+    for(WorkflowModel *wf : _workflowmodels ){
+        if ( wf->name() == cwf->name()){
+            _currentWorkflow = cwf;
+            break;
+        }
+    }
+}
+
 qint32 ModelDesigner::analysisCount() const
 {
     return _analysismodels.size();

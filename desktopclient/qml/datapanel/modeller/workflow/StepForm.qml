@@ -52,7 +52,7 @@ Column {
     TableView {
         width : parent.width
         height :parent.height
-        model : modellerDataPane.workflowModel().outputCurrentOperation
+        model : modellerDataPane.workflowModel() ? modellerDataPane.workflowModel().outputCurrentOperation : null
         TableViewColumn{
             role : "vertex"
             title : qsTr("Node")

@@ -20,6 +20,12 @@ Modeller.ModellerWorkArea {
     color: "transparent"
     transform : Scale{}
 
+    onWorkflowChanged: {
+        console.debug("v",workflow)
+        modellerDataPane.model.currentWorkflow = workflow
+        wfCanvas.canvasValid = false
+    }
+
     id: canvas
 
     DropArea {
@@ -607,8 +613,8 @@ Modeller.ModellerWorkArea {
             running: true;
             repeat: true
             onTriggered: {
-                //if ( !wfCanvas.canvasValid)
-                wfCanvas.draw(true)
+                if ( !wfCanvas.canvasValid)
+                    wfCanvas.draw(true)
             }
         }
 

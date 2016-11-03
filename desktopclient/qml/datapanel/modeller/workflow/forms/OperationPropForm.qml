@@ -11,7 +11,7 @@ Rectangle {
     }
 
     function showForm(propertyIndex, parms){
-        var wf = modellerDataPane.model.workflow(0) // atm we assume one workflow per scenario
+        var wf = modellerDataPane.model.currentWorkflow
         if ( wf !== null)
             listmodel = wf.selectedOperation
     }

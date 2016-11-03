@@ -15,9 +15,15 @@ Rectangle {
     id : modelmanager
     width: parent.width
     property var activeEditor
+    property var workflowView
+    property var analysView
+    property var applicationView
+    property var conceptView
+
+
 
     function setLayerIndex(index){
-        workflowView.item.setLayerIndex(index)
+        workflowManager.item.setLayerIndex(index)
     }
 
     /**
@@ -25,7 +31,7 @@ Rectangle {
       */
     function showForm(parms){
         if ( activeEditor){
-            activeEditor.enable(workflowView.item.getPropertyIndex(), parms)
+            activeEditor.enable(workflowManager.item.getPropertyIndex(), parms)
         }
     }
 
@@ -45,7 +51,7 @@ Rectangle {
     }
 
     function selectedWorkflowItem(itemid){
-        workflowView.item.selectedWorkflowItem(itemid)
+        workflowManager.item.selectedWorkflowItem(itemid)
     }
 
     function updateLists(){
@@ -61,7 +67,7 @@ Rectangle {
             else
                 modellerViews.currentIndex = 0
         }
-        workflowView.item.updateLists()
+        workflowManager.item.updateLists()
     }
 
     TabView{
@@ -84,28 +90,28 @@ Rectangle {
         }
 
         Tab {
-            id : conceptView
+            id : conceptManager
             title: qsTr("Conceptual View")
             active: true
-            Concepts.ManagerConceptualView{}
+            Concepts.ManagerConceptualView{ }
 
         }
 
         Tab{
-            id : applicationView
+            id : applicationManager
             active: true
             title: qsTr("Application View")
             Apps.ManagerApplicationView{}
         }
 
         Tab{
-            id : analysisView
+            id : analysisManager
             active: true
             title: qsTr("Analysis View")
             Analysis.ManagerAnalysisView{}
         }
         Tab{
-            id : workflowView
+            id : workflowManager
             active: true
             title: qsTr("Workflow View")
             WorkFlow.ManagerWorkflowView{}
