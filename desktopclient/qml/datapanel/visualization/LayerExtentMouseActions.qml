@@ -58,7 +58,7 @@ MouseArea {
             cursorShape = Qt.ClosedHandCursor
 
         }
-        if ( showInfo && drawer.showLayerInfo && !layerManager.hasSelectionDrawer){
+        if ( showInfo && drawer.showLayerInfo && !zoomStarted){
           floatrect.enabled = true
           floatrect.opacity = 1
           floatrect.x = mouseX
@@ -160,6 +160,7 @@ MouseArea {
                 drawer.update()
             }
             zoomEnded(envelope)
+
             zoomStarted = false
         }
         if ( layerManager.panningMode ){
