@@ -73,7 +73,6 @@ Rectangle {
             onCurrentIndexChanged: {
                 if ( modellerDataPane.model){
                     var wf = modellerDataPane.model.workflow(currentIndex)
-                    console.debug("a", currentIndex, wf, workflowView)
                     if ( wf && workflowView){
                         workflowView.workflow = wf
                     }

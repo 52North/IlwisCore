@@ -21,7 +21,6 @@ Modeller.ModellerWorkArea {
     transform : Scale{}
 
     onWorkflowChanged: {
-        console.debug("v",workflow)
         modellerDataPane.model.currentWorkflow = workflow
         wfCanvas.canvasValid = false
     }
