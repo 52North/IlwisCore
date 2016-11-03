@@ -28,9 +28,9 @@ Rectangle {
     }
     Button{
         y : parent.height - 25
-        width : 50
+        width : 60
         text : "execute"
-        height : 22
+        height : 25
         x : parent.width - 60
         onClicked: appFrame.doExecute(operationid, false)
     }

@@ -3,8 +3,8 @@ import QtQuick.Controls 1.1
 import QtQuick.Window 2.1
 import TabModel 1.0
 import WorkflowModel 1.0
-import ScenarioBuilderModel 1.0
-import Modeller 1.0
+import ModelBuilder 1.0
+import ModelDesigner 1.0
 import "./workflow" as WorkFlow
 import "../../Global.js" as Global
 
@@ -14,24 +14,25 @@ Item {
     height : parent.height
     property TabModel tabmodel
     property string panelType : "workflow"
-    property Modeller model
+    property ModelDesigner model
     property int ontTopZValue: 1000000
     property var createParameters : []
     property double factor : 1.1
 
     function addDataSource(filter, sourceName, sourceType){
         if ( filter !== "" ){
-            if (sourceType === "workflow") {
-                model = scenarios.create()
-
+            if (sourceType === "workflow" ) {
+                modellerDataPane.model = modelbuilder.createModel(modellerDataPane)
                 var resource = mastercatalog.id2Resource(filter.split('=')[1],modellerDataPane);
-                canvas.workflow = model.addWorkflow(filter);
+                workflowView.workflow = model.addWorkflow(filter);
                 manager.setLayerIndex(3)
                 if (resource) {
-                    canvas.drawFromWorkflow()
+                   workflowView.drawFromWorkflow()
                 }
                 createParameters = [filter, sourceName, sourceType]
-                manager.showWorkflowMetadata(canvas.workflow)
+
+
+                manager.updateLists()
             }
         }
     }
@@ -46,7 +47,7 @@ Item {
         return iconP
     }
      function store() {
-         canvas.store()
+         workflowView.store()
      }
 
     function selectedWorkflowItem(itemid){
@@ -57,61 +58,61 @@ Item {
 
     function datapaneChanged(index){
         if ( index == 0) {
-            defview.state = "visible"
-            canvas.state = "invisible"
-            operview.state = "invisible"
-            templateBuilder.state = "invisible"
+            conceptualView.state = "visible"
+            workflowView.state = "invisible"
+            analysisView.state = "invisible"
+            applicationView.state = "invisible"
 
         }else if ( index == 1){
-            defview.state = "invisible"
-            canvas.state = "invisible"
-            operview.state = "visible"
-            templateBuilder.state = "invisible"
+            conceptualView.state = "invisible"
+            workflowView.state = "invisible"
+            analysisView.state = "visible"
+            applicationView.state = "invisible"
         } else if ( index == 2){
-            defview.state = "invisible"
-            canvas.state = "invisible"
-            operview.state = "invisible"
-            templateBuilder.state = "visible"
+            conceptualView.state = "invisible"
+            workflowView.state = "invisible"
+            analysisView.state = "invisible"
+            applicationView.state = "visible"
         }else{
-            defview.state = "invisible"
-            canvas.state = "visible"
-            operview.state = "invisible"
-            templateBuilder.state = "invisible"
+            conceptualView.state = "invisible"
+            workflowView.state = "visible"
+            analysisView.state = "invisible"
+            applicationView.state = "invisible"
         }
     }
 
     function newCondition() {
-        canvas.newCondition()
+        workflowView.newCondition()
     }
 
     function deleteSelectedOperation(){
-        canvas.deleteSelectedOperation()
+        workflowView.deleteSelectedOperation()
     }
 
     function deleteSelectedEdge(){
-        canvas.deleteSelectedEdge()
+        workflowView.deleteSelectedEdge()
     }
 
     function alterSelectedEdge(){
-        canvas.alterSelectedEdge()
+        workflowView.alterSelectedEdge()
     }
 
     function canvasZoom(clicks){
-        canvas.zoom(clicks)
+        workflowView.zoom(clicks)
     }
 
     /**
     Sets the canvas' zoom back to 100%
     */
     function defaultZoom(){
-        canvas.defaultZoom();
+        workflowView.defaultZoom();
     }
 
     /**
     Sets the zoom percentage based on the tform's xScale
     */
     function setPercentage(){
-        var scl = canvas.getScale();
+        var scl = workflowView.getScale();
         modellertools.zoomLevel.text = Math.round((scl * 100)) + "%"
     }
 
@@ -119,7 +120,7 @@ Item {
       Calls the WorkflowCanvas's run method
       */
     function run() {
-        canvas.run()
+        workflowView.run()
     }
 
     function addError(id, error) {
@@ -127,15 +128,15 @@ Item {
     }
 
     function toggleStepMode(){
-        canvas.workflow.toggleStepMode();
+        workflowView.workflow.toggleStepMode();
     }
 
     function workflowModel() {
-        return canvas.workflow
+        return workflowView.workflow
     }
 
     function nextStep() {
-        canvas.showLastSteppedItem()
+        workflowView.showLastSteppedItem()
     }
 
     signal exit;
@@ -144,6 +145,10 @@ Item {
 
     ModellerTools{
         id : modellertools
+    }
+
+    function setSelectedOperationId(metaid){
+        datapane.setSelectedOperationId(metaid)
     }
 
     ModellerErrorView {
@@ -184,6 +189,7 @@ Item {
         width : parent.width
         orientation: Qt.Vertical
         height : parent.height - modellertools.height
+        id : modellersplit
 
         Item {
             id : datapane
@@ -191,11 +197,14 @@ Item {
             height : parent.height - 300
 
             function asignConstantInputData(vertexIndex, parameterIndex, value){
-                canvas.asignConstantInputData(vertexIndex, parameterIndex, value)
+                workflowView.asignConstantInputData(vertexIndex, parameterIndex, value)
+            }
+            function setSelectedOperationId(metaid){
+                workflowView.workflow.setSelectedOperationId(metaid)
             }
 
             WorkFlow.WorkflowCanvas {
-                id: canvas
+                id: workflowView
                 state : "visible"
                 transform : Scale{
                     id : tform
@@ -203,23 +212,23 @@ Item {
             }
 
 
-            ModellerDefinitionView{ id : defview}
-            ModellerTemplateBuilder{ id : templateBuilder}
-            ModellerOperationalView{ id : operview}
+            ModellerDefinitionView{ id : conceptualView}
+            ModellerTemplateBuilder{ id : applicationView}
+            ModellerOperationalView{ id : analysisView}
 
             states: [
                 State { name: "smaller"
 
                     PropertyChanges {
                         target: datapane
-                        height : parent.height - 170
+                        height : parent.height - 340
                     }
                 },
                 State {
                     name : "bigger"
                     PropertyChanges {
                         target: datapane
-                        height : parent.height - 23
+                        height : parent.height - 54
                     }
                 }
 
@@ -233,7 +242,7 @@ Item {
 
         ModelManager{
             id : manager
-            height : 300
+            height : 340
             anchors.left: parent.left
             anchors.right: parent.right
         }

@@ -26,6 +26,8 @@ private:
     std::vector<quint32> _groupSize = {1,1,1};
 
     NumericStatistics::PropertySets toMethod(const QString &nm);
+    void executeGrouped(const BoundingBox &inpBox);
+    void executeNonGrouped(const BoundingBox &inpBox);
 };
 }
 }

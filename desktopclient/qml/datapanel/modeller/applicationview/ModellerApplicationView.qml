@@ -1,9 +1,10 @@
 import QtQuick 2.0
+import ".." as Model
 
-ModellerWorkArea {
+Model.ModellerWorkArea {
     width : parent.width
     height : parent.height - 170
-    color : "green"
+    color : "blue"
     state : "invisible"
 }
 

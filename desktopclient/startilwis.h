@@ -10,7 +10,7 @@ class WorkflowMetadataFormBuilder;
 class UserMessageHandler;
 class OperationCatalogModel;
 class TranquilizerHandler;
-class ScenarioBuilderModel;
+class ModelBuilder;
 class DataPaneModel;
 class ObjectCreator;
 class PreferencesModel;
@@ -43,7 +43,7 @@ private:
     UserMessageHandler *_messageHandler;
     OperationCatalogModel *_operations;
     TranquilizerHandler *_tranquilizers;
-    ScenarioBuilderModel *_scenarios;
+    ModelBuilder *_modelBuilder;
     DataPaneModel *_datapane;
     ObjectCreator *_objcreator;
     PreferencesModel *_preferences;

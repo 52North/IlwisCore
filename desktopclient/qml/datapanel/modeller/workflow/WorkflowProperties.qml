@@ -1,11 +1,12 @@
 import QtQuick 2.0
-import "../../Global.js" as Global
+import "../../../Global.js" as Global
 
 Column {
     property alias currentIndex : layerProperties.currentIndex
+    property alias propertyItems : layerProperties.model
     Text {
         id : label
-        text : qsTr("Layer Properties")
+        text : qsTr("Workflow Forms")
         font.bold: true
         height : 22
         x : 4
@@ -16,7 +17,6 @@ Column {
         height : parent.height - label.height
         width : parent.width
 
-        model : layerprops.getItems()
         highlight: Rectangle{ width : layerProperties.width; height : 20; color : Global.selectedColor}
         delegate  {
             Item {
@@ -34,6 +34,9 @@ Column {
                     }
                 }
             }
+        }
+        Component.onCompleted: {
+            layerProperties.currentIndex = 0
         }
     }
 }

@@ -8,13 +8,13 @@
 
 class ModelDesigner;
 
-class ILWISCOREUISHARED_EXPORT ScenarioBuilderModel : public QObject
+class ILWISCOREUISHARED_EXPORT ModelBuilder : public QObject
 {
     Q_OBJECT
 public:
-    explicit ScenarioBuilderModel(QObject *parent = 0);
+    explicit ModelBuilder(QObject *parent = 0);
 
-    Q_INVOKABLE ModelDesigner * create();
+    Q_INVOKABLE ModelDesigner * createModel(QObject *parent);
 
 private:
 

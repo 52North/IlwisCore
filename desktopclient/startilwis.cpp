@@ -34,7 +34,7 @@
 #include "models/uicontextmodel.h"
 #include "models/projectionparametermodel.h"
 #include "models/workflow/workflowmodel.h"
-#include "models/workflow/scenariobuildermodel.h"
+#include "models/workflow/modelbuilder.h"
 #include "models/workflow/errormodel.h"
 #include "models/workflowerrormodel.h"
 #include "models/visualattributemodel.h"
@@ -50,7 +50,6 @@
 #include "models/ilwisobjectcreatormodel.h"
 #include "models/workflow/edgepropobject.h"
 #include "models/workflow/nodepropobject.h"
-#include "models/workflow/scenariodesignermodel.h"
 #include "models/preferencesmodel.h"
 #include "models/internaldatabasemodel.h"
 #include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
@@ -59,6 +58,13 @@
 #include "keyfilter.h"
 #include "startilwis.h"
 #include "scriptmodel.h"
+#include "applicationsetup.h"
+#include "analysispattern.h"
+#include "modelbuilder.h"
+#include "modeldesigner.h"
+#include "workflow/analysismodel.h"
+#include "workflow/conceptmodel.h"
+#include "workflow/applicationmodel.h"
 #include "../core/buildnumber.h"
 
 StartIlwis::StartIlwis()
@@ -107,7 +113,6 @@ void StartIlwis::init() {
         qmlRegisterType<ItemRepresentationSetter>("ItemRepresentationSetter", 1,0, "ItemRepresentationSetter");
         qmlRegisterType<RepresentationElement>("RepresentationElement", 1,0, "RepresentationElement");
         qmlRegisterType<ProjectionParameterModel>("ProjectionParameterModel", 1,0, "ProjectionParameterModel");
-        qmlRegisterType<ScenarioBuilderModel>("ScenarioBuilderModel", 1,0, "ScenarioBuilderModel");
         qmlRegisterType<WorkflowModel>("WorkflowModel", 1,0, "WorkflowModel");
         qmlRegisterType<VisualAttributeModel>("VisualAttributeModel", 1,0,"VisualAttributeModel");
         qmlRegisterType<TableModel>("TableModel", 1,0,"TableModel");
@@ -123,7 +128,8 @@ void StartIlwis::init() {
         qmlRegisterType<SidePanelModel>("SidePanelModel", 1,0,"SidePanelModel");
         qmlRegisterType<ObjectCreator>("ObjectCreator", 1,0,"ObjectCreator");
         qmlRegisterType<IlwisObjectCreatorModel>("IlwisObjectCreatorModel", 1,0,"IlwisObjectCreatorModel");
-        qmlRegisterType<ModelDesigner>("Modeller", 1,0,"Modeller");
+        qmlRegisterType<ModelBuilder>("ModelBuilder", 1,0,"ModelBuilder");
+        qmlRegisterType<ModelDesigner>("ModelDesigner", 1,0,"ModelDesigner");
         qmlRegisterType<WorkflowErrorModel>("WorkflowErrorModel", 1,0,"WorkflowErrorModel");
         qmlRegisterType<ErrorModel>("ErrorModel", 1,0,"ErrorModel");
         qmlRegisterType<NodePropObject>("NodePropObject", 1,0,"NodePropObject");
@@ -131,13 +137,16 @@ void StartIlwis::init() {
         qmlRegisterType<PreferencesModel>("PreferencesModel",1,0,"PreferencesModel");
         qmlRegisterType<InternalDatabaseModel>("InternalDatabaseModel",1,0,"InternalDatabaseModel");
         qmlRegisterType<ScriptModel>("ScriptModel",1,0,"ScriptModel");
+        qmlRegisterType<ApplicationModel>("ApplicationModel",1,0,"ApplicationModel");
+        qmlRegisterType<AnalysisModel>("AnalysisModel",1,0,"AnalysisModel");
+        qmlRegisterType<ConceptModel>("ConceptModel",1,0,"ConceptModel");
 
         _mastercatalogmodel = new MasterCatalogModel(ctx);
         _formbuilder = new ApplicationFormExpressionParser();
         _messageHandler = new UserMessageHandler();
         _operations = new OperationCatalogModel();
         _tranquilizers =new TranquilizerHandler();
-        _scenarios =new ScenarioBuilderModel();
+        _modelBuilder =new ModelBuilder();
         _datapane =new DataPaneModel();
         _objcreator =new ObjectCreator();
         _preferences =new PreferencesModel();
@@ -149,7 +158,7 @@ void StartIlwis::init() {
         ctx->setContextProperty("messagehandler", _messageHandler);
         ctx->setContextProperty("tranquilizerHandler", _tranquilizers);
         ctx->setContextProperty("operations", _operations);
-        ctx->setContextProperty("scenarios", _scenarios);
+        ctx->setContextProperty("modelbuilder", _modelBuilder);
         ctx->setContextProperty("datapane", _datapane);
         ctx->setContextProperty("objectcreator", _objcreator);
         ctx->setContextProperty("preferences",_preferences);
@@ -245,7 +254,7 @@ void StartIlwis::stop()
     delete _messageHandler;
     delete _operations;
     delete _tranquilizers;
-    delete _scenarios;
+    delete _modelBuilder;
     delete _datapane;
     delete _objcreator;
     delete _preferences;

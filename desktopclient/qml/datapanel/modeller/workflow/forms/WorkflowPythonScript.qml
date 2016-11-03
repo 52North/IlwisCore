@@ -17,7 +17,7 @@ Item {
     }
 
     function getScriptText() {
-        var wf = model.workflow("first_workflow_model") // atm we assume one workflow per scenario
+        var wf = modellerDataPane.model.workflow(0) // atm we assume one workflow per scenario
         if ( wf !== null){
             return wf.generateScript("python",workflow.parameters())
         }

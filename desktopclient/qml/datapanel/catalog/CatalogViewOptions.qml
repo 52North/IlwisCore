@@ -111,7 +111,6 @@ Rectangle {
                     for ( var i=0; i < ids.length; ++i) {
                         var resource = mastercatalog.id2Resource(ids[i],0)
                         if ( resource){
-                            console.debug(resource.typeName)
                             if ( resource.typeName.indexOf("coverage") !== -1)
                                 window.datapanel = "visualization/MapPanel.qml"
                             else if (resource.typeName === "table")

@@ -80,7 +80,7 @@ void WorkflowModel::assignConditionInputData(QString inputData, QStringList ids)
 
 QStringList WorkflowModel::addOperation(const QString &id)
 {
-    QStringList* parameterEntrySet = new QStringList();
+    QStringList parameterEntrySet;
     bool ok;
     quint64 opid = id.toULongLong(&ok);
     Resource res = mastercatalog()->id2Resource(opid);
@@ -97,13 +97,13 @@ QStringList WorkflowModel::addOperation(const QString &id)
             _workflow->assignInputData(v, i);
             ++_inputParameterCount;
             int parameterIndex = _workflow->getWorkflowParameterIndex(v, i);
-            parameterEntrySet->push_back(QString::number(parameterIndex) + "|insert");
+            parameterEntrySet.push_back(QString::number(parameterIndex) + "|insert");
         }
     }else {
        kernel()->issues()->log(QString(TR("Invalid operation id used in workflow %1")).arg(name()));
     }
     createMetadata();
-    return *parameterEntrySet;
+    return parameterEntrySet;
 }
 
 QStringList WorkflowModel::addFlow(int vertexFrom, int vertexTo, const QVariantMap& flowpoints, int rectFrom, int rectTo)
@@ -444,11 +444,11 @@ QVariantList WorkflowModel::propertyList()
     QVariantList result;
 
     QVariantMap workflow;
-    workflow["label"] = TR("Workflow(Run) form");
+    workflow["label"] = TR("Edit Workflow(Run) form");
     workflow["form"] = "OperationForms.qml";
     result.append(workflow);
     QVariantMap operation;
-    operation["label"] = TR("Selected operation form");
+    operation["label"] = TR("Edit Selected operation form");
     operation["form"] = "OperationForms.qml";
     result.append(operation);
     QVariantMap metadata;
@@ -459,6 +459,8 @@ QVariantList WorkflowModel::propertyList()
     metadata["label"] = TR("Script");
     metadata["form"] = "workflow/forms/WorkflowPythonScript.qml";
     result.append(metadata);
+
+
 
     return result;
 }

@@ -3,9 +3,9 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import UIContextModel 1.0
-import "../../controls" as Controls
-import "../../Global.js" as Global
-import ".." as DataPanel
+import "../../../controls" as Controls
+import "../../../Global.js" as Global
+import "../.." as DataPanel
 
 Rectangle {
     id : modelmanager

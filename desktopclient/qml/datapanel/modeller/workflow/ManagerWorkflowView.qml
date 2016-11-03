@@ -3,8 +3,9 @@ import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import UIContextModel 1.0
-import "../../controls" as Controls
-import "../../Global.js" as Global
+import "../../../controls" as Controls
+import "../../../Global.js" as Global
+import "./forms" as Forms
 
 Rectangle {
     id : modellayers
@@ -13,7 +14,7 @@ Rectangle {
     property string iconName : "../images/layers_s"
 
     function setLayerIndex(index){
-        layerColumn.currentIndex = index
+        workflows.currentIndex = index
     }
 
     function getPropertyIndex() {
@@ -31,17 +32,21 @@ Rectangle {
             properties.currentIndex = 0
     }
 
+    function updateLists() {
+        workflows.workflowNamesModel = modellerDataPane.model.workflowNames
+        properties.propertyItems = layerprops.getItems();
+    }
+
     SplitView {
         id : layerprops
-        property var layernames : ["Conceptual view","Application view","Analysis view", "Workflow view"]
         width : parent.width - 5
         height : parent.height
         y : 2
 
         function getItems(){
-            if ( layerColumn.currentIndex == 3){
+            if ( modellerViews.currentIndex == 3){
                 if ( model){
-                    var wf = model.workflow("first_workflow_model") // atm we assume one workflow per scenario
+                    var wf = model.workflow(workflows.currentIndex) // atm we assume one workflow per scenario
                     if ( wf !== null)
                         return wf.propertyList()
                 }
@@ -50,9 +55,9 @@ Rectangle {
         }
 
         function stepMode() {
-            if ( layerColumn.currentIndex == 3){
+            if ( workflows.currentIndex == 3){
                 if ( model){
-                    var wf = model.workflow("first_workflow_model") // atm we assume one workflow per scenario
+                    var wf = model.workflow(0) // atm we assume one workflow per scenario
                     if ( wf !== null)
                         return wf.gotoStepMode()
                 }
@@ -62,34 +67,33 @@ Rectangle {
         handleDelegate: Controls.SplitHandle{
             imageHeight: 15
         }
-        ModelLayers{
-            id : layerColumn
+        Workflows{
+            id : workflows
             height : parent.height
             width : 130
             anchors.left: parent.left
             onCurrentIndexChanged: {
-                datapaneChanged(currentIndex)
                 if (!editor.item){
                     if ( currentIndex == 3){
-                        editor.source = "workflow/WorkFlowForms.qml"
+                        editor.source = "WorkFlowForms.qml"
                     }
                 }
             }
         }
 
-        ModelLayerProperties{
+        WorkflowProperties{
             id : properties
             width : 160
             height : parent.height
 
             onCurrentIndexChanged: {
-                if ( editor && editor.item){
+                if ( editor && editor.item ){
                     editor.item.enable(properties.currentIndex, null)
                 }
             }
         }
 
-        ModelPropertyEditor{
+        WorkflowPropertyEditor{
             id : editor
             width : 400
             height : parent.height

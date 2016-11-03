@@ -26,6 +26,42 @@ AggregateRaster::AggregateRaster(quint64 metaid, const Ilwis::OperationExpressio
 {
 }
 
+
+void AggregateRaster::executeGrouped(const BoundingBox& inpBox){
+    BlockIterator blockInputIter(_inputObj.as<RasterCoverage>(),Size<>(groupSize(0),groupSize(1), groupSize(2)), inpBox);
+    PixelIterator iterOut(_inputObj.as<RasterCoverage>());
+    PixelIterator iterEnd = iterOut.end();
+    quint64 currentCount = 0;
+    while(iterOut != iterEnd) {
+        GridBlock& block = *blockInputIter;
+        std::vector<double> values= block.toVector();
+        double v = OperationHelper::statisticalMarker(values, _method);
+        *iterOut = v;
+        ++iterOut;
+        ++blockInputIter;
+
+        //updateTranquilizer(currentCount++, 1000);
+    }
+}
+
+void AggregateRaster::executeNonGrouped(const BoundingBox& inpBox){
+    BlockIterator blockInputIter(_inputObj.as<RasterCoverage>(),Size<>(groupSize(0),groupSize(1), groupSize(2)), inpBox);
+    IRasterCoverage outRaster = _outputObj.as<RasterCoverage>();
+    BlockIterator blockOutputIter(outRaster,Size<>(groupSize(0),groupSize(1), groupSize(2)), inpBox);
+    BlockIterator iterEnd = blockOutputIter.end();
+    quint64 currentCount = 0;
+    while(blockOutputIter != iterEnd) {
+        std::vector<double> values= (*blockInputIter).toVector();
+        double v = OperationHelper::statisticalMarker(values, _method);
+        GridBlock& blockOut = *blockOutputIter;
+        std::fill(blockOut.begin(), blockOut.end(), v);
+        ++blockInputIter;
+        ++blockOutputIter;
+
+        //updateTranquilizer(currentCount++, 1000);
+    }
+}
+
 bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
@@ -34,7 +70,7 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
 
-    quint64 currentCount = 0;
+
     BoxedAsyncFunc aggregateFun = [&](const BoundingBox& box) -> bool {
         //Size sz = outputRaster->size();
         PixelIterator iterOut(outputRaster, box);
@@ -45,20 +81,10 @@ bool AggregateRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
                                              (box.max_corner().y + 1) * groupSize(1) - 1,
                                              (box.max_corner().z + 1) * groupSize(2) - 1) );
 
-        // TODO blockiterator is too slow.
-        BlockIterator blockIter(_inputObj.as<RasterCoverage>(),Size<>(groupSize(0),groupSize(1), groupSize(2)), inpBox);
-        NumericStatistics stats;
-        PixelIterator iterEnd = iterOut.end();
-        while(iterOut != iterEnd) {
-            GridBlock& block = *blockIter;
-            // TODO using the big statistics class maybe a bit overdone here as this has some overhead (for each pixel)
-            stats.calculate(block.begin(), block.end(), _method);
-            double v = stats[_method];
-           *iterOut = v;
-            ++iterOut;
-            ++blockIter;
-            updateTranquilizer(currentCount++, 1000);
-        }
+            if ( _grouped)
+                executeGrouped( inpBox);
+            else
+                executeNonGrouped( inpBox);
         return true;
     };
     bool res = OperationHelperRaster::execute(ctx, aggregateFun, outputRaster);
@@ -83,8 +109,6 @@ NumericStatistics::PropertySets AggregateRaster::toMethod(const QString& nm) {
         return NumericStatistics::pMEDIAN;
     else if ( mname == "pred")
         return NumericStatistics::pPREDOMINANT;
-    else if ( mname == "std")
-        return NumericStatistics::pSTDEV;
     else if ( mname == "sum")
         return NumericStatistics::pSUM;
 
@@ -133,7 +157,8 @@ Ilwis::OperationImplementation::State AggregateRaster::prepare(ExecutionContext 
         return sPREPAREFAILED;
     }
 
-    _grouped = _expression.parm(3).value().toLower() == "true";
+    QString grouped =  _expression.parm(3).value().toLower();
+    _grouped = grouped == "true" || grouped == "yes" || grouped == "1";
     if ( !_grouped)
         copylist |= itGEOREF;
 
@@ -190,8 +215,8 @@ quint64 AggregateRaster::createMetadata()
 {
 
     OperationResource operation({"ilwis://operations/aggregateraster"});
-    operation.setLongName("Spatial Aggregation of Raster coverage");
-    operation.setSyntax("aggregateraster(inputgridcoverage,aggregationmethod=!Avg|Max|Med|Min|Prd|Std|Sum, groupsize,changegeometry)");
+    operation.setLongName("Spatial Raster Aggregation");
+    operation.setSyntax("aggregateraster(inputgridcoverage,aggregationmethod=!Avg|Max|Med|Min|Prd|Sum, groupsize,changegeometry)");
     operation.setDescription(TR("generates a rastercoverage according to a aggregation method. The aggregation method determines how pixel values are used in the aggregation"));
     operation.setInParameterCount({4});
     operation.addInParameter(0,itRASTER , TR("input rastercoverage"),TR("input rastercoverage with any domain"));

@@ -6,15 +6,18 @@ import UIContextModel 1.0
 import "../../controls" as Controls
 import "../../Global.js" as Global
 import ".." as DataPanel
+import "./analysisview" as Analysis
+import "./conceptualview" as Concepts
+import "./applicationview" as Apps
+import "./workflow" as WorkFlow
 
 Rectangle {
     id : modelmanager
     width: parent.width
-    height: 300
     property var activeEditor
 
     function setLayerIndex(index){
-        modelLayerOptions.item.setLayerIndex(index)
+        workflowView.item.setLayerIndex(index)
     }
 
     /**
@@ -22,7 +25,7 @@ Rectangle {
       */
     function showForm(parms){
         if ( activeEditor){
-            activeEditor.enable(modelLayerOptions.item.getPropertyIndex(), parms)
+            activeEditor.enable(workflowView.item.getPropertyIndex(), parms)
         }
     }
 
@@ -36,29 +39,33 @@ Rectangle {
         return forms.item.retrieveRunFormValues()
     }
 
-    function showMetaData(item) {
-        metadata.item.showMetaData(item)
-    }
-
-    function resetMetaData() {
-        metadata.item.resetMetaData()
-    }
-
-    function showWorkflowMetadata(workflow) {
-        metadata.item.showWorkflowMetaData(workflow)
-    }
-
     function clearOperationForm() {
         if ( activeEditor)
             activeEditor.clearOperationForm()
     }
 
     function selectedWorkflowItem(itemid){
-        modelLayerOptions.item.selectedWorkflowItem(itemid)
+        workflowView.item.selectedWorkflowItem(itemid)
+    }
+
+    function updateLists(){
+        if ( modellerDataPane.model ){
+            if ( modellerDataPane.model.conceptCount > 0)
+                modellerViews.currentIndex = 0
+            else if ( modellerDataPane.model.applicationCount > 0)
+                modellerViews.currentIndex = 1
+            else if ( modellerDataPane.model.analysisCount > 0)
+                modellerViews.currentIndex = 2
+            else if ( modellerDataPane.model.workflowCount > 0)
+                modellerViews.currentIndex = 3
+            else
+                modellerViews.currentIndex = 0
+        }
+        workflowView.item.updateLists()
     }
 
     TabView{
-        id : modellerProperties
+        id : modellerViews
         anchors.fill: parent
         tabPosition: Qt.BottomEdge
 
@@ -71,28 +78,40 @@ Rectangle {
                     datapane.state = "bigger"
                 }
             }
-
             currentIndex = index
         }
 
-
         Tab {
-            id : modelLayerOptions
-            title: qsTr("Model layers")
+            id : conceptView
+            title: qsTr("Conceptual View")
             active: true
-            LayerManagement{
-                id : layermanagement
-            }
+            Concepts.ConceptualView{}
+
         }
 
         Tab{
-            id : metadata
+            id : applicationView
             active: true
-            title: qsTr("Metadata")
-            MetaDataTab{}
+            title: qsTr("Application View")
+            Apps.ApplicationView{}
         }
 
+        Tab{
+            id : analysisView
+            active: true
+            title: qsTr("Analysis View")
+            Analysis.AnalysisView{}
+        }
+        Tab{
+            id : workflowView
+            active: true
+            title: qsTr("Workflow View")
+            WorkFlow.WorkflowView{}
+        }
+
+
         style: DataPanel.ButtonBarTabViewStyle{}
+
     }
 
 

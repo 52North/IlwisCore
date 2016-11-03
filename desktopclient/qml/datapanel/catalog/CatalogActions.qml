@@ -32,12 +32,10 @@ TabView {
 
 
     function refresh() {
-        console.debug("scanning")
         currentCatalog.scanContainer(true,true)
     }
 
     function tabClicked(index){
-        console.debug(index,currentIndex,catalogView.state)
         if ( index !== 3) {
             if ( catalogView.state == ""){
                 catalogView.state = "sized"
@@ -51,7 +49,6 @@ TabView {
                         catalogView.state = "maxed"
                     }
                     else{
-                        console.debug("c")
                         catalogView.state = "maxed"
                     }
                 }

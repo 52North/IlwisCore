@@ -34,6 +34,7 @@
 #include "internalprojectionconnector.h"
 #include "internalellipsoidconnector.h"
 #include "internalscriptconnector.h"
+#include "internalmodelconnector.h"
 #include "ilwiscontext.h"
 
 #include "coverage.h"
@@ -71,6 +72,7 @@ void InternalModule::prepare()
     factory->addCreator(itCOORDSYSTEM,"internal", InternalCoordinatesystemConnector::create);
     factory->addCreator(itREPRESENTATION,"internal", InternalRepresentationConnector::create);
     factory->addCreator(itWORKFLOW,"internal", WorkflowConnector::create);
+    factory->addCreator(itMODEL,"internal", InternalModelConnector::create);
     factory->addCreator(itSINGLEOPERATION,"internal", OperationMetadataConnector::create);
     factory->addCreator(itPROJECTION,"internal", InternalProjectionConnector::create);
     factory->addCreator(itELLIPSOID,"internal", InternalEllipsoidConnector::create);

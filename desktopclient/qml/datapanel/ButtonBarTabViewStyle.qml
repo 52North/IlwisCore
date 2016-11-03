@@ -8,7 +8,7 @@ import "../controls" as Controls
 TabViewStyle {
     property string selectColor : Global.palegreen
     property string nonselectColor : "#e6e6e6"
-    property int tabHeight : 50 * Global.uiScale
+    property int tabHeight : 54 * Global.uiScale
 
 
     frameOverlap: 1
@@ -29,7 +29,7 @@ TabViewStyle {
         Image {
             source : styleData.selected ? control.getTab(styleData.index).item.iconName + "_green.png" : control.getTab(styleData.index).item.iconName + "_grey.png"
             anchors.top: parent.top
-            anchors.topMargin: 1
+            anchors.topMargin: 4
             anchors.horizontalCenter: parent.horizontalCenter
         }
 

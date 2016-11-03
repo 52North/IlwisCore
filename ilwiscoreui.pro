@@ -80,8 +80,6 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/globallayermodel.h \
     ilwiscoreui/propertyeditors/gridpropertyeditor.h \
     ilwiscoreui/propertyeditors/layeropacitysetter.h \
-    ilwiscoreui/models/workflow/scenariodesignermodel.h \
-    ilwiscoreui/models/workflow/scenariobuildermodel.h \
     ilwiscoreui/propertyeditors/applyundefinedvaluedefinition.h \
     ilwiscoreui/models/workflow/errormodel.h \
     ilwiscoreui/models/workflow/workflowcatalogmodel.h \
@@ -102,7 +100,11 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/drawers/spatialdatadrawer.h \
     ilwiscoreui/drawers/griddrawer.h \
     ilwiscoreui/drawers/selectiondrawer.h
-
+    ilwiscoreui/models/workflow/modeldesigner.h \
+    ilwiscoreui/models/workflow/modelbuilder.h \
+    ilwiscoreui/models/workflow/analysismodel.h \
+    ilwiscoreui/models/workflow/applicationmodel.h \
+    ilwiscoreui/models/workflow/conceptmodel.h
 
 SOURCES += \
     ilwiscoreui/models/attributemodel.cpp \
@@ -163,8 +165,6 @@ SOURCES += \
     ilwiscoreui/models/globallayermodel.cpp \
     ilwiscoreui/propertyeditors/gridpropertyeditor.cpp \
     ilwiscoreui/propertyeditors/layeropacitysetter.cpp \
-    ilwiscoreui/models/workflow/scenariodesignermodel.cpp \
-    ilwiscoreui/models/workflow/scenariobuildermodel.cpp \
     ilwiscoreui/propertyeditors/applyundefinedvaluedefinition.cpp \
     ilwiscoreui/models/workflow/errormodel.cpp \
     ilwiscoreui/models/workflow/workflowcatalogmodel.cpp \
@@ -184,6 +184,11 @@ SOURCES += \
     ilwiscoreui/drawers/rootdrawer.cpp \
     ilwiscoreui/drawers/simpledrawer.cpp \
     ilwiscoreui/drawers/selectiondrawer.cpp
+    ilwiscoreui/models/workflow/modeldesigner.cpp \
+    ilwiscoreui/models/workflow/modelbuilder.cpp \
+    ilwiscoreui/models/workflow/analysismodel.cpp \
+    ilwiscoreui/models/workflow/applicationmodel.cpp \
+    ilwiscoreui/models/workflow/conceptmodel.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

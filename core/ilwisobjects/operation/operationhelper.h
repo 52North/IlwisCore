@@ -2,6 +2,7 @@
 #define OPERATIONHELPER_H
 
 #include <functional>
+#include "containerstatistics.h"
 
 namespace Ilwis {
 
@@ -21,6 +22,54 @@ public:
             throw CheckExpressionError(errMessage);
         }
 
+    }
+    static double statisticalMarker(const std::vector<double>& values, NumericStatistics::PropertySets method){
+        double result = rUNDEF;
+        if ( method == NumericStatistics::pMEAN){
+            double sum=0;
+            double count = 0;
+            for(auto v : values){
+                if ( !isNumericalUndef(v)){
+                    sum += v;
+                    ++count;
+                }
+            }
+            result = count == 0 ? rUNDEF : sum / count;
+        }else if (method == NumericStatistics::pMIN){
+            double minv = 1e308;
+            for(auto v : values){
+                minv = Ilwis::min(minv, v);
+            }
+            result = minv != 1e308 ? minv : rUNDEF;
+        }else if (method == NumericStatistics::pMAX){
+            double maxv = -1e308;
+            for(auto v : values){
+                maxv = Ilwis::max(maxv, v);
+            }
+            result = maxv != 1e308 ? maxv : rUNDEF;
+        }
+        else if (method == NumericStatistics::pMEDIAN){
+            std::vector<double> orderedNumbers;
+            orderedNumbers.reserve(values.size());
+            for(auto v : values){
+                if ( !isNumericalUndef(v)){
+                    orderedNumbers.push_back(v);
+                }
+            }
+            std::sort(orderedNumbers.begin(), orderedNumbers.end());
+            result = orderedNumbers.size() > 0 ? orderedNumbers[(int)(orderedNumbers.size() / 2)] : rUNDEF;
+        }else if (method == NumericStatistics::pPREDOMINANT){
+//            double pred = -1e308;
+//            std::map<double, qint32> counts;
+//            for(auto v : values){
+//                counts[v]++;
+//            }
+//            double maxCount = -1e308;
+//            for(auto item : counts){
+
+//            }
+        }
+        return result;
     }
 };
 }

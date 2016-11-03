@@ -33,6 +33,7 @@ Modeller.ModellerWorkArea {
 
                 var paramterIndexes = workflow.addOperation(drag.source.ilwisobjectid)
 
+
                 var item = wfCanvas.currentItem
                 wfCanvas.isInsideCondition(item.x + (item.width / 2), item.y + (item.height / 2), item.containerIndex)
                 if (wfCanvas.currentConditionContainer != -1) {
@@ -157,9 +158,9 @@ Modeller.ModellerWorkArea {
                         manager.showOperationForm(item, operationSelected, constantValues)
                     }
 
-                    manager.showMetaData(item.operation)
+                    //manager.showMetaData(item.operation)
                 } else {
-                    manager.resetMetaData();
+                    //manager.resetMetaData();
                 }
                 if ( operationSelected == -1){
                     manager.selectedWorkflowItem(-1)
@@ -472,7 +473,9 @@ Modeller.ModellerWorkArea {
           Calls the create meta data method of the WorkflowModel and regenerates the form
                 */
     function generateForm(parameterIndexes) {
+
         if (workflow) {
+
             var operationNames = []
 
             for( var i=0; i < wfCanvas.operationsList.length; i++){

@@ -128,18 +128,18 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/representation/colorlookup.cpp \
     core/ilwisobjects/representation/continuouscolorlookup.cpp \
     core/ilwisobjects/representation/palettecolorlookup.cpp \
-    core/ilwisobjects/workflow/workflow.cpp \
+    core/ilwisobjects/operation/modeller/workflow.cpp \
     core/util/tranquilizerfactory.cpp \
     core/util/consoletranquilizer.cpp \
     core/ilwisobjects/representation/shapelookup.cpp \
-    core/ilwisobjects/workflow/workflowoperationimplementation.cpp \
+    core/ilwisobjects/operation/modeller/workflowoperationimplementation.cpp \
     core/internaldatabaseconnection.cpp \
     core/catalog/mastercatalogcache.cpp \
     core/catalog/catalogexplorerworker.cpp \
     core/ilwisobjects/operation/script.cpp \
-    core/ilwisobjects/operation/model/model.cpp \
-    core/ilwisobjects/operation/model/analysispattern.cpp \
-    core/ilwisobjects/operation/model/applicationsetup.cpp
+    core/ilwisobjects/operation/modeller/model.cpp \
+    core/ilwisobjects/operation/modeller/analysispattern.cpp \
+    core/ilwisobjects/operation/modeller/applicationsetup.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -283,19 +283,19 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/representation/continuouscolorlookup.h \
     core/ilwisobjects/representation/palettecolorlookup.h \
     core/kernel_global.h \
-    core/ilwisobjects/workflow/workflow.h \
+    core/ilwisobjects/operation/modeller/workflow.h \
     core/util/tranquilizerfactory.h \
     core/util/consoletranquilizer.h \
     core/ilwisobjects/representation/shapelookup.h \
-    core/ilwisobjects/workflow/workflowoperationimplementation.h \
+    core/ilwisobjects/operation/modeller/workflowoperationimplementation.h \
     core/identityinterface.h \
     core/internaldatabaseconnection.h \
     core/catalog/mastercatalogcache.h \
     core/catalog/catalogexplorerworker.h \
     core/ilwisobjects/operation/script.h \
-    core/ilwisobjects/operation/model/model.h \
-    core/ilwisobjects/operation/model/analysispattern.h \
-    core/ilwisobjects/operation/model/applicationsetup.h
+    core/ilwisobjects/operation/modeller/model.h \
+    core/ilwisobjects/operation/modeller/analysispattern.h \
+    core/ilwisobjects/operation/modeller/applicationsetup.h
 
 OTHER_FILES += \
     core/resources/referencesystems.csv \

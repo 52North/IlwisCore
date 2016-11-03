@@ -55,7 +55,7 @@ Rectangle {
         operationFormScrollView.appForm.opacity = 1
         saveButtonEnabled = false
         conditionIds = ""
-        //canvas.workflow.resetParameterEntrySet()
+        canvas.workflow.resetParameterEntrySet()
 
     }
 
@@ -108,7 +108,8 @@ Rectangle {
         operationFormScrollView.appForm.formQML = form
         operationFormScrollView.appForm.formTitle = title
         operationFormScrollView.appForm.opacity = 1
-        canvas.workflow.setSelectedOperationId(metaid)
+        modellerDataPane.setSelectedOperationId(metaid)
+       // canvas.workflow.setSelectedOperationId(metaid)
     }
 
     /**
