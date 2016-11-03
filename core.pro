@@ -445,7 +445,6 @@ SOURCES += core/kernel.cpp \
     core/geos/src/inlines.cpp \
     core/util/ilwiscoordinate.cpp \
     core/util/ilwisangle.cpp
->>>>>>> Stashed changes
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -966,7 +965,6 @@ HEADERS += core/kernel.h\
     core/geos/src/operation/valid/IndexedNestedRingTester.h \
     core/util/ilwiscoordinate.h \
     core/util/ilwisangle.h
->>>>>>> Stashed changes
 
 OTHER_FILES += \
     core/resources/referencesystems.csv \
