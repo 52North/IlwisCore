@@ -18,22 +18,22 @@ DEFINES += FEATUREOPERATIONS_LIBRARY
 HEADERS += \
     featureoperations/featureoperationsmodule.h \
     featureoperations/gridding.h \
-    featureoperations/rastertopoint.h \
     featureoperations/pointrastercrossing.h \
     featureoperations/transformcoordinates.h \
     featureoperations/buffer.h \
     featureoperations/polygon2line.h \
-    featureoperations/line2polygon.h
+    featureoperations/line2polygon.h \
+    featureoperations/raster2point.h
 
 SOURCES += \
     featureoperations/featureoperationsmodule.cpp \
     featureoperations/gridding.cpp \
-    featureoperations/rastertopoint.cpp \
     featureoperations/pointrastercrossing.cpp \
     featureoperations/transformcoordinates.cpp \
     featureoperations/buffer.cpp \
     featureoperations/polygon2line.cpp \
-    featureoperations/line2polygon.cpp
+    featureoperations/line2polygon.cpp \
+    featureoperations/raster2point.cpp
 
 OTHER_FILES += \ 
     featureoperations/featureoperations.json
