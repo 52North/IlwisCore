@@ -19,7 +19,7 @@
 #include "operationmetadata.h"
 #include "operation.h"
 #include "operationhelperfeatures.h"
-#include "rastertopoint.h"
+#include "raster2point.h"
 
 using namespace Ilwis;
 using namespace FeatureOperations;
