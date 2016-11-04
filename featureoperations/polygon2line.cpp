@@ -133,7 +133,7 @@ quint64 Polygon2Line::createMetadata()
     operation.addInParameter(1,itBOOL, TR("single id"),TR("Each line in the output map has the same id"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itLINE, TR("output line coverage"), TR("Collection of boundaries of the polygons"));
-    operation.setKeywords("line,vector");
+    operation.setKeywords("line,polygon,vector");
     mastercatalog()->addItems({operation});
     return operation.id();
 }
