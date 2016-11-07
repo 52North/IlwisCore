@@ -59,11 +59,15 @@ bool Line2Polygon::execute(ExecutionContext *ctx, SymbolTable &symTable)
     for(geos::geom::Polygon *polygon : *polygons){
         _outputfeatures->newFeature(polygon);
     }
+    delete polygons;
+
     _outputfeatures->setAttributes(_inputfeatures->attributeTable()->copyTable());
 
     QVariant value;
     value.setValue<IFeatureCoverage>(_outputfeatures);
     ctx->setOutput(symTable, value, _outputfeatures->name(), itFEATURE,_outputfeatures->resource());
+
+
 
     return true;
 }
