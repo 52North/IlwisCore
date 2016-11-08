@@ -135,29 +135,8 @@ Item {
         }
     }
 
-    /*
-    Connections {
-        target: manager
-        onLatlonEnvelopeChanged :{
-            console.log("Layers.qml: onLatlonEnvelopeChanged")            
-        }
-    }
-
-    Connections {
-        target: layers.drawer()
-        onViewEnvelopeChanged :{
-            console.log("Layers.qml: onViewEnvelopeChanged")
-        }
-    }
-    */
 
 
 
-//    PostMapPanelCanvas{
-//        anchors.fill: parent
-//        Component.onCompleted: {
-//            addDrawer("drawers/GridDrawer.qml")
-//        }
-//    }
 }
 
