@@ -188,13 +188,29 @@ Rectangle {
 
         }
     }
+    Rectangle {
+        id : mapLabel
+        width : 370* Global.uiScale
+        height : 18
+        color : Global.palegreen
+        anchors.left: choices.right
+        anchors.leftMargin: 2
+        Text{
+            text : qsTr("Spatial Selection")
+            font.bold: true
+            x : 3
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
     Controls.SpatialSelection{
         id : spatselect
         anchors.left: choices.right
         anchors.leftMargin: 6* Global.uiScale
+        anchors.top : mapLabel.bottom
         z : 1
         height : parent.height
         width : 370* Global.uiScale
+        filterTarget: currentCatalog
     }
 }
 
