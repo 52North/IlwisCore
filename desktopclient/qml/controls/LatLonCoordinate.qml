@@ -8,19 +8,40 @@ import "../controls" as Controls
 import ".." as Base
 
 Row {
-    width : parent.width
+    width : childrenRect.width
     height : Global.rowHeight
     property string degrees
     property string metric
     property bool northsouth : true
     property bool isChanging: false
     property bool isReadOnly : false
+    property bool compact : false
+    property string nstring : qsTr("North")
+    property string estring : qsTr("East")
+    property string wstring : qsTr("West")
+    property string sstring : qsTr("South")
 
     function setCoordinate(crd){
         degreestxt.text = crd
+        calcstrings()
     }
 
-    spacing : 5
+    onCompactChanged: {
+        if ( compact)    {
+            nstring = qsTr("N")
+            estring = qsTr("E")
+            wstring = qsTr("W")
+            sstring = qsTr("S")
+
+        }else{
+            nstring = qsTr("North")
+            estring = qsTr("East")
+            wstring = qsTr("West")
+            sstring = qsTr("South")
+        }
+    }
+
+    spacing : compact ? 2 : 4
 
     function calcstrings() {
         isChanging = true
@@ -35,10 +56,10 @@ Row {
             if ( Number(degreestxt.text < 0)){
                 half.checked = false
                 degreestxt.text = Math.abs(dgr)
-                half.text = northsouth ? qsTr("South") : qsTr("West")
+                half.text = northsouth ? sstring : wstring
             }else{
                 half.checked = true
-                half.text = northsouth ? qsTr("North") : qsTr("East")
+                half.text = northsouth ? nstring : estring
             }
 
         }else {
@@ -63,7 +84,7 @@ Row {
 
     ValidatedTextField{
         id : degreestxt
-        width : 30
+        width : compact ? 20 : 40
         height : parent.height
         regexvalidator: /^-?(\d*(\.\d*)?)/
         readOnly : isReadOnly
@@ -75,14 +96,14 @@ Row {
         }
     }
     Text {
-        text : " °"
-        width : 10
+        text : "°"
+        width : 7
         height : parent.height
         clip : true
     }
     ValidatedTextField{
         id : minutestxt
-        width : 30
+        width : compact ? 20 : 40
         height : parent.height
         regexvalidator: /^\+?(0|[1-9]\d*)$/
         readOnly : isReadOnly
@@ -93,14 +114,14 @@ Row {
         }
     }
     Text {
-        text : " '"
-        width : 10
+        text : "'"
+        width : compact ? 5 : 10
         height : parent.height
         clip : true
     }
     ValidatedTextField{
         id : secondstxt
-        width : 50
+        width : compact ? 35 : 50
         height : parent.height
         regexvalidator: /^\d*(\.\d*)?$/
         readOnly : isReadOnly
@@ -111,18 +132,18 @@ Row {
         }
     }
     Text {
-        text : " \""
-        width : 20
+        text : "\""
+        width : compact ? 5 : 10
         height : parent.height
         clip : true
     }
     Button{
         id : half
         height : 20
-        width : 40
+        width : compact ? 20 : 40
         checked : true
         enabled: isReadOnly ? false : true
-        text : (northsouth ? (checked ? qsTr("North") : qsTr("South")) : (checked ? qsTr("East") : qsTr("West")))
+        text : (northsouth ? (checked ? nstring : sstring) : (checked ? estring : wstring))
         onClicked:  {
             checked = !checked
         }

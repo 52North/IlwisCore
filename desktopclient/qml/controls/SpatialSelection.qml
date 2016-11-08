@@ -12,35 +12,28 @@ import LayerManager 1.0
 Item {
     id : selector
     property var currentEnvelope
+    property var filterTarget
+    clip : true
 
 
     onCurrentEnvelopeChanged: {
         if ( currentEnvelope === "entiremap"){
             worldmap.addCommand("setviewextent("+ worldmap.viewerId + ",entiremap)");
             worldmap.update()
-            currentCatalog.spatialFilter = ""
+            if ( filterTarget){
+                if ( "spatialFilter" in filterTarget)
+                    filterTarget.spatialFilter = ""
+            }
         }else
             worldmap.newExtent(currentEnvelope)
     }
-    Rectangle {
-        id : mapLabel
-        width : parent.width
-        height : 18
-        color : Global.palegreen
-        Text{
-            text : qsTr("Spatial Selection")
-            font.bold: true
-            x : 3
-            anchors.verticalCenter: parent.verticalCenter
-        }
-    }
+
 
 
     Rectangle{
         id : worldmapcontainer
         width : parent.width
         height : 250
-        anchors.top: mapLabel.bottom
         property LayerManager manager
 
         SpatialSelectionToolbar{
@@ -57,7 +50,8 @@ Item {
             Connections{
                 target : mouseActions
                 onZoomEnded : {
-                    currentCatalog.filter("spatial", envelope)
+                    if ( filterTarget)
+                        filterTarget.filter("spatial", envelope)
                     currentEnvelope = envelope
                 }
             }
@@ -86,12 +80,35 @@ Item {
 
     }
 
-    clip : true
-
-
     Component.onCompleted: {
         worldmapcontainer.manager = uicontext.createLayerManager(objectName)
         worldmap.setManager(worldmapcontainer.manager)
     }
+    states: [
+        State { name: "invisible"
+
+            PropertyChanges {
+                target: selector
+                height : 0
+            }
+
+        },
+        State {
+            name : "visible"
+            PropertyChanges {
+                target: selector
+                height : 270
+            }
+        }
+
+    ]
+    transitions: [
+        Transition {
+            NumberAnimation
+            { properties: "height"; duration : 500 ; easing.type: Easing.OutCubic
+            }
+
+        }
+    ]
 }
 
