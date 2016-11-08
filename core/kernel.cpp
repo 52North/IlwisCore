@@ -52,6 +52,10 @@
 #include "operation.h"
 #include "tranquilizer.h"
 #include "tranquilizerfactory.h"
+#include "modeller/workflow.h"
+#include "modeller/applicationsetup.h"
+#include "modeller/analysispattern.h"
+#include "modellerfactory.h"
 
 Ilwis::Kernel *Ilwis::Kernel::_kernel = 0;
 
@@ -139,6 +143,10 @@ void Kernel::init() {
     TranquilizerFactory *trqFactory = new TranquilizerFactory();
     trqFactory->prepare();
     addFactory(trqFactory);
+
+    ModellerFactory *modFac = new ModellerFactory();
+    modFac->prepare();
+    addFactory(modFac);
 
 
     _modules.addModules();
