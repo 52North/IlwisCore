@@ -30,7 +30,6 @@ Item {
                 var resource = mastercatalog.id2Resource(filter.split('=')[1],modellerDataPane);
                 workflowView.workflow = model.addWorkflow(filter);
                 model.currentWorkflow = workflowView.workflow
-                //manager.setLayerIndex(3)
                 if (resource) {
                    workflowView.drawFromWorkflow()
                 }
@@ -41,6 +40,19 @@ Item {
             }
         }
     }
+
+    function setCurrentWorkflow(wf) {
+         if ( wf && wf.name !== model.currentWorkflow.name){
+             workflowView.workflow = wf
+             model.currentWorkflow = workflowView.workflow
+             if (model.currentWorkflow) {
+                 workflowView.drawFromWorkflow()
+             }
+             createParameters = ['itemid=' + wf.id, wf.name, 'workflow']
+
+             manager.updateLists()
+         }
+     }
 
     function iconsource(name) {
         if ( name.indexOf("/") !== -1)
@@ -68,12 +80,12 @@ Item {
             analysisView.state = "invisible"
             applicationView.state = "invisible"
 
-        }else if ( index == 1){
+        }else if ( index == 2){
             conceptualView.state = "invisible"
             workflowView.state = "invisible"
             analysisView.state = "visible"
             applicationView.state = "invisible"
-        } else if ( index == 2){
+        } else if ( index == 1){
             conceptualView.state = "invisible"
             workflowView.state = "invisible"
             analysisView.state = "invisible"
