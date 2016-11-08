@@ -34,7 +34,6 @@ Rectangle {
         onTriggered : {
             if ( manager){
                 var envelope = renderer.attributeOfDrawer("rootdrawer","zoomenvelope");
-                console.log("OverviewExtentToolbar.qml: zoomOutClicked: envelope= " + envelope)
                 Global.calcZoomOutEnvelope(envelope, layers, viewmanager,0.707)
             }
         }
