@@ -12,7 +12,7 @@ Model.ModellerWorkArea {
 
     width : parent.width
     height : parent.height - 170
-    color : "green"
+    color : "white"
     state : "invisible"
 
 

@@ -127,13 +127,7 @@ Item {
         workflowView.defaultZoom();
     }
 
-    /**
-    Sets the zoom percentage based on the tform's xScale
-    */
-    function setPercentage(){
-        var scl = workflowView.getScale();
-        modellertools.zoomLevel.text = Math.round((scl * 100)) + "%"
-    }
+
 
     /**
       Calls the WorkflowCanvas's run method
@@ -143,7 +137,7 @@ Item {
     }
 
     function addError(id, error) {
-        errorview.addError(id, error)
+        //errorview.addError(id, error)
     }
 
     function toggleStepMode(){
@@ -162,52 +156,16 @@ Item {
 
     property bool canSeparate : true
 
-    ModellerTools{
-        id : modellertools
-    }
+
 
     function setSelectedOperationId(metaid){
         datapane.setSelectedOperationId(metaid)
     }
 
-     ModellerErrorView {
-        height: 0
-        id : errorview
-        width : parent.width
-        y: modellertools.height
-        z: ontTopZValue
-        color: Global.alternatecolor4
-        border.width: 1
-        border.color: Global.alternatecolor1
-
-        states: [
-            State {
-                name : "bigger"
-                PropertyChanges {
-                    target: errorview
-                    height : 80
-                }
-            },
-            State {
-                name: "smaller"
-                PropertyChanges {
-                    target: errorview
-                    height : 0
-                }
-            }
-        ]
-        transitions: [
-            Transition {
-                NumberAnimation { properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
-            }
-        ]
-    }
-
     SplitView {
-        anchors.top : modellertools.bottom
         width : parent.width
         orientation: Qt.Vertical
-        height : parent.height - modellertools.height
+        height : parent.height
         id : modellersplit
 
         Item {

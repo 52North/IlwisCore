@@ -26,10 +26,16 @@ Modeller.ModellerWorkArea {
     }
 
     id: canvas
+    WorkflowTools{
+        id : tools
+    }
+
 
     DropArea {
         id: canvasDropArea
-        anchors.fill: canvas
+        anchors.top : tools.bottom
+        anchors.bottom: canvas.bottom
+        width : parent.width
         enabled: true
         onDropped: {
             if (drag.source.type === "singleoperation" || drag.source.type === "workflow") {
@@ -67,7 +73,10 @@ Modeller.ModellerWorkArea {
 
     MouseArea {
         id: area
-        anchors.fill: parent
+        anchors.top : tools.bottom
+        anchors.bottom: canvas.bottom
+        width : parent.width
+
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
         property bool positionChanged: false
@@ -290,7 +299,15 @@ Modeller.ModellerWorkArea {
         replacePanOperation()
 
         wfCanvas.scale = 1
-        modellerDataPane.setPercentage();
+        setPercentage();
+    }
+
+    /**
+    Sets the zoom percentage based on the tform's xScale
+    */
+    function setPercentage(){
+        var scl = workflowView.getScale();
+        tools.zoomLevel.text = Math.round((scl * 100)) + "%"
     }
 
     function getScale()
@@ -578,7 +595,10 @@ Modeller.ModellerWorkArea {
         }
 
         id : wfCanvas
-        anchors.fill: parent
+        anchors.top : tools.bottom
+        anchors.bottom: canvas.bottom
+        width : parent.width
+        clip : true
         z: Number.MAX_VALUE
 
         property var ctx: getContext('2d')
@@ -683,7 +703,7 @@ Modeller.ModellerWorkArea {
             if (component.status == Component.Ready) {
                 var ptOp = transformedPoint(x, y)
 
-                currentItem = component.createObject(canvas, {"x": ptOp.x, "y": ptOp.y, "operation" : resource, "itemid" : operationsList.length, "scale": wfCanvas.scale});
+                currentItem = component.createObject(wfCanvas, {"x": ptOp.x, "y": ptOp.y, "operation" : resource, "itemid" : operationsList.length, "scale": wfCanvas.scale});
                 if (currentItem == null) {
                     // Error Handling
                     console.log("Error creating object");
@@ -860,7 +880,7 @@ Modeller.ModellerWorkArea {
 
             replacePanOperation()
 
-            modellerDataPane.setPercentage();
+            setPercentage();
         }
     }
 

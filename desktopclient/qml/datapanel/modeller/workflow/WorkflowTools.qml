@@ -10,6 +10,16 @@ ToolBar{
 
     property alias zoomLevel: zoomLabel
 
+    function iconsource(name) {
+        if ( name.indexOf("/") !== -1)
+            return name
+        if ( name === "")
+            name = "redbuttonr.png"
+
+        var iconP = "../../../images/" + name
+        return iconP
+    }
+
     Column {
         height:parent.height
         width: parent.width/3

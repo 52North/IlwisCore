@@ -101,7 +101,7 @@ linux{
 qmldir.files = SMCE/qmldir
 qmldir.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/ui/$$TARGET
 
-qml.files = SMCE/SMCEPanel.qml
+qml.files = SMCE/*.qml
 qml.path =  $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/ui/$$TARGET
 #unix {
 #    installPath = $$[QT_INSTALL_QML]/$$replace(uri, \\., /)
@@ -124,6 +124,7 @@ linux{
 INSTALLS += qml qmldir
 
 DISTFILES += \
-    smce/SMCEPanel.qml
+    smce/SMCEPanel.qml \
+    smce/SMCEToolBar.qml
 
 
