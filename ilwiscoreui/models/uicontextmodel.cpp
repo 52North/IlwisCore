@@ -281,6 +281,8 @@ void UIContextModel::prepare()
     mastercatalog()->addItems({mapResource, scriptResource}) ;
     _consoleScript.prepare(scriptResource);
     _worldMap.prepare(mapResource);
+
+    kernel()->loadModulesFromLocation(context()->ilwisFolder().absoluteFilePath() + "/extensions/ui");
 }
 
 bool UIContextModel::abort() const
@@ -376,6 +378,13 @@ qint64 UIContextModel::addMapPanel(const QString& filter, const QString& side, c
             return ret.toLongLong();
     }
     return -1;
+}
+
+QString UIContextModel::ilwisFolder() const
+{
+    QFileInfo inf = context()->ilwisFolder();
+    QUrl url = QUrl::fromLocalFile(inf.absoluteFilePath());
+    return url.toString();
 }
 
 QStringList UIContextModel::formatList(const QString& query, const QString& selectParm) const

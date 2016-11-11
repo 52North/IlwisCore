@@ -48,6 +48,7 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
     Q_PROPERTY(int currentKey READ currentKey CONSTANT)
     Q_PROPERTY(QStringList colorNames READ colorNames CONSTANT)
     Q_PROPERTY(WorkSpaceModel * currentWorkSpace READ currentWorkSpace WRITE setCurrentWorkSpace NOTIFY currentWorkSpaceChanged)
+    Q_PROPERTY(QString ilwisFolder READ ilwisFolder CONSTANT)
 
 
 public:
@@ -94,6 +95,7 @@ public:
     void initializeDataPane();
     qint64 addMapPanel(const QString &filter, const QString &side, const QString url);
     QStringList formatList() const;
+    QString ilwisFolder() const;
 
 signals:
     void activeSplitChanged();
