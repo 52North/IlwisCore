@@ -190,6 +190,7 @@ public:
     void newTranquilizer(quint64 id, const QString &title, const QString &description, qint64 start, qint64 end);
     const Module* module(const QString& name) const;
     const ModuleMap& modules() const;
+    void loadModulesFromLocation(const QString& location);
     void addSyncLock(quint32 runid);
     void removeSyncLock(quint32 runid);
     QWaitCondition& waitcondition(quint32, bool& ok);

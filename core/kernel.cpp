@@ -148,8 +148,7 @@ void Kernel::init() {
     modFac->prepare();
     addFactory(modFac);
 
-
-    _modules.addModules();
+    loadModulesFromLocation(context()->ilwisFolder().absoluteFilePath() + "/extensions/");
 
 }
 
@@ -295,6 +294,11 @@ const Module *Kernel::module(const QString &name) const
 const ModuleMap &Kernel::modules() const
 {
     return _modules;
+}
+
+void Kernel::loadModulesFromLocation(const QString &location)
+{
+    _modules.addModules(location);
 }
 
 void Kernel::addSyncLock(quint32 runid)
