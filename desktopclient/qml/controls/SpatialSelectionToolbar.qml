@@ -49,7 +49,8 @@ Rectangle {
             onClicked: {
                 worldmap.addCommand("setviewextent("+ worldmap.viewerId + ",entiremap)");
                 worldmap.update()
-                currentCatalog.filter("spatial","")
+                if ( currentCatalog)
+                    currentCatalog.filter("spatial","")
             }
         }
 

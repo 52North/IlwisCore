@@ -67,13 +67,11 @@ Item {
                 height : 22
                 text : qsTr("Create")
                 onClicked: {
-                    console.debug(modellerDataPane.model, modellerDataPane.model.id)
                     var parms = {modelId : modellerDataPane.model.id, subtype : analysisType, type : "analysispattern",pattername : namefield.content, description : descField.content}
                     var analysis = objectcreator.createModellerObject(parms)
                     if (!modellerDataPane.model.addAnalysisPattern(analysis)){
                         analysis.suicide()
                     }else {
-                        console.debug(analysis)
                         analysis.longName = longnamefield.content
                         layerprops.refreshAnalysisNames()
                         createForm.state = "invisible"

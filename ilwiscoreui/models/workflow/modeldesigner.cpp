@@ -200,6 +200,19 @@ void ModelDesigner::removeApplication(qint32 index)
 
 }
 
+bool ModelDesigner::store(const QString& location)
+{
+    try{
+        QString outputUrl = location + "/" + _model->name() + ".ilwis";
+        _model->connectTo(outputUrl,"model","stream",IlwisObject::cmOUTPUT);
+        return _model->store();
+    } catch (ErrorObject& err){}
+
+    return false;
+
+
+}
+
 qint32 ModelDesigner::conceptCount() const
 {
     return _conceptmodels.size();

@@ -282,6 +282,8 @@ QString ResourceModel::iconPath(IlwisTypes tp)
         return "coord20.png";
     else if ( tp & itPIXEL)
         return "pixel20.png";
+    else if ( tp & itMODEL)
+        return "model.png";
     else
         return "eye.png";
 }

@@ -29,6 +29,7 @@ using namespace Ilwis;
 ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
 {
     _creators["workflow"] = new IlwisObjectCreatorModel("workflow",TR("Workflow"),itWORKFLOW,"CreateWorkflow.qml", 400, this);
+    _creators["model"] = new IlwisObjectCreatorModel("model",TR("Model"),itMODEL,"CreateModel.qml", 400, this);
     _creators["script"] = new IlwisObjectCreatorModel("script",TR("Script"),itSCRIPT,"CreateScript.qml", 400, this);
     _creators["numericdomain" ] = new IlwisObjectCreatorModel("numericdomain",TR("Numeric Domain"),itNUMERICDOMAIN,"CreateNumDom.qml", 250, this);
     _creators["thematicdomain" ] = new IlwisObjectCreatorModel("thematicdomain", TR("Thematic Domain"),itITEMDOMAIN | itTHEMATICITEM,"CreateThematicDom.qml", 520, this);
@@ -48,7 +49,7 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
     _creators["featurecoverage" ] = new IlwisObjectCreatorModel("featurecoverage", TR("Feature Coverage"),itFEATURE,"UnderDevelopment.qml", 200, this);
     _creators["table" ] = new IlwisObjectCreatorModel("table", TR("Table"),itTABLE,"UnderDevelopment.qml", 200, this);
     _creators["representation" ] = new IlwisObjectCreatorModel("representation",TR("Representation"),itREPRESENTATION,"UnderDevelopment.qml", 250, this);
-        _creators["domain" ] = new IlwisObjectCreatorModel("domain",TR("Domain"),itDOMAIN,"CreateDomain.qml", 250, this);
+    _creators["domain" ] = new IlwisObjectCreatorModel("domain",TR("Domain"),itDOMAIN,"CreateDomain.qml", 250, this);
 }
 
 ObjectCreator::~ObjectCreator()
@@ -325,7 +326,26 @@ QString ObjectCreator::createScript(const QVariantMap &parms)
 }
 
 QString ObjectCreator::createModel(const QVariantMap &parms){
-    return QString::number(i64UNDEF);
+    IModel model;
+    model.prepare();
+    QString name = parms["name"].toString();
+    model->name(name);
+    model->resourceRef().setUrl(parms["url"].toString());
+    model->resourceRef().setUrl(parms["url"].toString(), true);
+    model->resourceRef().setDescription(parms["description"].toString());
+    model->resourceRef().addProperty("keyword", parms["keywords"].toString());
+    model->connectTo(parms["url"].toString(),"model","stream",IlwisObject::cmOUTPUT);
+    model->store();
+    mastercatalog()->addItems({model->resource()});
+    QVariant mastercatalog = uicontext()->rootContext()->contextProperty("mastercatalog");
+    if ( mastercatalog.isValid()){
+        MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel*>();
+        CatalogModel *ocmodel = mcmodel->currentCatalog();
+        if ( dynamic_cast<OperationCatalogModel *>(ocmodel)){
+            ocmodel->refresh();
+        }
+    }
+    return QString::number(model->id());
 }
 
 QString ObjectCreator::createObject(const QVariantMap &parms)
@@ -347,6 +367,8 @@ QString ObjectCreator::createObject(const QVariantMap &parms)
         return createRasterCoverage(parms);
     }else if ( type == "script"){
         return createScript(parms);
+    }else if ( type == "model"){
+        return createModel(parms);
     }
 
 
