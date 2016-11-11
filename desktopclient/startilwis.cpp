@@ -160,7 +160,7 @@ void StartIlwis::init() {
         ctx->setContextProperty("messagehandler", _messageHandler);
         ctx->setContextProperty("tranquilizerHandler", _tranquilizers);
         ctx->setContextProperty("operations", _operations);
-        ctx->setContextProperty("modelbuilder", _modelBuilder);
+        ctx->setContextProperty("modelbuilder", modelbuilder().get());
         ctx->setContextProperty("datapane", _datapane);
         ctx->setContextProperty("objectcreator", _objcreator);
         ctx->setContextProperty("preferences",_preferences);
