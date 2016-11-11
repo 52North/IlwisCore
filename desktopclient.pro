@@ -6,7 +6,6 @@ QMAKE_CXXFLAGS += -Wno-deprecated-declarations
 
 
 
-
 CONFIG(debug, debug|release) {
 CONF=debug
 }

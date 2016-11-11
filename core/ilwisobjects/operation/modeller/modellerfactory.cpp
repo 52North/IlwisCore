@@ -12,18 +12,27 @@ ModellerFactory::ModellerFactory()  : AbstractFactory("ModellerFactory","ilwis",
 
 }
 
-AnalysisPattern *ModellerFactory::createAnalysisPattern(const QString &name, const QString &description, const IOOptions &options)
+AnalysisPattern *ModellerFactory::createAnalysisPattern(const QString type, const QString &name, const QString &description, const IOOptions &options)
 {
-    auto iter = _analysisCreators.find(name.toLower());
+    auto iter = _analysisCreators.find(type.toLower());
     if ( iter == _analysisCreators.end()){
         return 0;
     }
     return (*iter).second(name, description, options);
 }
 
+QStringList ModellerFactory::analysisTypes() const
+{
+    QStringList result;
+    for(auto analysis : _analysisCreators){
+        result.push_back(analysis.first);
+    }
+    return result;
+}
+
 AnalysisPattern *ModellerFactory::registerAnalysisPattern(const QString &classname, CreateAnalysisPattern createFunc)
 {
-    ModellerFactory *factory = kernel()->factory<ModellerFactory>("ModellerFactory");
+    ModellerFactory *factory = kernel()->factory<ModellerFactory>("ModellerFactory", "ilwis");
     if ( factory){
         factory->registerAnalysisPatternInternal(classname, createFunc);
     }
@@ -32,7 +41,7 @@ AnalysisPattern *ModellerFactory::registerAnalysisPattern(const QString &classna
 
 ModelApplication *ModellerFactory::registerModelApplication(const QString &classname, CreateModelApplication createFunc)
 {
-    ModellerFactory *factory = kernel()->factory<ModellerFactory>("ModellerFactory");
+    ModellerFactory *factory = kernel()->factory<ModellerFactory>("ModellerFactory", "ilwis");
     if ( factory){
         factory->registerModelApplicationInternal(classname, createFunc);
     }

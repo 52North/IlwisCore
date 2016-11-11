@@ -1,7 +1,9 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "workflow.h"
+#include "applicationsetup.h"
 #include "analysispattern.h"
+#include "model.h"
 
 using namespace Ilwis;
 
@@ -23,4 +25,14 @@ void AnalysisPattern::store(QDataStream &stream)
 void AnalysisPattern::load(QDataStream &stream)
 {
     Identity::store(stream)    ;
+}
+
+void AnalysisPattern::attachedModel(const IModel &model)
+{
+    _attachedModel = model;
+}
+
+IModel AnalysisPattern::attachedModel()
+{
+    return _attachedModel;
 }

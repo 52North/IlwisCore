@@ -1,0 +1,3 @@
+module SMCE
+SMCEPanel 1.0 SMCE/SMCEPanel.qml
+plugin SMCE

@@ -612,7 +612,7 @@ Modeller.ModellerWorkArea {
             running: true;
             repeat: true
             onTriggered: {
-                if ( !wfCanvas.canvasValid)
+                //if ( !wfCanvas.canvasValid)
                     wfCanvas.draw(true)
             }
         }

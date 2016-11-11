@@ -19,7 +19,8 @@ class KERNELSHARED_EXPORT ModellerFactory : public AbstractFactory
 public:
     ModellerFactory();
 
-    AnalysisPattern *createAnalysisPattern(const QString& name, const QString& description, const IOOptions &options);
+    AnalysisPattern *createAnalysisPattern(const QString type,const QString& name, const QString& description, const IOOptions &options);
+    QStringList analysisTypes() const;
 
     static AnalysisPattern * registerAnalysisPattern(const QString& classname, CreateAnalysisPattern createFunc);
     static ModelApplication * registerModelApplication(const QString& classname, CreateModelApplication createFunc);

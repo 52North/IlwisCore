@@ -17,6 +17,12 @@
 #include "objectcreator.h"
 #include "script.h"
 #include "operationmetadata.h"
+#include "analysispattern.h"
+#include "applicationsetup.h"
+#include "model.h"
+#include "modellerfactory.h"
+#include "workflow/modelbuilder.h"
+#include "workflow/analysismodel.h"
 
 using namespace Ilwis;
 
@@ -341,8 +347,6 @@ QString ObjectCreator::createObject(const QVariantMap &parms)
         return createRasterCoverage(parms);
     }else if ( type == "script"){
         return createScript(parms);
-    }else if ( type == "model"){
-        return createModel(parms);
     }
 
 
@@ -369,6 +373,34 @@ QVariantMap ObjectCreator::creatorInfo(const QString& name) const
         return data;
     }
     return QVariantMap();
+}
+
+QObject *ObjectCreator::createModellerObject(const QVariantMap &parms)
+{
+    QString modellerObjectType = parms["type"].toString();
+    if ( modellerObjectType == "analysispattern"){
+        bool ok;
+        quint64 modelId = parms["modelId"].toULongLong(&ok);
+        if ( ok){
+            IModel currentModel;
+            if ( currentModel.prepare(modelId)){
+                QString subtype = parms["subtype"].toString();
+                QString patternName = parms["pattername"].toString();
+                if ( patternName != ""){
+                    QString desc= parms["description"].toString();
+                    ModellerFactory *factory = kernel()->factory<ModellerFactory>("ModellerFactory","ilwis");
+                    AnalysisPattern * pattern = factory->createAnalysisPattern(subtype, patternName, desc, IOOptions());
+                    if ( pattern){
+                        currentModel->addAnalysisPattern(pattern);
+                        AnalysisModel *amodel = modelbuilder()->createAnalysisModel(pattern);
+                        return amodel; // the ownership of this model is in the modeldesigner to which this analysis will be added
+                    }
+                }else
+                    kernel()->issues()->log(TR("An analysis must have a name"), IssueObject::itWarning);
+            }
+        }
+    }
+    return 0;
 }
 
 QString ObjectCreator::createRasterCoverage(const QVariantMap& parms){

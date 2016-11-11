@@ -91,7 +91,7 @@ public slots:
 class ModuleMap : public QMap<QString, Module *> {
 public:
     ~ModuleMap();
-    void addModules();
+    void addModules(const QString &path);
     void initModules();
 private:
 

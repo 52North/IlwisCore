@@ -26,17 +26,19 @@ Item {
     function addDataSource(filter, sourceName, sourceType){
         if ( filter !== "" ){
             if (sourceType === "workflow" ) {
-                modellerDataPane.model = modelbuilder.createModel(modellerDataPane)
                 var resource = mastercatalog.id2Resource(filter.split('=')[1],modellerDataPane);
-                workflowView.workflow = model.addWorkflow(filter);
-                model.currentWorkflow = workflowView.workflow
-                if (resource) {
-                   workflowView.drawFromWorkflow()
+                if ( resource){
+                    modellerDataPane.model = modelbuilder.createModel(modellerDataPane)
+                    if ( modellerDataPane.model){
+                        workflowView.workflow = model.addWorkflow(filter);
+                        model.currentWorkflow = workflowView.workflow
+                        if (resource) {
+                            workflowView.drawFromWorkflow()
+                        }
+                        createParameters = [filter, sourceName, sourceType]
+                        manager.updateLists()
+                    }
                 }
-                createParameters = [filter, sourceName, sourceType]
-
-
-                manager.updateLists()
             }
         }
     }

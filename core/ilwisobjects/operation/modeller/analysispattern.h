@@ -4,7 +4,7 @@
 
 #define NEW_ANALYSISPATTERN \
     private: \
-static AnalysisPattern *dummy_analysis;
+static Ilwis::AnalysisPattern *dummy_analysis;
 
 #define REGISTER_ANALYSISPATTERN(classname) \
     AnalysisPattern *classname::dummy_analysis = ModellerFactory::registerAnalysisPattern(#classname, classname::create);
@@ -12,6 +12,8 @@ static AnalysisPattern *dummy_analysis;
 namespace Ilwis {
 class Workfolow;
 typedef IlwisData<Workflow> IWorkflow;
+class Model;
+typedef IlwisData<Model> IModel;
 
 class KERNELSHARED_EXPORT AnalysisPattern : public QObject, public Identity
 {
@@ -24,9 +26,13 @@ public:
 
     virtual void store(QDataStream& stream);
     virtual void load(QDataStream& stream);
-    virtual QString panel(const IOOptions& options=IOOptions()) = 0;
+    virtual QString type() const = 0 ;
+
+    void attachedModel(const IModel& model);
+    IModel attachedModel();
 
 private:
+    IModel _attachedModel;
 };
 
 typedef std::shared_ptr<AnalysisPattern> SPAnalysisPattern;

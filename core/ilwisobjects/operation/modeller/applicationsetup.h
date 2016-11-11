@@ -10,6 +10,7 @@ public:
 
     void store(QDataStream& stream);
     void load(QDataStream& stream);
+    virtual QString type() const = 0;
 };
 
 typedef std::shared_ptr<ModelApplication> SPModelApplication;

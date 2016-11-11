@@ -22,20 +22,21 @@
 #include "ilwiscoreui_global.h"
 #include "model.h"
 
-class ILWISCOREUISHARED_EXPORT ModelDesigner : public QObject
+class ILWISCOREUISHARED_EXPORT ModelDesigner : public ResourceModel
 {
     Q_OBJECT
 public:
     explicit ModelDesigner(QObject *parent = 0);
-    ModelDesigner(IModel& model, QObject *parent=0);
+    ModelDesigner(ResourceModel *rmodel, QObject *parent=0);
     Q_PROPERTY(int workflowCount READ workflowCount NOTIFY workflowCountChanged)
     Q_PROPERTY(int analysisCount READ analysisCount NOTIFY analysisCountChanged)
     Q_PROPERTY(int conceptCount READ conceptCount NOTIFY conceptCountChanged)
     Q_PROPERTY(int applicationCount READ applicationCount NOTIFY applicationCountChanged)
     Q_PROPERTY(QStringList workflowNames READ workflowNames CONSTANT)
-    Q_PROPERTY(QStringList analysisNames READ analysisNames CONSTANT)
+    Q_PROPERTY(QStringList analysisNames READ analysisNames NOTIFY analysisNamesChanged)
     Q_PROPERTY(QStringList applicationNames READ applicationNames CONSTANT)
     Q_PROPERTY(WorkflowModel *currentWorkflow READ currentWorkflow WRITE currentWorkflow NOTIFY workflowChanged)
+    Q_PROPERTY(QStringList analysisTypes READ analysisTypes NOTIFY analysisTypesChanged)
 
 
     qint32 workflowCount() const;
@@ -46,11 +47,11 @@ public:
     Q_INVOKABLE void removeWorkflow(const QString& name);
     Q_INVOKABLE void removeWorkflow(qint32 index);
 
-
+    QStringList analysisTypes() const;
     qint32 analysisCount() const;
     //SPAnalysisPattern analysisPattern(qint32 index) const;
     //SPAnalysisPattern analysisPattern(const QString& name) const;
-    //Q_INVOKABLE bool addAnalysisPattern(AnalysisPattern *pattern);
+    Q_INVOKABLE bool addAnalysisPattern(AnalysisModel *amodel);
     Q_INVOKABLE void removeAnalysisPattern(const QString& name);
     Q_INVOKABLE void removeAnalysisPattern(qint32 index);
 
@@ -71,6 +72,8 @@ signals:
     void analysisCountChanged();
     void conceptCountChanged();
     void workflowChanged();
+    void analysisTypesChanged();
+    void analysisNamesChanged();
 
 public slots:
 

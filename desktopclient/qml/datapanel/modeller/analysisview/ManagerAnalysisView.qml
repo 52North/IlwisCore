@@ -17,6 +17,11 @@ Item {
         id : layerprops
         width : parent.width - 5
         height : parent.height
+
+        function refreshAnalysisNames(){
+            firstColumn.refreshList();
+        }
+
         y : 2
         AnalysisList {
             id : firstColumn

@@ -12,18 +12,21 @@
 #include "ilwistypes.h"
 #include "applicationsetup.h"
 #include "analysispattern.h"
+#include "modellerfactory.h"
 #include "modeldesigner.h"
 
-ModelDesigner::ModelDesigner(QObject *parent) : QObject(parent)
+ModelDesigner::ModelDesigner(QObject *parent) : ResourceModel(Resource(), 0)
 {
-    if ( parent)
+    if ( parent){
         _model.prepare();
+        resource(_model->resource());
+    }
 }
 
-ModelDesigner::ModelDesigner(IModel& model, QObject *parent) : QObject(parent)
+ModelDesigner::ModelDesigner(ResourceModel *rmodel, QObject *parent) : ResourceModel(rmodel->resource(),parent)
 {
-    if ( model.isValid()){
-        _model = model;
+    _model.prepare(rmodel->id());
+    if ( _model.isValid()){
         for(int i=0; i < _model->workflowCount(); ++i){
             _workflowmodels.push_back(new WorkflowModel(_model->workflow(i)->resource(), this));
         }
@@ -98,6 +101,15 @@ void ModelDesigner::removeWorkflow(qint32 index)
         _workflowmodels.erase(_workflowmodels.begin() + index);
 }
 
+QStringList ModelDesigner::analysisTypes() const
+{
+    ModellerFactory *factory = kernel()->factory<ModellerFactory>("ModellerFactory","ilwis");
+    if ( factory){
+        return factory->analysisTypes();
+    }
+    return QStringList();
+}
+
 QStringList ModelDesigner::workflowNames() const{
     QStringList names;
     for(WorkflowModel *wf : _workflowmodels )    {
@@ -143,6 +155,18 @@ void ModelDesigner::currentWorkflow(WorkflowModel *cwf)
 qint32 ModelDesigner::analysisCount() const
 {
     return _analysismodels.size();
+}
+
+bool ModelDesigner::addAnalysisPattern(AnalysisModel *amodel)
+{
+    for(int i =0; i < _analysismodels.size() && amodel != 0; ++i ){
+        if ( _analysismodels[i]->name() == amodel->name()){
+            return false;
+        }
+    }
+    _analysismodels.push_back(amodel);
+
+    return true;
 }
 
 void ModelDesigner::removeAnalysisPattern(const QString &name)

@@ -73,9 +73,8 @@ void ModuleMap ::loadPlugin(const QFileInfo& file){
     }
 }
 
-void ModuleMap::addModules() {
+void ModuleMap::addModules(const QString& path) {
 
-    QString path = context()->ilwisFolder().absoluteFilePath() + "/extensions/";
     QDir folder(path);
     QFileInfoList dirs = folder.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
     for(auto entry : dirs){
@@ -99,6 +98,7 @@ void ModuleMap::addModules() {
     QString file = context()->ilwisFolder().absoluteFilePath() + "/httpserver.dll";
     loadPlugin(file);
     initModules();
+
 }
 
 void ModuleMap::initModules(){

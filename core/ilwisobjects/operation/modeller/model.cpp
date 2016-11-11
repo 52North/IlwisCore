@@ -105,6 +105,8 @@ bool Model::addAnalysisPattern(AnalysisPattern *pattern)
               return false;
           }
       }
+      IModel model(this);
+      pattern->attachedModel(model);
       _analysisPatterns.push_back(SPAnalysisPattern(pattern));
       return true;
 }
