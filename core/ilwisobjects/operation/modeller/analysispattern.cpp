@@ -19,20 +19,22 @@ AnalysisPattern::AnalysisPattern(const QString &name, const QString &description
 
 void AnalysisPattern::store(QDataStream &stream)
 {
-    Identity::store(stream)    ;
+    Identity::store(stream);
 }
 
 void AnalysisPattern::load(QDataStream &stream)
 {
-    Identity::store(stream)    ;
+    Identity::load(stream)    ;
 }
 
-void AnalysisPattern::attachedModel(const IModel &model)
+void AnalysisPattern::attachedModel(quint64 modelid)
 {
-    _attachedModel = model;
+    _modelId = modelid;
 }
 
 IModel AnalysisPattern::attachedModel()
 {
+    if ( !_attachedModel.isValid())
+        _attachedModel.prepare(_modelId);
     return _attachedModel;
 }

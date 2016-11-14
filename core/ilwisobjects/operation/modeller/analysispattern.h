@@ -28,10 +28,11 @@ public:
     virtual void load(QDataStream& stream);
     virtual QString type() const = 0 ;
 
-    void attachedModel(const IModel& model);
+    void attachedModel(quint64 modelid);
     IModel attachedModel();
 
 private:
+    quint64 _modelId; // the pattern maybe attached before the IModel realy exists (during prepare when a model is created)
     IModel _attachedModel;
 };
 
