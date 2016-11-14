@@ -21,6 +21,15 @@ AnalysisPattern *ModellerFactory::createAnalysisPattern(const QString type, cons
     return (*iter).second(name, description, options);
 }
 
+ModelApplication *ModellerFactory::createApplication(const QString type, const QString &name, const QString &description, const IOOptions &options)
+{
+    auto iter = _applicationCreators.find(type.toLower());
+    if ( iter == _applicationCreators.end()){
+        return 0;
+    }
+    return (*iter).second(name, description, options);
+}
+
 QStringList ModellerFactory::analysisTypes() const
 {
     QStringList result;
