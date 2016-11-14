@@ -6,7 +6,7 @@ import MasterCatalogModel 1.0
 import CatalogModel 1.0
 
 ToolBar{
-    id : workflowtools
+    id : smcetools
     width : parent.width
     height : 31
     function iconsource(name) {
@@ -18,23 +18,27 @@ ToolBar{
         var iconP = "../../../qml/images/" + name
         return iconP
     }
-
-    Button {
-        height : 25
-        width : 25
-        Image {
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            source : iconsource("data_folder.png")
-        }
-        onClicked: {
-            var url = mastercatalog.currentCatalog.url
-            console.debug("c", url)
-            if ( url.indexOf("file://") !== 0) {
-                return
+    Row {
+        width : parent.width
+        height: 25
+        Loader {
+            source : "../../../qml/datapanel/modeller/GenericTools.qml"
+            height : 25
+            onLoaded: {
+                width : item.width
             }
-            modellerDataPane.model.store(url)
+        }
+
+        Button {
+            height : 25
+            width : 25
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                source : iconsource("data_folder.png")
+            }
+
         }
     }
 }

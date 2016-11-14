@@ -523,6 +523,9 @@ Modeller.ModellerWorkArea {
           Draws canvas from the workflow
                 */
     function drawFromWorkflow() {
+        if (!workflow || !workflow.nodes)
+            return
+
         var nodes = workflow.nodes, node, resource, unOrderdEdges = workflow.edges, edges = [], nodeEdges, edge, fromItemid, toItemId, fromOperation = false, toOperation = false, flowPoints
         for (var i = 0; i < unOrderdEdges.length; i++) {
             edge = unOrderdEdges[i]

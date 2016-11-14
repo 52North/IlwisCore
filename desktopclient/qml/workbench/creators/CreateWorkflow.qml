@@ -197,7 +197,7 @@ Controls.DropableItem{
                         if (resource){
                             var filter = "itemid=" + resource.id
                             operations.refresh()
-                            bigthing.newCatalog(filter, "workflow",resource.url,"other")
+                            bigthing.newCatalog(filter, "model",resource.url,"other")
                         }
                     }
                 }

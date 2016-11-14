@@ -18,7 +18,7 @@ Rectangle {
     id : mainSplit
 
     function newCatalog(filter, outputtype, url,side){
-        dataPanel.newCatalog(filter, outputtype, url,side)
+         dataPanel.newCatalog(filter, outputtype, url,side)
     }
 
     function changeCatalog(filter, outputtype, url){

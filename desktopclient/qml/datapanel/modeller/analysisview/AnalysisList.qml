@@ -71,6 +71,9 @@ Item {
                         anchors.fill: parent
                         onClicked: {
                             analysisNamesList.currentIndex = index
+                            var analysis = modellerDataPane.model.analysisPattern(index);
+                            if ( analysis)
+                                analysView.currentAnalysis = analysis
                         }
                     }
                 }

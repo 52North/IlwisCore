@@ -23,7 +23,7 @@ Rectangle {
     ]
     transitions: [
         Transition {
-            NumberAnimation { properties: "height"; duration : 750 ; easing.type: Easing.InOutCubic }
+            NumberAnimation { properties: "height"; duration : 500 ; easing.type: Easing.InOutCubic }
         }
     ]
 

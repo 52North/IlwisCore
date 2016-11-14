@@ -17,150 +17,14 @@ Item {
     width : parent.width
     height : parent.height
     property TabModel tabmodel
-    property string panelType : "workflow"
+    property string panelType : "model"
     property ModelDesigner model
     property int ontTopZValue: 1000000
     property var createParameters : []
     property double factor : 1.1
-
-    function addDataSource(filter, sourceName, sourceType){
-        if ( filter !== "" ){
-            if (sourceType === "workflow" ) {
-                var resource = mastercatalog.id2Resource(filter.split('=')[1],modellerDataPane);
-                if ( resource){
-                    modellerDataPane.model = modelbuilder.createModel(modellerDataPane)
-                    if ( modellerDataPane.model){
-                        workflowView.workflow = model.addWorkflow(filter);
-                        model.currentWorkflow = workflowView.workflow
-                        if (resource) {
-                            workflowView.drawFromWorkflow()
-                        }
-                        createParameters = [filter, sourceName, sourceType]
-                        manager.updateLists()
-                    }
-                }
-            }
-        }
-    }
-
-    function setCurrentWorkflow(wf) {
-         if ( wf && wf.name !== model.currentWorkflow.name){
-             workflowView.workflow = wf
-             model.currentWorkflow = workflowView.workflow
-             if (model.currentWorkflow) {
-                 workflowView.drawFromWorkflow()
-             }
-             createParameters = ['itemid=' + wf.id, wf.name, 'workflow']
-
-             manager.updateLists()
-         }
-     }
-
-    function iconsource(name) {
-        if ( name.indexOf("/") !== -1)
-            return name
-        if ( name === "")
-            name = "redbuttonr.png"
-
-        var iconP = "../../images/" + name
-        return iconP
-    }
-     function store() {
-         workflowView.store()
-     }
-
-    function selectedWorkflowItem(itemid){
-        manager.selectedWorkflowItem(itemid)
-    }
-
-
-
-    function datapaneChanged(index){
-        if ( index == 0) {
-            conceptualView.state = "visible"
-            workflowView.state = "invisible"
-            analysisView.state = "invisible"
-            applicationView.state = "invisible"
-
-        }else if ( index == 2){
-            conceptualView.state = "invisible"
-            workflowView.state = "invisible"
-            analysisView.state = "visible"
-            applicationView.state = "invisible"
-        } else if ( index == 1){
-            conceptualView.state = "invisible"
-            workflowView.state = "invisible"
-            analysisView.state = "invisible"
-            applicationView.state = "visible"
-        }else{
-            conceptualView.state = "invisible"
-            workflowView.state = "visible"
-            analysisView.state = "invisible"
-            applicationView.state = "invisible"
-        }
-    }
-
-    function newCondition() {
-        workflowView.newCondition()
-    }
-
-    function deleteSelectedOperation(){
-        workflowView.deleteSelectedOperation()
-    }
-
-    function deleteSelectedEdge(){
-        workflowView.deleteSelectedEdge()
-    }
-
-    function alterSelectedEdge(){
-        workflowView.alterSelectedEdge()
-    }
-
-    function canvasZoom(clicks){
-        workflowView.zoom(clicks)
-    }
-
-    /**
-    Sets the canvas' zoom back to 100%
-    */
-    function defaultZoom(){
-        workflowView.defaultZoom();
-    }
-
-
-
-    /**
-      Calls the WorkflowCanvas's run method
-      */
-    function run() {
-        workflowView.run()
-    }
-
-    function addError(id, error) {
-        //errorview.addError(id, error)
-    }
-
-    function toggleStepMode(){
-        workflowView.workflow.toggleStepMode();
-    }
-
-    function workflowModel() {
-        return workflowView.workflow
-    }
-
-    function nextStep() {
-        workflowView.showLastSteppedItem()
-    }
-
-    signal exit;
-
     property bool canSeparate : true
 
-
-
-    function setSelectedOperationId(metaid){
-        datapane.setSelectedOperationId(metaid)
-    }
+    signal exit;
 
     SplitView {
         width : parent.width
@@ -224,8 +88,142 @@ Item {
     }
     Component.onCompleted: {
         manager.workflowView= workflowView
-        manager.analysView = analysisView
+        manager.analisysView = analysisView
         manager.applicationView= applicationView
         manager.conceptView= conceptualView
     }
+
+
+    function addDataSource(filter, sourceName, sourceType){
+        if ( filter !== "" ){
+            if (sourceType === "model" ) {
+                var resource = mastercatalog.id2Resource(filter.split('=')[1],modellerDataPane);
+                if ( resource){
+                    modellerDataPane.model = modelbuilder.createModel(resource, modellerDataPane)
+                    if ( modellerDataPane.model){
+                        if ( resource.typeName === "workflow")
+                        workflowView.workflow = model.addWorkflow(filter);
+                        model.currentWorkflow = workflowView.workflow
+                        if (resource) {
+                            workflowView.drawFromWorkflow()
+                        }
+                        createParameters = [filter, sourceName, sourceType]
+                        manager.updateLists()
+                    }
+
+                }
+            }
+        }
+    }
+
+    function setCurrentWorkflow(wf) {
+         if ( wf && wf.name !== model.currentWorkflow.name){
+             workflowView.workflow = wf
+             model.currentWorkflow = workflowView.workflow
+             if (model.currentWorkflow) {
+                 workflowView.drawFromWorkflow()
+             }
+             createParameters = ['itemid=' + wf.id, wf.name, 'workflow']
+
+             manager.updateLists()
+         }
+     }
+
+    function iconsource(name) {
+        if ( name.indexOf("/") !== -1)
+            return name
+        if ( name === "")
+            name = "redbuttonr.png"
+
+        var iconP = "../../images/" + name
+        return iconP
+    }
+
+    function store() {
+         workflowView.store()
+     }
+
+    function selectedWorkflowItem(itemid){
+        manager.selectedWorkflowItem(itemid)
+    }
+
+    function datapaneChanged(index){
+        if ( index == 0) {
+            conceptualView.state = "visible"
+            workflowView.state = "invisible"
+            analysisView.state = "invisible"
+            applicationView.state = "invisible"
+
+        }else if ( index == 2){
+            conceptualView.state = "invisible"
+            workflowView.state = "invisible"
+            analysisView.state = "visible"
+            applicationView.state = "invisible"
+        } else if ( index == 1){
+            conceptualView.state = "invisible"
+            workflowView.state = "invisible"
+            analysisView.state = "invisible"
+            applicationView.state = "visible"
+        }else{
+            conceptualView.state = "invisible"
+            workflowView.state = "visible"
+            analysisView.state = "invisible"
+            applicationView.state = "invisible"
+        }
+    }
+
+    function newCondition() {
+        workflowView.newCondition()
+    }
+
+    function deleteSelectedOperation(){
+        workflowView.deleteSelectedOperation()
+    }
+
+    function deleteSelectedEdge(){
+        workflowView.deleteSelectedEdge()
+    }
+
+    function alterSelectedEdge(){
+        workflowView.alterSelectedEdge()
+    }
+
+    function canvasZoom(clicks){
+        workflowView.zoom(clicks)
+    }
+
+    /**
+    Sets the canvas' zoom back to 100%
+    */
+    function defaultZoom(){
+        workflowView.defaultZoom();
+    }
+
+    /**
+      Calls the WorkflowCanvas's run method
+      */
+    function run() {
+        workflowView.run()
+    }
+
+    function addError(id, error) {
+        //errorview.addError(id, error)
+    }
+
+    function toggleStepMode(){
+        workflowView.workflow.toggleStepMode();
+    }
+
+    function workflowModel() {
+        return workflowView.workflow
+    }
+
+    function nextStep() {
+        workflowView.showLastSteppedItem()
+    }
+
+    function setSelectedOperationId(metaid){
+        datapane.setSelectedOperationId(metaid)
+    }
+
 }

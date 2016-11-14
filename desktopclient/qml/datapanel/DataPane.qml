@@ -106,7 +106,6 @@ Rectangle {
             var sidePanel = datapane.activeSide
             var tabview = sidePanel.tabview
             var insertetTab
-
             if ( tabview ){
                 var oldType = tabview.getTab(tabview.currentIndex).item.panelType
                 if ( oldType === "catalog" || oldType === "operationcatalog" || oldType === "scriptpanel"){

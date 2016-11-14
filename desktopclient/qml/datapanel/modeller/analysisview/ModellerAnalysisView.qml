@@ -7,7 +7,7 @@ Model.ModellerWorkArea {
     property var currentAnalysis
 
     onCurrentAnalysisChanged: {
-        meme.source = currentAnalysis ? (uicontext.ilwisFolder + "/extensions/ui/" + currentAnalysis.mainPanel) : ""
+        updateView()
     }
 
     width : parent.width
@@ -15,12 +15,20 @@ Model.ModellerWorkArea {
     color : "white"
     state : "invisible"
 
+    onStateChanged: {
+        if ( state == "visible"){
+            updateView()
+        }
+    }
 
     Loader {
         anchors.fill: parent
         id: meme
-
     }
 
+    function updateView() {
+        meme.source = currentAnalysis ? (uicontext.ilwisFolder + "/extensions/ui/" + currentAnalysis.mainPanel) : ""
+        state = "visible"
+    }
 }
 

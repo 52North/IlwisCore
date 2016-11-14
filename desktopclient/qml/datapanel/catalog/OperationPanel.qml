@@ -27,7 +27,7 @@ Item {
         if ( resource){
             if ( resource.typeName === "workflow"){
                 var filter = "itemid=" + resource.id
-                newPanel = datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
+                newPanel = datapanesplit.newPanel(filter, "model",resource.url,"other")
             }else {
                 mastercatalog.setSelectedObjects(objectid)
                 bigthing.getWorkbenchPane("objectproperties","visible");
