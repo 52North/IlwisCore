@@ -27,6 +27,7 @@ IWorkflow SMCE::workflow(const IOOptions &opt)
 
 void SMCE::store(QDataStream &stream)
 {
+    stream << type();
     AnalysisPattern::store(stream);
     stream << _test;
 }
