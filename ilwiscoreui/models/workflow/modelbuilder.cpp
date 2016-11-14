@@ -25,10 +25,10 @@ ModelBuilder::ModelBuilder(QObject *parent) : QObject(parent)
 
 }
 
-ModelDesigner *ModelBuilder::createModel(QObject *parent)
+ModelDesigner *ModelBuilder::createModel(ResourceModel *rmodel,QObject *parent)
 {
     try {
-        return new ModelDesigner(parent);
+        return new ModelDesigner(rmodel, parent);
     }
     catch( const ErrorObject& ){}
 

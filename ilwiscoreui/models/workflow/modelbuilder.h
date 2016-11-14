@@ -30,7 +30,7 @@ class ILWISCOREUISHARED_EXPORT ModelBuilder : public QObject
 public:
     explicit ModelBuilder(QObject *parent = 0);
 
-    Q_INVOKABLE ModelDesigner * createModel(QObject *parent);
+    Q_INVOKABLE ModelDesigner * createModel(ResourceModel *rmodel, QObject *parent);
     Q_INVOKABLE AnalysisModel * createAnalysisModel(Ilwis::AnalysisPattern *pattern);
     Q_INVOKABLE ApplicationModel * createApplicationModel(Ilwis::ModelApplication *model);
 
