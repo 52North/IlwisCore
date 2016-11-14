@@ -8,7 +8,7 @@
 
 using namespace Ilwis;
 
-AnalysisModel::AnalysisModel(AnalysisPattern *pattern) : _analysis(pattern)
+AnalysisModel::AnalysisModel(AnalysisPattern *pattern, QObject *parent) : QObject(parent), _analysis(pattern)
 {
 
 }

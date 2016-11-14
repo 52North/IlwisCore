@@ -27,7 +27,7 @@ public:
     Q_PROPERTY(QString longName READ longName WRITE longName NOTIFY longNameChanged)
     Q_PROPERTY(QString mainPanel READ mainPanel CONSTANT)
 
-    explicit AnalysisModel(Ilwis::AnalysisPattern *pattern = 0);
+    explicit AnalysisModel(Ilwis::AnalysisPattern *pattern = 0, QObject *parent=0);
     Q_INVOKABLE void suicide();
 
 
