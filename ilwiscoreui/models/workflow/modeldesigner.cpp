@@ -13,6 +13,7 @@
 #include "applicationsetup.h"
 #include "analysispattern.h"
 #include "modellerfactory.h"
+#include "modelbuilder.h"
 #include "modeldesigner.h"
 
 ModelDesigner::ModelDesigner(QObject *parent) : ResourceModel(Resource(), 0)
@@ -25,10 +26,15 @@ ModelDesigner::ModelDesigner(QObject *parent) : ResourceModel(Resource(), 0)
 
 ModelDesigner::ModelDesigner(ResourceModel *rmodel, QObject *parent) : ResourceModel(rmodel->resource(),parent)
 {
-    _model.prepare(rmodel->id());
+    _model.prepare(rmodel->id().toULongLong());
     if ( _model.isValid()){
         for(int i=0; i < _model->workflowCount(); ++i){
             _workflowmodels.push_back(new WorkflowModel(_model->workflow(i)->resource(), this));
+        }
+        for(int i=0; i < _model->analysisCount(); ++i){
+            AnalysisModel *amodel = modelbuilder()->createAnalysisModel(_model->analysisPattern(i).get());
+            if ( amodel)
+                _analysismodels.push_back(amodel);
         }
     }
 }
@@ -157,6 +163,14 @@ qint32 ModelDesigner::analysisCount() const
     return _analysismodels.size();
 }
 
+AnalysisModel *ModelDesigner::analysisPattern(qint32 index) const
+{
+    if ( index < _analysismodels.size()){
+        return _analysismodels[index]    ;
+    }
+    return 0;
+}
+
 bool ModelDesigner::addAnalysisPattern(AnalysisModel *amodel)
 {
     for(int i =0; i < _analysismodels.size() && amodel != 0; ++i ){
@@ -203,7 +217,9 @@ void ModelDesigner::removeApplication(qint32 index)
 bool ModelDesigner::store(const QString& location)
 {
     try{
-        QString outputUrl = location + "/" + _model->name() + ".ilwis";
+        QString outputUrl = location + "/" + _model->name();
+        if ( outputUrl.indexOf(".ilwis") == -1)
+            outputUrl += ".ilwis";
         _model->connectTo(outputUrl,"model","stream",IlwisObject::cmOUTPUT);
         return _model->store();
     } catch (ErrorObject& err){}

@@ -49,8 +49,7 @@ public:
 
     QStringList analysisTypes() const;
     qint32 analysisCount() const;
-    //SPAnalysisPattern analysisPattern(qint32 index) const;
-    //SPAnalysisPattern analysisPattern(const QString& name) const;
+    Q_INVOKABLE AnalysisModel *analysisPattern(qint32 index) const;
     Q_INVOKABLE bool addAnalysisPattern(AnalysisModel *amodel);
     Q_INVOKABLE void removeAnalysisPattern(const QString& name);
     Q_INVOKABLE void removeAnalysisPattern(qint32 index);
