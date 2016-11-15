@@ -18,6 +18,15 @@ void AnalysisModel::suicide()
     delete this;
 }
 
+QString AnalysisModel::panel(const QString &panelName)
+{
+    auto iter = _panels.find(panelName);
+    if ( iter != _panels.end()){
+        return (*iter).second;
+    }
+    return "";
+}
+
 QString AnalysisModel::name() const{
     if ( _analysis)    {
        return _analysis->name();
@@ -54,9 +63,6 @@ const Resource &AnalysisModel::resourceRef() const
     throw ErrorObject(TR("trying to use uninitialized analysis model"));
 }
 
-QString AnalysisModel::mainPanel() const
-{
-    return _panelPath;
-}
+
 
 

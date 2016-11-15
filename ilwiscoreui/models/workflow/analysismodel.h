@@ -25,10 +25,10 @@ class ILWISCOREUISHARED_EXPORT AnalysisModel : public QObject
     Q_OBJECT
 public:
     Q_PROPERTY(QString longName READ longName WRITE longName NOTIFY longNameChanged)
-    Q_PROPERTY(QString mainPanel READ mainPanel CONSTANT)
 
     explicit AnalysisModel(Ilwis::AnalysisPattern *pattern = 0, QObject *parent=0);
     Q_INVOKABLE void suicide();
+    Q_INVOKABLE QString panel(const QString& panelName);
 
     QString name() const;
 
@@ -37,7 +37,7 @@ signals:
 public slots:
 
 protected:
-    QString _panelPath;
+    std::map<QString, QString> _panels;
     Ilwis::AnalysisPattern *_analysis; // pattern is stored in the model; there is no ownership here
 
 private:
@@ -47,7 +47,6 @@ private:
     void longName(const QString& lname);
     Ilwis::Resource& resourceRef();
     const Ilwis::Resource &resourceRef() const;
-    QString mainPanel() const;
 };
 
 #endif // ANALYSISMODEL_H
