@@ -11,16 +11,21 @@ class ILWISCOREUISHARED_EXPORT ApplicationModel : public QObject
 {
     Q_OBJECT
 public:
-    explicit ApplicationModel(QObject *parent = 0);
+    explicit ApplicationModel(Ilwis::ModelApplication *app=0, QObject *parent = 0);
+    Q_INVOKABLE QString panel(const QString& panelName);
 
     QString name() const;
+    QString attachedAnalysis() const;
+    void attachedAnalysis(const QString& name);
 
 signals:
 
 public slots:
 
-private:
-    Ilwis::ModelApplication *_app;
+protected:
+    std::map<QString, QString> _panels;
+    Ilwis::ModelApplication *_app = 0;
+
 };
 
 #endif // APPLICATINMODEL_H
