@@ -153,12 +153,13 @@ SPModelApplication Model::application(const QString &name) const
 
 bool Model::addApplication(ModelApplication *app)
 {
-      for(SPModelApplication app : _applications){
-          if ( app->name() == app->name()){
-              kernel()->issues()->log(TR("No duplicate names allowed as Analysis name:") + app->name());
+      for(SPModelApplication applic : _applications){
+          if ( applic->name() == app->name()){
+              kernel()->issues()->log(TR("No duplicate names allowed as Application name:") + app->name());
               return false;
           }
       }
+      app->attachedModel(id());
       _applications.push_back(SPModelApplication(app));
       return true;
 }
