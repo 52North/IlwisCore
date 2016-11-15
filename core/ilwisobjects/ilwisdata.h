@@ -300,6 +300,11 @@ public:
     */
     bool prepare(const quint64& iid,const IOOptions& options=IOOptions()){
         Resource resource = mastercatalog()->id2Resource(iid);
+        IlwisTypes objecttp = class2name();
+        if ( objecttp == itANY || !hasType(objecttp, resource.ilwisType())){
+            kernel()->issues()->log(TR("Requested object type doesnt match object type found in the master catalog; Is the requested resource correct?"));
+            return false;
+        }
         if (!mastercatalog()->isRegistered(iid)) {
             T *data = static_cast<T *>(IlwisObject::create(resource, options));
             if ( data != 0)
