@@ -16,7 +16,7 @@ SMCEModel::SMCEModel()
 }
 
 SMCEModel::SMCEModel(Ilwis::AnalysisPattern *p) : AnalysisModel(p){
-    _panelPath = "SMCE/SMCEPanel.qml";
+    _panels["main"] = "SMCE/SMCEPanel.qml";
 }
 
 AnalysisModel *SMCEModel::create(Ilwis::AnalysisPattern *pattern)
