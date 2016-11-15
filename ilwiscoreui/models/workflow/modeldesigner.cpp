@@ -128,11 +128,14 @@ QStringList ModelDesigner::workflowNames() const{
     return names;
 }
 
-QStringList ModelDesigner::applicationNames() const
+QStringList ModelDesigner::applicationNames(const QString& analysisName) const
 {
     QStringList names;
-    for(ApplicationModel *app : _appmodels )    {
-        names.push_back(app->name());
+    if ( analysisName != "") {
+        for(ApplicationModel *app : _appmodels )    {
+            if ( app->attachedAnalysis() == analysisName)
+                names.push_back(app->name());
+        }
     }
     return names;
 }

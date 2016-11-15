@@ -34,7 +34,6 @@ public:
     Q_PROPERTY(int applicationCount READ applicationCount NOTIFY applicationCountChanged)
     Q_PROPERTY(QStringList workflowNames READ workflowNames CONSTANT)
     Q_PROPERTY(QStringList analysisNames READ analysisNames NOTIFY analysisNamesChanged)
-    Q_PROPERTY(QStringList applicationNames READ applicationNames CONSTANT)
     Q_PROPERTY(WorkflowModel *currentWorkflow READ currentWorkflow WRITE currentWorkflow NOTIFY workflowChanged)
     Q_PROPERTY(QStringList analysisTypes READ analysisTypes NOTIFY analysisTypesChanged)
 
@@ -53,6 +52,7 @@ public:
     Q_INVOKABLE bool addAnalysisPattern(AnalysisModel *amodel);
     Q_INVOKABLE void removeAnalysisPattern(const QString& name);
     Q_INVOKABLE void removeAnalysisPattern(qint32 index);
+    Q_INVOKABLE QStringList applicationNames(const QString& analysisName) const;
 
     qint32 applicationCount() const;
     Q_INVOKABLE ApplicationModel* application(qint32 index) const;
@@ -87,7 +87,6 @@ private:
     IModel _model;
 
     QStringList workflowNames() const;
-    QStringList applicationNames() const;
     QStringList analysisNames() const;
     QStringList conceptNames() const;
     WorkflowModel *currentWorkflow();
