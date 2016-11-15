@@ -27,7 +27,7 @@ Model.ModellerWorkArea {
     }
 
     function updateView() {
-        meme.source = currentAnalysis ? (uicontext.ilwisFolder + "/extensions/ui/" + currentAnalysis.mainPanel) : ""
+        meme.source = currentAnalysis ? (uicontext.ilwisFolder + "/extensions/ui/" + currentAnalysis.panel("main")) : ""
         state = "visible"
     }
 }

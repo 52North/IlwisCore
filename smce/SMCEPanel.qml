@@ -19,7 +19,7 @@ Column {
         opacity : height > 0 ? 1 : 0
         Text{
             anchors.centerIn: parent
-            text: "I am under construction"
+            text: "SMCE Defenition and Evaluation Construction"
             font.bold: true
             font.pointSize: 20
 
