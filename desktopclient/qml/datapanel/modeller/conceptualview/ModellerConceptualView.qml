@@ -4,7 +4,7 @@ import ".." as Model
 Model.ModellerWorkArea {
     width : parent.width
     height : parent.height - 170
-    color : "red"
+    color : "#FAF0E6"
     state : "invisible"
 }
 

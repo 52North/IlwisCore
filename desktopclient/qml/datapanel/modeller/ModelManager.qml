@@ -108,9 +108,10 @@ Rectangle {
         if ( modellerDataPane.model ){
             if ( modellerDataPane.model.conceptCount > 0)
                 modellerViews.currentIndex = 0
-            else if ( modellerDataPane.model.applicationCount > 0)
+            else if ( modellerDataPane.model.applicationCount > 0){
                 modellerViews.currentIndex = 1
-            else if ( modellerDataPane.model.analysisCount > 0){
+                modellerViews.currentApplication = modellerDataPane.model.application(0)
+            }else if ( modellerDataPane.model.analysisCount > 0){
                 modellerViews.currentIndex = 2
                 analisysView.currentAnalysis = modellerDataPane.model.analysisPattern(0)
             } else if ( modellerDataPane.model.workflowCount > 0){
