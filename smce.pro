@@ -29,13 +29,15 @@ win32{
 SOURCES += \
     smce/smce_plugin.cpp \
     smce/smce.cpp \
-    smce/smcemodel.cpp
+    smce/smcemodel.cpp \
+    smce/smcespatialalternatives.cpp
  
 
 HEADERS += \
     smce/smce_plugin.h \
     smce/smce.h \
-    smce/smcemodel.h
+    smce/smcemodel.h \
+    smce/smcespatialalternatives.h
   
 
 OTHER_FILES = smce/qmldir
@@ -125,6 +127,7 @@ INSTALLS += qml qmldir
 
 DISTFILES += \
     smce/SMCEPanel.qml \
-    smce/SMCEToolBar.qml
+    smce/SMCEToolBar.qml \
+    smce/SMCESpatialAlternativePanel.qml
 
 
