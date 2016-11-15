@@ -1,4 +1,5 @@
 module SMCE
 SMCEPanel 1.0 SMCE/SMCEPanel.qml
 SMCEPanel 1.0 SMCE/SMCEToolBar.qml
+SMCESpatialAlternativePanel 1.0 SMCE/SMCESpatialAlternativePanel.qml
 plugin SMCE
