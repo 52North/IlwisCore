@@ -30,7 +30,6 @@ public:
     explicit AnalysisModel(Ilwis::AnalysisPattern *pattern = 0, QObject *parent=0);
     Q_INVOKABLE void suicide();
 
-
     QString name() const;
 
 signals:
@@ -39,9 +38,9 @@ public slots:
 
 protected:
     QString _panelPath;
+    Ilwis::AnalysisPattern *_analysis; // pattern is stored in the model; there is no ownership here
 
 private:
-    Ilwis::AnalysisPattern *_analysis; // pattern is stored in the model; there is no ownership here
 
 
     QString longName() const;
