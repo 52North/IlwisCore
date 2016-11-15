@@ -26,7 +26,11 @@ ModelDesigner::ModelDesigner(QObject *parent) : ResourceModel(Resource(), 0)
 
 ModelDesigner::ModelDesigner(ResourceModel *rmodel, QObject *parent) : ResourceModel(rmodel->resource(),parent)
 {
-    _model.prepare(rmodel->id().toULongLong());
+    if ( rmodel->type() == itWORKFLOW){
+       _model.prepare(); // anonymous model
+       addWorkflow("itemid=" + QString::number(rmodel->resource().id()));
+    }else
+        _model.prepare(rmodel->id().toULongLong());
     if ( _model.isValid()){
         for(int i=0; i < _model->workflowCount(); ++i){
             _workflowmodels.push_back(new WorkflowModel(_model->workflow(i)->resource(), this));
@@ -126,7 +130,11 @@ QStringList ModelDesigner::workflowNames() const{
 
 QStringList ModelDesigner::applicationNames() const
 {
-    return QStringList();
+    QStringList names;
+    for(ApplicationModel *app : _appmodels )    {
+        names.push_back(app->name());
+    }
+    return names;
 }
 
 QStringList ModelDesigner::analysisNames() const
@@ -202,6 +210,14 @@ void ModelDesigner::removeAnalysisPattern(qint32 index)
 qint32 ModelDesigner::applicationCount() const
 {
     return _appmodels.size();
+}
+
+ApplicationModel *ModelDesigner::application(qint32 index) const
+{
+    if ( index < _appmodels.size())
+        return _appmodels[index];
+
+    return 0;
 }
 
 void ModelDesigner::removeApplication(const QString &name)

@@ -55,7 +55,7 @@ public:
     Q_INVOKABLE void removeAnalysisPattern(qint32 index);
 
     qint32 applicationCount() const;
-   // SPModelApplication application(qint32 index) const;
+    Q_INVOKABLE ApplicationModel* application(qint32 index) const;
    // SPModelApplication application(const QString& name) const;
    // bool addApplication(ModelApplication *app);
     Q_INVOKABLE  void removeApplication(const QString& name);
