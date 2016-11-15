@@ -98,6 +98,7 @@ Rectangle {
         }
 
         TableViewColumn{
+            id : nameColumn
             role : "displayName"
             title : qsTr("Name")
             width : 220
@@ -114,6 +115,7 @@ Rectangle {
 
         }
         TableViewColumn{
+            id : dimColumn
             role : "dimensions"
             title : qsTr("Dimensions")
             width : 150
@@ -129,6 +131,7 @@ Rectangle {
         }
 
         TableViewColumn{
+            id : domColumn
             role : "domainName"
             title : qsTr("Domain")
             width : 100
@@ -144,6 +147,7 @@ Rectangle {
         }
 
         TableViewColumn{
+            id : domTypeColumn
             role : "domainType"
             title : qsTr("Domain type")
             width : 100
@@ -159,6 +163,7 @@ Rectangle {
         }
 
         TableViewColumn{
+            id : csyColumn
             role : "coordinateSystemName"
             title : qsTr("Coordinate system")
             width : 120
@@ -174,9 +179,24 @@ Rectangle {
         }
 
         TableViewColumn{
+            id : grfColumn
             role : "geoReferenceName"
             title : qsTr("Georeference")
             width : 120
+            delegate: Component{
+                Text {
+                    text: styleData.value
+                    verticalAlignment:Text.AlignVCenter
+                    font.pixelSize: 11
+                    color : styleData.selected ? "white" : "black"
+                    elide: Text.ElideMiddle
+                }
+            }
+        }
+        TableViewColumn{
+            role : "description"
+            title : qsTr("Description")
+            width : parent.width - grfColumn.width - csyColumn.width - nameColumn.width - imageColumn.width - dimColumn.width - domTypeColumn.width - domColumn.width - 20
             delegate: Component{
                 Text {
                     text: styleData.value
