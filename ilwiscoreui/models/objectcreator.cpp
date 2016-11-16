@@ -18,7 +18,7 @@
 #include "script.h"
 #include "operationmetadata.h"
 #include "analysispattern.h"
-#include "applicationsetup.h"
+#include "applicationmodel.h"
 #include "model.h"
 #include "modellerfactory.h"
 #include "workflow/modelbuilder.h"
@@ -397,7 +397,7 @@ QVariantMap ObjectCreator::creatorInfo(const QString& name) const
     return QVariantMap();
 }
 
-QObject *ObjectCreator::createModellerObject(const QVariantMap &parms)
+QObject *ObjectCreator::createModellerObject(const QVariantMap &parms, QObject *parent)
 {
     QString modellerObjectType = parms["type"].toString();
     if ( modellerObjectType == "analysispattern"){
@@ -417,6 +417,25 @@ QObject *ObjectCreator::createModellerObject(const QVariantMap &parms)
                         AnalysisModel *amodel = modelbuilder()->createAnalysisModel(pattern);
                         return amodel; // the ownership of this model is in the modeldesigner to which this analysis will be added
                     }
+                }else
+                    kernel()->issues()->log(TR("An analysis must have a name"), IssueObject::itWarning);
+            }
+        }
+    } else    if ( modellerObjectType == "applicationmodel"){
+        bool ok;
+        quint64 modelId = parms["modelId"].toULongLong(&ok);
+        if ( ok){
+            IModel currentModel;
+            if ( currentModel.prepare(modelId)){
+                QString subtype = parms["subtype"].toString();
+
+                ModellerFactory *factory = kernel()->factory<ModellerFactory>("ModellerFactory","ilwis");
+                ApplicationModel * app = factory->createApplication(subtype);
+                if ( app){
+                    currentModel->addApplication(app);
+                    ApplicationModelUI *amodel = modelbuilder()->createApplicationModelUI(app, 0);
+                    return (QObject *)amodel; // the ownership of this model is in the modeldesigner to which this analysis will be added
+
                 }else
                     kernel()->issues()->log(TR("An analysis must have a name"), IssueObject::itWarning);
             }
