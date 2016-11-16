@@ -1,7 +1,7 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "modeller/workflow.h"
-#include "modeller/applicationsetup.h"
+#include "modeller/applicationmodel.h"
 #include "modeller/analysispattern.h"
 #include "modellerfactory.h"
 
@@ -21,13 +21,13 @@ AnalysisPattern *ModellerFactory::createAnalysisPattern(const QString type, cons
     return (*iter).second(name, description, options);
 }
 
-ModelApplication *ModellerFactory::createApplication(const QString type, const QString &name, const QString &description, const IOOptions &options)
+ApplicationModel *ModellerFactory::createApplication(const QString type)
 {
     auto iter = _applicationCreators.find(type.toLower());
     if ( iter == _applicationCreators.end()){
         return 0;
     }
-    return (*iter).second(name, description, options);
+    return (*iter).second();
 }
 
 QStringList ModellerFactory::analysisTypes() const
@@ -36,6 +36,20 @@ QStringList ModellerFactory::analysisTypes() const
     for(auto analysis : _analysisCreators){
         result.push_back(analysis.first);
     }
+    return result;
+}
+
+QStringList ModellerFactory::applications(const QString &analysisType)
+{
+    QStringList result;
+    for(auto creator : _applicationCreators){
+        ApplicationModel * amodel = creator.second();
+        if ( amodel->attachedAnalysis() == analysisType){
+            result.push_back(amodel->name());
+        }
+        delete amodel;
+    }
+
     return result;
 }
 
@@ -48,7 +62,7 @@ AnalysisPattern *ModellerFactory::registerAnalysisPattern(const QString &classna
     return 0;
 }
 
-ModelApplication *ModellerFactory::registerModelApplication(const QString &classname, CreateModelApplication createFunc)
+ApplicationModel *ModellerFactory::registerModelApplication(const QString &classname, CreateModelApplication createFunc)
 {
     ModellerFactory *factory = kernel()->factory<ModellerFactory>("ModellerFactory", "ilwis");
     if ( factory){

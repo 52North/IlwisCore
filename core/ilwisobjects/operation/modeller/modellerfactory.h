@@ -9,10 +9,10 @@
 namespace Ilwis {
 
 class AnalysisPattern;
-class ModelApplication;
+class ApplicationModel;
 
 typedef std::function<AnalysisPattern *(const QString& name, const QString& description, const IOOptions &options)> CreateAnalysisPattern;
-typedef std::function<ModelApplication *(const QString& name, const QString& description, const IOOptions &options)> CreateModelApplication;
+typedef std::function<ApplicationModel *()> CreateModelApplication;
 
 class KERNELSHARED_EXPORT ModellerFactory : public AbstractFactory
 {
@@ -20,12 +20,13 @@ public:
     ModellerFactory();
 
     AnalysisPattern *createAnalysisPattern(const QString type,const QString& name, const QString& description, const IOOptions &options);
-    ModelApplication *createApplication(const QString type, const QString &name, const QString &description, const IOOptions &options);
+    ApplicationModel *createApplication(const QString type);
 
     QStringList analysisTypes() const;
+    QStringList applications(const QString& analysisType);
 
     static AnalysisPattern * registerAnalysisPattern(const QString& classname, CreateAnalysisPattern createFunc);
-    static ModelApplication * registerModelApplication(const QString& classname, CreateModelApplication createFunc);
+    static ApplicationModel * registerModelApplication(const QString& classname, CreateModelApplication createFunc);
 
 
 private:
