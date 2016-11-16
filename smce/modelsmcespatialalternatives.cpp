@@ -1,6 +1,40 @@
+#include "kernel.h"
+#include "ilwisdata.h"
+#include "modeller/modellerfactory.h"
+#include "modeller/workflow.h"
+#include "modeller/analysispattern.h"
+#include "modeller/applicationmodel.h"
 #include "modelsmcespatialalternatives.h"
 
-ModelSMCESpatialAlternatives::ModelSMCESpatialAlternatives()
-{
 
+using namespace Ilwis;
+using namespace Smce;
+
+REGISTER_MODELAPPLICATION(SMCESpatialAlternativesModel,"smcespatialalternatives")
+
+SMCESpatialAlternativesModel::SMCESpatialAlternativesModel() :
+    ApplicationModel("smcespatialalternatives",TR("calculates the result(s) of a specific smce for different areas"))
+{
+   attachedAnalysis("d4"); // a test name
+}
+
+void SMCESpatialAlternativesModel::store(QDataStream &stream)
+{
+    stream << type();
+   ApplicationModel::store(stream);
+}
+
+void SMCESpatialAlternativesModel::load(QDataStream &stream)
+{
+    ApplicationModel::load(stream);
+}
+
+QString SMCESpatialAlternativesModel::type() const
+{
+    return "smcespatialalternatives";
+}
+
+ApplicationModel *SMCESpatialAlternativesModel::create()
+{
+    return new SMCESpatialAlternativesModel()    ;
 }

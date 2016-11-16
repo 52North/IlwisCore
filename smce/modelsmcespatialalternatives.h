@@ -1,11 +1,27 @@
 #ifndef MODELSMCESPATIALALTERNATIVES_H
 #define MODELSMCESPATIALALTERNATIVES_H
 
+#include "kernel.h"
+#include "ilwisdata.h"
+#include "modeller/workflow.h"
+#include "modeller/applicationmodel.h"
 
-class ModelSMCESpatialAlternatives : public ModelApplication
+namespace Ilwis{
+class ApplicationModel;
+
+namespace Smce {
+class SMCESpatialAlternativesModel : public ApplicationModel
 {
 public:
-    ModelSMCESpatialAlternatives();
+    SMCESpatialAlternativesModel();
+    void store(QDataStream& stream);
+    void load(QDataStream& stream);
+    QString type() const;
+    static ApplicationModel *create();
+
+NEW_MODELAPPLICATION
 };
+}
+}
 
 #endif // MODELSMCESPATIALALTERNATIVES_H
