@@ -53,7 +53,7 @@
 #include "tranquilizer.h"
 #include "tranquilizerfactory.h"
 #include "modeller/workflow.h"
-#include "modeller/applicationsetup.h"
+#include "modeller/applicationmodel.h"
 #include "modeller/analysispattern.h"
 #include "modellerfactory.h"
 
