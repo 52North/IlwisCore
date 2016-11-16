@@ -443,9 +443,9 @@ SOURCES += core/kernel.cpp \
     core/util/ilwiscoordinate.cpp \
     core/util/ilwisangle.cpp \
     core/ilwisobjects/operation/modeller/analysispattern.cpp \
-    core/ilwisobjects/operation/modeller/applicationsetup.cpp \
     core/ilwisobjects/operation/modeller/model.cpp \
-    core/ilwisobjects/operation/modeller/modellerfactory.cpp
+    core/ilwisobjects/operation/modeller/modellerfactory.cpp \
+    core/ilwisobjects/operation/modeller/applicationmodel.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -964,11 +964,11 @@ HEADERS += core/kernel.h\
     core/util/ilwiscoordinate.h \
     core/util/ilwisangle.h \
     core/ilwisobjects/operation/modeller/analysispattern.h \
-    core/ilwisobjects/operation/modeller/applicationsetup.h \
     core/ilwisobjects/operation/modeller/edgepropobject.h \
     core/ilwisobjects/operation/modeller/model.h \
     core/ilwisobjects/operation/modeller/nodepropobject.h \
-    core/ilwisobjects/operation/modeller/modellerfactory.h
+    core/ilwisobjects/operation/modeller/modellerfactory.h \
+    core/ilwisobjects/operation/modeller/applicationmodel.h
 
 OTHER_FILES += \
     core/resources/referencesystems.csv \

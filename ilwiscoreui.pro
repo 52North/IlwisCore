@@ -103,8 +103,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/workflow/modeldesigner.h \
     ilwiscoreui/models/workflow/modelbuilder.h \
     ilwiscoreui/models/workflow/analysismodel.h \
-    ilwiscoreui/models/workflow/applicationmodel.h \
-    ilwiscoreui/models/workflow/conceptmodel.h
+    ilwiscoreui/models/workflow/conceptmodel.h \
+    ilwiscoreui/models/workflow/applicationmodelui.h
 
 SOURCES += \
     ilwiscoreui/models/attributemodel.cpp \
@@ -187,8 +187,8 @@ SOURCES += \
     ilwiscoreui/models/workflow/modeldesigner.cpp \
     ilwiscoreui/models/workflow/modelbuilder.cpp \
     ilwiscoreui/models/workflow/analysismodel.cpp \
-    ilwiscoreui/models/workflow/applicationmodel.cpp \
-    ilwiscoreui/models/workflow/conceptmodel.cpp
+    ilwiscoreui/models/workflow/conceptmodel.cpp \
+    ilwiscoreui/models/workflow/applicationmodelui.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 
