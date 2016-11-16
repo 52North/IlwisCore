@@ -10,6 +10,7 @@
 
 namespace Ilwis{
 namespace Smce {
+
 class SMCE : public AnalysisPattern
 {
 public:
