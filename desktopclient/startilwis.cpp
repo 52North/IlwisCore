@@ -58,13 +58,13 @@
 #include "keyfilter.h"
 #include "startilwis.h"
 #include "scriptmodel.h"
-#include "applicationsetup.h"
+#include "applicationmodel.h"
 #include "analysispattern.h"
 #include "modelbuilder.h"
 #include "modeldesigner.h"
 #include "workflow/analysismodel.h"
 #include "workflow/conceptmodel.h"
-#include "workflow/applicationmodel.h"
+#include "workflow/applicationmodelui.h"
 #include "../core/buildnumber.h"
 
 StartIlwis::StartIlwis()
@@ -139,7 +139,7 @@ void StartIlwis::init() {
         qmlRegisterType<PreferencesModel>("PreferencesModel",1,0,"PreferencesModel");
         qmlRegisterType<InternalDatabaseModel>("InternalDatabaseModel",1,0,"InternalDatabaseModel");
         qmlRegisterType<ScriptModel>("ScriptModel",1,0,"ScriptModel");
-        qmlRegisterType<ApplicationModel>("ApplicationModel",1,0,"ApplicationModel");
+        qmlRegisterType<ApplicationModelUI>("ApplicationModel",1,0,"ApplicationModel");
         qmlRegisterType<AnalysisModel>("AnalysisModel",1,0,"AnalysisModel");
         qmlRegisterType<ConceptModel>("ConceptModel",1,0,"ConceptModel");
 
