@@ -2,7 +2,7 @@
 #include "ilwisdata.h"
 #include "modeller/workflow.h"
 #include "modeller/analysispattern.h"
-#include "modeller/applicationsetup.h"
+#include "modeller/applicationmodel.h"
 #include "modeller/model.h"
 #include "workflow/modelbuilder.h"
 #include "smcemodel.h"
@@ -17,6 +17,7 @@ SMCEModel::SMCEModel()
 
 SMCEModel::SMCEModel(Ilwis::AnalysisPattern *p) : AnalysisModel(p){
     _panels["main"] = "SMCE/SMCEPanel.qml";
+    _panels["form"] = "SMCE/SMCEForm.qml";
 }
 
 AnalysisModel *SMCEModel::create(Ilwis::AnalysisPattern *pattern)
