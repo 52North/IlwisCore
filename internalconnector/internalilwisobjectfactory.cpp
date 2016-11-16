@@ -65,7 +65,7 @@
 #include "catalog.h"
 #include "workflow.h"
 #include "analysispattern.h"
-#include "applicationsetup.h"
+#include "applicationmodel.h"
 #include "script.h"
 #include "model.h"
 
