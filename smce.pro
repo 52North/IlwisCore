@@ -30,14 +30,16 @@ SOURCES += \
     smce/smce_plugin.cpp \
     smce/smce.cpp \
     smce/smcemodel.cpp \
-    smce/smcespatialalternatives.cpp
+    smce/smcespatialalternatives.cpp \
+    smce/modelsmcespatialalternatives.cpp
  
 
 HEADERS += \
     smce/smce_plugin.h \
     smce/smce.h \
     smce/smcemodel.h \
-    smce/smcespatialalternatives.h
+    smce/smcespatialalternatives.h \
+    smce/modelsmcespatialalternatives.h
   
 
 OTHER_FILES = smce/qmldir
@@ -128,6 +130,8 @@ INSTALLS += qml qmldir
 DISTFILES += \
     smce/SMCEPanel.qml \
     smce/SMCEToolBar.qml \
-    smce/SMCESpatialAlternativePanel.qml
+    smce/SMCESpatialAlternativePanel.qml \
+    smce/SMCEForm.qml \
+    smce/SMCEAppForm.qml
 
 
