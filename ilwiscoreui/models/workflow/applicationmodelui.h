@@ -4,14 +4,22 @@
 #include <QObject>
 #include "ilwiscoreui_global.h"
 
+#define NEW_APPMODEL \
+    private: \
+static ApplicationModelUI *dummy_app;
+
+#define REGISTER_APPMODEL(classname,modelname) \
+    ApplicationModelUI *classname::dummy_app = modelbuilder()->registerApplicationModel(modelname, classname::create);
+
 namespace Ilwis {
-    class ModelApplication;
+    class ApplicationModel;
 }
-class ILWISCOREUISHARED_EXPORT ApplicationModel : public QObject
+class ILWISCOREUISHARED_EXPORT ApplicationModelUI : public QObject
 {
     Q_OBJECT
 public:
-    explicit ApplicationModel(Ilwis::ModelApplication *app=0, QObject *parent = 0);
+    explicit ApplicationModelUI(QObject *parent = 0);
+    ApplicationModelUI(Ilwis::ApplicationModel *, QObject *parent = 0);
     Q_INVOKABLE QString panel(const QString& panelName);
 
     QString name() const;
@@ -24,7 +32,7 @@ public slots:
 
 protected:
     std::map<QString, QString> _panels;
-    Ilwis::ModelApplication *_app = 0;
+    Ilwis::ApplicationModel *_app = 0;
 
 };
 

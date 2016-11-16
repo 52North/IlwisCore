@@ -2,16 +2,21 @@
 #include "ilwisdata.h"
 #include "workflow.h"
 #include "analysispattern.h"
-#include "applicationsetup.h"
-#include "model.h"
 #include "applicationmodel.h"
+#include "model.h"
+#include "applicationmodelui.h"
 
-ApplicationModel::ApplicationModel(Ilwis::ModelApplication *app, QObject *parent) : QObject(parent), _app(app)
+ApplicationModelUI::ApplicationModelUI(QObject *parent) : QObject(parent)
 {
 
 }
 
-QString ApplicationModel::name() const
+ApplicationModelUI::ApplicationModelUI(Ilwis::ApplicationModel *app, QObject *parent) : QObject(parent), _app(app)
+{
+
+}
+
+QString ApplicationModelUI::name() const
 {
     if ( _app)    {
        return _app->name();
@@ -19,20 +24,20 @@ QString ApplicationModel::name() const
     return "";
 }
 
-QString ApplicationModel::attachedAnalysis() const
+QString ApplicationModelUI::attachedAnalysis() const
 {
     if ( _app)
         return _app->attachedAnalysis();
     return "";
 }
 
-void ApplicationModel::attachedAnalysis(const QString &name)
+void ApplicationModelUI::attachedAnalysis(const QString &name)
 {
     if ( _app)
         _app->attachedAnalysis(name);
 }
 
-QString ApplicationModel::panel(const QString &panelName)
+QString ApplicationModelUI::panel(const QString &panelName)
 {
     auto iter = _panels.find(panelName);
     if ( iter != _panels.end()){

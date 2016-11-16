@@ -2,15 +2,23 @@
 #define APPLICATIONSETUP_H
 #include "kernel_global.h"
 
+#define NEW_MODELAPPLICATION \
+    private: \
+static Ilwis::ApplicationModel *dummy_model;
+
+#define REGISTER_MODELAPPLICATION(classname,modelname) \
+    Ilwis::ApplicationModel *classname::dummy_model = ModellerFactory::registerModelApplication(modelname, classname::create);
+
 namespace Ilwis {
 
 class Model;
 typedef IlwisData<Model> IModel;
 
-class KERNELSHARED_EXPORT ModelApplication : public Identity
+class KERNELSHARED_EXPORT ApplicationModel : public Identity
 {
 public:
-    ModelApplication();
+    ApplicationModel();
+    ApplicationModel(const QString &name, const QString &description);
 
     void store(QDataStream& stream);
     void load(QDataStream& stream);
@@ -26,7 +34,7 @@ protected:
     IModel _attachedModel;
 };
 
-typedef std::shared_ptr<ModelApplication> SPModelApplication;
+typedef std::shared_ptr<ApplicationModel> SPModelApplication;
 }
 
 #endif // APPLICATIONSETUP_H

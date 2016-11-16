@@ -1,45 +1,50 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "workflow.h"
-#include "applicationsetup.h"
+#include "applicationmodel.h"
 #include "analysispattern.h"
 #include "model.h"
 
 using namespace Ilwis;
 
-ModelApplication::ModelApplication()
+ApplicationModel::ApplicationModel()
 {
 
 }
 
-void ModelApplication::store(QDataStream &stream)
+ApplicationModel::ApplicationModel(const QString &name, const QString &description) : Identity(name,i64UNDEF,description)
+{
+
+}
+
+void ApplicationModel::store(QDataStream &stream)
 {
     Identity::store(stream)    ;
     stream << _analysisName;
 }
 
-void ModelApplication::load(QDataStream &stream)
+void ApplicationModel::load(QDataStream &stream)
 {
     Identity::load(stream);
     stream >> _analysisName;
 }
 
-QString ModelApplication::attachedAnalysis() const
+QString ApplicationModel::attachedAnalysis() const
 {
     return _analysisName;
 }
 
-void ModelApplication::attachedAnalysis(const QString &name)
+void ApplicationModel::attachedAnalysis(const QString &name)
 {
     _analysisName = name;
 }
 
-void ModelApplication::attachedModel(quint64 modelid)
+void ApplicationModel::attachedModel(quint64 modelid)
 {
     _modelId = modelid;
 }
 
-IModel ModelApplication::attachedModel()
+IModel ApplicationModel::attachedModel()
 {
     if ( !_attachedModel.isValid())
         _attachedModel.prepare(_modelId);
