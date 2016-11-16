@@ -11,9 +11,10 @@
 #include "ilwiscontext.h"
 #include "ilwistypes.h"
 #include "resourcemodel.h"
-#include "applicationsetup.h"
+#include "applicationmodel.h"
 #include "analysispattern.h"
 #include "modeldesigner.h"
+#include "modellerfactory.h"
 #include "modelbuilder.h"
 
 std::unique_ptr<ModelBuilder> ModelBuilder::_modelbuilder;
@@ -44,11 +45,13 @@ AnalysisModel *ModelBuilder::createAnalysisModel(AnalysisPattern *pattern)
     return 0;
 }
 
-ApplicationModel *ModelBuilder::createApplicationModel(ModelApplication *model)
-{
-    auto iter = _applicationModelCreators.find(model->type());
-    if ( iter != _applicationModelCreators.end()){
-         return (*iter).second(model);
+ApplicationModelUI * ModelBuilder::createApplicationModelUI(ApplicationModel *appmodel, QObject *parent){
+    for(auto creator : _applicationModelCreators){
+        ApplicationModelUI *appmodelui = creator.second(appmodel, parent);
+        if ( appmodel->name() == appmodelui->name()){
+            return appmodelui;
+        }
+        delete appmodelui;
     }
     return 0;
 }
@@ -62,7 +65,7 @@ AnalysisModel *ModelBuilder::registerAnalysisModel(const QString &type, CreateAn
     return 0;
 }
 
-ApplicationModel *ModelBuilder::registerApplicationModel(const QString &type, CreateAppModel creator)
+ApplicationModelUI *ModelBuilder::registerApplicationModel(const QString &type, CreateAppModel creator)
 {
     auto iter = _applicationModelCreators.find(type);
     if ( iter == _applicationModelCreators.end()){

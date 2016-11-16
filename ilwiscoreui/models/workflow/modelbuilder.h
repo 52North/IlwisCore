@@ -9,17 +9,17 @@
 
 namespace Ilwis{
 class AnalysisPattern;
-class ModelApplication;
+class ApplicationModel;
 }
 class ModelDesigner;
 class AnalysisModel;
 
-class ApplicationModel;
+class ApplicationModelUI;
 class ResourceModel;
 
 
 typedef std::function<AnalysisModel *(Ilwis::AnalysisPattern *pattern)> CreateAnalysisModel;
-typedef std::function<ApplicationModel *(Ilwis::ModelApplication *app)> CreateAppModel;
+typedef std::function<ApplicationModelUI *(Ilwis::ApplicationModel *,QObject *parent)> CreateAppModel;
 
 
 class ILWISCOREUISHARED_EXPORT ModelBuilder : public QObject
@@ -32,10 +32,11 @@ public:
 
     Q_INVOKABLE ModelDesigner * createModel(ResourceModel *rmodel, QObject *parent);
     Q_INVOKABLE AnalysisModel * createAnalysisModel(Ilwis::AnalysisPattern *pattern);
-    Q_INVOKABLE ApplicationModel * createApplicationModel(Ilwis::ModelApplication *model);
+    ApplicationModelUI *createApplicationModelUI(Ilwis::ApplicationModel *appmodel, QObject *parent);
 
     AnalysisModel *registerAnalysisModel(const QString& type, CreateAnalysisModel creator);
-    ApplicationModel *registerApplicationModel(const QString& type, CreateAppModel creator);
+    ApplicationModelUI *registerApplicationModel(const QString& type, CreateAppModel creator);
+
 
 
 
