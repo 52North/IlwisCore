@@ -13,6 +13,10 @@ Item {
     height : parent.height
     property string iconName : "../images/app"
 
+    function refreshFormArea(form) {
+        formArea.source = uicontext.ilwisFolder + "/extensions/ui/" + form
+    }
+
     SplitView {
         id : layerprops
         width : parent.width - 5
@@ -30,10 +34,19 @@ Item {
         }
         Item {
             id : rest
-            width:parent.width - firstColumn.width
+            width:100
             Layout.fillWidth: true
             height : parent.height
+            Loader {
+                id : formArea
+                anchors.fill: parent
+            }
 
+        }
+        AppAddForm {
+            id : createForm
+            state : "invisible"
+            height : parent.height
         }
     }
 

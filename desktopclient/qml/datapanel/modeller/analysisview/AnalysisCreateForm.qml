@@ -99,6 +99,10 @@ Item {
                 target: createForm
                 width : 0
             }
+            PropertyChanges {
+                target: rest
+                opacity : 1
+            }
         },
         State {
             name : "visible"
@@ -106,17 +110,24 @@ Item {
                 target: createForm
                 width : layerprops.width - firstColumn.width - 3
             }
+            PropertyChanges {
+                target: rest
+                opacity : 0
+            }
         }
 
     ]
     transitions: [
         Transition {
             NumberAnimation { properties: "width"; duration : 630 ; easing.type: Easing.InOutCubic }
+            NumberAnimation { properties: "opacity"; duration : 630 ; easing.type: Easing.InOutCubic }
             onRunningChanged: {
                 if ((state == "invisible") && (!running)) {
                     opacity = 0
-                }else
+                }else{
                     opacity = 1
+                }
+
             }
         }
     ]

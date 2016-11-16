@@ -13,6 +13,10 @@ Item {
     height : parent.height
     property string iconName : "../images/analysis"
 
+    function refreshFormArea(form) {
+        formArea.source = uicontext.ilwisFolder + "/extensions/ui/" + form
+    }
+
     SplitView {
         id : layerprops
         width : parent.width - 5
@@ -21,6 +25,7 @@ Item {
         function refreshAnalysisNames(){
             firstColumn.refreshList();
         }
+
 
         y : 2
         AnalysisList {
@@ -33,6 +38,11 @@ Item {
             width:100
             Layout.fillWidth: true
             height : parent.height
+            Loader {
+                id : formArea
+                anchors.fill: parent
+            }
+
 
         }
         AnalysisCreateForm {

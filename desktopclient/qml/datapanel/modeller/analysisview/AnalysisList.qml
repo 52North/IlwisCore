@@ -72,8 +72,10 @@ Item {
                         onClicked: {
                             analysisNamesList.currentIndex = index
                             var analysis = modellerDataPane.model.analysisPattern(index);
-                            if ( analysis)
-                                analysView.currentAnalysis = analysis
+                            if ( analysis){
+                                analisysView.currentAnalysis = analysis
+                                analysisv.refreshFormArea(analysis.panel("form"))
+                            }
                         }
                     }
                 }

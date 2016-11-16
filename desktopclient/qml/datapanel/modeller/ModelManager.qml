@@ -113,7 +113,9 @@ Rectangle {
                 modellerViews.currentApplication = modellerDataPane.model.application(0)
             }else if ( modellerDataPane.model.analysisCount > 0){
                 modellerViews.currentIndex = 2
-                analisysView.currentAnalysis = modellerDataPane.model.analysisPattern(0)
+                var analysis = modellerDataPane.model.analysisPattern(0)
+                analisysView.currentAnalysis = analysis
+                analysisManager.item.refreshFormArea(analysis.panel("form"))
             } else if ( modellerDataPane.model.workflowCount > 0){
                 modellerViews.currentIndex = 3
                 workflowView.workflow = modellerDataPane.model.workflow(0)
