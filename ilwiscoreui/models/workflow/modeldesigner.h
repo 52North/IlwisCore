@@ -10,7 +10,7 @@
 #include "ilwisobjectmodel.h"
 #include "symboltable.h"
 #include "workflow.h"
-#include "applicationsetup.h"
+#include "applicationmodel.h"
 #include "analysispattern.h"
 #include "operationExpression.h"
 #include "nodepropobject.h"
@@ -18,7 +18,7 @@
 #include "workflowmodel.h"
 #include "conceptmodel.h"
 #include "analysismodel.h"
-#include "applicationmodel.h"
+#include "applicationmodelui.h"
 #include "ilwiscoreui_global.h"
 #include "model.h"
 
@@ -52,12 +52,13 @@ public:
     Q_INVOKABLE bool addAnalysisPattern(AnalysisModel *amodel);
     Q_INVOKABLE void removeAnalysisPattern(const QString& name);
     Q_INVOKABLE void removeAnalysisPattern(qint32 index);
-    Q_INVOKABLE QStringList applicationNames(const QString& analysisName) const;
+    Q_INVOKABLE QStringList applicationNames(const QString& analysisName) const; // apps in the current model
+    Q_INVOKABLE QStringList applicationsByAnalysis(const QString& analysisType) const; //all apps known based on a type
 
     qint32 applicationCount() const;
-    Q_INVOKABLE ApplicationModel* application(qint32 index) const;
+    Q_INVOKABLE ApplicationModelUI* application(qint32 index) const;
    // SPModelApplication application(const QString& name) const;
-   // bool addApplication(ModelApplication *app);
+    Q_INVOKABLE bool addApplication(ApplicationModelUI *app);
     Q_INVOKABLE  void removeApplication(const QString& name);
     Q_INVOKABLE void removeApplication(qint32 index);
 
@@ -80,7 +81,7 @@ public slots:
 
 private:
     std::vector<WorkflowModel*> _workflowmodels;
-    std::vector<ApplicationModel*> _appmodels;
+    std::vector<ApplicationModelUI*> _appmodels;
     std::vector<AnalysisModel*> _analysismodels;
     std::vector<ConceptModel *> _conceptmodels;
     WorkflowModel *_currentWorkflow = 0;

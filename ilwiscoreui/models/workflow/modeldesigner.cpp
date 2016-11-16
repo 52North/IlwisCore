@@ -10,7 +10,7 @@
 #include "../workflowerrormodel.h"
 #include "ilwiscontext.h"
 #include "ilwistypes.h"
-#include "applicationsetup.h"
+#include "applicationmodel.h"
 #include "analysispattern.h"
 #include "modellerfactory.h"
 #include "modelbuilder.h"
@@ -37,8 +37,15 @@ ModelDesigner::ModelDesigner(ResourceModel *rmodel, QObject *parent) : ResourceM
         }
         for(int i=0; i < _model->analysisCount(); ++i){
             AnalysisModel *amodel = modelbuilder()->createAnalysisModel(_model->analysisPattern(i).get());
-            if ( amodel)
+            if ( amodel){
                 _analysismodels.push_back(amodel);
+            }
+        }
+        for(int i=0; i < _model->applicationCount(); ++i){
+            ApplicationModelUI *amodel = modelbuilder()->createApplicationModelUI(_model->application(i).get(), parent);
+            if ( amodel){
+                _appmodels.push_back(amodel);
+            }
         }
     }
 }
@@ -132,12 +139,23 @@ QStringList ModelDesigner::applicationNames(const QString& analysisName) const
 {
     QStringList names;
     if ( analysisName != "") {
-        for(ApplicationModel *app : _appmodels )    {
+        for(ApplicationModelUI *app : _appmodels )    {
             if ( app->attachedAnalysis() == analysisName)
                 names.push_back(app->name());
         }
     }
     return names;
+}
+
+QStringList ModelDesigner::applicationsByAnalysis(const QString &analysisType) const
+{
+    if ( analysisType == "")
+        return QStringList();
+    ModellerFactory *factory = kernel()->factory<ModellerFactory>("ModellerFactory","ilwis");
+    if ( factory){
+        return factory->applications(analysisType);
+    }
+    return QStringList();
 }
 
 QStringList ModelDesigner::analysisNames() const
@@ -184,6 +202,8 @@ AnalysisModel *ModelDesigner::analysisPattern(qint32 index) const
 
 bool ModelDesigner::addAnalysisPattern(AnalysisModel *amodel)
 {
+    if ( !amodel)
+        return false;
     for(int i =0; i < _analysismodels.size() && amodel != 0; ++i ){
         if ( _analysismodels[i]->name() == amodel->name()){
             return false;
@@ -215,12 +235,26 @@ qint32 ModelDesigner::applicationCount() const
     return _appmodels.size();
 }
 
-ApplicationModel *ModelDesigner::application(qint32 index) const
+ApplicationModelUI *ModelDesigner::application(qint32 index) const
 {
     if ( index < _appmodels.size())
         return _appmodels[index];
 
     return 0;
+}
+
+bool ModelDesigner::addApplication(ApplicationModelUI *app)
+{
+    if (!app)
+        return false;
+
+    for(int i =0; i < _appmodels.size() && app != 0; ++i ){
+        if ( _appmodels[i]->name() == app->name()){
+            return false;
+        }
+    }
+    _appmodels.push_back(app);
+    return true;
 }
 
 void ModelDesigner::removeApplication(const QString &name)
