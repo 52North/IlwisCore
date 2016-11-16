@@ -3,7 +3,7 @@
 #include "operationmetadata.h"
 #include "workflow.h"
 #include "analysispattern.h"
-#include "applicationsetup.h"
+#include "applicationmodel.h"
 #include "model.h"
 
 using namespace Ilwis;
@@ -151,7 +151,7 @@ SPModelApplication Model::application(const QString &name) const
     return SPModelApplication();
 }
 
-bool Model::addApplication(ModelApplication *app)
+bool Model::addApplication(ApplicationModel *app)
 {
       for(SPModelApplication applic : _applications){
           if ( applic->name() == app->name()){

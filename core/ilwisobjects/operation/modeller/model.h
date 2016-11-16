@@ -31,7 +31,7 @@ public:
     qint32 applicationCount() const;
     SPModelApplication application(qint32 index) const;
     SPModelApplication application(const QString& name) const;
-    bool addApplication(ModelApplication *app);
+    bool addApplication(ApplicationModel *app);
     void removeApplication(const QString& name);
     void removeApplication(qint32 index);
 
