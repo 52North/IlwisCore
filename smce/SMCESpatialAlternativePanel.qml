@@ -19,7 +19,7 @@ Column {
         opacity : height > 0 ? 1 : 0
         Text{
             anchors.centerIn: parent
-            text: "SMCE Spatial Alternative Results Contstruction"
+            text: "SMCE Spatial Alternative Results Construction"
             font.bold: true
             font.pointSize: 20
 
