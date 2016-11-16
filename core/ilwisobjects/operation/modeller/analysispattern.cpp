@@ -1,7 +1,7 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "workflow.h"
-#include "applicationsetup.h"
+#include "applicationmodel.h"
 #include "analysispattern.h"
 #include "model.h"
 
