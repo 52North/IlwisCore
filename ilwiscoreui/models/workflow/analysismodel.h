@@ -38,7 +38,7 @@ public slots:
 
 protected:
     std::map<QString, QString> _panels;
-    Ilwis::AnalysisPattern *_analysis; // pattern is stored in the model; there is no ownership here
+    Ilwis::AnalysisPattern *_analysis = 0; // pattern is stored in the model; there is no ownership here
 
 private:
 
