@@ -20,7 +20,8 @@ public:
     bool execute(const QVariantMap& inputParameters, QVariantMap& outputParameters);
     Ilwis::IWorkflow workflow(const Ilwis::IOOptions& opt);
     void store(QDataStream& stream);
-    void load(QDataStream &stream);
+    void loadMetadata(QDataStream &stream);
+    virtual void loadData(QDataStream& stream);
     QString type() const;
     static AnalysisPattern *create(const QString& name, const QString& description, const Ilwis::IOOptions &options);
 

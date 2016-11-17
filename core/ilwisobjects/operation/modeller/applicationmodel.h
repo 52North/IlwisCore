@@ -21,7 +21,8 @@ public:
     ApplicationModel(const QString &name, const QString &description);
 
     virtual void store(QDataStream& stream);
-    virtual void load(QDataStream& stream);
+    virtual void loadData(QDataStream& stream){} // empty implementation as it is often not needed
+    virtual void loadMetadata(QDataStream& stream);
     virtual QString type() const = 0;
     QString attachedAnalysis() const;
     void attachedAnalysis(const QString& name);

@@ -25,6 +25,11 @@ IWorkflow SMCE::workflow(const IOOptions &opt)
     return IWorkflow();
 }
 
+void SMCE::loadData(QDataStream &stream)
+{
+    //TODO
+}
+
 void SMCE::store(QDataStream &stream)
 {
     stream << type();
@@ -32,7 +37,7 @@ void SMCE::store(QDataStream &stream)
     stream << _test;
 }
 
-void SMCE::load(QDataStream &stream)
+void SMCE::loadMetadata(QDataStream &stream)
 {
     AnalysisPattern::load(stream);
     stream >> _test;

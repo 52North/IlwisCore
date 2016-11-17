@@ -22,9 +22,14 @@ void AnalysisPattern::store(QDataStream &stream)
     Identity::store(stream);
 }
 
-void AnalysisPattern::load(QDataStream &stream)
+void AnalysisPattern::loadMetadata(QDataStream &stream)
 {
     Identity::load(stream)    ;
+}
+
+void AnalysisPattern::loadData(QDataStream &stream)
+{
+    //TODO
 }
 
 void AnalysisPattern::attachedModel(quint64 modelid)

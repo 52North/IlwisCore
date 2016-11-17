@@ -30,7 +30,7 @@ Controls.DropableItem{
             if ( panel.panelType === "catalog"){
                 var url = panel.currentCatalog.url
                 if ( url.indexOf("file://") !== 0) {
-                    return ""
+                    return "error"
                 }
                 return url
             }
@@ -151,8 +151,12 @@ Controls.DropableItem{
                     text : qsTr("Location can't be used for writing")
                     anchors.right: createButton.left
                     anchors.rightMargin: 8
-                    opacity : topItem.currentCatalogCorrectUrl() === "" ? 1 : 0
+                    opacity : topItem.currentCatalogCorrectUrl() === "error" ? 1 : 0
                     color : "red"
+
+                    onOpacityChanged: {
+
+                    }
 
                 }
 

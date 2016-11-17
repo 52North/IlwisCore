@@ -110,7 +110,7 @@ Rectangle {
                 modellerViews.currentIndex = 0
             else if ( modellerDataPane.model.applicationCount > 0){
                 modellerViews.currentIndex = 1
-                modellerViews.currentApplication = modellerDataPane.model.application(0)
+                applicationView.currentApplication = modellerDataPane.model.application(0)
             }else if ( modellerDataPane.model.analysisCount > 0){
                 modellerViews.currentIndex = 2
                 var analysis = modellerDataPane.model.analysisPattern(0)

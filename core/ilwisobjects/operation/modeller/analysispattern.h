@@ -25,7 +25,8 @@ public:
     virtual IWorkflow workflow(const IOOptions& opt) = 0;
 
     virtual void store(QDataStream& stream);
-    virtual void load(QDataStream& stream);
+    virtual void loadMetadata(QDataStream& stream);
+    virtual void loadData(QDataStream& stream);
     virtual QString type() const = 0 ;
 
     void attachedModel(quint64 modelid);

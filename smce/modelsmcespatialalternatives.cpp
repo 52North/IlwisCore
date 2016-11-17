@@ -24,9 +24,14 @@ void SMCESpatialAlternativesModel::store(QDataStream &stream)
    ApplicationModel::store(stream);
 }
 
-void SMCESpatialAlternativesModel::load(QDataStream &stream)
+void SMCESpatialAlternativesModel::loadMetadata(QDataStream &stream)
 {
     ApplicationModel::load(stream);
+}
+
+void SMCESpatialAlternativesModel::loadData(QDataStream &stream)
+{
+    //TODO
 }
 
 QString SMCESpatialAlternativesModel::type() const

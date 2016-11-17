@@ -23,7 +23,7 @@ void ApplicationModel::store(QDataStream &stream)
     stream << _analysisName;
 }
 
-void ApplicationModel::load(QDataStream &stream)
+void ApplicationModel::loadMetadata(QDataStream &stream)
 {
     Identity::load(stream);
     stream >> _analysisName;

@@ -15,7 +15,8 @@ class SMCESpatialAlternativesModel : public ApplicationModel
 public:
     SMCESpatialAlternativesModel();
     void store(QDataStream& stream);
-    void load(QDataStream& stream);
+    void loadMetadata(QDataStream& stream);
+    virtual void loadData(QDataStream& stream);
     QString type() const;
     static ApplicationModel *create();
 
