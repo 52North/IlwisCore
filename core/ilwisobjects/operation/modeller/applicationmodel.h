@@ -20,8 +20,8 @@ public:
     ApplicationModel();
     ApplicationModel(const QString &name, const QString &description);
 
-    void store(QDataStream& stream);
-    void load(QDataStream& stream);
+    virtual void store(QDataStream& stream);
+    virtual void load(QDataStream& stream);
     virtual QString type() const = 0;
     QString attachedAnalysis() const;
     void attachedAnalysis(const QString& name);
