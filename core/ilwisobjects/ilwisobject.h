@@ -257,6 +257,8 @@ public:
      * @return the IlwisTypes of this IlwisObject
      */
     virtual IlwisTypes ilwisType() const = 0;
+    IlwisTypes extendedType() const;
+    void extendedType(quint64 extype);
 
     /**
      * ??

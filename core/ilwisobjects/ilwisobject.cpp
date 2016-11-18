@@ -351,6 +351,21 @@ void IlwisObject::changed(bool yesno)
 
 }
 
+IlwisTypes IlwisObject::extendedType() const
+{
+    if ( !_connector.isNull()){
+        return _connector->source().extendedType();
+    }
+    return itUNKNOWN;
+}
+
+void IlwisObject::extendedType(quint64 extype)
+{
+    if ( !_connector.isNull()){
+        return _connector->sourceRef().setExtendedType(extype);
+    }
+}
+
 bool IlwisObject::prepare(const QString &)
 {
     if ( isReadOnly())
