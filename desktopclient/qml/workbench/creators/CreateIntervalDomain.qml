@@ -15,37 +15,6 @@ Controls.DropableItem{
 
     clip:true
 
-    function addDomainItems(items,clear){
-        if ( clear)
-           container.itemArray = []
-        for(var i = 0; i < items.length; ++i){
-            if ( items[i].name === "")
-                continue;
-            if ( items[i].minvalue > items[i].maxvalue){
-                continue;
-            }
-            var illegal = false
-            for ( var j = 0; j < container.itemArray.length; ++j){
-                // double names allowed
-                if( items[i].name === container.itemArray[j].name){
-                    illegal = true
-                }
-                // no double codes allowed unless its empty
-                if( items[i].code !== "" && (items[i].code === container.itemArray[j].code)){
-                    illegal = true
-                }
-                if ( items[i].minvalue < container.itemArray[j].minvalue){
-                    illegal = true
-                }
-
-                if ( illegal)
-                    break
-            }
-            if ( !illegal)
-                container.itemArray.push(items[i])
-        }
-        commonpart.domitems.item.model = container.itemArray
-    }
 
     Component {
         id : itemresolution
@@ -60,7 +29,7 @@ Controls.DropableItem{
 
     Rectangle {
         id : container
-        height: 550
+        height: 590
         width : parent.width
         border.width : 1
         border.color : Global.edgecolor
@@ -118,6 +87,40 @@ Controls.DropableItem{
         }
 
     }
+    function addDomainItems(items,clear){
+        if ( clear)
+           container.itemArray = []
+        for(var i = 0; i < items.length; ++i){
+            console.debug("c", items[i].name)
+            if ( items[i].name === "")
+                continue;
+            if ( items[i].minvalue > items[i].maxvalue){
+                continue;
+            }
+            var illegal = false
+            for ( var j = 0; j < container.itemArray.length; ++j){
+                // double names allowed
+                if( items[i].name === container.itemArray[j].name){
+                    illegal = true
+                }
+                // no double codes allowed unless its empty
+                if( items[i].code !== "" && (items[i].code === container.itemArray[j].code)){
+                    illegal = true
+                }
+                if ( items[i].minvalue < container.itemArray[j].minvalue){
+                    illegal = true
+                }
+
+                if ( illegal)
+                    break
+            }
+            console.debug("a", items[i].name)
+            if ( !illegal)
+                container.itemArray.push(items[i])
+        }
+        commonpart.domitems.item.model = container.itemArray
+    }
+
 
 }
 
