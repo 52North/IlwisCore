@@ -208,6 +208,14 @@ QString ApplicationFormExpressionParser::dropKeys(IlwisTypes type) const{
         if ( keypart != "") keypart += ",";
         keypart += "\""+ TypeHelper::type2name(itDOMAIN) + "\"";
     }
+    if ( hasType(type, itITEMDOMAIN)){
+        if ( keypart != "") keypart += ",";
+        keypart += "\""+ TypeHelper::type2name(itITEMDOMAIN)+ "\"";
+    }
+    if ( hasType(type, itNUMERICDOMAIN)){
+        if ( keypart != "") keypart += ",";
+        keypart += "\""+ TypeHelper::type2name(itNUMERICDOMAIN)+ "\"";
+    }
     if ( hasType(type, itGEOREF)){
         if ( keypart != "") keypart += ",";
         keypart += "\""+ TypeHelper::type2name(itGEOREF) + "\"";
