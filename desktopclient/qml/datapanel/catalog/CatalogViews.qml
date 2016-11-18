@@ -27,8 +27,11 @@ DropArea {
             return
 
         var ids = idstring.split("|")
-        for(var i=0; i < ids.length; ++i ){
+        if ( ids.length === 1){ // you can start a drag of a single item without actually selecting it; this means that the selected ids are not necessarily correct. The ilwisobjectid is though
+            ids[0] = drag.source.ilwisobjectid
+        }
 
+        for(var i=0; i < ids.length; ++i ){
             var obj = mastercatalog.id2object(ids[i], catalogViewsArea)
             if (obj) {
                 if ( currentCatalog.url == "ilwis://internalcatalog")
