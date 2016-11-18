@@ -91,10 +91,9 @@ Controls.DropableItem{
         if ( clear)
            container.itemArray = []
         for(var i = 0; i < items.length; ++i){
-            console.debug("c", items[i].name)
             if ( items[i].name === "")
                 continue;
-            if ( items[i].minvalue > items[i].maxvalue){
+            if ( Number(items[i].minvalue) > Number(items[i].maxvalue)){
                 continue;
             }
             var illegal = false
@@ -107,14 +106,13 @@ Controls.DropableItem{
                 if( items[i].code !== "" && (items[i].code === container.itemArray[j].code)){
                     illegal = true
                 }
-                if ( items[i].minvalue < container.itemArray[j].minvalue){
+                if ( Number(items[i].minvalue) < Number(container.itemArray[j].minvalue)){
                     illegal = true
                 }
 
                 if ( illegal)
                     break
             }
-            console.debug("a", items[i].name)
             if ( !illegal)
                 container.itemArray.push(items[i])
         }
