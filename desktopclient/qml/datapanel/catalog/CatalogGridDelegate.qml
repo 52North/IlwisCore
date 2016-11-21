@@ -114,7 +114,7 @@ Item {
                 image.anchors.fill = mouseArea
                 image.destroy();
             }
-            if ( floatingprops && floatingProps.item){
+            if ( floatingProps && floatingProps.item){
                 floatingProps.source=""
             }
         }
