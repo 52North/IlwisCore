@@ -37,9 +37,12 @@ Rectangle {
         }
         else if ( typeName == "itemdomain" ){
             var valueType = getProperty("valuetype")
-            if ( valueType !== "" && valueType !== "indexidentifier")
+            if ( valueType !== "" && valueType === "numericinterval"){
+                source = "IntervalItemProperties.qml"
+            }
+            else if ( valueType !== "" && valueType !== "indexidentifier")
                 source = "ItemDomainProperties.qml"
-            if ( valueType !== "" && valueType === "indexidentifier")
+            else if ( valueType !== "" && valueType === "indexidentifier")
                 source = "IndexedItemDomainProperties.qml"
         }
         else if ( typeName == "numericdomain" ){

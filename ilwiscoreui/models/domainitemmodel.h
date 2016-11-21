@@ -12,6 +12,8 @@
 #include "identifieritem.h"
 #include "thematicitem.h"
 #include "identifierrange.h"
+#include "interval.h"
+#include "intervalrange.h"
 #include "ilwiscoreui_global.h"
 
 class ILWISCOREUISHARED_EXPORT DomainItemModel : public QObject
@@ -21,6 +23,9 @@ class ILWISCOREUISHARED_EXPORT DomainItemModel : public QObject
     Q_PROPERTY(QString name READ name CONSTANT)
     Q_PROPERTY(QString code READ code CONSTANT)
     Q_PROPERTY(QString description READ description CONSTANT)
+    Q_PROPERTY(QString minimum READ min CONSTANT)
+    Q_PROPERTY(QString maximum READ max CONSTANT)
+
 public:
     DomainItemModel();
     explicit DomainItemModel(Ilwis::SPItemRange _range, const QString &name, QObject *parent = 0);
@@ -28,6 +33,8 @@ public:
     QString name() const;
     QString code() const;
     QString description() const;
+    QString min() const;
+    QString max() const;
 
 signals:
 

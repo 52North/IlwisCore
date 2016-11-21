@@ -292,6 +292,7 @@ QQmlListProperty<DomainItemModel> IlwisObjectModel::domainitems()
         if ( hasType(domain->ilwisType(), itITEMDOMAIN)){
             SPItemRange itemrange =domain->range<ItemRange>();
             if ( !itemrange.isNull()){
+                _domainItems.clear();
                 for(auto item : *(itemrange.data())) {
                     if ( item){
                         DomainItemModel *domainitem = new DomainItemModel(itemrange,item->name(), this);
