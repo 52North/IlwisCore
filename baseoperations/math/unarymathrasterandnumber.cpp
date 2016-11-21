@@ -128,7 +128,7 @@ Resource UnaryMathRasterAndNumber::populateMetadata(const QString& item, const Q
     OperationResource operation(item);
     QString shortname = item.split("/").last();
     operation.setSyntax(QString("%1(raster|number)").arg(shortname));
-    operation.setDescription(TR("generates a new numrical rastercoverage/featurecoverage based on the operation, applied to all the pixels"));
+    operation.setDescription(TR("generates a new numerical rastercoverage/featurecoverage based on the operation, applied to all the pixels"));
     operation.setLongName(longname);
     operation.setInParameterCount({1});
     operation.addInParameter(0,itRASTER|itNUMBER,"input value");
