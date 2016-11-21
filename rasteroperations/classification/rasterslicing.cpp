@@ -68,6 +68,7 @@ bool RasterSlicing::execute(ExecutionContext *ctx, SymbolTable &symTable)
             }
             ++iterIn;
             ++iterOut;
+            updateTranquilizer(iterOut.linearPosition(), 1000);
         }
         return true;
 
@@ -78,6 +79,7 @@ bool RasterSlicing::execute(ExecutionContext *ctx, SymbolTable &symTable)
     QVariant value;
     value.setValue<IRasterCoverage>(_outputRaster);
     ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->resource() );
+
 
     return res;
 
@@ -127,6 +129,8 @@ OperationImplementation::State RasterSlicing::prepare(ExecutionContext *ctx, con
     attributes->addColumn(COVERAGEKEYCOLUMN,_numericItems);
 
     _outputRaster->setAttributes(attributes);
+
+    initialize(_outputRaster->size().linearSize());
     return sPREPARED;
 }
 
