@@ -7,6 +7,7 @@
 #include "itemdomain.h"
 #include "interval.h"
 #include "intervalrange.h"
+#include "table.h"
 #include "rasterslicing.h"
 
 using namespace Ilwis;
@@ -35,22 +36,35 @@ bool RasterSlicing::execute(ExecutionContext *ctx, SymbolTable &symTable)
         PixelIterator iterOut(_outputRaster, box);
         PixelIterator iterEnd = iterOut.end();
         PixelIterator iterIn(_inputRaster, box);
+        qint32 lastIndex = -1;
+        double lastMin, lastMax;
+        ITable attTable = _outputRaster->attributeTable();
+        int colIndex = attTable->columnIndex(COVERAGEKEYCOLUMN);
+        Raw lastRaw;
         while(iterOut != iterEnd){
             double v = *iterIn;
             double &outValue = *iterOut;
-            long i1 = _bounds.size();
-            if (v == rUNDEF || v > _bounds[i1]){
+            if (v == rUNDEF ){
                 outValue = rUNDEF;
             } else {
-                long i0 = 0;
-                while (i0 < i1) {
-                    long reduced = i0/2 + i1/2;
-                    if (v <= _bounds[reduced])
-                        i1 = reduced;
-                    else
-                        i0 = reduced + 1;
+                if ( lastIndex >= 0 && v >= lastMin && v <= lastMax){
+                    outValue = lastRaw;
+                }else {
+                    lastIndex = -1;
+                    for(int i=0; i<_bounds.size(); ++i)    {
+                        lastMin = _bounds[i]->range().min();
+                        lastMax = _bounds[i]->range().max();
+                        if ( v >= lastMin && v <= lastMax){
+                            lastIndex = i;
+                            lastRaw = _bounds[lastIndex]->raw();
+                            outValue = lastRaw;
+                            attTable->setCell(colIndex,(quint32)outValue,outValue);
+                            break;
+                        }
+                    }
                 }
-                outValue = i0;
+                if ( lastIndex == -1)
+                    outValue = rUNDEF;
             }
             ++iterIn;
             ++iterOut;
@@ -61,11 +75,10 @@ bool RasterSlicing::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     bool res = OperationHelperRaster::execute(ctx, sliceFun, _outputRaster);
 
-    if ( res && ctx != 0) {
-        QVariant value;
-        value.setValue<IRasterCoverage>(_outputRaster);
-        ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->resource() );
-    }
+    QVariant value;
+    value.setValue<IRasterCoverage>(_outputRaster);
+    ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->resource() );
+
     return res;
 
 }
@@ -90,10 +103,10 @@ OperationImplementation::State RasterSlicing::prepare(ExecutionContext *ctx, con
         ERROR2(ERR_COULD_NOT_LOAD_2,domainName,"");
         return sPREPAREFAILED;
     }
-    _bounds.resize(_numericItems->count(), 0);
+    _bounds.resize(_numericItems->count());
     int  i =0;
     for(auto& v : _bounds){
-        v = _numericItems->item(i++)->as<Interval>()->range().min();
+        v = _numericItems->item(i++)->as<Interval>();
     }
 
     IIlwisObject outputObj = OperationHelperRaster::initialize(_inputRaster,itRASTER, itCOORDSYSTEM | itGEOREF);
@@ -101,9 +114,19 @@ OperationImplementation::State RasterSlicing::prepare(ExecutionContext *ctx, con
         ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
         return sPREPAREFAILED;
     }
-    _outputRaster = outputObj.as<RasterCoverage>();
-    _outputRaster->name(outputName);
 
+
+    _outputRaster = outputObj.as<RasterCoverage>();
+    if ( outputName != sUNDEF)
+        _outputRaster->name(outputName);
+    std::vector<double> indexes(_outputRaster->size().zsize());
+    _outputRaster->setDataDefintions(_numericItems,indexes);
+    ITable attributes;
+
+    attributes.prepare();
+    attributes->addColumn(COVERAGEKEYCOLUMN,_numericItems);
+
+    _outputRaster->setAttributes(attributes);
     return sPREPARED;
 }
 

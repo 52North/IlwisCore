@@ -20,7 +20,7 @@ private:
     IRasterCoverage _inputRaster;
     IRasterCoverage _outputRaster;
     IIntervalDomain _numericItems;
-    std::vector<double> _bounds;
+    std::vector<Interval *> _bounds;
 
     NEW_OPERATION(RasterSlicing);
 
