@@ -49,7 +49,9 @@ void RasterCoverage::georeference(const IGeoReference &grf, bool resetData)
             _size = Size<>(_georef->size().xsize(), _georef->size().ysize(), _size.zsize());
         else
             _size = _georef->size();
-        envelope(grf->envelope());
+        Envelope env = grf->envelope();
+        if ( env.isValid() && !env.isNull())
+            envelope(grf->envelope());
 
     }
     else
