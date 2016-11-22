@@ -488,7 +488,12 @@ void RasterCoverage::name(const QString &nam)
     IlwisObject::name(nam);
     if ( _attributeTable.isValid()) {
         if ( _attributeTable->isAnonymous()) {
-            _attributeTable->name(nam + "_attributes");
+            int index;
+            if ( (index = nam.indexOf(".ilwis")) != -1 ){
+                QString part = nam.left(index);
+                _attributeTable->name(part + "_attributes" + ".ilwis");
+            }else
+                _attributeTable->name(nam + "_attributes");
         }
     }
 }
