@@ -142,7 +142,7 @@ void PixelIterator::copy(const PixelIterator &iter) {
 
 void PixelIterator::init() {
     const Size<>& sz = _raster->size();
-    if ( _box.isNull()) {
+    if ( !_box.isValid()) {
         _box = BoundingBox(sz);
     }
     _box.ensure(sz);
