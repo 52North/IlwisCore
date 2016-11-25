@@ -176,13 +176,15 @@ Controls.DropableItem{
                         }
                         onDropped : {
                             var idstring = drag.source.ids
-                            if ( idstring && idstring === "")
+                            if ( (idstring && idstring === "") || idstring.indexOf("|") === -1)
                                 idstring = drag.source.ilwisobjectid
                             var ids = idstring.split("|")
+
                             for(var i=0; i < ids.length; ++i ){
                                 var id = ids[i]
                                 var obj = mastercatalog.id2object(id, rasterlist)
                                 var grfurl = obj.getProperty("georeferenceurl");
+                                console.debug(idstring, obj.name, grfurl, obj.typeName,grfvalue.content)
                                 if ( obj && obj.typeName === "rastercoverage"){
                                     if ( grfvalue.content === ""){
                                         grfvalue.content = grfurl
