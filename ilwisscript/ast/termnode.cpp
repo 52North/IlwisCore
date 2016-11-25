@@ -80,7 +80,7 @@ QString TermNode::buildBracketSelection(QString& name)
 {
     for(QSharedPointer<Selector> selector: _selectors)  {
         QString selectordef;
-        if ( !selector->box().isNull())
+        if ( !selector->box().isNull() && selector->box().isValid() )
             selectordef = QString("\"box=%1 %2, %3 %4\"").arg(selector->box().min_corner().x).arg(selector->box().min_corner().y).
                                                         arg(selector->box().max_corner().x).arg(selector->box().max_corner().y);
         else if (selector->selectorType() == "index") {

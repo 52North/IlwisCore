@@ -212,7 +212,7 @@ bool SelectionBase::ExpressionPart::match(const Pixel& location,double pixelValu
        delete pnt;
        return ok;
     }
-    if ( _type == ExpressionPart::ptENVELOPE && !_envelope.isNull())   {
+    if ( _type == ExpressionPart::ptENVELOPE && _envelope.isValid())   {
         return checkForBounds(location);
     }
     if ( _type == ExpressionPart::ptATTRIBUTESELECTION ) {

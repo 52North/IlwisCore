@@ -139,7 +139,7 @@ Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext 
     std::vector<QString> selectionBands = bands(inputRaster);
      _box = boundingBox(_inputObj.as<RasterCoverage>());
     bool useOldGrf ;
-    if ( _box.isNull()){
+    if ( _box.isNull() || !_box.isValid()){
         _box = inputRaster->size();
         useOldGrf = true;
     } else
