@@ -19,7 +19,7 @@ template<class PointType=Coordinate> class Box : public Range{
 public:
     enum Dimension{dim0=0, dimX=1, dimY=2, dimZ=4};
 
-    Box() : _min_corner(PointType(0,0,0)), _max_corner(PointType(0,0,0)){
+    Box() {
     }
 
     Box(const PointType& pMin, const PointType& pMax) : _min_corner(pMin), _max_corner(pMax){
@@ -366,11 +366,9 @@ public:
         if ( !pnew.isValid())
             return *this;
 
-
-
         PointType& pmin = this->min_corner();
         PointType& pmax = this->max_corner();
-        if ( isNull() || !isValid()) {
+        if (!isValid()) {
             pmin = pnew;
             pmax = pnew;
             return *this;
