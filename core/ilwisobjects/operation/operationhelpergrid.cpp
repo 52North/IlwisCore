@@ -111,7 +111,7 @@ int OperationHelperRaster::subdivideTasks(ExecutionContext *ctx,const IRasterCov
     boxes.clear();
     boxes.resize(cores);
     BoundingBox bounds = bnds;
-    if ( bounds.isNull())
+    if ( bounds.isNull() || !bounds.isValid())
         bounds = BoundingBox(raster->size());
     int left = 0; //bounds.min_corner().x;
     int right = bounds.size().xsize();
