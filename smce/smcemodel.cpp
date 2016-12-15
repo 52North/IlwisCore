@@ -27,6 +27,10 @@ AnalysisModel *SMCEModel::create(Ilwis::AnalysisPattern *pattern)
 
 bool SMCEModel::execute(const QVariantMap &inputParameters, QVariantMap &outputParameters)
 {
+
+    // execute the tree calculation here:
+    // create the python script and run it using "//operations/runpython"
+
     if ( _analysis){
         return _analysis->execute(inputParameters, outputParameters);
     }

@@ -106,6 +106,9 @@ qmldir.files = SMCE/qmldir
 qmldir.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/ui/$$TARGET
 
 qml.files = SMCE/*.qml
+qml.files += SMCE/table
+qml.files += SMCE/tree
+qml.files += SMCE/controls
 qml.path =  $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/ui/$$TARGET
 #unix {
 #    installPath = $$[QT_INSTALL_QML]/$$replace(uri, \\., /)
@@ -132,6 +135,26 @@ DISTFILES += \
     smce/SMCEToolBar.qml \
     smce/SMCESpatialAlternativePanel.qml \
     smce/SMCEForm.qml \
-    smce/SMCEAppForm.qml
+    smce/SMCEAppForm.qml \
+    smce/SMCEClassStandardization.qml \
+    smce/SMCEClassStandardizationTable.qml \
+    smce/table/AggregateCell.qml \
+    smce/table/ColumnHeader.qml \
+    smce/table/ColumnList.qml \
+    smce/table/ColumnMetadataList.qml \
+    smce/table/ColumnOperation.qml \
+    smce/table/ColumnOperationList.qml \
+    smce/table/ConvertColumn.qml \
+    smce/table/FirstColumn.qml \
+    smce/table/NormalCell.qml \
+    smce/table/SortColumn.qml \
+    smce/table/TableColumn.qml \
+    smce/tree/Tree.qml \
+    smce/controls/LabeledCheckBox.qml \
+    smce/controls/DragPoint.qml \
+    smce/SMCENodeEval.qml \
+    smce/SMCEDefForm.qml \
+    smce/SMCEEvalForm.qml \
+    smce/SMCEGraphStandardization.qml
 
 

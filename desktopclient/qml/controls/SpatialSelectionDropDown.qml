@@ -11,6 +11,8 @@ Item {
     property alias envelope : topline.envelope
     property alias readOnly :topline.readOnly
 
+    property alias labelText : topline.label
+
     function filter(type, value){
         envelope = value
     }

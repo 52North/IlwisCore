@@ -68,7 +68,7 @@ Item {
                     var parms = {modelId : modellerDataPane.model.id, subtype : selectedApp, type : "applicationmodel"}
                     var app = objectcreator.createModellerObject(parms,0)
                     if (!modellerDataPane.model.addApplication(app)){
-                        analysis.suicide()
+                        app.suicide()
                     }else {
                         layerprops.refreshAppNames()
                         applicationView.currentApplication = app

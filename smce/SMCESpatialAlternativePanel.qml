@@ -22,8 +22,7 @@ Column {
             text: "SMCE Spatial Alternative Results Construction"
             font.bold: true
             font.pointSize: 20
-
-
+            color: "black"
         }
 
     }

@@ -50,7 +50,7 @@ Item {
             }
 
             WorkFlow.ModellerWorkflowView { id: workflowView }
-            Analysis.ModellerAnalysisView{ id : analysisView}
+            Analysis.ModellerAnalysisView{ id : analysisView} // panel
             Apps.ModellerApplicationView{ id : applicationView}
             Concepts.ModellerConceptualView{ id : conceptualView}
 
@@ -77,7 +77,7 @@ Item {
                 }
             ]
         }
-
+        // form
         ModelManager{
             id : manager
             height : 340
@@ -91,8 +91,20 @@ Item {
         manager.analisysView = analysisView
         manager.applicationView= applicationView
         manager.conceptView= conceptualView
+
+        manager.analisysView.onMessage.connect(informModelManager)
+        manager.analysisManager.analysisv.onMessage.connect(informAnalysisView)
     }
 
+    function informModelManager(msg) {
+        console.log("ModellerDataPane.qml: sending: " + msg)
+        manager.sendMessage(msg)
+    }
+
+    function informAnalysisView(msg) {
+        console.log("ModellerDataPane.qml: sending: " + msg)
+        analysisView.sendMessage(msg)
+    }
 
     function addDataSource(filter, sourceName, sourceType){
         if ( filter !== "" ){

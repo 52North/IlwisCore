@@ -20,6 +20,9 @@ Rectangle {
     property var applicationView
     property var conceptView
 
+
+    property var analysisManager : analysisManager
+
     TabView{
         id : modellerViews
         anchors.fill: parent
@@ -124,6 +127,10 @@ Rectangle {
                 modellerViews.currentIndex = 0
         }
         workflowManager.item.updateLists()
+    }
+
+    function sendMessage(msg) {
+        console.log("ModelManager.qml: received: " + msg)
     }
 
 

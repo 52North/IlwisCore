@@ -6,6 +6,8 @@ Model.ModellerWorkArea {
 
     property var currentAnalysis
 
+    signal message(string msg)
+
     onCurrentAnalysisChanged: {
         updateView()
     }
@@ -26,9 +28,18 @@ Model.ModellerWorkArea {
         id: meme
     }
 
+    Component.onCompleted: {
+        console.log("ModellerAnalysisView.qml: generating initial message...")
+        message("sending this message")
+    }
+
     function updateView() {
         meme.source = currentAnalysis ? (uicontext.ilwisFolder + "/extensions/ui/" + currentAnalysis.panel("main")) : ""
         state = "visible"
+    }
+
+    function sendMessage(msg) {
+        console.log("ModellerAnalysisView.qml: received: " + msg)
     }
 }
 

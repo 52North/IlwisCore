@@ -48,6 +48,7 @@ Item {
         Controls.SpatialSelectionDropDown{
             width : parent.width
             height : 22
+            labelText: qsTr("Study B. Box")
         }
 
         Controls.TextAreaLabelPair{
@@ -68,14 +69,14 @@ Item {
                 text : qsTr("Create")
                 onClicked: {
                     var parms = {modelId : modellerDataPane.model.id, subtype : analysisType, type : "analysispattern",pattername : namefield.content, description : descField.content}
-                    var analysis = objectcreator.createModellerObject(parms)
+                    var analysis = objectcreator.createModellerObject(parms,0)
                     if (!modellerDataPane.model.addAnalysisPattern(analysis)){
                         analysis.suicide()
                     }else {
                         analysis.longName = longnamefield.content
                         layerprops.refreshAnalysisNames()
                         createForm.state = "invisible"
-                        analysView.currentAnalysis = analysis
+                        analisysView.currentAnalysis = analysis
                     }
                 }
 

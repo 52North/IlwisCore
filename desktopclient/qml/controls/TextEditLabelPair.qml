@@ -19,6 +19,8 @@ DropArea {
     height : Global.rowHeight
     width : parent.width
 
+    signal contentEdited()
+
     Text {
         id : label
         height : parent.height
@@ -57,6 +59,10 @@ DropArea {
                 }
                 oldText = textid.text
             }
+        }
+
+        onEditingFinished: {
+            contentEdited()
         }
     }
     onDropped : {

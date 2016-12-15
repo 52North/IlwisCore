@@ -10,6 +10,7 @@ Item {
             text: "SMCE Application Form Area"
             font.bold: true
             font.pointSize: 12
+            color: "black"
         }
     }
 

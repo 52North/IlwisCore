@@ -4,4 +4,24 @@ SMCEToolBar 1.0 SMCEToolBar.qml
 SMCEForm 1.0 SMCEForm.qml
 SMCAppForm 1.0 SMCEAppForm.qml
 SMCESpatialAlternativePanel 1.0 SMCE/SMCESpatialAlternativePanel.qml
+SMCEClassStandardization 1.0 SMCEClassStandardization.qml
+SMCEClassStandardizationTable 1.0 SMCEClassStandardizationTable.qml
+SMCEDefForm 1.0 SMCEDefForm.qml
+SMCEEvalForm 1.0 SMCEEvalForm.qml
+SMCEGraphStandardization 1.0 SMCEGraphStandardization.qml
+AggregateCell 1.0 table/AggregateCell.qml
+ColumnHeader 1.0 table/ColumnHeader.qml
+ColumnList 1.0 table/ColumnList.qml
+ColumnMetadataList 1.0 table/ColumnMetadataList.qml
+ColumnOperation 1.0 table/ColumnOperation.qml
+ColumnOperationList 1.0 table/ColumnOperationList.qml
+ConvertColumn 1.0 table/ConvertColumn.qml
+FirstColumn 1.0 table/FirstColumn.qml
+NormalCell 1.0 table/NormalCell.qml
+SortColumn 1.0 table/SortColumn.qml
+TableColumn 1.0 table/TableColumn.qml
+Tree 1.0 tree/Tree.qml
+LabeledCheckBox 1.0 controls/LabeledCheckBox.qml
+DragPoint 1.0 controls/DragPoint.qml
+
 plugin SMCE

@@ -40,5 +40,26 @@ ToolBar{
             }
 
         }
+        Button {
+            height : 25
+            width : 25
+           text: "Expand all"
+           onClicked: {
+           }
+        }
+
+        Button {
+            height : 25
+            width : 25
+            //text: "Generate"
+            Image {
+               anchors.verticalCenter: parent.verticalCenter
+               anchors.horizontalCenter: parent.horizontalCenter
+
+               source : iconsource("runselected.png")
+            }
+            onClicked: {
+            }
+        }
     }
 }

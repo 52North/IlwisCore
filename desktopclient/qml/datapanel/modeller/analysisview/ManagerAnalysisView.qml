@@ -13,8 +13,15 @@ Item {
     height : parent.height
     property string iconName : "../images/analysis"
 
+    signal message(string msg)
+
     function refreshFormArea(form) {
         formArea.source = uicontext.ilwisFolder + "/extensions/ui/" + form
+    }
+
+    Component.onCompleted: {
+        console.log("ManagerAnalysisView.qml: generating initial message...")
+        message("sending this message")
     }
 
     SplitView {
@@ -42,8 +49,6 @@ Item {
                 id : formArea
                 anchors.fill: parent
             }
-
-
         }
         AnalysisCreateForm {
             id : createForm
@@ -51,8 +56,4 @@ Item {
             height : parent.height
         }
     }
-
-
-
-
 }

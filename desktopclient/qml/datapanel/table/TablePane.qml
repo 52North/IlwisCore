@@ -38,9 +38,19 @@ Item {
     }
 
     function addDataSource(sourceUrl, filter, sourceType){
+        console.log("addDataSource called: ...")
+        console.log("tablePane: " + tablePane)
+
+        console.log("sourceUrl: " + sourceUrl)
+        console.log("sourceType: " + sourceType)
+
         table = uicontext.createTableModel(tablePane,sourceUrl, sourceType)
+        console.log("table: " + table)
+
         if ( table){
+            console.log("table:" + table)
             tableView.model = table
+            console.log("table:" + tableView.model)
             columnManagement.setColumnModel1(table.columns)
 
             for(var i =0; i < table.columnCount; ++i){
