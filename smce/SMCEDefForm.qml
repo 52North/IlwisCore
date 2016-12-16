@@ -103,14 +103,13 @@ Item {
                 }
 
 
-                Controls.TextEditLabelPair{
+                Controls.TextAreaLabelPair{
                     id : nodeText
                     labelWidth: 80
+                    height: 60
+                    width: parent.width
                     labelText: qsTr("Text")
-                    transparentBackgrond: false
-
                 }
-
 
                 Controls.TextEditLabelPair{
                     id : inpIndicatorRaster
@@ -120,10 +119,10 @@ Item {
                 }
 
 
-                Controls.LabeledCheckBox {
+                /*Controls.LabeledCheckBox {
                     id: ro
                     labelText : qsTr("Read only")
-                }
+                }*/
 
                 Button {
                     id : applyNodeBut
@@ -135,4 +134,5 @@ Item {
                 }
             }
         }
+
 }

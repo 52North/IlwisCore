@@ -29,8 +29,8 @@ Model.ModellerWorkArea {
     }
 
     Component.onCompleted: {
-        console.log("ModellerAnalysisView.qml: generating initial message...")
-        message("sending this message")
+        //console.log("ModellerAnalysisView.qml: generating initial message...")
+        //message("sending this message")
     }
 
     function updateView() {

@@ -84,6 +84,11 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
 
+            Component.onCompleted: {
+                //analysisManager.analysisv.onMessage.connect(informAnalysisView)
+                //console.log("Setting the callback now!")
+                //manager.analysisvfunction = informAnalysisView
+            }
         }
     }
     Component.onCompleted: {
@@ -92,17 +97,20 @@ Item {
         manager.applicationView= applicationView
         manager.conceptView= conceptualView
 
-        manager.analisysView.onMessage.connect(informModelManager)
-        manager.analysisManager.analysisv.onMessage.connect(informAnalysisView)
+        // analisysView is a ModellerAnalysisView
+        manager.analisysView.onMessage.connect(informManagerMessage)
+        manager.onMessage.connect(informModeller)
     }
 
-    function informModelManager(msg) {
-        console.log("ModellerDataPane.qml: sending: " + msg)
+
+    function informManagerMessage(msg) {
+        console.log("ModellerDataPane.qml: informManager: sending: " + msg)
         manager.sendMessage(msg)
     }
 
-    function informAnalysisView(msg) {
-        console.log("ModellerDataPane.qml: sending: " + msg)
+
+    function informModeller(msg) {
+        console.log("ModellerDataPane.qml: informModeller: sending: " + msg)
         analysisView.sendMessage(msg)
     }
 

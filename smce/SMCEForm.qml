@@ -15,37 +15,27 @@ Item {
             id : formEditor
             width : parent.width
             height : parent.height
+            source: "SMCEDefForm.qml"
         }
-
-
-        // 1. Node detail
-
-
-        // 2. Standardization form
-
-
-        // 3. Standardization Preview
     }
 
-    function setForm(){
-        if (mode === "definition")
+    function setForm(mode){
+        if (mode === "defMode")
             formEditor.setSource("SMCEDefForm.qml")
-        else if (mode === "definition")
+        else if (mode === "evalMode")
             formEditor.setSource("SMCEEvalForm.qml")
         else { // the future analysis mode.....
 
         }
     }
 
-    function smcemodeChanged() {
-        console.log("ModeChanged was called")
-        setForm()
+    function smcemodeChanged(msg) {
+        console.log("ModeChanged was called with: " + msg)
+        setForm(msg)
     }
+
 
     Component.onCompleted: {
         //formEditor.setSource("SMCEDefForm.qml")
-        formEditor.setSource("SMCEEvalForm.qml")
-        //SMCEPanel.modeChanged.connect(smcemodeChanged)
-        //setForm()
     }
 }

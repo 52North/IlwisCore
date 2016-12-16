@@ -31,7 +31,7 @@ Item {
 
                 Text{
                     id: inpindicatortext
-                    text : qsTr("Input indicator:") + qsTr("map name to be red")
+                    text : qsTr("Input indicator:") + qsTr("map name to be read")
                     font.bold : false
                     x : 5
                 }

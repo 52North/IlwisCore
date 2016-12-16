@@ -29,7 +29,7 @@ Item {
           function add2(nodeinfo) {
               var szSplit = nodeinfo.split('---')
               if(szSplit.length === 1) {
-                 objModel.append({"id" : idcounter++, "type": "", "weight": "", "name": szSplit[0], "level": 0, "parentModel": objModel, "subNode": []})
+                 objModel.append({"id" : idcounter++, "type": "", "weight": "", "name": szSplit[0], "selected": "false", "level": 0, "parentModel": objModel, "subNode": []})
               }
               else {
                  if(objModel.get(parseInt(szSplit[0])) === undefined) {
@@ -44,7 +44,7 @@ Item {
                     }
                     node = node.subNode.get(parseInt(szSplit[i]))
                  }
-                 node.subNode.append({"id" : idcounter++, "type": "", "weight": "", "name": szSplit[i], "level": i, "parentModel": node.subNode, "subNode": []})
+                 node.subNode.append({"id" : idcounter++, "type": "", "weight": "", "name": szSplit[i], "selected": "false", "level": i, "parentModel": node.subNode, "subNode": []})
               }
           }
 
@@ -100,6 +100,7 @@ Item {
              property int m_iIndex: model.index
              property var m_parentModel: model.parentModel
              property alias objMouseArea: objMouseArea
+             property int selectedNode: -1
              MouseArea {
                 id: objMouseArea
                 objectName: "objMouseArea"
@@ -119,6 +120,18 @@ Item {
                       }
                    }
                 }
+                onClicked: {
+                    model.selected = "true"
+                    console.log(model.id, model.name + " is selected...")
+                    // propagate to the form..... how????
+                    selectedNode = model.id
+
+                    console.log(selectedNode + " is selected")
+
+                    var selNode = objModel.getById(undefined, model.id)
+                    console.log(selNode.name)                    
+                }
+
                 Row {
                    id: objRow
                    Item {
@@ -257,7 +270,7 @@ Item {
                 function add() {
                     var szSplit = text.split(',')
                     if(szSplit.length === 1) {
-                       objModel.append({"type":inputtype.text , "weight": inputweight.text,    "name": szSplit[0], "level": 0, "parentModel": objModel, "subNode": []})
+                       objModel.append({"type":inputtype.text , "weight": inputweight.text,    "name": szSplit[0], "selected": "false", "level": 0, "parentModel": objModel, "subNode": []})
                     }
                     else {
                        if(objModel.get(parseInt(szSplit[0])) === undefined) {
@@ -272,7 +285,7 @@ Item {
                           }
                           node = node.subNode.get(parseInt(szSplit[i]))
                        }
-                       node.subNode.append({"type":inputtype.text , "weight": inputweight.text,    "name": szSplit[i], "level": i, "parentModel": node.subNode, "subNode": []})
+                       node.subNode.append({"type":inputtype.text , "weight": inputweight.text,    "name": szSplit[i], "selected": "false", "level": i, "parentModel": node.subNode, "subNode": []})
                     }
                 }
 

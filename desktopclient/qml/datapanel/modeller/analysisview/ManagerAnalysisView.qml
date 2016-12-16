@@ -13,15 +13,22 @@ Item {
     height : parent.height
     property string iconName : "../images/analysis"
 
-    signal message(string msg)
+    property alias loaderItem: formArea.item
+
+    signal msg(string msg)
 
     function refreshFormArea(form) {
         formArea.source = uicontext.ilwisFolder + "/extensions/ui/" + form
     }
 
-    Component.onCompleted: {
-        console.log("ManagerAnalysisView.qml: generating initial message...")
-        message("sending this message")
+    function sendthemessagetest() {
+        //console.log("ManagerAnalysisView.qml: generating initial message...")
+        //msg("sending this message")
+    }
+
+    function smcemodeChanged(msg) {
+        console.log("ManagerAnalysisView.qml: smcemodeChanged: " + msg)
+        formArea.item.smcemodeChanged(msg)
     }
 
     SplitView {
@@ -45,6 +52,9 @@ Item {
             width:100
             Layout.fillWidth: true
             height : parent.height
+
+
+
             Loader {
                 id : formArea
                 anchors.fill: parent

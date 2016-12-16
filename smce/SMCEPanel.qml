@@ -14,7 +14,6 @@ Column {
         id : tools        
     }
 
-    signal modeChanged(string newMode)
 
     GroupBox {
         id: mode
@@ -27,8 +26,8 @@ Column {
                 checked: true
                 exclusiveGroup: modeGroup
                 Layout.minimumWidth: 100
-                onCheckedChanged: {
-                    modeChanged("defMode")
+                onClicked: {
+                    message("defMode")
                 }
             }
             RadioButton {
@@ -36,8 +35,8 @@ Column {
                 text: qsTr("Evaluation mode")
                 exclusiveGroup: modeGroup
                 Layout.minimumWidth: 100
-                onCheckedChanged: {
-                    modeChanged("evalMode")
+                onClicked: {
+                    message("evalMode")
                 }
             }
             /*RadioButton {
