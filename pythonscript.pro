@@ -1,3 +1,8 @@
+# Instructions:
+#
+# First build project "pythonapi" (follow the instructions in pythonapi.pro if not yet done)
+# Then build project "pythonscript"
+
 CONFIG += plugin
 TARGET = pythonscript
 
@@ -16,11 +21,11 @@ resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resour
 INSTALLS += resources
 
 OTHER_FILES += \
-    spreadsheetconnectors/pythonscript.json
+    pythonscript/pythonscript.json
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET -lpython35 \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET -l_ilwisobjects
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/pythonapi -lpython35 \
+        -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/pythonapi -l_ilwisobjects
 		
 win32:CONFIG(release, debug|release): {
     QMAKE_CXXFLAGS_RELEASE += -O2
