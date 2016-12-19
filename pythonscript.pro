@@ -15,13 +15,27 @@ TEMPLATE = lib
 
 DEFINES += PYTHONSCRIPT_LIBRARY
 
-resources.files += pythonscript/resources/libraries.config
-resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
-
-INSTALLS += resources
+SOURCE_RESOURCE = $$clean_path($$PWD/$$TARGET/resources/libraries.config)
+TARGET_RESOURCE_DIR = $$clean_path($$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources/)
+TARGET_RESOURCE = $$TARGET_RESOURCE_DIR/libraries.config
+resources.target = $$TARGET_RESOURCE
+linux {
+    resources.commands = $$quote(test -d $$TARGET_RESOURCE_DIR || mkdir -p $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+}
+win32 {
+    SOURCE_RESOURCE = $$replace(SOURCE_RESOURCE,/,\\)
+    TARGET_RESOURCE = $$replace(TARGET_RESOURCE,/,\\)
+    TARGET_RESOURCE_DIR = $$replace(TARGET_RESOURCE_DIR,/,\\)
+    resources.commands = $$quote(if not exist $$TARGET_RESOURCE_DIR mkdir $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+}
+resources.commands += $$quote($(COPY) $$SOURCE_RESOURCE $$TARGET_RESOURCE_DIR$$escape_expand(\n\t))
+resources.depends = $$SOURCE_RESOURCE
+PRE_TARGETDEPS += $$TARGET_RESOURCE
+QMAKE_EXTRA_TARGETS += resources
 
 OTHER_FILES += \
-    pythonscript/pythonscript.json
+    pythonscript/pythonscript.json \
+    pythonscript/resources/libraries.config
 
 LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF -lilwiscore \
         -L$$PWD/../libraries/$$PLATFORM$$CONF/extensions/pythonapi -lpython35 \
