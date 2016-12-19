@@ -30,7 +30,7 @@ Item {
 
           function add2(nodeinfo) {
               var szSplit = nodeinfo.split('---')
-              if(szSplit.length === 2 && szSplit[1] === "Goal") {
+              if(szSplit.length === 3 && szSplit[1] === "Goal") {
                  objModel.append({"id" : idcounter++, "type": "Goal", "weight": "", "name": szSplit[0], "selected": "false", "level": 0, "parentModel": objModel, "subNode": []})
               }
               else {
@@ -39,14 +39,14 @@ Item {
                     return
                  }
                  var node = objModel.get(parseInt(szSplit[0]))
-                 for(var i = 1; i < szSplit.length - 2; ++i) {
+                 for(var i = 1; i < szSplit.length - 3; ++i) {
                     if(node.subNode.get(parseInt(szSplit[i])) === undefined) {
                        console.log("2 - Error - Given node does not exist !")
                        return
                     }
                     node = node.subNode.get(parseInt(szSplit[i]))
                  }
-                 node.subNode.append({"id" : idcounter++, "type": szSplit[i+1], "weight": "", "name": szSplit[i], "selected": "false", "level": i, "parentModel": node.subNode, "subNode": []})
+                 node.subNode.append({"id" : idcounter++, "type": szSplit[i+1], "weight": szSplit[i+2], "name": szSplit[i], "selected": "false", "level": i, "parentModel": node.subNode, "subNode": []})
               }
           }
 
@@ -161,6 +161,8 @@ Item {
                         if (nodetype === "Objective")
                             return "Objective.png"
 
+                        if (nodetype === "AArea")
+                            return "raster.png"
                       }
 
                       Image {
@@ -187,9 +189,19 @@ Item {
 
 
                       Text {
-                         id: objNodeName
+                         id: objNodeWeight
                          anchors { left: icon.right; top: parent.top; bottom: parent.bottom }
-                         text: model.type + " -> " + model.weight + " " + model.name
+                         //text: model.type + " -> " + model.weight + " " + model.name
+                         text: qsTr("  " + model.weight + "  ")
+                         color: "black"
+                         verticalAlignment: Text.AlignVCenter
+                      }
+
+                      Text {
+                         id: objNodeName
+                         anchors { left: objNodeWeight.right; top: parent.top; bottom: parent.bottom }
+                         //text: model.type + " -> " + model.weight + " " + model.name
+                         text: qsTr(model.name)
                          color: "black"
                          verticalAlignment: Text.AlignVCenter
                       }
@@ -330,24 +342,23 @@ Item {
           }
 
           Component.onCompleted: {
-              objModel.add2("(We want to) ... Establish biophysical priority within a potential Green Belt buffer of a maximum 1000m width along all coast lines of Bangladesh, with exception of the Sundarbans, in which the proposed Green Belt can be established to provide protection from cyclones storm surges and other natural hazards---Goal")
-              objModel.add2("0---Analysis area---AArea")
-              objModel.add2("0---(We want to) ... Reduce the vulnerability of population, economy and environment---Objective")
-              objModel.add2("0---1---The higher the vulnerability is in the Green Belt buffer, as measured by the coastal vulnerability index, the higher the priority for development of the Green Belt---Factor")
-              objModel.add2("0---(We want to) ... Protect areas that are exposed to storm surges.---Objective")
-              objModel.add2("0---2---The higher the surge hight the higher the priority to develop the Greenbelt---Factor")
-              objModel.add2("0---(We want to)...  Protect infrastructure and reduce the cost of upgrading and maintenance of infrastucture to---Objective")
-              objModel.add2("0---3---Inside an embankment a Greenbelt is not necessary.---Constraint")
-              objModel.add2("0---3---If the distance of an embankment to the shore inside a Greenbelt is less than 1000m there is no need for a Greenbelt, otherwise there is full priority to develop the Greenbelt---Constraint")
-              objModel.add2("0---3---The closer critical infrastructure is within 20 km of the Green Belt, the higher the priority an area receives.---Factor")
-              objModel.add2("0---(We want to)... Stabilize the coastal zone and reclaim land---Objective")
-              objModel.add2("0---4---Within 50 meters of an erosion area inside the Greenbelt development receives full priority whereas beyond that disatnce from erosion areas priority is none---Factor")
-              objModel.add2("0---4---Accretion areas inside the Greenbelt have higher priority than other areas---Factor")
-              objModel.add2("0---(We want to).. Make use of existing forest inside the Green Belt and connect to these---Objective")
-              objModel.add2("0---5---The closer to forest land inside the Green Belt, the higher the priority of the area for Green Belt development---Factor")
-              objModel.add2("0---(We want to)... Minimize the costs of land acquisition---Objective")
-              objModel.add2("0---6---Public land is better than public leased land, which in turn is better than private land---Factor")
-
+              objModel.add2("(We want to) ... Establish biophysical priority within a potential Green Belt buffer of a maximum 1000m width along all coast lines of Bangladesh, with exception of the Sundarbans, in which the proposed Green Belt can be established to provide protection from cyclones storm surges and other natural hazards---Goal---")
+              objModel.add2("0---Analysis area---AArea---")
+              objModel.add2("0---(We want to) ... Reduce the vulnerability of population, economy and environment---Objective---0.2")
+              objModel.add2("0---1---The higher the vulnerability is in the Green Belt buffer, as measured by the coastal vulnerability index, the higher the priority for development of the Green Belt---Factor---1.0")
+              objModel.add2("0---(We want to) ... Protect areas that are exposed to storm surges.---Objective---0.2")
+              objModel.add2("0---2---The higher the surge hight the higher the priority to develop the Greenbelt---Factor---1.0")
+              objModel.add2("0---(We want to)...  Protect infrastructure and reduce the cost of upgrading and maintenance of infrastucture to---Objective---0.2")
+              objModel.add2("0---3---Inside an embankment a Greenbelt is not necessary.---Constraint---0.33")
+              objModel.add2("0---3---If the distance of an embankment to the shore inside a Greenbelt is less than 1000m there is no need for a Greenbelt, otherwise there is full priority to develop the Greenbelt---Constraint---0.33")
+              objModel.add2("0---3---The closer critical infrastructure is within 20 km of the Green Belt, the higher the priority an area receives.---Factor---0.33")
+              objModel.add2("0---(We want to)... Stabilize the coastal zone and reclaim land---Objective---0.2")
+              objModel.add2("0---4---Within 50 meters of an erosion area inside the Greenbelt development receives full priority whereas beyond that disatnce from erosion areas priority is none---Factor---0.5")
+              objModel.add2("0---4---Accretion areas inside the Greenbelt have higher priority than other areas---Factor---0.5")
+              objModel.add2("0---(We want to).. Make use of existing forest inside the Green Belt and connect to these---Objective---0.1")
+              objModel.add2("0---5---The closer to forest land inside the Green Belt, the higher the priority of the area for Green Belt development---Factor---1.0")
+              objModel.add2("0---(We want to)... Minimize the costs of land acquisition---Objective---0.1")
+              objModel.add2("0---6---Public land is better than public leased land, which in turn is better than private land---Factor---1.0")
 
               objModel.traverse()
           }

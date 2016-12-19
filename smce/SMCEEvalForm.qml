@@ -4,8 +4,8 @@ import "../../../qml/Global.js" as Global
 import "../../../qml/controls" as Controls
 
 Item {
-    width: parent.width
-    height: parent.height
+    //width: parent.width
+    //height: parent.height
     Row {
        Column {
             id: nodecolumn

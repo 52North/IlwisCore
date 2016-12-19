@@ -21,7 +21,7 @@ ToolBar{
     Row {
         width : parent.width
         height: 25
-        Loader {
+        /*Loader {
             source : "../../../qml/datapanel/modeller/GenericTools.qml"
             height : 25
             onLoaded: {
@@ -39,7 +39,7 @@ ToolBar{
                 source : iconsource("data_folder.png")
             }
 
-        }
+        }*/
         /*Button {
             height : 25
             width : 25
