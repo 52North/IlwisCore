@@ -21,7 +21,7 @@ ToolBar{
     Row {
         width : parent.width
         height: 25
-        Loader {
+        /*Loader {
             source : "../../../qml/datapanel/modeller/GenericTools.qml"
             height : 25
             onLoaded: {
@@ -39,14 +39,14 @@ ToolBar{
                 source : iconsource("data_folder.png")
             }
 
-        }
-        Button {
+        }*/
+        /*Button {
             height : 25
             width : 25
            text: "Expand all"
            onClicked: {
            }
-        }
+        }*/
 
         Button {
             height : 25
@@ -56,7 +56,7 @@ ToolBar{
                anchors.verticalCenter: parent.verticalCenter
                anchors.horizontalCenter: parent.horizontalCenter
 
-               source : iconsource("runselected.png")
+               source : iconsource("arrowright.png")
             }
             onClicked: {
             }

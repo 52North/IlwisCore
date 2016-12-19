@@ -20,8 +20,10 @@ Rectangle {
     property var applicationView
     property var conceptView
 
+    property alias  analysisManager : analysisManager
 
-    property var analysisManager : analysisManager
+    signal message(string msg)
+
 
     TabView{
         id : modellerViews
@@ -61,8 +63,25 @@ Rectangle {
             id : analysisManager
             active: true
             title: qsTr("Analysis View")
-            Analysis.ManagerAnalysisView{}
+
+            //property alias  analysisv : analysisv
+
+            Analysis.ManagerAnalysisView{
+                onMsg: {
+                    message(msg)
+                }
+
+                /*Component.onCompleted: {
+                    analysisv.sendthemessagetest()
+                }*/
+            }
+            /*function sendthemessagetest() {
+                analysisv.sendthemessagetest()
+            }*/
+
         }
+
+
         Tab{
             id : workflowManager
             active: true
@@ -74,6 +93,8 @@ Rectangle {
         style: DataPanel.ButtonBarTabViewStyle{}
 
     }
+
+
 
     function setLayerIndex(index){
         workflowManager.item.setLayerIndex(index)
@@ -131,8 +152,8 @@ Rectangle {
 
     function sendMessage(msg) {
         console.log("ModelManager.qml: received: " + msg)
+        analysisManager.item.smcemodeChanged(msg)
+
     }
-
-
 }
 
