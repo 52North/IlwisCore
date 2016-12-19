@@ -15,6 +15,8 @@ Item {
 
     property int idcounter : 0
 
+    signal selNodeChanged (string node)
+
 
     Rectangle {
        id: objRoot
@@ -28,8 +30,8 @@ Item {
 
           function add2(nodeinfo) {
               var szSplit = nodeinfo.split('---')
-              if(szSplit.length === 1) {
-                 objModel.append({"id" : idcounter++, "type": "", "weight": "", "name": szSplit[0], "selected": "false", "level": 0, "parentModel": objModel, "subNode": []})
+              if(szSplit.length === 2 && szSplit[1] === "Goal") {
+                 objModel.append({"id" : idcounter++, "type": "Goal", "weight": "", "name": szSplit[0], "selected": "false", "level": 0, "parentModel": objModel, "subNode": []})
               }
               else {
                  if(objModel.get(parseInt(szSplit[0])) === undefined) {
@@ -37,14 +39,14 @@ Item {
                     return
                  }
                  var node = objModel.get(parseInt(szSplit[0]))
-                 for(var i = 1; i < szSplit.length - 1; ++i) {
+                 for(var i = 1; i < szSplit.length - 2; ++i) {
                     if(node.subNode.get(parseInt(szSplit[i])) === undefined) {
                        console.log("2 - Error - Given node does not exist !")
                        return
                     }
                     node = node.subNode.get(parseInt(szSplit[i]))
                  }
-                 node.subNode.append({"id" : idcounter++, "type": "", "weight": "", "name": szSplit[i], "selected": "false", "level": i, "parentModel": node.subNode, "subNode": []})
+                 node.subNode.append({"id" : idcounter++, "type": szSplit[i+1], "weight": "", "name": szSplit[i], "selected": "false", "level": i, "parentModel": node.subNode, "subNode": []})
               }
           }
 
@@ -129,7 +131,9 @@ Item {
                     console.log(selectedNode + " is selected")
 
                     var selNode = objModel.getById(undefined, model.id)
-                    console.log(selNode.name)                    
+                    console.log(selNode.name)
+                    selNodeChanged(selNode.name)
+                    console.log("sent signal for: " + selNode.name)
                 }
 
                 Row {
@@ -142,7 +146,22 @@ Item {
                    Rectangle {
                       id: objDisplayRowRect
                       height: objNodeName.implicitHeight + 5
-                      width: subArrow.width + objNodeName.implicitWidth + 5
+                      width: icon.width + subArrow.width + objNodeName.implicitWidth + 5
+
+                      function getIcon(nodetype) {
+                        if (nodetype === "Goal")
+                            return "Goal.png"
+
+                        if (nodetype === "Constraint")
+                            return "Constraint.png"
+
+                        if (nodetype === "Factor")
+                            return "Factorplus.png"
+
+                        if (nodetype === "Objective")
+                            return "Objective.png"
+
+                      }
 
                       Image {
                           id: subArrow
@@ -156,9 +175,20 @@ Item {
                           visible: objRepeater.count > 0
                       }
 
+                      Image {
+                          id: icon
+                          width:  15
+                          height:  15
+                          anchors.left: subArrow.right
+                          anchors.leftMargin: 10
+                          anchors.verticalCenter: parent.verticalCenter
+                          source: parent.getIcon(model.type)
+                      }
+
+
                       Text {
                          id: objNodeName
-                         anchors { left: subArrow.right; top: parent.top; bottom: parent.bottom }
+                         anchors { left: icon.right; top: parent.top; bottom: parent.bottom }
                          text: model.type + " -> " + model.weight + " " + model.name
                          color: "black"
                          verticalAlignment: Text.AlignVCenter
@@ -300,17 +330,23 @@ Item {
           }
 
           Component.onCompleted: {
-              objModel.add2("(We want to) ... Establish biophysical priority within a potential Green Belt buffer of a maximum 1000m width along all coast lines of Bangladesh, with exception of the Sundarbans, in which the proposed Green Belt can be established to provide protection from cyclones storm surges and other natural hazards")
-              objModel.add2("0---Analysis area")
-              objModel.add2("0---(We want to) ... Reduce the vulnerability of population, economy and environment")
-              objModel.add2("0---1---The higher the vulnerability is in the Green Belt buffer, as measured by the coastal vulnerability index, the higher the priority for development of the Green Belt")
-              objModel.add2("0---(We want to) ... Protect areas that are exposed to storm surges.")
-              objModel.add2("0---(We want to)...  Protect infrastructure and reduce the cost of upgrading and maintenance of infrastucture to")
-              objModel.add2("0---3---The closer a location inside the Greenbelt is to an embankment inside the greenbelt the higher the priority of greenbelt development in order to provide protection to of the embankment")
-              objModel.add2("0---3---The closer critical infrastructure is within 20 km of the Green Belt, the higher the priority an area receives.")
-              objModel.add2("0---(We want to)... Stabilize the coastal zone and reclaim land")
-              objModel.add2("0---(We want to).. Make use of existing forest inside the Green Belt and connect to these")
-              objModel.add2("0---(We want to)... Minimize the costs of land acquisition")
+              objModel.add2("(We want to) ... Establish biophysical priority within a potential Green Belt buffer of a maximum 1000m width along all coast lines of Bangladesh, with exception of the Sundarbans, in which the proposed Green Belt can be established to provide protection from cyclones storm surges and other natural hazards---Goal")
+              objModel.add2("0---Analysis area---AArea")
+              objModel.add2("0---(We want to) ... Reduce the vulnerability of population, economy and environment---Objective")
+              objModel.add2("0---1---The higher the vulnerability is in the Green Belt buffer, as measured by the coastal vulnerability index, the higher the priority for development of the Green Belt---Factor")
+              objModel.add2("0---(We want to) ... Protect areas that are exposed to storm surges.---Objective")
+              objModel.add2("0---2---The higher the surge hight the higher the priority to develop the Greenbelt---Factor")
+              objModel.add2("0---(We want to)...  Protect infrastructure and reduce the cost of upgrading and maintenance of infrastucture to---Objective")
+              objModel.add2("0---3---Inside an embankment a Greenbelt is not necessary.---Constraint")
+              objModel.add2("0---3---If the distance of an embankment to the shore inside a Greenbelt is less than 1000m there is no need for a Greenbelt, otherwise there is full priority to develop the Greenbelt---Constraint")
+              objModel.add2("0---3---The closer critical infrastructure is within 20 km of the Green Belt, the higher the priority an area receives.---Factor")
+              objModel.add2("0---(We want to)... Stabilize the coastal zone and reclaim land---Objective")
+              objModel.add2("0---4---Within 50 meters of an erosion area inside the Greenbelt development receives full priority whereas beyond that disatnce from erosion areas priority is none---Factor")
+              objModel.add2("0---4---Accretion areas inside the Greenbelt have higher priority than other areas---Factor")
+              objModel.add2("0---(We want to).. Make use of existing forest inside the Green Belt and connect to these---Objective")
+              objModel.add2("0---5---The closer to forest land inside the Green Belt, the higher the priority of the area for Green Belt development---Factor")
+              objModel.add2("0---(We want to)... Minimize the costs of land acquisition---Objective")
+              objModel.add2("0---6---Public land is better than public leased land, which in turn is better than private land---Factor")
 
 
               objModel.traverse()
