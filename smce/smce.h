@@ -7,12 +7,29 @@
 #include "ilwisdata.h"
 #include "modeller/workflow.h"
 #include "modeller/analysispattern.h"
+#include "smcemodel.h"
 
 namespace Ilwis{
 namespace Smce {
 
 class SMCE : public AnalysisPattern
 {
+
+    enum nodeType { Goal=0, AnalysisArea=1, Objective=2, Constraint=3, Factor=4};
+
+    class Node {
+        public:
+            quint16 _id;
+            quint16 _parentId;
+            nodeType _type;
+            QString _text;
+            float _weight;
+            QString _input;
+            //QString _standardizedInput; // ???
+            QList <Node> _subNodes;
+    };
+
+
 public:
 
     explicit SMCE();
@@ -30,7 +47,12 @@ signals:
 public slots:
 
 private:
-    int _test = 244;
+    //int _test = 244;
+
+    Node _tree;
+
+    void storeNode(QDataStream &stream, Node node);
+    Node * getNode (Node *node, quint16 id);
 
     NEW_ANALYSISPATTERN
 };
