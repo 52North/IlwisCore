@@ -35,7 +35,14 @@ Item {
     }
 
 
+    function updateNodeInfo(msg) {
+        console.log("SMCEForm.qml: updateNodeInfo was called with: " + msg)
+        formEditor.item.updateNodeInfo(msg)
+    }
+
+
+
     Component.onCompleted: {
-        //formEditor.setSource("SMCEDefForm.qml")
+
     }
 }

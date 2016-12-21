@@ -128,4 +128,8 @@ Item {
             }
         }
     }
+
+    function updateNodeInfo(msg) {
+
+    }
 }

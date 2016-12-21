@@ -569,8 +569,8 @@ Item {
 
         Button {
            text: "Apply"
-           anchors.top: objCoordY8text.bottom
-           anchors.left: objCoordY8text.left
+           anchors.top: objCoordY8text.top
+           anchors.left: objCoordY8text.right
            onClicked: {
                 parent.a1 = (parent.parent.toRealYY(point1.y) - parent.parent.toRealYY(point0.y)) / (parent.parent.toRealXX(point1.x) - parent.parent.toRealXX(point0.x))
                 parent.b1 = parent.parent.toRealYY(point0.y) - parent.a1 * parent.parent.toRealXX(point0.x)

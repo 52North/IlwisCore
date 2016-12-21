@@ -119,10 +119,10 @@ Item {
                 }
 
 
-                /*Controls.LabeledCheckBox {
+                Controls.LabeledCheckBox {
                     id: ro
                     labelText : qsTr("Read only")
-                }*/
+                }
 
                 Button {
                     id : applyNodeBut
@@ -134,5 +134,10 @@ Item {
                 }
             }
         }
+
+       function updateNodeInfo(msg) {
+            nodeText.content = msg;
+
+       }
 
 }

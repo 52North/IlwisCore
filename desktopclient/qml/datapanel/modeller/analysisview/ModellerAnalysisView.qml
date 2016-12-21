@@ -7,6 +7,8 @@ Model.ModellerWorkArea {
     property var currentAnalysis
 
     signal message(string msg)
+    signal nodeChanged (string node)
+
 
     onCurrentAnalysisChanged: {
         updateView()

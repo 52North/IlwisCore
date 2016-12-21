@@ -84,10 +84,7 @@ Item {
             anchors.left: parent.left
             anchors.right: parent.right
 
-            Component.onCompleted: {
-                //analysisManager.analysisv.onMessage.connect(informAnalysisView)
-                //console.log("Setting the callback now!")
-                //manager.analysisvfunction = informAnalysisView
+            Component.onCompleted: {                
             }
         }
     }
@@ -97,8 +94,10 @@ Item {
         manager.applicationView= applicationView
         manager.conceptView= conceptualView
 
-        // analisysView is a ModellerAnalysisView
-        manager.analisysView.onMessage.connect(informManagerMessage)
+
+        // todo: refactor these into the SMCE proj. Find a way to decouple SMCE specifics from the desktopclient's
+        manager.analisysView.onMessage.connect(informManagerMessage) // analisysView is a ModellerAnalysisView
+        manager.analisysView.onNodeChanged.connect(informManagerSelNodeChanged)
         manager.onMessage.connect(informModeller)
     }
 
@@ -106,6 +105,11 @@ Item {
     function informManagerMessage(msg) {
         console.log("ModellerDataPane.qml: informManager: sending: " + msg)
         manager.sendMessage(msg)
+    }
+
+    function informManagerSelNodeChanged(msg) {
+        console.log("ModellerDataPane.qml: informManagerSelNodeChanged: sending: " + msg)
+        manager.sendSelNodeChanged(msg)
     }
 
 
@@ -130,7 +134,6 @@ Item {
                         createParameters = [filter, sourceName, sourceType]
                         manager.updateLists()
                     }
-
                 }
             }
         }

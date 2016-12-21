@@ -150,10 +150,15 @@ Rectangle {
         workflowManager.item.updateLists()
     }
 
+    // todo: create a mechanism to decouple these SMCE-specific functions
     function sendMessage(msg) {
         console.log("ModelManager.qml: received: " + msg)
         analysisManager.item.smcemodeChanged(msg)
+    }
 
+    function sendSelNodeChanged(msg) {
+        console.log("ModelManager.qml: received: " + msg)
+        analysisManager.item.updateNodeInfo(msg)
     }
 }
 

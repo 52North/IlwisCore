@@ -14,6 +14,7 @@ Column {
         id : tools        
     }
 
+    //signal nodeChanged (string node)
 
     GroupBox {
         id: mode
@@ -59,6 +60,11 @@ Column {
             id: evalTree
             width : parent.width
             height : parent.height
+
+            onSelNodeChanged: {
+                console.log("onSelNodeChanged signal received...")
+                nodeChanged(node)
+            }
         }
     }
 }
