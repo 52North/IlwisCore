@@ -221,27 +221,12 @@ double MathHelper::roundTo3DecimalDigits(const double value) {
     return round(value * 1000.0) / 1000.0 ;
 }
 
-
-
 quint8 MathHelper::lenDecimalDigits(double number) {
-
-    double decs = fabs(number - (qint64)number);
-
-    QString num = QString::number(decs,'g',10);
-    qint8 dotIdx = num.indexOf('.');
-    quint8 size = num.size();
-
-    if (dotIdx > -1) {
-        // -2 because we don't want to be fooled by cases like 0.00000000001
-        for(int i=num.size() - 2; i >=0; --i){
-            QChar n = num[i];
-            if ( n == '.')
-                return size - i - 1;
-            if ( n != '0'){
-                return i - dotIdx;
-            }
-        }
+    const double eps = 1e-9; // we are going to miss anything smaller than this, but we also don't want to be fooled by cases like 0.00000000001
+    quint8 digits = 0;
+    while(eps < fabs(number - ::round(number))) { // explicitly call round() from math.h
+        number *= 10.0;
+        ++digits;
     }
-
-    return 0;
+    return digits;
 }
