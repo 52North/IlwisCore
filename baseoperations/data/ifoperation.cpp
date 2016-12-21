@@ -36,18 +36,17 @@ DataDefinition IfOperation::findOutputDataDef(const OperationExpression &expr ) 
 DataDefinition IfOperation::findParameterDataDef(const OperationExpression &expr, int index)  {
     const Parameter& parm = expr.parm(index);
     DataDefinition def;
-    QString parmvalue = parm.value().toLower();
-
-    quint64 gcid = mastercatalog()->name2id(parmvalue, itRASTER);
-    if ( gcid != i64UNDEF) {
+    QString parmvalue = parm.value();
+    IlwisTypes ptype = parm.valuetype();
+    if (hasType(ptype,itRASTER)) {
         IRasterCoverage cov;
-        if(cov.prepare(gcid)) {
+        if (cov.prepare(parmvalue)) {
             def = cov->datadef();
             _coverages[index - 1] = cov.as<Coverage>();
         }
     } else {
         bool ok;
-        _number[index - 1] =parmvalue.toDouble(&ok);
+        _number[index - 1] = parmvalue.toDouble(&ok);
         if ( ok){
             IDomain dom("code=domain:value");
             def.domain(dom);
