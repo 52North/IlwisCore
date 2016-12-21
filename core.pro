@@ -1059,10 +1059,10 @@ resources.files = core/resources/referencesystems.csv \
 
 win32{
     DLLDESTDIR = $$PWD/../output/$$PLATFORM$$CONF/bin
-    resources.path = $$DLLDESTDIR/resources
+    resources.path = $$clean_path($$DLLDESTDIR/resources)
 }
 linux{
-    resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/resources
+    resources.path = $$clean_path($$PWD/../output/$$PLATFORM$$CONF/bin/resources)
     target.path = $$PWD/../output/$$PLATFORM$$CONF/bin
     INSTALLS += target
 }
@@ -1074,6 +1074,23 @@ installer.files =installer.nsi
 installer.path = $$PWD/../output/$$PLATFORM$$CONF/bin
 
 INSTALLS += resources license installer
+
+SOURCE_DIR = $$clean_path($$PWD)
+
+linux {
+    for(FILE,resources.files){
+        QMAKE_POST_LINK += $$quote($(COPY) $$SOURCE_DIR/$$FILE $$resources.path$$escape_expand(\n\t))
+    }
+}
+
+win32 {
+    resources.files = $$replace(resources.files,/,\\)
+    resources.path = $$replace(resources.path,/,\\)
+    SOURCE_DIR = $$replace(SOURCE_DIR,/,\\)
+    for(FILE,resources.files){
+        QMAKE_POST_LINK += $$quote($(COPY) $$SOURCE_DIR\\$$FILE $$resources.path$$escape_expand(\n\t))
+    }
+}
 
 DISTFILES += \
     core/geos/include/geos/._version.h.vc \

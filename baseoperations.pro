@@ -131,16 +131,6 @@ win32{
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/$$TARGET
 
-DISTFILES += \
-    baseoperations/resources/libraries.config
-
-
-resources.files += baseoperations/resources/libraries.config
-resources.path = $$PWD/../output/$$PLATFORM$$CONF/bin/extensions/$$TARGET/resources
-
-INSTALLS += resources
-
-
 linux{
     LIBS += -L/usr/lib -lgsl
     INCLUDEPATH += /usr/include/gsl
