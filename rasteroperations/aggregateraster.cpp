@@ -29,12 +29,12 @@ AggregateRaster::AggregateRaster(quint64 metaid, const Ilwis::OperationExpressio
 
 void AggregateRaster::executeGrouped(const BoundingBox& inpBox){
     BlockIterator blockInputIter(_inputObj.as<RasterCoverage>(),Size<>(groupSize(0),groupSize(1), groupSize(2)), inpBox);
-    PixelIterator iterOut(_inputObj.as<RasterCoverage>());
+    PixelIterator iterOut(_outputObj.as<RasterCoverage>());
     PixelIterator iterEnd = iterOut.end();
     quint64 currentCount = 0;
     while(iterOut != iterEnd) {
         GridBlock& block = *blockInputIter;
-        std::vector<double> values= block.toVector();
+        std::vector<double> values= (*blockInputIter).toVector();
         double v = OperationHelper::statisticalMarker(values, _method);
         *iterOut = v;
         ++iterOut;
