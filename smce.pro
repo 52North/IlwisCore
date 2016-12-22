@@ -31,7 +31,8 @@ SOURCES += \
     smce/smce.cpp \
     smce/smcemodel.cpp \
     smce/smcespatialalternatives.cpp \
-    smce/modelsmcespatialalternatives.cpp
+    smce/modelsmcespatialalternatives.cpp \
+    smce/node.cpp
  
 
 HEADERS += \
@@ -39,7 +40,8 @@ HEADERS += \
     smce/smce.h \
     smce/smcemodel.h \
     smce/smcespatialalternatives.h \
-    smce/modelsmcespatialalternatives.h
+    smce/modelsmcespatialalternatives.h \
+    smce/node.h
   
 
 OTHER_FILES = smce/qmldir
