@@ -67,7 +67,7 @@ public:
     bool isValid() const;
     Pixel position() const;
     void setValue(double v);
-    std::vector<double> toVector(Pivot pivot = pCENTER) const;
+    std::vector<double> toVector(Pivot pivot = pLEFTUP) const;
 
 private:
     BlockIterator* _iterator;
