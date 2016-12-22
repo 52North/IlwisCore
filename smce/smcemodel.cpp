@@ -61,3 +61,40 @@ bool SMCEModel::execute(const QVariantMap &inputParameters, QVariantMap &outputP
     }
     return false;
 }
+
+Node SMCEModel::getNode() const
+{
+    return _tree;
+}
+
+Node * SMCEModel::getNode(quint16 id)
+{
+    return getNode (&_tree, id);
+}
+
+Node * SMCEModel::getNode (Node *node, quint16 id) {
+
+    if (node->_id == id)
+        return node;
+    else {
+        if (node->_subNodes.length() >0  ) {
+            for (Node subNode: node->_subNodes) {
+                Node *found = getNode(&subNode, id);
+
+                if (found != nullptr)
+                    return found;
+            }
+        }
+    }
+    return NULL;
+}
+
+void SMCEModel::setNode(Node node)
+{
+
+}
+
+Node SMCEModel::tree() const
+{
+    return _tree;
+}

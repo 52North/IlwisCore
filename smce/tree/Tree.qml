@@ -132,7 +132,7 @@ Item {
 
                     var selNode = objModel.getById(undefined, model.id)
                     console.log(selNode.name)
-                    selNodeChanged(selNode.name)
+                    selNodeChanged(selNode.id)
                     console.log("sent signal for: " + selNode.name)
                 }
 

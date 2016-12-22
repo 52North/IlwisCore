@@ -26,7 +26,7 @@ IWorkflow SMCE::workflow(const IOOptions &opt)
 }
 
 
-SMCE::Node * SMCE::getNode (Node *node, quint16 id) {
+Node * SMCE::getNode (Node *node, quint16 id) {
 
     if (node->_id == id)
         return node;
@@ -52,9 +52,9 @@ void SMCE::loadData(QDataStream &stream)
     while (!stream.atEnd())
     {
         stream >> node._id >> node._parentId >> node._text >> nodeTypeInt >> node._weight >> node._input;
-        node._type = static_cast<nodeType>(nodeTypeInt);
+        node._type = static_cast<Node::NodeType>(nodeTypeInt);
 
-        if (node._type == Goal )
+        if (node._type == Node::NodeType::Goal )
             _tree = node;
         else {
             Node *parent = getNode(&_tree, node._parentId);

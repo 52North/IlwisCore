@@ -129,7 +129,7 @@ Item {
         }
     }
 
-    function updateNodeInfo(msg) {
+    function updateNodeInfo(id) {
 
     }
 }

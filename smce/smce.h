@@ -7,6 +7,7 @@
 #include "ilwisdata.h"
 #include "modeller/workflow.h"
 #include "modeller/analysispattern.h"
+#include "node.h"
 #include "smcemodel.h"
 
 namespace Ilwis{
@@ -14,21 +15,6 @@ namespace Smce {
 
 class SMCE : public AnalysisPattern
 {
-
-    enum nodeType { Goal=0, AnalysisArea=1, Objective=2, Constraint=3, Factor=4};
-
-    class Node {
-        public:
-            quint16 _id;
-            quint16 _parentId;
-            nodeType _type;
-            QString _text;
-            float _weight;
-            QString _input;
-            //QString _standardizedInput; // ???
-            QList <Node> _subNodes;
-    };
-
 
 public:
 
