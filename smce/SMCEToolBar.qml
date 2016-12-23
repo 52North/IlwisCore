@@ -63,45 +63,8 @@ ToolBar{
             }
             onClicked: {
                 console.log("Generate button clicked...")
-                //newTab = datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
-                //var smceCatalog = mastercatalog.newCatalog("file:///F:/testdata2/BFD/Final_Data/SMCE_Greenbelt_submission_2711/sub","")
-                //mastercatalog.currentCatalog = smceCatalog
-                //smceCatalog.scanContainer(false, false)
-                var resources = smceCatalog.resources
-                console.log("resources=" + resources)
-                var sz = resources.length
-                console.log("start, length=" + sz)
-                for(var j = 0; j < sz; ++j) {
-                  console.log ("name=" +resources[j].name + " id=" + resources[j].id)
-                  if (resources[j].name == "Coastal_stabilization_reclamation_prioirty_sub.mpr") {
-                      resource = resources[j]
-                      filter = "itemid=" + resources.id
-                      newTab = datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
-                      break;
-                  }
-                }
+                openMap("Greenbelt_development_priority_sub.mpr")
             }
         }
-    }
-
-    Component.onCompleted: {
-        //newTab = datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
-        //var
-        smceCatalog = mastercatalog.newCatalog("file:///F:/testdata2/BFD/Final_Data/SMCE_Greenbelt_submission_2711/sub","")
-        //mastercatalog.currentCatalog = smceCatalog
-        //smceCatalog.scanContainer(false, false)
-        var resources = smceCatalog.resources
-        var sz = resources.length
-        console.log("start, length=" + sz)
-        /*for(var j = 0; j < sz; ++j) {
-          console.log ("name=" +resources[j].name + " id=" + resources[j].id)
-          if (resources[j].name == "Coastal_stabilization_reclamation_prioirty_sub.mpr") {
-              resource = resources[j]
-              filter = "itemid=" + resources.id
-              newTab = datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
-              break;
-          }
-        }*/
-        console.log("end")
     }
 }
