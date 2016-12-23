@@ -62,6 +62,7 @@ Item {
                 //console.log("3 traverse:" + node.subNode.count)
                 for(var i = 0; i < node.subNode.count; ++i) {
                     var subNode = node.subNode.get(i)
+                    //console.log(subNode.id+subNode.name)
                     console.log(subNode.id+subNode.name)
                     if (subNode.subNode !== undefined)
                         traverse(subNode)
@@ -344,23 +345,43 @@ Item {
           Component.onCompleted: {
               objModel.add2("(We want to) ... Establish biophysical priority within a potential Green Belt buffer of a maximum 1000m width along all coast lines of Bangladesh, with exception of the Sundarbans, in which the proposed Green Belt can be established to provide protection from cyclones storm surges and other natural hazards---Goal---")
               objModel.add2("0---Analysis area---AArea---")
-              objModel.add2("0---(We want to) ... Reduce the vulnerability of population, economy and environment---Objective---0.2")
+              objModel.add2("0---(We want to) ... Reduce the vulnerability of population, economy and environment---Objective---0.33")
               objModel.add2("0---1---The higher the vulnerability is in the Green Belt buffer, as measured by the coastal vulnerability index, the higher the priority for development of the Green Belt---Factor---1.0")
-              objModel.add2("0---(We want to) ... Protect areas that are exposed to storm surges.---Objective---0.2")
+              objModel.add2("0---(We want to) ... Protect areas that are exposed to storm surges.---Objective---0.33")
               objModel.add2("0---2---The higher the surge hight the higher the priority to develop the Greenbelt---Factor---1.0")
-              objModel.add2("0---(We want to)...  Protect infrastructure and reduce the cost of upgrading and maintenance of infrastucture to---Objective---0.2")
+              objModel.add2("0---(We want to)...  Protect infrastructure and reduce the cost of upgrading and maintenance of infrastucture to---Objective---0.33")
               objModel.add2("0---3---Inside an embankment a Greenbelt is not necessary.---Constraint---0.33")
               objModel.add2("0---3---If the distance of an embankment to the shore inside a Greenbelt is less than 1000m there is no need for a Greenbelt, otherwise there is full priority to develop the Greenbelt---Constraint---0.33")
               objModel.add2("0---3---The closer critical infrastructure is within 20 km of the Green Belt, the higher the priority an area receives.---Factor---0.33")
-              objModel.add2("0---(We want to)... Stabilize the coastal zone and reclaim land---Objective---0.2")
+
+              /*objModel.add2("0---(We want to)... Stabilize the coastal zone and reclaim land---Objective---0.2")
               objModel.add2("0---4---Within 50 meters of an erosion area inside the Greenbelt development receives full priority whereas beyond that disatnce from erosion areas priority is none---Factor---0.5")
               objModel.add2("0---4---Accretion areas inside the Greenbelt have higher priority than other areas---Factor---0.5")
               objModel.add2("0---(We want to).. Make use of existing forest inside the Green Belt and connect to these---Objective---0.1")
               objModel.add2("0---5---The closer to forest land inside the Green Belt, the higher the priority of the area for Green Belt development---Factor---1.0")
               objModel.add2("0---(We want to)... Minimize the costs of land acquisition---Objective---0.1")
-              objModel.add2("0---6---Public land is better than public leased land, which in turn is better than private land---Factor---1.0")
+              objModel.add2("0---6---Public land is better than public leased land, which in turn is better than private land---Factor---1.0")*/
 
               objModel.traverse()
+
+
+              //newTab = datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
+              var smceCatalog = mastercatalog.newCatalog("file:///F:/testdata2/BFD/Final_Data/SMCE_Greenbelt_submission_2711/sub","")
+              //mastercatalog.currentCatalog = smceCatalog
+              //smceCatalog.scanContainer(false, false)
+              var resources = smceCatalog.resources
+              var sz = resources.length
+              console.log("start, length=" + sz)
+              for(var j = 0; j < sz; ++j) {
+                console.log ("name=" +resources[j].name + " id=" + resources[j].id)
+                if (resources[j].name == "Coastal_stabilization_reclamation_prioirty_sub.mpr") {
+                    resource = resources[j]
+                    filter = "itemid=" + resources.id
+                    newTab = datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
+                    break;
+                }
+              }
+              console.log("end")
           }
 
           Button {
