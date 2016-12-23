@@ -25,10 +25,8 @@ Item {
     }
 
     signal catalogChanged()
-    //signal currentCatalogChanged()
 
     function showObject(objectids){
-        console.log("CatalogPanel showObject..." + objectids)
         var filter
         if ( objectids === -1){ // case for  .. one step back
             var container = currentCatalog.container
@@ -49,27 +47,13 @@ Item {
                     newTab = datapanesplit.changePanel(filter, "catalog",resource.url)
                 }else { // object as 'real' data case
                     filter = "itemid=" + resource.id
-                    console.log("filter:"+ filter)
                     // try to find a suitable data pane for it
                     if ( newTab && resource.typeName.indexOf("coverage")!== -1){
-                        console.log(" 1 resource:"+ resource.name)
                         newTab.item.addDataSource(filter,resource.name,resource.typeName)
                     }else {
-                        console.log("2 resource:"+ resource.name + ", "+ resource.typeName+", "+ resource.url)
-                        //newTab = datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
-                        var smceCatalog = mastercatalog.newCatalog("file:///F:/testdata2/BFD/Final_Data/SMCE_Greenbelt_submission_2711/sub","")
-                        //mastercatalog.currentCatalog = smceCatalog
-                        smceCatalog.scanContainer(false, false)
-                        var resources = smceCatalog.resources
-                        var sz = resources.length
-                        console.log("start, length=" + sz)
-                        for(var j = 0; j < sz; ++j) {
-                          console.log ("name=" +resources[j].name + " id=" + resources[j].id)
-                        }
-                        console.log("end")
+                        newTab = datapanesplit.newPanel(filter, resource.typeName,resource.url,"other")
                     }
                     if ( newTab == null){ // we dont have a seperate pane for it so it is an object with only metadata to show
-                        console.log("3 resource:")
                         mastercatalog.setSelectedObjects(ids[i])
                         bigthing.getWorkbenchPane("objectproperties","visible");
                     }
@@ -79,7 +63,6 @@ Item {
 
         }
     }
-
 
     function addDataSource(filter, sourceName, sourceType){
         var url = sourceName
