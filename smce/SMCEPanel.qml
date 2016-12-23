@@ -13,7 +13,7 @@ Column {
     property CatalogModel smceCatalog
 
     function loadSmceCatalog() {
-        scanCatalog("file:///d:/martin/problematic_data/boerboom/SMCE_Greenbelt_submission_2711/sub")
+        scanCatalog(uicontext.ilwisFolder + "/smcedata")
     }
 
     function scanCatalog(folder) {
