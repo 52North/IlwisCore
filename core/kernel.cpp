@@ -52,6 +52,7 @@
 #include "operation.h"
 #include "tranquilizer.h"
 #include "tranquilizerfactory.h"
+#include "modeller/workflownode.h"
 #include "modeller/workflow.h"
 #include "modeller/applicationmodel.h"
 #include "modeller/analysispattern.h"

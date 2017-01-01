@@ -7,30 +7,71 @@ import "../../../Global.js" as Global
 import "../../../controls" as Controls
 import OperationModel 1.0
 
-Rectangle {
+WorkflowChoiceForm {
     id : flowParameterForm
-    width: 350
-    height: 0
-    enabled: false
-    anchors.centerIn: parent
-    color : "white"
-    state : "invisible"
-    border.width: 1
-    border.color: Global.edgecolor
-    property OperationModel operationFrom
-    property OperationModel operationTo
+    property var operationOut
+    property var operationIn
     property var attachRect
     property var target
-    radius : 4
-    z : 1
-    clip : true
+    property var source
 
-    onOperationToChanged: {
-        if ( operationFrom && operationTo){
-            textid.model = operationFrom.parameterIndexes("",true)
-            if ( textid.model.length === 1){
-                var fromType = operationFrom.outputparameterType(0)
-                textid2.model = operationTo.parameterIndexes(fromType, false)
+    onOperationInChanged: {
+        if ( operationOut && operationIn){
+            var inParameterIndexes = operationIn.operation.parameterIndexes("",false),
+                outParameterIndexes = [],
+                count = 0,
+                validTypes = [],
+                type
+
+            // Get valid types
+            for (var i in inParameterIndexes) {
+                type = operationIn.operation.inputparameterType(i, false)
+                if (validTypes.indexOf(type) === -1) {
+                    validTypes.push(type)
+                    outParameterIndexes = operationOut.operation.parameterIndexes(type,true)
+
+                    count += outParameterIndexes.length
+
+                    for (var j in outParameterIndexes) {
+                        outModel.append({'text': outParameterIndexes[j]})
+                    }
+                }
+            }
+
+            if (count === 0) {
+                modellerDataPane.addError(1, 'There were no possible matches found between ' + operationOut.name.text + ' and ' + operationIn.name.text)
+                refresh()
+            } else {
+                fillInputModel(0)
+            }
+        }
+    }
+
+    function refresh() {
+        wfCanvas.stopWorkingLine()
+        flowParameterForm.state = "invisible"
+        wfCanvas.canvasValid = false
+        canvasActive = true
+        source = null
+        operationOut = null
+        operationIn = null
+        attachRect = 0
+        target = null
+        inModel.clear()
+        outModel.clear()
+    }
+
+    function fillInputModel(index) {
+        if (operationIn) {
+            inModel.clear()
+            var parameterIndexes = operationIn.operation.parameterIndexes(operationOut.operation.inputparameterType(index), false)
+
+            for (var i in parameterIndexes) {
+                var name = parameterIndexes[i]
+
+                if (!workarea.workflow.hasValueDefined(operationIn.itemid, name.split(':')[0])) {
+                    inModel.append({'text': name})
+                }
             }
         }
     }
@@ -53,14 +94,14 @@ Rectangle {
     }
 
     Item {
-        id : inParams
+        id : outParams
         anchors.top : header.bottom
         anchors.topMargin: 4
         x : 5
         width : parent.width
         height : 20
         Text {
-            id : label
+            id : outLabel
             height : 20
             width : 150
             text : qsTr("Outgoing parameters index")
@@ -69,25 +110,27 @@ Rectangle {
         }
 
         ComboBox{
-            id : textid
-            anchors.left : label.right
+            id : outComboBox
+            anchors.left : outLabel.right
             height : 20
-            width : parent.width - label.width -10
+            width : parent.width - outLabel.width -10
+            model : ListModel {
+                id: outModel
+            }
             onCurrentIndexChanged: {
-                if ( operationFrom)
-                    textid2.model = operationTo.parameterIndexes(operationFrom.inputparameterType(currentIndex),false)
+                fillInputModel(currentIndex)
             }
         }
     }
     Item {
-        id : outParams
-        anchors.top : inParams.bottom
+        id : inParams
+        anchors.top : outParams.bottom
         anchors.topMargin: 4
         x : 5
         width : parent.width
         height : 20
         Text {
-            id : labelOut
+            id : labelIn
             height : 20
             width : 150
             text : qsTr("Input parameters index")
@@ -96,10 +139,13 @@ Rectangle {
         }
 
         ComboBox{
-            id : textid2
-            anchors.left : labelOut.right
+            id : inComboBox
+            anchors.left : labelIn.right
             height : 20
-            width : parent.width - labelOut.width -10
+            width : parent.width - labelIn.width -10
+            model : ListModel {
+                id: inModel
+            }
         }
     }
     Button{
@@ -110,12 +156,10 @@ Rectangle {
         anchors.rightMargin: 5
         anchors.top : applyButton.top
         onClicked: {
-            flowParameterForm.state = "invisible"
-            wfCanvas.canvasValid = false
+            console.debug(operationIn, target, source)
+            refresh()
         }
-
     }
-
     Button{
         id : applyButton
         text : qsTr("Apply")
@@ -123,7 +167,7 @@ Rectangle {
         width : 60
         anchors.right: parent.right
         anchors.rightMargin: 5
-        anchors.top : outParams.bottom
+        anchors.top : inParams.bottom
         anchors.topMargin: 5
         onClicked: {
             function getIndex(txt){
@@ -131,15 +175,16 @@ Rectangle {
                 return parts[0]
             }
 
-            var fromIndex = getIndex(textid.currentText)
-            var toIndex = getIndex(textid2.currentText)
+            var fromIndex = getIndex(outComboBox.currentText)
+            var toIndex = getIndex(inComboBox.currentText)
             var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
-            if (wfCanvas.currentItem.operation.isLegalFlow(operationFrom, operationTo)){
-                wfCanvas.operationsList[wfCanvas.currentOperationIndex].setFlow(target,attachRect, flowPoints)
-            }
-            flowParameterForm.state = "invisible"
-            wfCanvas.canvasValid = false
 
+            if (!source) {
+                if ( workarea.currentItem.type === "operationitem")
+                source = workarea.currentItem
+            }
+            source.setFlow(target, attachRect, flowPoints)
+            refresh()
         }
     }
 

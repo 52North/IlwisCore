@@ -2,13 +2,175 @@ import QtQuick 2.2
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
+import "../../../controls" as Controls
 
 ToolBar{
-    id : modellertools
+    id : workflowtools
     width : parent.width
-    height : 31
+    height : 45
 
-    property alias zoomLevel: zoomLabel
+    property int buttonSize : 30
+
+
+    Row {
+        anchors.verticalCenter: parent.verticalCenter
+
+        width : childrenRect.width
+        height : buttonSize
+        spacing : 3
+        id : editingtools
+
+        Loader {
+            source : "../GenericTools.qml"
+            height : buttonSize
+            onLoaded: {
+                width = item.width
+            }
+        }
+
+        Controls.ToolButton{
+            height : buttonSize
+            width : buttonSize
+            iconSource: iconsource("saveb.png")
+            tooltip: qsTr("Saves the workflow in the current active catalog(if possible)")
+
+            onClicked: {
+                var url = mastercatalog.currentCatalog.url
+                if ( url.indexOf("file://") !== 0) {
+                    return
+                }
+                workflow.store("","")
+            }
+        }
+        Controls.ToolButton{
+            height : buttonSize
+            width : buttonSize
+            iconSource: iconsource("saveasb.png")
+        }
+
+
+
+
+        Controls.ToolButton {
+            height : buttonSize
+            width : buttonSize
+            iconSource : iconsource("trash20.png")
+            tooltip: qsTr("Removes a selected flow or operation)")
+            onClicked: {
+                // modellerDataPane.deleteSelectedOperation()
+                // modellerDataPane.deleteSelectedEdge()
+
+            }
+        }
+         Controls.ToolButton {
+             height : buttonSize
+             width : buttonSize
+            iconSource : iconsource("run20.png")
+            onClicked: {
+                workflowManager.executeRunForm({"runid" :  workflow.id, "stepmode" :false})
+            }
+        }
+        Controls.ToolButton {
+            height : buttonSize
+            width : buttonSize
+            id : stepButton
+            opacity : enabled ? 1 : 0.5
+            iconSource : iconsource("step20.png")
+            onClicked :{
+                //  if ( stepModeCheck.checked )
+                //      modellerDataPane.workflowModel().nextStep()
+                //     modellerDataPane.nextStep()
+            }
+        }
+        Controls.ToolButton {
+            height : buttonSize
+            width : buttonSize
+            iconSource : iconsource("stop20.png")
+        }
+
+        Controls.ToolButton {
+            height : buttonSize
+            width : buttonSize
+            id : newcondition
+            checked: false
+            checkable: true
+            exclusiveGroup: toolgroup
+            iconSource: iconsource("choice20.png")
+            onClicked: {
+                workarea.dropCondition = checked
+            }
+        }
+
+        ExclusiveGroup {
+            id: toolgroup
+        }
+
+    }
+
+
+    Row{
+        x : 3
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        height : buttonSize
+        width: childrenRect.width
+        spacing : 2
+
+
+
+        Button {
+            height : buttonSize
+            width : buttonSize
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                source : iconsource("zoomin20.png")
+            }
+            onClicked: {
+                workarea.zoom(3,false,-1,-1)
+            }
+        }
+
+        ComboBox {
+            id : zoomFactor
+            editable: true
+            height : buttonSize
+            width : 75
+            model : ["10%","25%","50%","70%","80%","90%","100%","125%","150%", "200%"]
+
+            onCurrentIndexChanged: {
+                if ( currentText == "")
+                    return;
+                var perc = Number(currentText.slice(0, -1))
+                zoom(perc, true,-1,-1)
+            }
+
+            Component.onCompleted: {
+                currentIndex = 6
+            }
+
+        }
+
+        Button {
+            height : buttonSize
+            width : buttonSize
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                source : iconsource("zoomout20.png")
+            }
+            onClicked: {
+                workarea.zoom(-3,false,-1,-1)
+            }
+        }
+
+    }
+    function dropCondition(yesno){
+       newcondition.checked = yesno
+    }
+
 
     function iconsource(name) {
         if ( name.indexOf("/") !== -1)
@@ -20,147 +182,11 @@ ToolBar{
         return iconP
     }
 
-    Column {
-        height:parent.height
-        width: parent.width/3
-        id : editingColumn
-        Row {
-            width : parent.width
-            height : 25
-            spacing : 2
-            id : editingtools
-
-            Button {
-                id : newcondition
-                height : 25
-                width : 25
-                Image {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    source : iconsource("choice20.png")
-                }
-                onClicked: {
-                    modellerDataPane.newCondition()
-
-                }
-            }
-
-            Button {
-                height : 25
-                width : 25
-                Image {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    source : iconsource("trash20.png")
-                }
-                onClicked: {
-                    modellerDataPane.deleteSelectedOperation()
-                    modellerDataPane.deleteSelectedEdge()
-
-                }
-            }
-            Button {
-                id : chanconbut
-                height : 25
-                width : 25
-                Image {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    source : iconsource("refresh20.png")
-                }
-                onClicked: {
-                    modellerDataPane.alterSelectedEdge()
-                }
-            }
-
-            Button {
-                height : 25
-                width : 25
-                Image {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    source : iconsource("error_sign.png")
-                }
-                onClicked: {
-
-                    if(errorview.state == "smaller")
-                    {
-                        errorview.state = "bigger"
-                    } else {
-                        errorview.state = "smaller"
-                    }
-
-                }
-            }
-        }
-
+    function setZoomEdit(amount){
+        zoomFactor.editText = amount
     }
 
 
-    Column{
-        id:zoomTools
-        anchors{
-            right: parent.right
-        }
 
-        height: parent.height
-        width: parent.width/3
-        Row{
-            height : 25
-            spacing : 2
-            anchors{
-                right: parent.right
-            }
-
-            Button {
-                height : 25
-                width : 25
-                Image {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    source : iconsource("zoomin20.png")
-                }
-                onClicked: {
-                    modellerDataPane.canvasZoom(3)
-                }
-            }
-
-            Button {
-                height : 25
-                width : 75
-                text: "Default zoom"
-
-                onClicked: {
-                    modellerDataPane.defaultZoom()
-                }
-            }
-
-            Button {
-                height : 25
-                width : 25
-                Image {
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.horizontalCenter: parent.horizontalCenter
-
-                    source : iconsource("zoomout20.png")
-                }
-                onClicked: {
-                    modellerDataPane.canvasZoom(-3)
-                }
-            }
-
-            Text{
-                id:zoomLabel
-                text:"100%"
-                font.pixelSize: 18
-            }
-        }
-
-    }
 }
 

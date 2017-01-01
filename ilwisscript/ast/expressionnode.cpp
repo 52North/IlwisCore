@@ -1,7 +1,7 @@
 #include <set>
 #include "kernel.h"
 #include "astnode.h"
-#include "operationnode.h"
+#include "operationnodescript.h"
 #include "symboltable.h"
 #include "expressionnode.h"
 
@@ -18,7 +18,7 @@ QString ExpressionNode::nodeType() const
 
 bool ExpressionNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 {
-    OperationNode::evaluate(symbols, scope, ctx);
+    OperationNodeScript::evaluate(symbols, scope, ctx);
     const NodeValue& vleft = _leftTerm->value();
     _value = vleft;
     bool ret  = true;
@@ -27,11 +27,11 @@ bool ExpressionNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext 
         term._rightTerm->evaluate(symbols, scope, ctx) ;
         const NodeValue& vright = term._rightTerm->value();
         for(int i=0; i < vright.size(); ++i) {
-            if ( term._operator == OperationNode::oAND ){
+            if ( term._operator == OperationNodeScript::oAND ){
                 ret = handleAnd(i,vright, symbols, ctx);
-            } else   if ( term._operator == OperationNode::oOR ){
+            } else   if ( term._operator == OperationNodeScript::oOR ){
                 ret = handleOr(i,vright, symbols, ctx);
-            } else   if ( term._operator == OperationNode::oXOR ){
+            } else   if ( term._operator == OperationNodeScript::oXOR ){
                 ret = handleXor(i,vright, symbols, ctx);
             }
             if (!ret)

@@ -48,8 +48,6 @@
 #include "models/datapanemodel.h"
 #include "models/objectcreator.h"
 #include "models/ilwisobjectcreatormodel.h"
-#include "models/workflow/edgepropobject.h"
-#include "models/workflow/nodepropobject.h"
 #include "models/preferencesmodel.h"
 #include "models/internaldatabasemodel.h"
 #include "ilwiscoreui/propertyeditors/numericrepresentationsetter.h"
@@ -134,8 +132,6 @@ void StartIlwis::init() {
         qmlRegisterType<ModelDesigner>("ModelDesigner", 1,0,"ModelDesigner");
         qmlRegisterType<WorkflowErrorModel>("WorkflowErrorModel", 1,0,"WorkflowErrorModel");
         qmlRegisterType<ErrorModel>("ErrorModel", 1,0,"ErrorModel");
-        qmlRegisterType<NodePropObject>("NodePropObject", 1,0,"NodePropObject");
-        qmlRegisterType<EdgePropObject>("EdgePropObject", 1,0,"EdgePropObject");
         qmlRegisterType<PreferencesModel>("PreferencesModel",1,0,"PreferencesModel");
         qmlRegisterType<InternalDatabaseModel>("InternalDatabaseModel",1,0,"InternalDatabaseModel");
         qmlRegisterType<ScriptModel>("ScriptModel",1,0,"ScriptModel");

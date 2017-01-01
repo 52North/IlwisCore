@@ -3,7 +3,7 @@
 #include "errorobject.h"
 #include "symboltable.h"
 #include "astnode.h"
-#include "operationnode.h"
+#include "operationnodescript.h"
 #include "expressionnode.h"
 #include "ifnode.h"
 

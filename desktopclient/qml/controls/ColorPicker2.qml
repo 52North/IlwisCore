@@ -179,7 +179,6 @@ Rectangle {
                             var dx = mouseX - disk.width / 2
                             var dy = mouseY - (disk.height / 2)
                             var r = Math.sqrt(dx*dx + dy*dy)
-                            //console.debug(dx,dy,r,colorPicker.numberOfCircles,disk.diskRadius)
                             var cellsize = (disk.diskRadius / colorPicker.numberOfCircles)
                             var circle = cellsize > 0 ? Math.floor(r / (cellsize  )) : 0
 

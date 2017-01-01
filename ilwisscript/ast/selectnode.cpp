@@ -5,7 +5,7 @@
 #include "geos/geom/Coordinate.h"
 #include "geos/geom/Geometry.h"
 #include "ilwiscoordinate.h"
-#include "operationnode.h"
+#include "operationnodescript.h"
 #include "expressionnode.h"
 #include "featurecoverage.h"
 #include "feature.h"

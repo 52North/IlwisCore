@@ -6,6 +6,9 @@
 #include <QMultiHash>
 
 namespace Ilwis {
+
+struct ExecutionContext;
+
 class KERNELSHARED_EXPORT Symbol{
 public:
     Symbol(int scope=iUNDEF, quint64 tp=itUNKNOWN, const QVariant& v=QVariant()) ;
@@ -34,8 +37,9 @@ public:
         return var.value<T>();
     }
 
-    void unloadRasters();
+    void unloadData();
     IlwisTypes ilwisType(const QVariant &value, const QString &symname) const;
+    void copyFrom(ExecutionContext* ctx, const SymbolTable& symTable);
 
     static bool isNumerical(const QVariant &var) ;
     static bool isRealNumerical(const QVariant &var) ;

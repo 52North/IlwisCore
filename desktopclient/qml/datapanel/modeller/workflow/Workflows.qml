@@ -9,86 +9,101 @@ DropArea {
     property alias workflowNamesModel : namesColumn.model
     id : dropArea
 
-    Text {
+
+    Rectangle {
         id : label
-        text : qsTr("Available workflows")
-        font.bold: true
+        width : parent.width - 2
         height : 22
-        x : 4
+        color : Global.palegreen
+        Text{
+            text : qsTr("Available workflows")
+            font.bold: true
+            x : 3
+            anchors.verticalCenter: parent.verticalCenter
+        }
     }
     onDropped: {
         modellerDataPane.model.addWorkflow("itemid=" + drag.source.ilwisobjectid)
         namesColumn.model = modellerDataPane.model.workflowNames
     }
 
-    ListView{
-        id : namesColumn
+    Rectangle {
         anchors.top : label.bottom
-        anchors.bottom: buttons.top
-        width : parent.width - 3
-        highlight: Rectangle{ width : 200; height : 20; color : Global.selectedColor}
-        delegate  {
-            Item {
-                width : parent.width
-                height : 20
-                x : 4
-                Text {
-                    anchors.fill: parent
-                    text : modelData
-                    MouseArea{
-                        anchors.fill: parent
-                        onClicked: {
-                            namesColumn.currentIndex = index
+        anchors.bottom : parent.bottom
+        width : parent.width
+        color : Global.lightestgreen
+        Rectangle {
+            width : parent.width - 2
+            height : parent.height - buttons.height - 5
+            color : "white"
+            ListView{
+                id : namesColumn
+                anchors.fill : parent
+                highlight: Rectangle{ width : 200; height : 20; color : Global.selectedColor}
+                delegate  {
+                    Item {
+                        width : parent.width
+                        height : 20
+                        x : 4
+                        Text {
+                            anchors.fill: parent
+                            text : modelData
+                            MouseArea{
+                                anchors.fill: parent
+                                onClicked: {
+                                    namesColumn.currentIndex = index
+                                }
+                            }
                         }
                     }
                 }
+
+                Component.onCompleted: {
+                    currentIndex = 0
+                }
+
             }
         }
+        Row {
+            id : buttons
+            width : childrenRect.width
+            height: 22
+            anchors.right: parent.right
+            anchors.rightMargin: 5
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 2
+            Button{
+                id : deleteButton
+                height : 18
+                width: 35
+                opacity : enabled ? 1 : 0.5
+                enabled : true
+                Image{
+                    source : "../../../images/minus.png"
+                    width : 14
+                    height : 14
+                    anchors.centerIn: parent
+                }
+                onClicked: {
+                    modellerDataPane.model.removeWorkflow(namesColumn.currentIndex)
+                    namesColumn.model = modellerDataPane.model.workflowNames
+                }
 
-        Component.onCompleted: {
-            currentIndex = 0
-        }
+            }
+            Button{
+                id : addButton
+                height : 18
+                width: 35
+                Image{
+                    source : "../../../images/plus.png"
+                    width : 14
+                    height : 14
+                    anchors.centerIn: parent
+                }
+                onClicked: {
+                }
 
-    }
-    Row {
-        id : buttons
-        width : childrenRect.width
-        //height: 37
-        anchors.right: parent.right
-        anchors.rightMargin: 5
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 5
-        Button{
-            id : deleteButton
-            height : 18
-            width: 35
-            opacity : enabled ? 1 : 0.5
-            enabled : true
-            Image{
-                source : "../../../images/minus.png"
-                width : 14
-                height : 14
-                anchors.centerIn: parent
             }
-            onClicked: {
-                modellerDataPane.model.removeWorkflow(namesColumn.currentIndex)
-                namesColumn.model = modellerDataPane.model.workflowNames
-            }
-
-        }
-        Button{
-            id : addButton
-            height : 18
-            width: 35
-            Image{
-                source : "../../../images/plus.png"
-                width : 14
-                height : 14
-                anchors.centerIn: parent
-            }
-            onClicked: {
-            }
-
         }
     }
 }

@@ -100,6 +100,8 @@ public:
 
     static QString type2name(IlwisTypes t);
     static IlwisTypes name2type(const QString& name);
+    static IlwisTypes variant2type(const QVariant &v);
+
 };
 }
 

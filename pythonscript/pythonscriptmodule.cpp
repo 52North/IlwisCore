@@ -5,7 +5,10 @@
 #include "ilwisdata.h"
 #include "symboltable.h"
 #include "operationExpression.h"
+#include "symboltable.h"
 #include "operationmetadata.h"
+#include "location.h"
+#include "workflownode.h"
 #include "workflow.h"
 #include "commandhandler.h"
 #include "operation.h"
@@ -89,8 +92,8 @@ void PythonScriptModule::prepare()
 
         factory->addCreator(itSCRIPT,"python",PythonScript::PythonScriptConnector::create);
 
-        factory->addCreator("fileworkflow","python",PythonScript::PythonWorkflowConnector::create);
-        factory->addCreator("inmemoryworkflow","python",PythonScript::PythonWorkflowConnector::create2);
+        //factory->addCreator("fileworkflow","python",PythonScript::PythonWorkflowConnector::create);
+       // factory->addCreator("inmemoryworkflow","python",PythonScript::PythonWorkflowConnector::create2);
         factory->addCreator("script","python",PythonScript::PythonScriptConnector::create);
 
         quint64 id = mastercatalog()->name2id("ilwis://operations/callpython", itSINGLEOPERATION);

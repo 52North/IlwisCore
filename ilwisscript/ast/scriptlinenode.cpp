@@ -36,7 +36,7 @@ bool ScriptLineNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext 
     // we do not keep al binary data in memory for rasters as within a script they might not get out of scope until
     // the script finishes. This quickly fills up memory. So we unload all binaries and the raster will reload when it
     // is needed (if it all). This means a slight performance hit but it is necessary
-    symbols.unloadRasters();
+    symbols.unloadData();
 
     return _evaluated;
 }

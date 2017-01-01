@@ -24,6 +24,7 @@ Rectangle {
 
     signal message(string msg)
 
+    property alias workflowManager : wfManager.item
 
     TabView{
         id : modellerViews
@@ -83,7 +84,7 @@ Rectangle {
 
 
         Tab{
-            id : workflowManager
+            id : wfManager
             active: true
             title: qsTr("Workflow View")
             WorkFlow.ManagerWorkflowView{}
@@ -125,7 +126,7 @@ Rectangle {
     }
 
     function selectedWorkflowItem(itemid){
-        workflowManager.item.selectedWorkflowItem(itemid)
+        //workflowManager.item.selectedWorkflowItem(itemid)
     }
 
     function updateLists(){
@@ -147,7 +148,9 @@ Rectangle {
             else
                 modellerViews.currentIndex = 0
         }
-        workflowManager.item.updateLists()
+        if ( workflowManager){
+            workflowManager.updateLists()
+        }
     }
 
     // todo: create a mechanism to decouple these SMCE-specific functions

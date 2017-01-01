@@ -184,7 +184,6 @@ Controls.DropableItem{
                                 var id = ids[i]
                                 var obj = mastercatalog.id2object(id, rasterlist)
                                 var grfurl = obj.getProperty("georeferenceurl");
-                                console.debug(idstring, obj.name, grfurl, obj.typeName,grfvalue.content)
                                 if ( obj && obj.typeName === "rastercoverage"){
                                     if ( grfvalue.content === ""){
                                         grfvalue.content = grfurl

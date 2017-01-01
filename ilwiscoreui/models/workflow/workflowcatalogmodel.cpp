@@ -11,6 +11,10 @@
 #include "commandhandler.h"
 #include "operation.h"
 #include "../catalogmodel.h"
+#include "symboltable.h"
+#include "commandhandler.h"
+#include "ilwisoperation.h"
+#include "workflownode.h"
 #include "workflow.h"
 
 #include "workflowmodel.h"

@@ -2,7 +2,7 @@
 #define MULTIPLICATIONNODE_H
 
 namespace Ilwis {
-class MultiplicationNode : public OperationNode
+class MultiplicationNode : public OperationNodeScript
 {
 public:
     MultiplicationNode();

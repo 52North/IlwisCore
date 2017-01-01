@@ -2,7 +2,7 @@
 #include "ilwis.h"
 #include "identity.h"
 #include "astnode.h"
-#include "operationnode.h"
+#include "operationnodescript.h"
 #include "symboltable.h"
 #include "expressionnode.h"
 #include "whilenode.h"

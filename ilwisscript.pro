@@ -42,7 +42,6 @@ SOURCES += \
     ilwisscript/ast/returnnode.cpp \
     ilwisscript/ast/termnode.cpp \
     ilwisscript/ast/multiplicationnode.cpp \
-    ilwisscript/ast/operationnode.cpp \
     ilwisscript/ast/addnode.cpp \
     ilwisscript/ast/relationnode.cpp \
     ilwisscript/ast/commandnode.cpp \
@@ -56,7 +55,8 @@ SOURCES += \
     ilwisscript/ast/domainformatter.cpp \
     ilwisscript/ast/ifnode.cpp \
     ilwisscript/ast/outparametersnode.cpp \
-    ilwisscript/ast/selectnode.cpp
+    ilwisscript/ast/selectnode.cpp \
+    ilwisscript/ast/operationnodescript.cpp
 
 
 HEADERS +=\
@@ -78,7 +78,6 @@ HEADERS +=\
     ilwisscript/ast/returnnode.h \
     ilwisscript/ast/termnode.h \
     ilwisscript/ast/multiplicationnode.h \
-    ilwisscript/ast/operationnode.h \
     ilwisscript/ast/addnode.h \
     ilwisscript/ast/relationnode.h \
     ilwisscript/ast/commandnode.h \
@@ -122,7 +121,8 @@ HEADERS +=\
     ilwisscript/parserlexer/include/antlr3rewritestreams.h \
     ilwisscript/parserlexer/include/antlr3string.h \
     ilwisscript/parserlexer/include/antlr3tokenstream.h \
-    ilwisscript/parserlexer/include/antlr3treeparser.h
+    ilwisscript/parserlexer/include/antlr3treeparser.h \
+    ilwisscript/ast/operationnodescript.h
 
 OTHER_FILES += ilwisscript/ilwisscript.json
 

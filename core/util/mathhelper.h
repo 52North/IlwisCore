@@ -23,6 +23,8 @@ public:
     static double roundTo3DecimalDigits(const double value);
 
     static quint8 lenDecimalDigits(double number);
+    static LogicalOperator string2logicalOperator(const QString &op);
+    static QString logicalOperator2string(LogicalOperator lo);
 };
 }
 #endif // MATHHELPER_H

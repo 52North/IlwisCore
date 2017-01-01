@@ -173,7 +173,7 @@ has the callable functions (rules) shown below,
 #include "astnode.h"
 #include "idnode.h"
 #include "scriptnode.h"
-#include "operationnode.h"
+#include "operationnodescript.h"
 #include "expressionnode.h"
 #include "outparametersnode.h"
 #include "assignmentnode.h"

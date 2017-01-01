@@ -106,7 +106,7 @@ Symbol SymbolTable::getSymbol(const QString &name, int scope) const
     return Symbol();
 }
 
-void SymbolTable::unloadRasters()
+void SymbolTable::unloadData()
 {
     for(Symbol& sym: _symbols) {
         if ( sym._type == itRASTER) {
@@ -139,6 +139,16 @@ IlwisTypes SymbolTable::ilwisType(const QVariant &value, const QString& symname)
         }
     }
     return itUNKNOWN;
+}
+
+void SymbolTable::copyFrom(ExecutionContext *ctx, const SymbolTable &symTable)
+{
+    for(const QString& result : ctx->_results){
+        Symbol symbol = symTable.getSymbol(result);
+        if ( symbol.isValid()){
+            _symbols[result] = symbol;
+        }
+    }
 }
 
 bool SymbolTable::isNumerical(const QVariant& var) {

@@ -230,3 +230,57 @@ quint8 MathHelper::lenDecimalDigits(double number) {
     }
     return digits;
 }
+
+LogicalOperator MathHelper::string2logicalOperator(const QString& op){
+    QString optemp = op.trimmed().toLower();
+    if (optemp == "and")
+        return loAND;
+    else if ( optemp == "or")
+        return loOR;
+    else if ( optemp == "equals")
+        return loEQ;
+    else if ( optemp == "notequals")
+        return loNEQ;
+    else if ( optemp == "not")
+        return loNOT;
+    else if ( optemp == "lessthan")
+        return loLESS;
+    else if ( optemp == "lessorequal")
+        return loLESSEQ;
+    else if ( optemp == "greaterthan")
+        return loGREATER;
+    else if (optemp == "greaterorequal")
+        return loGREATEREQ;
+    else if (optemp == "exclusiveor")
+        return loXOR;
+    return loNONE;
+}
+
+QString MathHelper::logicalOperator2string(LogicalOperator lo){
+    switch (lo){
+    case loAND:
+        return "and";
+    case loOR:
+        return "or";
+    case loNOT:
+        return "not";
+    case loEQ:
+        return "equals";
+    case loNEQ:
+        return "notequals";
+    case loLESS:
+        return "lessthan";
+    case loLESSEQ:
+        return "lessorequal";
+    case loGREATER:
+        return "greaterthan";
+    case loGREATEREQ:
+        return "greaterorequal";
+    case loXOR:
+        return "exclusiveor";
+    default:
+        return "";
+
+    }
+    return sUNDEF;
+}

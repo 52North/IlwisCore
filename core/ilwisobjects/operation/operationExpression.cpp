@@ -807,10 +807,12 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
     }
 
     if(!duplicateFileNames){
+        QString opname = operationresource.name();
+        opname.remove(".ilwis");
         if ( allOutputsString == "")
-            expression = QString("script %1(%2)").arg(operationresource.name()).arg(expression);
+            expression = QString("script %1(%2)").arg(opname).arg(expression);
         else
-            expression = QString("script %1=%2(%3)").arg(allOutputsString).arg(operationresource.name()).arg(expression);
+            expression = QString("script %1=%2(%3)").arg(allOutputsString).arg(opname).arg(expression);
 
         OperationExpression opExpr(expression);
 

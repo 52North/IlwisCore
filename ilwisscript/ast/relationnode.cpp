@@ -1,7 +1,7 @@
 #include "kernel.h"
 #include "iooptions.h"
 #include "astnode.h"
-#include "operationnode.h"
+#include "operationnodescript.h"
 #include "relationnode.h"
 #include "symboltable.h"
 #include "commandhandler.h"
@@ -19,7 +19,7 @@ QString RelationNode::nodeType() const
 
 bool RelationNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 {
-    if (!OperationNode::evaluate(symbols, scope, ctx))
+    if (!OperationNodeScript::evaluate(symbols, scope, ctx))
         return false;
 
     bool ret = true;
@@ -27,17 +27,17 @@ bool RelationNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *c
         term._rightTerm->evaluate(symbols, scope, ctx) ;
         const NodeValue& vright = term._rightTerm->value();
         for(int i=0; i < vright.size(); ++i) {
-            if ( term._operator == OperationNode::oEQ ){
+            if ( term._operator == OperationNodeScript::oEQ ){
                 ret = handleEQ(i,vright, symbols, ctx);
-            } else   if ( term._operator == OperationNode::oGREATER ){
+            } else   if ( term._operator == OperationNodeScript::oGREATER ){
                 ret = handleGREATER(i,vright, symbols, ctx);
-            } else   if ( term._operator == OperationNode::oGREATEREQ ){
+            } else   if ( term._operator == OperationNodeScript::oGREATEREQ ){
                 ret = handleGREATEREQ(i,vright, symbols, ctx);
-            }  else   if ( term._operator == OperationNode::oLESS ){
+            }  else   if ( term._operator == OperationNodeScript::oLESS ){
                 ret = handleLESS(i,vright, symbols, ctx);
-            } else   if ( term._operator == OperationNode::oLESSEQ ){
+            } else   if ( term._operator == OperationNodeScript::oLESSEQ ){
                 ret = handleLESSEQ(i, vright, symbols, ctx);
-            }  else   if ( term._operator == OperationNode::oNEQ ){
+            }  else   if ( term._operator == OperationNodeScript::oNEQ ){
                 ret = handleNEQ(i,vright, symbols, ctx);
             }
             if(!ret) {

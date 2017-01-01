@@ -1,7 +1,7 @@
 #include "kernel.h"
 #include "errorobject.h"
 #include "astnode.h"
-#include "operationnode.h"
+#include "operationnodescript.h"
 #include "multiplicationnode.h"
 #include "symboltable.h"
 #include "commandhandler.h"
@@ -19,7 +19,7 @@ QString MultiplicationNode::nodeType() const
 
 bool MultiplicationNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 {
-    if(!OperationNode::evaluate(symbols, scope, ctx))
+    if(!OperationNodeScript::evaluate(symbols, scope, ctx))
         return false;
 
     bool ret = true;
@@ -27,11 +27,11 @@ bool MultiplicationNode::evaluate(SymbolTable &symbols, int scope, ExecutionCont
         term._rightTerm->evaluate(symbols, scope, ctx) ;
         const NodeValue& vright = term._rightTerm->value();
         for(int i=0; i < vright.size(); ++i) {
-            if ( term._operator == OperationNode::oTIMES ){
+            if ( term._operator == OperationNodeScript::oTIMES ){
                 ret = handleTimes(i, vright, symbols, ctx);
-            } else   if ( term._operator == OperationNode::oDIVIDED ){
+            } else   if ( term._operator == OperationNodeScript::oDIVIDED ){
                 ret = handleDiv(i, vright, symbols, ctx);
-            }else   if ( term._operator == OperationNode::oMOD ){
+            }else   if ( term._operator == OperationNodeScript::oMOD ){
                 ret = handleMod(i, vright, symbols, ctx);
             }
 

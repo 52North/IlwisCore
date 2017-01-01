@@ -1,6 +1,7 @@
 #ifndef FLATTABLE_H
 #define FLATTABLE_H
 
+#include <QVariant>
 #include "record.h"
 
 namespace Ilwis {
@@ -100,5 +101,7 @@ protected:
 };
 typedef IlwisData<FlatTable> IFlatTable;
 }
+
+Q_DECLARE_METATYPE(Ilwis::IFlatTable)
 
 #endif // FLATTABLE_H

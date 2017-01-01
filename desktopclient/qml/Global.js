@@ -66,6 +66,53 @@ function calcZoomOutEnvelope(envelope, layers, viewmanager, factor)
     }
 }
 
+function drawLine(canvas, ctx, pt1,pt2, selected, color, width){
+    var fromx = pt1.x
+    var fromy = pt1.y
+    var tox = pt2.x
+    var toy = pt2.y
+    ctx.beginPath();
+    ctx.moveTo(fromx, fromy);
+    ctx.lineTo(tox, toy);
+    if(selected)
+    {
+        ctx.strokeStyle = "red"
+        ctx.lineWidth = width * 2
+    }else {
+        ctx.strokeStyle = color
+        ctx.lineWidth = width * canvas.zoomScale
+    }
+
+    ctx.stroke()
+}
+
+function drawArrow(canvas, ctx, pt1,pt2, selected){
+    var fromx = pt1.x
+    var fromy = pt1.y
+    var tox = pt2.x
+    var toy = pt2.y
+    var headlen = 15 * canvas.zoomScale;   // length of head in pixels
+    var angle = Math.atan2(toy-fromy,tox-fromx);
+
+    ctx.beginPath();
+    ctx.moveTo(fromx, fromy);
+    ctx.lineTo(tox, toy);
+    ctx.moveTo(tox, toy);
+    ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
+    ctx.moveTo(tox, toy);
+    ctx.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
+
+    if(selected)
+    {
+        ctx.strokeStyle = "red"
+        ctx.lineWidth = 5
+    }else {
+        ctx.strokeStyle = "blue"
+        ctx.lineWidth = 3 * canvas.zoomScale
+    }
+
+    ctx.stroke()
+}
 
 function createfileUrlFromParts(left, right) {
     if (Qt.platform.os === "windows") {

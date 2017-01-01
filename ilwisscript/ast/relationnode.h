@@ -2,7 +2,7 @@
 #define RELATIONNODE_H
 
 namespace Ilwis {
-class RelationNode : public OperationNode
+class RelationNode : public OperationNodeScript
 {
 public:
     RelationNode();

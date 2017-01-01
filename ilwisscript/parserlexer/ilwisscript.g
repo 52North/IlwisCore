@@ -190,7 +190,7 @@ unary  returns [ TermNode *node]
 mult  returns [ MultiplicationNode *node]
 @init{
 	node = new MultiplicationNode();
-	OperationNode::Operators op;
+	OperationNodeScript::Operators op;
 }
 	:	un1=unary 				{ node->setLeftTerm(un1); }
 		(
@@ -205,7 +205,7 @@ mult  returns [ MultiplicationNode *node]
 add  returns [ AddNode *node]
 @init{
 	node = new AddNode();
-	OperationNode::Operators op;
+	OperationNodeScript::Operators op;
 }
 	:	mul1 = mult 				{ node->setLeftTerm(mul1); }
 		(
@@ -220,7 +220,7 @@ add  returns [ AddNode *node]
 relation  returns [ RelationNode *node]
 @init{
 	node = new RelationNode();
-	OperationNode::Operators op;
+	OperationNodeScript::Operators op;
 }
 	:	add1=add				{ node->setLeftTerm(add1); } 
 		(
@@ -239,7 +239,7 @@ relation  returns [ RelationNode *node]
 expression returns [ ExpressionNode *node]
 @init{
 	node = new ExpressionNode();
-	OperationNode::Operators op;
+	OperationNodeScript::Operators op;
 }
 	:	rel1 = relation				{ node->setLeftTerm(rel1); } 
 		(				

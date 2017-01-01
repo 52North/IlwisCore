@@ -84,8 +84,6 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/workflow/errormodel.h \
     ilwiscoreui/models/workflow/workflowcatalogmodel.h \
     ilwiscoreui/models/workflowerrormodel.h \
-    ilwiscoreui/models/workflow/edgepropobject.h \
-    ilwiscoreui/models/workflow/nodepropobject.h \
     ilwiscoreui/models/preferencesmodel.h \
     ilwiscoreui/models/internaldatabasemodel.h \
     ilwiscoreui/models/resourcemanager.h \
@@ -169,8 +167,6 @@ SOURCES += \
     ilwiscoreui/models/workflow/errormodel.cpp \
     ilwiscoreui/models/workflow/workflowcatalogmodel.cpp \
     ilwiscoreui/models/workflowerrormodel.cpp \
-    ilwiscoreui/models/workflow/edgepropobject.cpp \
-    ilwiscoreui/models/workflow/nodepropobject.cpp \
     ilwiscoreui/models/preferencesmodel.cpp \
     ilwiscoreui/models/internaldatabasemodel.cpp \
     ilwiscoreui/models/resourcemanager.cpp \

@@ -5,6 +5,10 @@
 #include "ilwiscoreui_global.h"
 #include "kernel.h"
 #include "ilwisdata.h"
+#include "symboltable.h"
+#include "location.h"
+#include "operationmetadata.h"
+#include "workflownode.h"
 #include "modeller/workflow.h"
 #include "modeller/analysispattern.h"
 

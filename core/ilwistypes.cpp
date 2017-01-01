@@ -302,6 +302,22 @@ QString TypeHelper::type2name(IlwisTypes t)
     case itCOLUMN:
         return "column";
     }
+//    QString type;
+//    for(quint64 i =0; i < 64; ++i){
+//       quint64 result = 1 << i;
+//       if ( result > t)
+//           break;
+
+//        if ( hasType(t, result)) {
+//            if ( type != "")
+//                type += "|";
+//            type += TypeHelper::type2name(result);
+//        }
+
+//    }
+//    if ( type != "")
+//        return type;
+
     return sUNDEF;
 
 }
@@ -420,4 +436,89 @@ IlwisTypes TypeHelper::name2type(const QString &dname)
     return itUNKNOWN;
 
 
+}
+
+IlwisTypes TypeHelper::variant2type(const QVariant &v)
+{
+    QVariant::Type ty = v.type();
+    switch(ty) {
+        case QVariant::Bool:
+            return itUINT8; break;
+        case QVariant::Double:
+            return itDOUBLE; break;
+        case QVariant::Int:
+          return itINT32; break;
+        case QVariant::LongLong:
+        case QVariant::ULongLong:
+            return itINT64; break;
+        case QVariant::UInt:
+            return itUINT32; break;
+        case QVariant::String:
+              return itSTRING; break;
+        case QVariant::Time:
+            return itTIME; break;
+        case QVariant::Date:
+            return itDATE; break;
+        case QVariant::DateTime:
+            return itDATETIME;
+        case QVariant::List:
+            return itCOLLECTION;
+        default:
+        {
+            QString name = v.typeName();
+            if ( name == "Ilwis::RasterCoverage")
+                return itRASTER;
+            if ( name == "Ilwis::FeatureCoverage")
+                return itFEATURE;
+            if ( name == "Ilwis::Table")
+                return itTABLE;
+            if ( name =="Ilwis::IlwisObject")
+                return  itILWISOBJECT;
+            if ( name == "Ilwis::Coverage")
+                return  itCOVERAGE;
+            if ( name.indexOf("Ilwis::ItemDomain")==0) // contains template construct, so different comparison
+                return  itITEMDOMAIN;
+            if ( name == "Ilwis::NumericDomain")
+                return  itNUMERICDOMAIN;
+            if ( name == "Ilwis::TextDomain")
+                return  itTEXTDOMAIN;
+            if ( name == "Ilwis::ColorDomain")
+                return  itCOLORDOMAIN;
+            if ( name == "Ilwis::Domain")
+                return  itDOMAIN;
+            if ( name == "Ilwis::CoordinateSystem")
+                return  itCOORDSYSTEM;
+            if ( name == "Ilwis::ConventionalCoordinateSystem")
+                return  itCONVENTIONALCOORDSYSTEM;
+            if ( name == "Ilwis::BoundsOnlyCoordinateSystem")
+                return  itBOUNDSONLYCSY;
+            if ( name == "Ilwis::GeoReference")
+                return  itGEOREF;
+            if ( name == "Ilwis::FlatTable")
+                return  itFLATTABLE;
+            if ( name == "Ilwis::AttributeTable")
+                return  itATTRIBUTETABLE;
+            if ( name == "Ilwis::Projection")
+                return  itPROJECTION;
+            if ( name == "Ilwis::Ellipsoid")
+                return  itELLIPSOID;
+            if ( name == "Ilwis::Catalog")
+                return  itCATALOG;
+            if ( name == "Ilwis::SingleOperation")
+                return  itSINGLEOPERATION;
+            if ( name == "Ilwis::Workflow") {
+                return  itWORKFLOW;
+            }
+            if ( name == "Ilwis::Script") {
+                return  itSCRIPT;
+            }
+            if ( name == "Ilwis::Model") {
+                return  itMODEL;
+            }
+            if ( name == "Ilwis::Representation")
+                return  itREPRESENTATION;
+        }
+
+    }
+    return itUNKNOWN;
 }
