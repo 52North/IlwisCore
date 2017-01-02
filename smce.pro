@@ -73,6 +73,7 @@ INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
                 $$ILWISCORE/core/ilwisobjects/geometry \
                 $$ILWISCORE/core/util \
                 $$ILWISCORE/core/geos/include \
+                $$ILWISCORE/core/ilwisobjects/operation/modeller \
                 $$ILWISCORE/core/ilwisobjects/geometry/geodeticdatum \
                 $$ILWISCORE/core/ilwisobjects/geometry/projection \
                 $$ILWISCORE/core/ilwisobjects/geometry/coordinatesystem \
