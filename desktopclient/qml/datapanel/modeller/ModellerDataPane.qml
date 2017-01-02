@@ -93,6 +93,7 @@ Item {
         manager.analisysView = analysisView
         manager.applicationView= applicationView
         manager.conceptView= conceptualView
+        workflowView.workflowManager = manager.workflowManager
 
 
         // todo: refactor these into the SMCE proj. Find a way to decouple SMCE specifics from the desktopclient's

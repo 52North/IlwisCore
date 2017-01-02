@@ -5,7 +5,6 @@ import OperationModel 1.0
 import WorkflowModel 1.0
 import QtQuick.Dialogs 1.1
 import ".." as Modeller
-import "forms" as Forms
 import "../../../matrix.js" as Matrix
 import "../../../Global.js" as Global
 
@@ -24,8 +23,6 @@ Modeller.ModellerWorkArea {
     onDropConditionChanged: {
         tools.dropCondition(dropCondition)
     }
-
-
 
     state : "visible"
 

@@ -5,7 +5,6 @@ import QtQuick.Controls.Styles 1.0
 import UIContextModel 1.0
 import "../../../controls" as Controls
 import "../../../Global.js" as Global
-import "./forms" as Forms
 
 Rectangle {
     id : modellayers
