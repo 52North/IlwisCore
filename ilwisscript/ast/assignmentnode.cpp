@@ -6,7 +6,7 @@
 #include "symboltable.h"
 #include "astnode.h"
 #include "idnode.h"
-#include "operationnode.h"
+#include "operationnodescript.h"
 #include "expressionnode.h"
 #include "symboltable.h"
 #include "formatter.h"

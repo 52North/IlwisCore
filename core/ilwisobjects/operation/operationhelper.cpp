@@ -12,10 +12,16 @@
 #include "featurecoverage.h"
 #include "feature.h"
 #include "symboltable.h"
+#include "catalog.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
 #include "operation.h"
 #include "commandhandler.h"
+#include "proj4parameters.h"
+#include "basetable.h"
+#include "flattable.h"
+#include "conventionalcoordinatesystem.h"
+#include "ilwiscontext.h"
 #include "operationhelper.h"
 
 using namespace Ilwis;
@@ -77,4 +83,87 @@ void OperationHelper::initialize(const IIlwisObject &inputObject, Ilwis::IIlwisO
             }
         }
     }
+
+}
+
+IIlwisObject OperationHelper::variant2ilwisobject(const QVariant& variant, IlwisTypes tp){
+    switch(tp)    {
+        case itRASTER:
+            return variant.value<IRasterCoverage>();
+    case itFEATURE:
+        return variant.value<IFeatureCoverage>();
+    case itTABLE:
+        return variant.value<ITable>();
+    case itFLATTABLE:
+        return variant.value<IFlatTable>();
+    case itCOORDSYSTEM:
+        return variant.value<ICoordinateSystem>();
+    case itCONVENTIONALCOORDSYSTEM:
+        return variant.value<IConventionalCoordinateSystem>();
+    case itDOMAIN:
+        return variant.value<IDomain>();
+        //TODO rest of the cases
+    }
+    return IIlwisObject();
+}
+
+QString OperationHelper::unquote(const QString& name){
+    if ( name.size() == 0)
+        return name;
+
+    if (name[0] == '\'' && name[name.size()-1] == '\''){
+        return name.mid(1,name.size() - 2);
+    }
+    return name;
+}
+
+QString OperationHelper::variant2string(const QVariant& v, IlwisTypes tp){
+    QMetaType::Type metatype = static_cast<QMetaType::Type>(v.type());
+    bool inttype = metatype == QMetaType::Int ||  metatype == QMetaType::UInt ||
+            metatype == QMetaType::LongLong ||  metatype == QMetaType::ULongLong ||
+            metatype == QMetaType::Long ||  metatype == QMetaType::ULong ||
+            metatype == QMetaType::Short || metatype == QMetaType::UShort ||
+            metatype == QMetaType::Char || metatype == QMetaType::UChar;
+    if ( inttype)
+        return QString::number(v.toLongLong());
+
+    if ( metatype == QMetaType::Double || metatype == QMetaType::Float)
+        return QString::number(v.toDouble());
+    if ( metatype == QMetaType::QString)
+        return v.toString();
+
+    if ( hasType(tp, itILWISOBJECT)){
+        IIlwisObject obj = OperationHelper::variant2ilwisobject(v,tp);
+        if ( obj.isValid()){
+            return obj->resource().url()    .toString();
+        }
+    }
+    //TODO: other ilwis types
+    return "";
+}
+
+IlwisTypes OperationHelper::determineType(const QString &value)
+{
+    if ( value == "\"?\"")
+        return itANY;
+
+    IlwisTypes tp = IlwisObject::findType(value);
+
+    if ( tp != itUNKNOWN)
+        return tp;
+
+    QString s = context()->workingCatalog()->resolve(value);
+    IlwisTypes type = IlwisObject::findType(s) ;
+    if ( type != itUNKNOWN)
+        return type;
+
+    quint64 id = IlwisObject::internalname2id(value);
+    if ( id != i64UNDEF){
+        ESPIlwisObject obj =  mastercatalog()->get(id);
+        if ( obj.get() != 0)
+            return obj->ilwisType();
+    }
+    tp = TypeHelper::variant2type(value);
+
+    return tp == itUNKNOWN ? itSTRING : tp;
 }

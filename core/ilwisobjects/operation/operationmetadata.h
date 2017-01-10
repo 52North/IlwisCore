@@ -10,6 +10,8 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT OperationResource : public Resource{
 public:
     enum UIElement{ueNONE=0, ueCOMBO=1, ueLIST=2};
+    OperationResource();
+    OperationResource(const Resource& resource);
     OperationResource(const QUrl& url, const QString& nmspace="ilwis");
     OperationResource(const QUrl& url, const IlwisTypes &type, const QString& nmspace="ilwis");
     OperationResource(const QUrl& urlNorm, const QUrl& urlRaw, const QString& nmspace="ilwis");

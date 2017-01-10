@@ -28,7 +28,9 @@ DropArea {
         text : labelText
         font.weight: boldLabel ? Font.Bold : Font.DemiBold
         font.pointSize: fontSize
+        elide: Text.ElideMiddle
         y :3
+        clip :true
     }
     TextField{
         id : textid

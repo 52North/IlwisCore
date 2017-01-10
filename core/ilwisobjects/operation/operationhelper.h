@@ -59,18 +59,27 @@ public:
             std::sort(orderedNumbers.begin(), orderedNumbers.end());
             result = orderedNumbers.size() > 0 ? orderedNumbers[(int)(orderedNumbers.size() / 2)] : rUNDEF;
         }else if (method == NumericStatistics::pPREDOMINANT){
-//            double pred = -1e308;
-//            std::map<double, qint32> counts;
-//            for(auto v : values){
-//                counts[v]++;
-//            }
-//            double maxCount = -1e308;
-//            for(auto item : counts){
-
-//            }
+            std::map<double, qint32> counts;
+            for(auto v : values){
+                counts[v]++;
+            }
+            double maxCount = -1e308;
+            for(auto item : counts){
+                double cmax = Ilwis::max(item.second, maxCount);
+                if ( cmax > maxCount){
+                    result = item.first;
+                    maxCount = cmax;
+                }
+            }
         }
         return result;
     }
+
+
+    static IlwisTypes determineType(const QString &value);
+    static IIlwisObject variant2ilwisobject(const QVariant &variant, IlwisTypes tp);
+    static QString variant2string(const QVariant &v, IlwisTypes tp);
+    static QString unquote(const QString &name);
 };
 }
 

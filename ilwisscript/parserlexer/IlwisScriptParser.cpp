@@ -4067,7 +4067,7 @@ mult(pilwisscriptParser ctx)
 
 
     	node = new MultiplicationNode();
-    	OperationNode::Operators op;
+    	OperationNodeScript::Operators op;
 
     {
         // D:\\Projects\\Ilwis\\Ilwis4\\projects\\IlwisCore\\ilwisscript\\parserlexer\\ilwisscript.g:195:2: (un1= unary ( ( '*' | '/' | 'mod' ) un2= unary )* )
@@ -4156,7 +4156,7 @@ mult(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oTIMES; 
+            	        	             op = OperationNodeScript::oTIMES; 
             	        	        }
 
 
@@ -4173,7 +4173,7 @@ mult(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oDIVIDED; 
+            	        	             op = OperationNodeScript::oDIVIDED; 
             	        	        }
 
 
@@ -4190,7 +4190,7 @@ mult(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oMOD; 
+            	        	             op = OperationNodeScript::oMOD; 
             	        	        }
 
 
@@ -4267,7 +4267,7 @@ add(pilwisscriptParser ctx)
 
 
     	node = new AddNode();
-    	OperationNode::Operators op;
+    	OperationNodeScript::Operators op;
 
     {
         // D:\\Projects\\Ilwis\\Ilwis4\\projects\\IlwisCore\\ilwisscript\\parserlexer\\ilwisscript.g:210:2: (mul1= mult ( ( '+' | '-' ) mul2= mult )* )
@@ -4350,7 +4350,7 @@ add(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oADD; 
+            	        	             op = OperationNodeScript::oADD; 
             	        	        }
 
 
@@ -4367,7 +4367,7 @@ add(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oSUBSTRACT; 
+            	        	             op = OperationNodeScript::oSUBSTRACT; 
             	        	        }
 
 
@@ -4444,7 +4444,7 @@ relation(pilwisscriptParser ctx)
 
 
     	node = new RelationNode();
-    	OperationNode::Operators op;
+    	OperationNodeScript::Operators op;
 
     {
         // D:\\Projects\\Ilwis\\Ilwis4\\projects\\IlwisCore\\ilwisscript\\parserlexer\\ilwisscript.g:225:2: (add1= add ( ( '==' | '!=' | '<' | '<=' | '>=' | '>' ) add2= add )* )
@@ -4551,7 +4551,7 @@ relation(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oEQ; 
+            	        	             op = OperationNodeScript::oEQ; 
             	        	        }
 
 
@@ -4568,7 +4568,7 @@ relation(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oNEQ; 
+            	        	             op = OperationNodeScript::oNEQ; 
             	        	        }
 
 
@@ -4585,7 +4585,7 @@ relation(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oLESS; 
+            	        	             op = OperationNodeScript::oLESS; 
             	        	        }
 
 
@@ -4602,7 +4602,7 @@ relation(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oLESSEQ; 
+            	        	             op = OperationNodeScript::oLESSEQ; 
             	        	        }
 
 
@@ -4619,7 +4619,7 @@ relation(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oGREATEREQ; 
+            	        	             op = OperationNodeScript::oGREATEREQ; 
             	        	        }
 
 
@@ -4636,7 +4636,7 @@ relation(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oGREATER; 
+            	        	             op = OperationNodeScript::oGREATER; 
             	        	        }
 
 
@@ -4713,7 +4713,7 @@ expression(pilwisscriptParser ctx)
 
 
     	node = new ExpressionNode();
-    	OperationNode::Operators op;
+    	OperationNodeScript::Operators op;
 
     {
         // D:\\Projects\\Ilwis\\Ilwis4\\projects\\IlwisCore\\ilwisscript\\parserlexer\\ilwisscript.g:244:2: (rel1= relation ( ( 'and' | 'or' | 'xor' ) rel2= relation )* )
@@ -4802,7 +4802,7 @@ expression(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oAND; 
+            	        	             op = OperationNodeScript::oAND; 
             	        	        }
 
 
@@ -4819,7 +4819,7 @@ expression(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oOR; 
+            	        	             op = OperationNodeScript::oOR; 
             	        	        }
 
 
@@ -4836,7 +4836,7 @@ expression(pilwisscriptParser ctx)
 
 
             	        	        {
-            	        	             op = OperationNode::oXOR; 
+            	        	             op = OperationNodeScript::oXOR; 
             	        	        }
 
 

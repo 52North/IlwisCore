@@ -28,6 +28,7 @@
 #include "ilwiscontext.h"
 #include "operationworker.h"
 #include "dataformat.h"
+#include "modeller/workflownode.h"
 #include "operationcatalogmodel.h"
 #include "workflow/workflowmodel.h"
 

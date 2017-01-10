@@ -47,6 +47,9 @@ Controls.DropableItem{
                 labelText: qsTr("Name")
                 labelWidth: 100
                 width : parent.width
+                onContentChanged: {
+                    isNew = true
+                }
             }
             Controls.TextAreaLabelPair{
                 id : descedit
@@ -151,7 +154,7 @@ Controls.DropableItem{
                     text : qsTr("Location can't be used for writing")
                     anchors.right: createButton.left
                     anchors.rightMargin: 8
-                    opacity : topItem.currentCatalogCorrectUrl() === "" ? 1 : 0
+                    opacity : isNew && topItem.currentCatalogCorrectUrl() === "" ? 1 : 0
                     color : "red"
 
                 }
@@ -165,7 +168,7 @@ Controls.DropableItem{
 
                     enabled: nameedit.content.length > 0 && topItem.currentCatalogCorrectUrl() !== ""
                     onClicked: {
-
+                        isNew = false
                         var keywords = ""
                         for( var i=0; i < keyitems.model.length; ++i){
                             var item = keyitems.model[i]

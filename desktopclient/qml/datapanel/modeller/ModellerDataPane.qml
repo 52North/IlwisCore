@@ -35,7 +35,7 @@ Item {
         Item {
             id : datapane
             width : parent.width
-            height : parent.height - 300
+            height : parent.height - 340
 
             function changeDataPane(index, newState){
                 datapane.state = newState
@@ -93,6 +93,7 @@ Item {
         manager.analisysView = analysisView
         manager.applicationView= applicationView
         manager.conceptView= conceptualView
+        workflowView.workflowManager = manager.workflowManager
 
 
         // todo: refactor these into the SMCE proj. Find a way to decouple SMCE specifics from the desktopclient's
@@ -110,6 +111,7 @@ Item {
     function informManagerSelNodeChanged(msg) {
         console.log("ModellerDataPane.qml: informManagerSelNodeChanged: sending: " + msg)
         manager.sendSelNodeChanged(msg)
+        workflowView.workflowManager = manager.workflowManager
     }
 
 
@@ -120,13 +122,14 @@ Item {
 
     function addDataSource(filter, sourceName, sourceType){
         if ( filter !== "" ){
+
             if (sourceType === "model" ) {
                 var resource = mastercatalog.id2Resource(filter.split('=')[1],modellerDataPane);
                 if ( resource){
                     modellerDataPane.model = modelbuilder.createModel(resource, modellerDataPane)
                     if ( modellerDataPane.model){
                         if ( resource.typeName === "workflow")
-                        workflowView.workflow = model.addWorkflow(filter);
+                            workflowView.workflow = model.addWorkflow(filter);
                         model.currentWorkflow = workflowView.workflow
                         if (resource) {
                             workflowView.drawFromWorkflow()

@@ -9,6 +9,7 @@
 #include "numericdomain.h"
 #include "symboltable.h"
 #include "operationmetadata.h"
+#include "workflownode.h"
 #include "workflow.h"
 #include "commandhandler.h"
 #include "uicontextmodel.h"
@@ -287,7 +288,7 @@ QString ObjectCreator::createWorkflow(const QVariantMap &parms)
     wf.prepare();
     QString name = parms["name"].toString();
     wf->name(name);
-    wf->resourceRef().setUrl(QUrl("ilwis://operations/" + name));
+    wf->resourceRef().setUrl(QUrl("ilwis://operations/" + name + ".ilwis"));
     wf->resourceRef().setUrl(parms["url"].toString(), true);
     wf->resourceRef().setDescription(parms["description"].toString());
     wf->resourceRef().addProperty("keyword", parms["keywords"].toString());

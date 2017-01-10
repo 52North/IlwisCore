@@ -1,7 +1,7 @@
 #include "kernel.h"
 #include "errorobject.h"
 #include "astnode.h"
-#include "operationnode.h"
+#include "operationnodescript.h"
 #include "addnode.h"
 #include "symboltable.h"
 #include "commandhandler.h"
@@ -19,7 +19,7 @@ QString AddNode::nodeType() const
 
 bool AddNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 {
-    if(!OperationNode::evaluate(symbols, scope, ctx))
+    if(!OperationNodeScript::evaluate(symbols, scope, ctx))
         return false;
 
     bool ret = true;
@@ -27,9 +27,9 @@ bool AddNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
         term._rightTerm->evaluate(symbols, scope, ctx) ;
         const NodeValue& vright = term._rightTerm->value();
         for(int i=0; i < vright.size(); ++i) {
-            if ( term._operator == OperationNode::oADD ){
+            if ( term._operator == OperationNodeScript::oADD ){
                 ret = handleAdd(i, vright, symbols, ctx);
-            } else   if ( term._operator == OperationNode::oSUBSTRACT ){
+            } else   if ( term._operator == OperationNodeScript::oSUBSTRACT ){
                 ret = handleSubstract(i, vright, symbols, ctx);
             }
             if (!ret)

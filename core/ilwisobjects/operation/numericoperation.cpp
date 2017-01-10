@@ -102,6 +102,7 @@ NumericRange *NumericOperation::constructRangeFrom(const SPNumericRange &range, 
 
 void NumericOperation::mathoperator(const QString &oper)
 {
+
     if ( oper.toLower() == "add")
         _operator = otPLUS;
     else if ( oper.toLower() == "substract")

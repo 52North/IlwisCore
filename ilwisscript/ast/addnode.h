@@ -2,7 +2,7 @@
 #define ADDNODE_H
 
 namespace Ilwis {
-class AddNode : public OperationNode
+class AddNode : public OperationNodeScript
 {
 public:
     AddNode();

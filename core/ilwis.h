@@ -50,7 +50,8 @@ inline long min(long a, long b) { return ((a<=b && a!=iUNDEF) || b==iUNDEF) ? a 
 inline long max(long a, long b) { return (a>=b && a!=iUNDEF) ? a : b; }
 inline qint64 max(qint64 a, qint64 b) { return a>=b && a!=i64UNDEF ? a : b;}
 
-enum LogicalOperator{loNONE,loAND, loOR, loXOR, loLESS, loLESSEQ, loNEQ, loEQ, loGREATER, loGREATEREQ};
+enum LogicalOperator{loNONE,loAND, loOR, loXOR, loLESS, loLESSEQ, loNEQ, loEQ, loGREATER, loGREATEREQ, loNOT};
+
 }
 
 #include "ilwistypes.h"

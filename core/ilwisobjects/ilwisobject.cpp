@@ -532,7 +532,8 @@ bool IlwisObject::isInternalObject() const
         return true;
     if (resource().isValid()){
         QString path = resource().url().toString();
-        bool ok = path.indexOf("ilwis:/") == 0 && path.indexOf("ilwis://system") == -1;
+        //worklfows nromalized url begins with ilwis but it not an internalobject
+        bool ok = (path.indexOf("ilwis:/") == 0 && ilwisType() != itWORKFLOW) && path.indexOf("ilwis://system") == -1;
         return ok;
     }
     return false;

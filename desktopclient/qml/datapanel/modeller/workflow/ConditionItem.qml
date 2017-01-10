@@ -4,234 +4,196 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import QtQuick.Dialogs 1.0
 import "../../../Global.js" as Global
+import "../../../controls" as Controls
 
 
 Rectangle {
-    property int standardHeight: 180
-    property int standardWidth: 200
-    property int padding: 20
-
-    function inSideCondtion(centerY){
-        var relY = centerY - y;
-        return relY < listRectangle.height
-    }
-
     id : conditionItem
+
+    property int standardHeight: 180
+    property int standardWidth: 360
+    property int padding: 1
+    property string type : "conditionitem"
+    property var operationsList : []
+    property var conditions : []
+    property var junctionsList: []
+    property var itemid
+    property bool isSelected : false
+
     width: standardWidth
     height: standardHeight
-    color: "#bfd9bf"
+    color: "transparent"
     border.width: 1
     border.color: "grey"
     transformOrigin: Item.TopLeft;
-    z: 0
     radius : 5
-    transform: Translate { id: transformTl }
-    property var operationsList : []
-    property var conditionContainerCanvas
-    property var canvasComponent
-    property var containerId
 
-    function panOperation(x, y)
-    {
-        transformTl.x += x;
-        transformTl.y += y;
+    onXChanged: {
+        changeBox()
+    }
+    onYChanged: {
+        changeBox()
+    }
+    onWidthChanged: {
+        changeBox()
+    }
+    onHeightChanged: {
+        changeBox()
     }
 
-    function getXYcoordsCanvas()
-    {
-        var pt = {x: 0, y: 0};
-        pt.x = conditionItem.x + transformTl.x;
-        pt.y = conditionItem.y + transformTl.y;
-        return pt;
-    }
+    transform: Scale { origin.x:  width /2; origin.y : height / 2; xScale : wfCanvas.zoomScale; yScale: wfCanvas.zoomScale}
+    z : 4
 
-    function replacePanOperation(x, y)
-    {
-        transformTl.x = x - conditionItem.x ;
-        transformTl.y = y - conditionItem.y ;
-    }
-
-    function scaleOperation(scaleFactor)
-    {
-        conditionItem.scale *= scaleFactor;
-    }
-
-    function transformedPoint(matrix, x, y)
-    {
-        return {
-            x: matrix.inverse().a * x + matrix.inverse().c * y + matrix.inverse().e,
-            y: matrix.inverse().b * x + matrix.inverse().d * y + matrix.inverse().f
-        }
-    }
-
-    function getScreenCoords(matrix, x, y) {
-        var xn = matrix.e + x * matrix.a;
-        var yn = matrix.f + y * matrix.d;
-        return { x: xn, y: yn };
-    }
-
-    function setCanvasColor(color){
-        conditionRectangle.color = color;
-    }
-
-    function addToOperationList(operationIndex) {
-        if(operationsList.indexOf(operationIndex) == -1) {
-            operationsList.push(operationIndex);
-            resize()
-        }
-    }
-
-    function removeFromOperationList(operationIndex) {
-        if(operationsList.indexOf(operationIndex) > -1) {
-            operationsList.splice(operationsList.indexOf(operationIndex), 1)
-            resize()
-        }
-    }
-
-    function finishCreation(component) {
-        if (canvasComponent.status === Component.Ready) {
-            var sprite = canvasComponent.createObject(conditionRectangle, {});
-            if (sprite === null) {
-                console.log("Error creating object");
-            }
-        } else if (canvasComponent.status === Component.Error) {
-            console.log("Error loading component:", canvasComponent.errorString());
-        }
-    }
-
-    function openNewConditionDialogButtonFunction() {
-        wfCanvas.showConditionTypeForm(containerId)
-    }
-
-    function resize() {
-        var minX = 1000000, maxX = -1000000, minY = 1000000, maxY = -1000000, operation, operationIndex, xChanged = false, yChanged = false;
-
-        // Search for min and max, x and y
-        for (var i in operationsList) {
-            operationIndex = operationsList[i]
-            operation = wfCanvas.operationsList[operationIndex]
-
-            if (operation.x < minX) {
-                minX = operation.x
-                xChanged = true
-            }
-            if (operation.x + operation.width > maxX) {
-                maxX = operation.x + operation.width
-                xChanged = true
-            }
-
-            if (operation.y < minY) {
-                minY = operation.y;
-                yChanged = true
-            }
-            if (operation.y + operation.height > maxY) {
-                maxY = operation.y + operation.height
-                yChanged = true
-            }
-        }
-
-        conditionItem.width = xChanged ? maxX - minX + (padding * 2) : standardWidth
-        conditionItem.height = yChanged ? maxY - minY + listRectangle.height + (padding * 2) : standardHeight
-        if (xChanged) conditionItem.x = minX - padding
-        if (yChanged) conditionItem.y = minY - listRectangle.height - padding
-    }
-
-    function addCondition(conditionId, name) {
-        testModel.append({
-                             'first': false,
-                             'condition': '',
-                             'second': false,
-                             'xId': conditionId,
-                             'name': name
-                         })
-    }
-
-    function refresh() {
-        var conditions = wfCanvas.getConditions(containerId)
-        testModel.clear()
-
-        for (var i = 0; i < conditions.length; i++){
-            testModel.append(conditions[i])
-        }
-    }
-
-    ListModel {
-        id: testModel
+    AttachmentRectangle{
+        id : att1
+        index : 0
+        anchors.left: conditionItem.left
+        anchors.leftMargin: -15
+        anchors.top : conditionItem.top
+        anchors.topMargin: 15
+        owner : conditionItem
+        z : 2
     }
 
     Rectangle {
         id: listRectangle
+        property int detailsHeight : 0
 
         border.width: 1
         border.color: "grey"
         color: "#b3e6c9"
-        height : 65
+        height : 35 + detailsHeight
         width : parent.width - 8
         x : 4
         y: 4
         radius : 5
 
+        DropArea {
+            x : 2
+            y : 2
+            z: 1
 
-        ListView{
-            id : conditionList
+            height : parent.height
+            width : parent.width - 4
+            enabled : true
 
-            clip : true
-            height : parent.height - 25
-            width : parent.width
-            x: 0
-            y: 0
-
-            model : testModel
-            delegate: Row {
-                Column {
-                    Loader{
-                        width: conditionList.width - 30
-                        height: 15
-                        source: name !== "" ? "OnlyNameCondition.qml" : "StandardCondition.qml"
-                    }
-                }
-                Column {
-                    Button {
-                        height : 15
-                        width : 15
-                        Image {
-                            anchors.fill: parent
-                            source : "../../../images/refresh20.png"
-                        }
-                        onClicked: {
-                            var info = canvas.workflow.getOpenConditionParameters(containerId, xId)
-                            manager.showConditionForm(info.operationId, info.hiddenFields, info.constantValues, containerId + '|' + xId)
-                        }
-                    }
-                }
-                Column {
-                    Button {
-                        height : 15
-                        width : 15
-                        Image {
-                            anchors.fill: parent
-                            source : "../../../images/close20.png"
-                        }
-                        onClicked: {
-                            // TODO: remove condition
-                            refresh()
-                        }
-                    }
-                }
+            Text {
+               anchors.centerIn: parent
+               text : qsTr("Drop test operation(s) here")
+               color : "grey"
             }
-        }
-        Button {
-            height : 25
-            width : 25
-            anchors.top : conditionList.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            Image {
+
+            ListView{
+                id :testList
+                property var tests : []
                 anchors.fill: parent
-                source : "../../../images/createCS1.png"
+                z : 2
+                delegate: Column {
+                    id : testPart
+                    width : parent.width
+                    height : 25
+                    Row {
+                        width : parent.width
+                        height : 25
+                        ComboBox{
+                            width : 45
+                            height : parent.height
+                            model: [" ", "not"]
+                        }
+
+                        TextField{
+                            id : testText
+                            width : parent.width - 115
+                            height : parent.height
+                            readOnly: true
+                            text : modelData.name2
+                        }
+
+
+                        Button {
+                            width : 25
+                            height : 25
+                            Image {
+                                width : 20
+                                height : 20
+                                anchors.centerIn: parent
+                                source : "../../../images/zoomin20.png"
+                            }
+                            onClicked: {
+                                if ( testDetails.height == 0){
+                                    //var operation = modelData.parameters
+                                    //var names = operation.inParamNames
+                                    testDetails.model = modelData.parameters
+                                    testList.currentIndex = index
+                                }else{
+                                    for(var t=0; t < detailsBack.values.length; ++t)
+                                        workflow.setTestValues(itemid, testList.currentIndex, t, detailsBack.values[t])
+                                    detailsBack.values = []
+                                    testDetails.model = null
+
+                                }
+                            }
+                        }
+
+                        ComboBox{
+                            width : 45
+                            height : parent.height
+                            model: [" ", "and", "or"]
+                        }
+                    }
+                    Rectangle {
+                        id : detailsBack
+                        width : parent.width
+                        height : 0
+                        property var values : []
+                        ListView {
+                            id : testDetails
+                            anchors.fill: parent
+                            onModelChanged: {
+                                detailsBack.height = model ? model.length * 20 : 0
+                                listRectangle.detailsHeight = detailsBack.height
+                            }
+
+                            delegate : Item{
+                                id : parmRow
+                                width : parent.width
+                                height : 20
+                                Rectangle{
+                                    id : attachDetail
+                                    anchors.right : parmvalues.left
+                                    anchors.rightMargin: 15
+                                    width : 10
+                                    height : 10
+                                    border.width: 1
+                                    MouseArea{
+                                        anchors.fill : parent
+                                        onClicked: {
+                                            testDetails.currentIndex = index
+                                            var datatype = workflow.testValueDataType(itemid, testList.currentIndex, index)
+                                            attachTestFlow(type,index )
+                                            att1.finishFlow(0,index)
+                                        }
+                                    }
+
+                                }
+
+                                Controls.TextEditLabelPair{
+                                    id : parmvalues
+                                    width : parent.width - 20
+                                    labelWidth: 160
+                                    labelText: modelData.label
+                                    height : 20
+                                    content : modelData.value
+                                    onContentChanged: {
+                                        detailsBack.values[index] = content
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            onClicked: {
-                openNewConditionDialogButtonFunction()
-            }
+
         }
     }
 
@@ -242,10 +204,234 @@ Rectangle {
         anchors.top: listRectangle.bottom
         border.width: 1
         border.color: "grey"
-        color : "#fcf5e8"
-        height: parent.height - listRectangle.height - 12
+        color : "lightblue"
+        opacity : 0.1
+        height: parent.height - listRectangle.height - 10 - bottombuttons.height
         width : parent.width - 8
         x : 4
         radius : 5
+    }
+    Rectangle {
+        id : bottombuttons
+        anchors.top : conditionRectangle.bottom
+        width : parent.width - 8
+        anchors.horizontalCenter: parent.horizontalCenter
+        height : 24
+        color : "#d9f2e4"
+        border.width: 1
+        border.color: "darkgrey"
+        Button {
+            width : 22
+            height : 22
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: 2
+            Image {
+                anchors.centerIn: parent
+                width : 20
+                height : 20
+                source : "../../../images/junction.png"
+
+            }
+            onClicked: {
+                createJunction(0)
+            }
+        }
+        Button {
+            width : 22
+            height : 22
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 2
+            Image {
+                anchors.centerIn: parent
+                width : 20
+                height : 20
+                source : "../../../images/junction.png"
+
+
+            }
+            onClicked: {
+                createJunction(2)
+            }
+        }
+        Button {
+            width : 22
+            height : 22
+            anchors.verticalCenter: parent.verticalCenter
+            x : parent.width / 2 - 11
+            Image {
+                anchors.centerIn: parent
+                width : 20
+                height : 20
+                source : "../../../images/junction.png"
+
+            }
+            onClicked: {
+                createJunction(1)
+            }
+        }
+
+    }
+
+    MouseArea {
+        hoverEnabled: true
+        anchors.bottom: parent.bottom
+        width : parent.width
+        height : 5
+        onExited: {
+            cursorShape = Qt.ArrowCursor
+        }
+
+
+    }
+
+    function addToOperationList(operation) {
+            operationsList.push(operation);
+            operation.condition = conditionItem
+            resize()
+    }
+
+    function removeFromOperationList(operationIndex) {
+    }
+
+
+    function resize() {
+        var newWidth = -1000000, newHeight = -1000000, operation, xChanged = false, yChanged = false;
+
+
+        for (var i in operationsList) {
+            operation = operationsList[i]
+
+            if ((operation.x  - conditionItem.x + operation.width) > conditionItem.width) {
+                newWidth = operation.x  - conditionItem.x + operation.width
+                xChanged = true
+            }
+
+            if ((operation.y  - conditionItem.y + operation.height) > conditionItem.height) {
+               newHeight = operation.y  - conditionItem.y + operation.height
+                yChanged = true
+            }
+        }
+        if ( xChanged)
+            conditionItem.width = newWidth + (padding * 2)
+        if ( yChanged)
+            conditionItem.height = newHeight + (padding * 2)
+
+    }
+
+    function addTest(index, pre, operation, value, post,type) {
+        if ( index == -1)
+            index = testList.tests.length
+        workflow.addTest2Condition(itemid,operation.id,pre, post)
+        testList.model = null
+        testList.model = workflow.getTests(itemid)
+    }
+
+    function inOperationList(my) {
+        var yrelative = my - y
+        return yrelative > conditionRectangle.y
+    }
+
+    function moveContent(dx, dy){
+        for(var i=0; i < operationsList.length; ++i){
+            var item = operationsList[i]
+            item.x += dx
+            item.y += dy
+        }
+        wfCanvas.canvasValid = false
+        drawFlows(wfCanvas.ctx)
+    }
+
+    function inSideCondtion(centerY){
+        var relY = centerY - y;
+        return relY < listRectangle.height
+    }
+
+    function attachementPoint(canvas, index){
+         return att1.center()
+    }
+
+     function attachFlow(target, attachRect){
+         // no direct implementation as no one can directly do this
+     }
+
+    function attachTestFlow(type, toIndex){
+        console.debug(type, toIndex)
+        wfCanvas.showTestForm(conditionItem, att1.index, type, toIndex)
+//        var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
+//        currentItem.setFlow(conditionItem, att1.index, flowPoints)
+    }
+
+    function changeBox(){
+        workflow.changeBox(itemid, x,y,width, height)
+    }
+
+    function addTestOperation(operationid){
+        var operation = operations.operation(operationid)
+        if ( operation){
+            addTest(-1, "", operation,"","","")
+        }
+    }
+
+    function createJunction(side){
+        var px,py, attach
+        if (side === 1){
+            px = conditionItem.x + conditionItem.width / 2 - 15
+            py = conditionItem.y + height + 40
+        }
+        if (side === 0){
+            px = conditionItem.x -80
+            py = conditionItem.y + conditionItem.height / 2 - 15
+        }
+        if (side === 2){
+            px = conditionItem.x + conditionItem.width + 80
+            py = conditionItem.y + conditionItem.height / 2 - 15
+        }
+        component = Qt.createComponent("JunctionItem.qml");
+        if (component.status === Component.Ready){
+            var nodeid = workflow.addNode(0,{x : px, y:py,type:'junctionnode'})
+            currentItem = component.createObject(wfCanvas, {"x": px, "y": py, "itemid" : nodeid, "scale": wfCanvas.scale});
+            junctionsList.push(currentItem)
+            wfCanvas.canvasValid = false
+        }
+    }
+
+    function drawFlows(ctx){
+        for(var i=0; i < junctionsList.length; i++){
+            var item = junctionsList[i]
+            var ep = Qt.point(conditionItem.x + width / 2, conditionItem.y + height/2)
+            var sp = item.center()
+            //console.debug("aa", sp,ep, conditionItem.x, conditionItem.y, conditionItem.width, conditionItem.height)
+
+            if ( sp.x < conditionItem.x){
+                ep.x = conditionItem.x
+            }
+            if ( sp.y < conditionItem.y){
+                ep.y = conditionItem.y
+            }
+            if ( sp.x > (conditionItem.x + conditionItem.width)){
+                ep.x = conditionItem.x +conditionItem.width
+            }
+            if ( sp.y > (conditionItem.y + conditionItem.height)){
+                ep.y = conditionItem.y + conditionItem.height
+            }
+
+
+
+            //console.debug("a", sp,ep)
+
+            Global.drawLine(wfCanvas, ctx, sp, ep, false, "green", 1)
+        }
+    }
+
+    function setValue(operationItemid, fromParam, toParam){
+        var value = "link=" + operationItemid + "|" +fromParam
+        workflow.setTestValues(itemid, testList.currentIndex, toParam, value)
+        testList.model = null
+        testList.model = workflow.getTests(itemid)
+    }
+
+    function resetInputModel(){
     }
 }

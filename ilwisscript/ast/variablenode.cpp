@@ -5,7 +5,7 @@
 #include "ilwisobject.h"
 #include "astnode.h"
 #include "idnode.h"
-#include "operationnode.h"
+#include "operationnodescript.h"
 #include "symboltable.h"
 #include "expressionnode.h"
 #include "variablenode.h"

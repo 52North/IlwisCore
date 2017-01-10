@@ -130,7 +130,6 @@ SOURCES += core/kernel.cpp \
     core/util/tranquilizerfactory.cpp \
     core/util/consoletranquilizer.cpp \
     core/ilwisobjects/representation/shapelookup.cpp \
-    core/ilwisobjects/operation/modeller/workflowoperationimplementation.cpp \
     core/internaldatabaseconnection.cpp \
     core/catalog/mastercatalogcache.cpp \
     core/catalog/catalogexplorerworker.cpp \
@@ -445,7 +444,13 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/operation/modeller/analysispattern.cpp \
     core/ilwisobjects/operation/modeller/model.cpp \
     core/ilwisobjects/operation/modeller/modellerfactory.cpp \
-    core/ilwisobjects/operation/modeller/applicationmodel.cpp
+    core/ilwisobjects/operation/modeller/applicationmodel.cpp \
+    core/ilwisobjects/operation/modeller/workflownode.cpp \
+    core/ilwisobjects/operation/modeller/workflowparameter.cpp \
+    core/ilwisobjects/operation/modeller/workflowimplementation.cpp \
+    core/ilwisobjects/operation/modeller/junctionNode.cpp \
+    core/ilwisobjects/operation/modeller/conditionNode.cpp \
+    core/ilwisobjects/operation/modeller/operationnode.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -591,7 +596,6 @@ HEADERS += core/kernel.h\
     core/util/tranquilizerfactory.h \
     core/util/consoletranquilizer.h \
     core/ilwisobjects/representation/shapelookup.h \
-    core/ilwisobjects/operation/modeller/workflowoperationimplementation.h \
     core/identityinterface.h \
     core/internaldatabaseconnection.h \
     core/catalog/mastercatalogcache.h \
@@ -964,11 +968,15 @@ HEADERS += core/kernel.h\
     core/util/ilwiscoordinate.h \
     core/util/ilwisangle.h \
     core/ilwisobjects/operation/modeller/analysispattern.h \
-    core/ilwisobjects/operation/modeller/edgepropobject.h \
     core/ilwisobjects/operation/modeller/model.h \
-    core/ilwisobjects/operation/modeller/nodepropobject.h \
     core/ilwisobjects/operation/modeller/modellerfactory.h \
-    core/ilwisobjects/operation/modeller/applicationmodel.h
+    core/ilwisobjects/operation/modeller/applicationmodel.h \
+    core/ilwisobjects/operation/modeller/workflowparameter.h \
+    core/ilwisobjects/operation/modeller/workflownode.h \
+    core/ilwisobjects/operation/modeller/workflowimplementation.h \
+    core/ilwisobjects/operation/modeller/conditionNode.h \
+    core/ilwisobjects/operation/modeller/junctionNode.h \
+    core/ilwisobjects/operation/modeller/operationnode.h
 
 OTHER_FILES += \
     core/resources/referencesystems.csv \

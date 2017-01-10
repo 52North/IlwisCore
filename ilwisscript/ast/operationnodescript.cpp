@@ -1,22 +1,22 @@
 #include <QVariant>
 #include "ilwis.h"
 #include "astnode.h"
-#include "operationnode.h"
+#include "operationnodescript.h"
 #include "commandhandler.h"
 #include "symboltable.h"
 
 using namespace Ilwis;
 
-OperationNode::OperationNode()
+OperationNodeScript::OperationNodeScript()
 {
 }
 
-void OperationNode::setLeftTerm(ASTNode *node)
+void OperationNodeScript::setLeftTerm(ASTNode *node)
 {
     _leftTerm = QSharedPointer<ASTNode>(node);
 }
 
-void OperationNode::addRightTerm(OperationNode::Operators op, ASTNode *node)
+void OperationNodeScript::addRightTerm(OperationNodeScript::Operators op, ASTNode *node)
 {
     RightTerm term;
     term._operator = op;
@@ -24,7 +24,7 @@ void OperationNode::addRightTerm(OperationNode::Operators op, ASTNode *node)
     _rightTerm.push_back(term);
 }
 
-bool OperationNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
+bool OperationNodeScript::evaluate(SymbolTable &symbols, int scope, ExecutionContext *ctx)
 {
    bool ok =  _leftTerm->evaluate(symbols, scope, ctx)   ;
    const NodeValue& vleft = _leftTerm->value();
@@ -34,12 +34,12 @@ bool OperationNode::evaluate(SymbolTable &symbols, int scope, ExecutionContext *
 
 }
 
-bool OperationNode::isValid() const
+bool OperationNodeScript::isValid() const
 {
     return ! _leftTerm.isNull();
 }
 
-bool OperationNode::handleBinaryCases(int index, const NodeValue& vright, const QString &operation,
+bool OperationNodeScript::handleBinaryCases(int index, const NodeValue& vright, const QString &operation,
                                               const QString& relation, SymbolTable &symbols, ExecutionContext *ctx) {
     if ( index >= vright.size())
         return false;
@@ -60,7 +60,7 @@ bool OperationNode::handleBinaryCases(int index, const NodeValue& vright, const 
     return true;
 }
 
-bool OperationNode::handleTableCases(int index, const NodeValue& vright, const QString &operation,
+bool OperationNodeScript::handleTableCases(int index, const NodeValue& vright, const QString &operation,
                                               const QString& relation, SymbolTable &symbols, ExecutionContext *ctx) {
     if ( index >= vright.size())
         return false;
@@ -87,7 +87,7 @@ bool OperationNode::handleTableCases(int index, const NodeValue& vright, const Q
     return true;
 }
 
-IlwisTypes OperationNode::typesUsed(int index, const NodeValue& vright, SymbolTable &symbols) const {
+IlwisTypes OperationNodeScript::typesUsed(int index, const NodeValue& vright, SymbolTable &symbols) const {
     if ( index >= vright.size())
         return itUNKNOWN;
 
@@ -100,7 +100,7 @@ IlwisTypes OperationNode::typesUsed(int index, const NodeValue& vright, SymbolTa
 
 }
 
-QString OperationNode::additionalInfo(ExecutionContext *ctx, const QString& key ) const {
+QString OperationNodeScript::additionalInfo(ExecutionContext *ctx, const QString& key ) const {
     const auto& iter = ctx->_additionalInfo.find(key);
     if ( iter == ctx->_additionalInfo.end())
         return sUNDEF;

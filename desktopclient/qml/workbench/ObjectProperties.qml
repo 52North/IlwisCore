@@ -36,6 +36,7 @@ WorkBenchShifter {
         model : width > 0 ? mastercatalog.selectedData : null
         property int lastIndex : 0
         delegate : PropertyForm.DPropertyForm{}
+
     }
 
 

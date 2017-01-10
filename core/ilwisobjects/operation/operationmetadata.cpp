@@ -102,7 +102,7 @@ void OperationMetaData::parametersFromSyntax(QStringList &required, QStringList 
 
 IlwisTypes OperationMetaData::ilwisType() const
 {
-    return itOPERATIONMETADATA;
+    return itSINGLEOPERATION;
 }
 
 std::vector<SPOperationParameter> OperationMetaData::getInputParameters() const
@@ -294,6 +294,16 @@ OperationParameter::OperationParameter(OperationParameter::ParameterKind kind, c
 
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
+OperationResource::OperationResource()
+{
+
+}
+
+OperationResource::OperationResource(const Resource &resource) : Resource(resource)
+{
+
+}
+
 OperationResource::OperationResource(const QUrl &inurl, const QString &nmspace) :  Resource(inurl,itSINGLEOPERATION)
 {
     prepare();

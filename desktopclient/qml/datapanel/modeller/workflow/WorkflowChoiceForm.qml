@@ -3,8 +3,8 @@ import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.0
 import QtQuick.Controls.Styles 1.0
 import Qt.labs.folderlistmodel 2.1
-import "../../../../Global.js" as Global
-import "../../../../controls" as Controls
+import "../../../Global.js" as Global
+import "../../../controls" as Controls
 import OperationModel 1.0
 
 Rectangle {

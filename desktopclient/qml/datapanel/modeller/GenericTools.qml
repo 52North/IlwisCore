@@ -7,11 +7,13 @@ import "../../controls" as Controls
 Row {
     id : row
     width : childrenRect.width
-    height : 25
+    height : 35
 
     Controls.ToolButton{
         iconSource: "../../images/save.png"
         tooltip: qsTr("Saves the model in the current active catalog(if possible)")
+        height : buttonSize
+        width : buttonSize
 
         onClicked: {
             var url = mastercatalog.currentCatalog.url
@@ -22,6 +24,8 @@ Row {
         }
     }
     Controls.ToolButton{
+        height : buttonSize
+        width : buttonSize
         iconSource: "../../images/saveas.png"
     }
 

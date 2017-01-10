@@ -1,6 +1,10 @@
 #include "kernel.h"
 #include "ilwisdata.h"
 #include "mastercatalog.h"
+#include "symboltable.h"
+#include "operationmetadata.h"
+#include "workflownode.h"
+
 #include "workflow.h"
 #include "operationmetadata.h"
 #include "workflowmodel.h"
@@ -27,13 +31,15 @@ ModelDesigner::ModelDesigner(QObject *parent) : ResourceModel(Resource(), 0)
 ModelDesigner::ModelDesigner(ResourceModel *rmodel, QObject *parent) : ResourceModel(rmodel->resource(),parent)
 {
     if ( rmodel->type() == itWORKFLOW){
-       _model.prepare(); // anonymous model
-       addWorkflow("itemid=" + QString::number(rmodel->resource().id()));
+        _model.prepare(); // anonymous model
+        //addWorkflow("itemid=" + QString::number(rmodel->resource().id()));
     }else
         _model.prepare(rmodel->id().toULongLong());
     if ( _model.isValid()){
-        for(int i=0; i < _model->workflowCount(); ++i){
-            _workflowmodels.push_back(new WorkflowModel(_model->workflow(i)->resource(), this));
+        if ( rmodel->type() != itWORKFLOW){ // special case, workflows are openend as anon models and are added above, no replication here
+            for(int i=0; i < _model->workflowCount(); ++i){
+                _workflowmodels.push_back(new WorkflowModel(_model->workflow(i)->resource(), this));
+            }
         }
         for(int i=0; i < _model->analysisCount(); ++i){
             AnalysisModel *amodel = modelbuilder()->createAnalysisModel(_model->analysisPattern(i).get());

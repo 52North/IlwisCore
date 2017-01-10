@@ -123,7 +123,17 @@ public:
         return *this;
     }
 
+    void store(QDataStream& stream){
+        stream << this->x;
+        stream << this->y;
+        stream << this->z;
+    }
 
+    void load(QDataStream& stream){
+        stream >> this->x;
+        stream >> this->y;
+        stream >> this->z;
+    }
 
     /*!
      operator += addes a vector of 2 values to a point shifting it in 2D space. Using undefined() values in the vector may lead to unpredictable results

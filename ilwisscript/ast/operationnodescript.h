@@ -2,7 +2,7 @@
 #define OPERATIONNODE_H
 
 namespace Ilwis {
-class OperationNode : public ASTNode
+class OperationNodeScript : public ASTNode
 {
 public:
     enum Operators{oNONE, oADD, oSUBSTRACT, oMOD, oTIMES, oDIVIDED, oAND, oOR, oXOR, oLESS, oLESSEQ, oNEQ, oEQ, oGREATER, oGREATEREQ};
@@ -12,9 +12,9 @@ public:
     };
 
 
-    OperationNode();
+    OperationNodeScript();
     void setLeftTerm(ASTNode *node);
-    void addRightTerm(OperationNode::Operators op, ASTNode *node);
+    void addRightTerm(OperationNodeScript::Operators op, ASTNode *node);
     bool evaluate(SymbolTable& symbols, int scope, ExecutionContext *ctx);
     bool isValid() const;
 

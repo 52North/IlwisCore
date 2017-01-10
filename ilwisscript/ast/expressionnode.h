@@ -5,7 +5,7 @@ namespace Ilwis{
 
 typedef std::function<std::set<quint32>(const Indices& , const Indices& )> RelationFunc;
 
-class ExpressionNode : public OperationNode
+class ExpressionNode : public OperationNodeScript
 {
 public:
     ExpressionNode();
