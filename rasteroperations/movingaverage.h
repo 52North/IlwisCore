@@ -10,8 +10,6 @@ namespace RasterOperations {
 class MovingAverage : public OperationImplementation
 {
 public:
-    enum WeightFuncType {wfEXACT = 0, wfNOTEXACT };
-
     MovingAverage();
     ~MovingAverage();
     MovingAverage(quint64 metaid, const Ilwis::OperationExpression &expr);
@@ -24,22 +22,15 @@ public:
 
     NEW_OPERATION(MovingAverage);
 
-
 private:
+    enum WeightFuncType {wfEXACT = 0, wfNOTEXACT };
     IFeatureCoverage _inputfeatures;
     IRasterCoverage _outputraster;
     IGeoReference _inputgrf;
-    QString weightFunct;
-    double exp;
-    double limDist;
-    bool _needCoordinateTransformation = false;    
-    long iNrPoints;
-    long iNrValidPnts;
-    WeightFuncType wft;
-
-
-
-
+    QString _attribute;
+    double _exp;
+    double _limDist;
+    WeightFuncType _wft;
 };
 }
 }
