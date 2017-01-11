@@ -30,6 +30,7 @@ public:
     std::vector<SPWorkFlowNode> outputNodes();
     void setFixedParameter(const QString &data, NodeId nodeId, qint32 parmIndex);
     void addFlow(NodeId fromNode, NodeId toNode, qint32 inParmIndex, qint32 outParmIndex, int attachRctIndxFrom, int attachRctIndxTo);
+    void addConditionFlow(NodeId fromNode, NodeId toNode, qint32 testIndex, qint32 inParmIndex, qint32 outParmIndex, int attachRctIndxFrom, int attachRctIndxTo);
     void removeFlow(NodeId toNode, qint32 parameterIndex);
     void addJunctionFlow(int junctionIdTo, const QString &operationIdFrom, int paramIndex, int recFrom, int rectTo, bool truecase);
     qint32 operationInputParameterCount(NodeId nodeId);
@@ -44,10 +45,13 @@ public:
     std::pair<int, int> translation() const;
     void translation(double x, double y);
     quint32 generateId();
+    void updateIdCounter();
+    const std::vector<SPWorkFlowNode>& graph() const;
 
     static void reverseExecutionOrder(Ilwis::SPWorkFlowNode currentList, std::vector<SPWorkFlowNode> &executionOrder, std::set<SPWorkFlowNode> &usedNodes);
     static ExecutionOrder executionOrder(std::vector<Ilwis::SPWorkFlowNode> &graph);
     static std::vector<SPWorkFlowNode> outputNodes(const std::vector<Ilwis::SPWorkFlowNode> graph);
+
 
 
 private:

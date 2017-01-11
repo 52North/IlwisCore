@@ -63,19 +63,16 @@ quint32 WorkflowModel::addNode(const QString &id, const QVariantMap& parameters)
             if ( nodePtr){
                 SPWorkFlowNode node;
                 node.reset(nodePtr);
-                if ( parameters.contains("owner")){
-                    SPWorkFlowNode parent = _workflow->nodeById(parameters["owner"].toULongLong());
-                    if ( parent){
-                        node->owner(parent);
-                        parent->addSubNode(node,parameters["reason"].toString());
-                    }
-
+                quint64 ownerid = i64UNDEF;
+                if ( parameters.contains("owner") ){
+                    ownerid = parameters["owner"].toInt();
+                    node->owner(_workflow->nodeById((ownerid)));
                 }
 
                 Pixel lu(parameters["x"].toInt(), parameters["y"].toInt());
                 Pixel rd(lu.x + parameters["w"].toInt(), lu.y + parameters["w"].toInt());
                 node->box(BoundingBox(lu, rd));
-                return _workflow->addNode(node);
+                return _workflow->addNode(node, ownerid);
             }else {
                 kernel()->issues()->log(TR("Could not create node in the workflow; maybe illegal node type?"));
             }
@@ -88,54 +85,79 @@ quint32 WorkflowModel::addNode(const QString &id, const QVariantMap& parameters)
 
 void WorkflowModel::addFlow(int nodeIdFrom, int nodeIdTo, qint32 inParmIndex, qint32 outParmIndex, int rectFrom, int rectTo)
 {
-      if ( _workflow.isValid()){
-          _workflow->addFlow(nodeIdFrom, nodeIdTo, inParmIndex, outParmIndex, rectFrom, rectTo);
-          bool found = false;
-          for(const auto& tp: _flows){
-              int from, to, rfrom, rto;
-              std::tie(from,to, rfrom,rto) = tp;
-              if ( from == nodeIdFrom && to == nodeIdTo && rfrom == rectFrom && rto == rectTo){
-                found = true;
-                break;
-              }
-          }
-          if (!found)
-            _flows.push_back(std::make_tuple(nodeIdFrom, nodeIdTo, rectFrom, rectTo));
-      }
+    try {
+        if ( _workflow.isValid()){
+            _workflow->addFlow(nodeIdFrom, nodeIdTo, inParmIndex, outParmIndex, rectFrom, rectTo);
+        }
+    }
+    catch(const ErrorObject&){}
 }
 
 void WorkflowModel::addJunctionFlows(int junctionIdTo, const QString &operationIdFrom, int parameterIndex, int rectFrom, int rectTo, bool truecase)
 {
-    if ( _workflow.isValid()){
+    try {
+        if ( _workflow.isValid()){
 
-        _workflow->addJunctionFlow(junctionIdTo, operationIdFrom, parameterIndex, rectFrom, rectTo, truecase);
+            _workflow->addJunctionFlow(junctionIdTo, operationIdFrom, parameterIndex, rectFrom, rectTo, truecase);
+        }
+    } catch ( const ErrorObject& ){}
+}
+
+void WorkflowModel::addConditionFlow(int conditionIdTo, const QString &operationIdFrom, int testIndex, int inParameterIndex, int outParmIndex, int rectFrom, int rectTo)
+{
+    try {
+        if ( _workflow.isValid()){
+
+            _workflow->addConditionFlow(conditionIdTo, operationIdFrom.toULongLong(), testIndex, inParameterIndex, outParmIndex, rectFrom, rectTo);
+        }
     }
+    catch(const ErrorObject&){}
 }
 
 void WorkflowModel::addTest2Condition(int conditionId, const QString &operationId, const QString &pre, const QString &post)
 {
-    SPWorkFlowNode node = _workflow->nodeById(conditionId);
-    if ( node){
-        std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
-        SPWorkFlowNode operNode(new OperationNode(operationId.toULongLong()));
-        if ( operNode->id() == i64UNDEF)
-            operNode->nodeId(_workflow->generateId());
-        LogicalOperator lpre = MathHelper::string2logicalOperator(pre);
-        LogicalOperator lpost = MathHelper::string2logicalOperator(post);
+    try {
+        SPWorkFlowNode node = _workflow->nodeById(conditionId);
+        if ( node){
+            std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
+            SPWorkFlowNode operNode(new OperationNode(operationId.toULongLong()));
+            if ( operNode->id() == i64UNDEF)
+                operNode->nodeId(_workflow->generateId());
+            LogicalOperator lpre = MathHelper::string2logicalOperator(pre);
+            LogicalOperator lpost = MathHelper::string2logicalOperator(post);
 
-        condition->addTest(operNode, lpre, lpost);
-    }
+            condition->addTest(operNode, lpre, lpost);
+        }
+    } catch(const ErrorObject&){}
+}
+
+void WorkflowModel::addCondition2Junction(int conditionId,int junctionId)
+{
+    try{
+        SPWorkFlowNode node = _workflow->nodeById(conditionId);
+        if ( node && node->type() == "conditionnode"){
+            std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
+            SPWorkFlowNode jnode = _workflow->nodeById(junctionId);
+            if ( jnode){
+                std::shared_ptr<Junction> junction = std::static_pointer_cast<Junction>(jnode);
+                junction->link2condition(node);
+            }
+
+        }
+    } catch(const ErrorObject&){}
 }
 
 void WorkflowModel::setTestValues(int conditionId, int testIndex, int parameterIndex, const QString &value)
 {
-    if ( _workflow.isValid()){
-        SPWorkFlowNode node = _workflow->nodeById(conditionId);
-        if ( node){
-            std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
-            condition->setTestValue(testIndex, parameterIndex, value, _workflow);
+    try{
+        if ( _workflow.isValid()){
+            SPWorkFlowNode node = _workflow->nodeById(conditionId);
+            if ( node){
+                std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
+                condition->setTestValue(testIndex, parameterIndex, value, _workflow);
+            }
         }
-    }
+    } catch(const ErrorObject&){}
 }
 
 QString WorkflowModel::testValueDataType(quint32 conditionId, quint32 testIndex, quint32 parameterIndex) const
@@ -225,6 +247,25 @@ void WorkflowModel::deleteFlow(int nodeId, int parameterIndex)
     }
 }
 
+QVariantMap WorkflowModel::getParameter(const SPWorkFlowNode& node, int index)
+{
+    QVariantMap parm;
+    WorkFlowParameter& p = node->inputRef(index);
+    parm["name"] = p.name();
+    parm["description"] = p.description();
+    parm["index"] = index;
+    parm["outputIndex"] = p.outputParameterIndex() == iUNDEF ? -1 : p.outputParameterIndex();
+    if ( p.outputParameterIndex() != iUNDEF)
+        parm["outputNodeId"] = p.inputLink()->id();
+    parm["valuetype"] = TypeHelper::type2name(p.valueType());
+    parm["state"] = p.state() == WorkFlowParameter::pkFREE ? "free" : (p.state() == WorkFlowParameter::pkFIXED ? "fixed" : "calculated");
+    parm["sourceRect"] = p.attachement(true);
+    parm["targetRect"] = p.attachement(false);
+    parm["value"] = p.value();
+
+    return parm;
+}
+
 QVariantMap WorkflowModel::getNode(int nodeId){
     QVariantMap data;
     if (_workflow.isValid()){
@@ -239,28 +280,42 @@ QVariantMap WorkflowModel::getNode(int nodeId){
         data["description"]= node->description();
         data["operationid"] = QString::number(oid);
         data["nodeid"] = QString::number(nid);
+        data["type"] = node->type();
         data["x"] = box.min_corner().x;
         data["y"] = box.min_corner().y;
         data["w"] = box.xlength();
         data["h"] = box.ylength();
-        QVariantList parameters;
-        for(int i=0; i < node->inputCount(); ++i){
-            QVariantMap parm;
-            WorkFlowParameter& p = node->inputRef(i);
-            parm["name"] = p.name();
-            parm["description"] = p.description();
-            parm["index"] = i;
-            parm["outputIndex"] = p.outputParameterIndex() == iUNDEF ? -1 : p.outputParameterIndex();
-            if ( p.outputParameterIndex() != iUNDEF)
-                parm["outputNodeId"] = p.inputLink()->id();
-            parm["valuetype"] = TypeHelper::type2name(p.valueType());
-            parm["state"] = p.state() == WorkFlowParameter::pkFREE ? "free" : (p.state() == WorkFlowParameter::pkFIXED ? "fixed" : "calculated");
-            parm["sourceRect"] = p.attachement(true);
-            parm["targetRect"] = p.attachement(false);
-            parm["value"] = p.value();
-            parameters.push_back(parm);
+        if ( node->type() == "operationnode"){
+            QVariantList parameters;
+            for(int i=0; i < node->inputCount(); ++i){
+                parameters.push_back(getParameter(node, i));
+            }
+            data["parameters"] = parameters;
+        }else if ( node->type() == "conditionnode"){
+            QVariantList test;
+            QVariantList operations;
+            std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
+            for(int i=0; i < condition->testCount(); ++i){
+                WorkFlowCondition::Test tst = condition->test(i);
+                QVariantMap t;
+                t["pre"] = MathHelper::logicalOperator2string(tst._pre);
+                t["post"] = MathHelper::logicalOperator2string(tst._post);
+                t["operation"] = getNode(tst._operation->id());
+                test.push_back(t);
+            }
+            std::vector<SPWorkFlowNode> subnodes = node->subnodes("operations");
+            for(int i=0; i < subnodes.size(); ++i){
+                operations.push_back(getNode(subnodes[i]->id()));
+            }
+            data["ownedoperations"] = operations;
+            data["tests"] = test;
+        }else if ( node->type() == "junctionnode"){
+            std::shared_ptr<Junction> junction = std::static_pointer_cast<Junction>(node);
+            SPWorkFlowNode condition =  junction->inputRef(0).inputLink();
+            data["linkedcondition"] = condition ? condition->id() : i64UNDEF;
+            data["linkedtrueoperation"] = getParameter(junction,1);
+            data["linkedfalseoperation"] = getParameter(junction,2);
         }
-        data["parameters"] = parameters;
     }
     return data;
 }
@@ -304,21 +359,18 @@ QVariantList WorkflowModel::getTests(int conditionId) const
 QVariantList WorkflowModel::getNodes()
 {
     QVariantList result;
-    Workflow::ExecutionOrder order = _workflow->executionOrder();
-    std::vector<SPWorkFlowNode> nodes = order._independentOrder;
-    for(const SPWorkFlowNode& node : nodes){
-        QVariantMap data = getNode(node->id());
+    try {
+        const std::vector<SPWorkFlowNode>& graph = _workflow->graph();
 
-        result.push_back(data);
-
-    }
-    for(auto item : order._dependentOrder){
-        nodes = item.second;
-        for(const SPWorkFlowNode& node : nodes){
+        for(const SPWorkFlowNode& node : graph){
             QVariantMap data = getNode(node->id());
+
             result.push_back(data);
+
         }
+        return result;
     }
+    catch ( const ErrorObject& err){}
     return result;
 
 }
@@ -335,25 +387,28 @@ void WorkflowModel::createMetadata()
 QVariantList WorkflowModel::propertyList()
 {
     QVariantList result;
-
-    QVariantMap workflow;
-    workflow["label"] = TR("Edit Workflow(Run) form");
-    workflow["form"] = "OperationForms.qml";
-    result.append(workflow);
-    QVariantMap operation;
-    operation["label"] = TR("Edit Selected operation form");
-    operation["form"] = "OperationForms.qml";
-    result.append(operation);
-    QVariantMap metadata;
-    metadata["label"] = TR("Metadata selected form");
-    metadata["form"] = "workflow/forms/OperationPropForm.qml";
-    result.append(metadata);
-    QVariantMap script;
-    metadata["label"] = TR("Script");
-    metadata["form"] = "workflow/forms/WorkflowPythonScript.qml";
-    result.append(metadata);
+    try{
 
 
+        QVariantMap workflow;
+        workflow["label"] = TR("Edit Workflow(Run) form");
+        workflow["form"] = "OperationForms.qml";
+        result.append(workflow);
+        QVariantMap operation;
+        operation["label"] = TR("Edit Selected operation form");
+        operation["form"] = "OperationForms.qml";
+        result.append(operation);
+        QVariantMap metadata;
+        metadata["label"] = TR("Metadata selected form");
+        metadata["form"] = "workflow/forms/OperationPropForm.qml";
+        result.append(metadata);
+        QVariantMap script;
+        metadata["label"] = TR("Script");
+        metadata["form"] = "workflow/forms/WorkflowPythonScript.qml";
+        result.append(metadata);
+
+        return result;
+    } catch(const ErrorObject&){}
 
     return result;
 }

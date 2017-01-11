@@ -34,7 +34,8 @@ SOURCES += \
     rasteroperations/filter/timesat_nrs.cpp \
     rasteroperations/densifyraster.cpp \
     rasteroperations/distanceraster.cpp \
-    rasteroperations/line2raster.cpp
+    rasteroperations/line2raster.cpp \
+    rasteroperations/filter/stackminmaxfilter.cpp
 
 
 HEADERS += \
@@ -56,7 +57,8 @@ HEADERS += \
     rasteroperations/filter/timesat_nrs.h \
     rasteroperations/densifyraster.h \
     rasteroperations/distanceraster.h \
-    rasteroperations/line2raster.h
+    rasteroperations/line2raster.h \
+    rasteroperations/filter/stackminmaxfilter.h
 
 
 OTHER_FILES += \ 

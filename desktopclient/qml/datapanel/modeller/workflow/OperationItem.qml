@@ -16,7 +16,10 @@ Rectangle {
     property var itemid;
     property var condition
     property string type : "operationitem"
-    transform: Scale { origin.x:  width /2; origin.y : height / 2; xScale : wfCanvas.zoomScale; yScale: wfCanvas.zoomScale}
+    transform: Scale {
+        origin.x:  0; origin.y : 0; xScale : condition ? 1.0 : wfCanvas.zoomScale; yScale :condition ? 1.0: wfCanvas.zoomScale
+    }
+    z : 4
 
     color:"transparent"
     width: 240
@@ -293,14 +296,9 @@ Rectangle {
     function drawFlows(ctx){
         for(var i=0; i < flowConnections.length; i++){
             var item = flowConnections[i]
-            var index = -1
-          //  if ( item.target.type !== "conditionitem"){
-                index = item.attachtarget
-         //   }
-
+            var index = item.attachtarget
             var sp = item.attachsource.center()
             var ep = item.target.attachementPoint(wfCanvas,index)
-
             var pt1 = Qt.point(sp.x, sp.y)
             var pt2 = Qt.point( ep.x, ep.y);
 
@@ -327,7 +325,7 @@ Rectangle {
     }
 
 
-    function setFlow(target, attachRectIndex, flowPoints){
+    function setFlow(target, attachRectIndex, flowPoints, testIndex){
         flowConnections.push({
                                  "target" : target,
                                  "source" :operationItem,
@@ -338,17 +336,32 @@ Rectangle {
                                  "testindex" : -1,
                                  "testparameter" : -1
                              })
-        workflow.addFlow(
-                    itemid,
-                    target.itemid,
-                    flowPoints.toParameterIndex,
-                    flowPoints.fromParameterIndex,
-                    selectedAttach.index,
-                    attachRectIndex
-                    )
+
+        if ( testIndex === -1){
+            workflow.addFlow(
+                        itemid,
+                        target.itemid,
+                        flowPoints.toParameterIndex,
+                        flowPoints.fromParameterIndex,
+                        selectedAttach.index,
+                        attachRectIndex
+                        )
+        }else if (testIndex === -2) {
+            var truecase = target.containedInLinkedCondition(operationItem)
+            workflow.addJunctionFlows(target.itemid, itemid,flowPoints.fromParameterIndex,selectedAttach.index,attachRectIndex,truecase)
+        }else {
+            workflow.addConditionFlow(
+                        itemid,
+                        target.itemid,
+                        testIndex,
+                        flowPoints.toParameterIndex,
+                        flowPoints.fromParameterIndex,
+                        selectedAttach.index,
+                        attachRectIndex
+                        )
+        }
         workflow.createMetadata();
         workflowManager.updateRunForm()
-
         target.resetInputModel()
         wfCanvas.stopWorkingLine()
 
@@ -362,7 +375,7 @@ Rectangle {
         return false
     }
 
-    function attachFlow(target, attachRect){
+    function attachFlow(target, attachRectTo){
         //If not connected to itself
         if ( currentItem !== target){
             if ( allParmsDefined(target.itemid))
@@ -370,13 +383,12 @@ Rectangle {
 
 
             if (operation.needChoice(target.operation)) {
-
-                wfCanvas.showAttachmentForm(target, attachRect)
+                wfCanvas.showAttachmentForm(target, attachRectTo,"")
             } else {
                 var fromIndex = 0
                 var toIndex = 0
                 var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
-                currentItem.setFlow(target, attachRect, flowPoints)
+                currentItem.setFlow(target, attachRectTo, flowPoints,-1)
 
             }
 
@@ -403,6 +415,16 @@ Rectangle {
 
     function changeBox(){
         workflow.changeBox(itemid, x,y,width, height)
+    }
+
+    function parameterType(index, isOutput){
+        if ( isOutput)
+            return operation.outputparameterType(index)
+        return operation.inputparameterType(index)
+    }
+
+    function parameterNames(typefilter, isOutput){
+        return operation.parameterIndexes(typefilter,isOutput)
     }
 
 }

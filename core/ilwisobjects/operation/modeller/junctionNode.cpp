@@ -20,6 +20,15 @@ using namespace Ilwis;
 Junction::Junction() :  WorkFlowNode("")
 {
     _inputParameters1.resize(3);
+
+}
+
+Junction::Junction(quint64 nodeid) :  WorkFlowNode("")
+{
+    nodeId(nodeid);
+    _inputParameters1.push_back(WorkFlowParameter(0,id(),"condition"));
+    _inputParameters1.push_back(WorkFlowParameter(1,id(),"trueLink"));
+    _inputParameters1.push_back(WorkFlowParameter(2,id(),"falseLink"));
 }
 
 QString Junction::type() const
@@ -30,8 +39,18 @@ QString Junction::type() const
 void Junction::link2condition(SPWorkFlowNode conditionnode)
 {
     WorkFlowParameter parm(0,id(),sUNDEF);
-    parm.inputLink(conditionnode);
+    parm.inputLink(conditionnode, iUNDEF);
     _inputParameters1[0] = parm;
+    if ( conditionnode)
+        name(QString("junction_%1_%2").arg(conditionnode->id()).arg(id()));
+    else
+        name(QString("junction_%1").arg(id()));
+}
+
+void Junction::nodeId(quint64 id)
+{
+    WorkFlowNode::nodeId(id);
+    name(QString("junction_%1").arg(id));
 }
 
 void Junction::link2trueCase(SPWorkFlowNode trueNode, int parmIndex)

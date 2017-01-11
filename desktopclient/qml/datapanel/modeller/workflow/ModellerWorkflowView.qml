@@ -38,11 +38,15 @@ Modeller.ModellerWorkArea {
         height : parent.height - tools.height
         enabled: true
 
-        function addOperation(objectid,dx,dy){
+        function addOperation(objectid,dx,dy,ownerid, parentItem){
             var operation = operations.operation(objectid)
             if ( operation){
-                var nodeId = workflow.addNode(objectid,{x : dx, y:dy, w:240, h:130,type:'operationnode'})
-                wfCanvas.createItem(dx, dy,operation, nodeId)
+                var nodeId
+                if ( ownerid === -1)
+                    nodeId = workflow.addNode(objectid,{x : dx, y:dy, w:240, h:130,type:'operationnode'})
+                else
+                    nodeId = workflow.addNode(objectid,{x : dx, y:dy, w:240, h:130,type:'operationnode',owner:ownerid,reason : "operations"})
+                wfCanvas.createItem(dx, dy,operation, nodeId,parentItem)
             }
 
 
@@ -58,14 +62,15 @@ Modeller.ModellerWorkArea {
                 if (drag.source.type === "workflow") {
                     operations.refresh()
                 }
-                var onItem = itemAt(drag.x, drag.y)
+                 var onItem = itemAt(drag.x, drag.y)
                 if (!onItem ){
-                    addOperation(drag.source.ilwisobjectid,drag.x,drag.y)
+                    addOperation(drag.source.ilwisobjectid,drag.x,drag.y,-1, wfCanvas)
 
                 }else {
                     if ( onItem.type === "conditionitem"){
                         if (onItem.inOperationList(drag.y)){
-                            var operation = addOperation(drag.source.ilwisobjectid,drag.x,drag.y)
+                            var p = wfCanvas.mapToItem(onItem, drag.x, drag.y)
+                            var operation = addOperation(drag.source.ilwisobjectid,p.x,p.y,onItem.itemid, onItem)
                             if ( operation){
                                 onItem.addToOperationList(currentItem)
                             }
@@ -95,47 +100,178 @@ Modeller.ModellerWorkArea {
         }
     }
 
-    function drawFromWorkflow() {
+    function getItem(nodeId){
+        for(var i=0; i < operationsList.length; ++i){
+            if ( operationsList[i].itemid == nodeId)
+                return operationsList[i]
+        }
+        for(i=0; i < conditionsList.length; ++i){
+            var condition = conditionsList[i]
+            if ( condition.itemid == nodeId)
+                return condition
+            for(var j=0; j < condition.operationsList.length; ++j){
+                if ( condition.operationsList[i].itemid === nodeId)
+                    return condition.operationsList[i]
+            }
+            for(j=0; j < condition.junctionsList.length; ++j){
+                if ( condition.junctionsList[i].itemid === nodeId)
+                    return condition.junctionsList[i]
+            }
+        }
+        return null
+    }
+
+    function createOperationItem(operationid,nodeid, px, py,parentitem){
+        var operation = operations.operation(operationid)
+        if ( !operation)
+            return null
+        var component = Qt.createComponent("OperationItem.qml");
+        if (component.status === Component.Ready){
+            var item = component.createObject(parentitem, {"x": px, "y": py, "operation" : operation, "itemid" : nodeid, "scale": wfCanvas.scale});
+            operationsList.push(item)
+            return item
+        }
+        return null
+    }
+    function recreateJunctionFlow(junctionItem, kvp){
+        var node = workflow.getNode(junctionItem.itemid)
+        if(!node)
+            return
+
+        var parm = node.linkedtrueoperation
+//            recreateFlow(parm,kvp,junctionItem,1)
+//        parm = node.linkedfalseoperation
+//        recreateFlow(parm,kvp,junctionItem,2)
+            var flowPoints = { "fromParameterIndex" :  parm.outputIndex, "toParameterIndex" :1};
+            var sourceItem = kvp[parm.outputNodeId]
+            var sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
+            var targetRect = parm.targetRect
+            sourceItem.flowConnections.push({
+                                                   "target" : junctionItem,
+                                                   "source" :sourceItem,
+                                                   "attachtarget" : targetRect,
+                                                   "attachsource" : sourceRect,
+                                                   "flowPoints" : flowPoints,
+                                                   "isSelected" : false
+                                               })
+        parm = node.linkedfalseoperation
+        flowPoints = { "fromParameterIndex" :  parm.outputIndex, "toParameterIndex" :2};
+        sourceItem = kvp[parm.outputNodeId]
+        sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
+        targetRect = parm.targetRect
+        sourceItem.flowConnections = []
+        sourceItem.flowConnections.push({
+                                               "target" : junctionItem,
+                                               "source" :sourceItem,
+                                               "attachtarget" : targetRect,
+                                               "attachsource" : sourceRect,
+                                               "flowPoints" : flowPoints,
+                                               "isSelected" : false
+                                           })
+     }
+
+    function recreateConditionFlow(conditionItem, kvp){
+        var node = workflow.getNode(conditionItem.itemid)
+        if(!node)
+            return
+
+        var tests = node.tests
+        for(var i=0; i < tests.length; ++i){
+            var testParameters = tests[i].operation.parameters
+
+            for(var j=0; j < testParameters.length; ++j){
+                recreateFlow(testParameters[j], kvp,conditionItem,j)
+            }
+        }
+    }
+
+    function recreateFlow(parm,kvp,item, index){
+        if ( parm && item && parm.outputIndex !== -1){
+            var flowPoints = { "fromParameterIndex" :  index, "toParameterIndex" : parm.outputIndex};
+            var sourceItem = kvp[parm.outputNodeId]
+            var sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
+            var targetRect = parm.targetRect
+            item.flowConnections.push({
+                                     "target" : item,
+                                     "source" :sourceItem,
+                                     "attachtarget" : targetRect,
+                                     "attachsource" : sourceRect,
+                                     "flowPoints" : flowPoints,
+                                     "isSelected" : false
+                                 })
+        }
+    }
+
+    function recreateFlows(operationItem, kvp) {
+        var node = workflow.getNode(operationItem.itemid)
+        if(!node)
+            return
+
+        var parameters = node.parameters
+        for(var j=0; j < parameters.length; ++j){
+            recreateFlow(parameters[j], kvp,operationItem,j)
+        }
+
+    }
+
+    function recreateWorkflow() {
+
         var nodes = workflow.getNodes()
         var kvp = []
+        var unlinkedJunctions = []
         for(var i=0; i < nodes.length; ++i){
             var node = nodes[i];
-            var operation = operations.operation(node.operationid)
-            if ( !operation)
-                return
-            var component = Qt.createComponent("OperationItem.qml");
-            if (component.status === Component.Ready){
-                currentItem = component.createObject(wfCanvas, {"x": node.x, "y": node.y, "operation" : operation, "itemid" : node.nodeid, "scale": wfCanvas.scale});
-                operationsList.push(currentItem)
-                kvp[currentItem.itemid] = currentItem
+            if ( node.type === "conditionnode"){
+                var component = Qt.createComponent("ConditionItem.qml");
+                if (component.status === Component.Ready){
+                    currentItem = component.createObject(wfCanvas, {"x": node.x, "y": node.y, "height" : node.h, "width" : node.w,"itemid" : node.nodeid, "scale": wfCanvas.scale});
+                    workarea.conditionsList.push(currentItem)
+                    currentItem.setTests()
+                    kvp[currentItem.itemid] = currentItem
+                    var ownedoperations = node.ownedoperations;
+                    recreateConditionFlow(currentItem, kvp)
+                    for(var j = 0;  j < ownedoperations.length; ++j){
+                        var oper = ownedoperations[j]
+                        var item = createOperationItem(oper.operationid, oper.nodeid,oper.x, oper.y,currentItem)
+                        if ( item){
+                            kvp[item.itemid] = item
+                            item.condition = currentItem
+                            currentItem.operationsList.push(item)
+                        }
+                    }
+                    for(var k=0; k < currentItem.operationsList.length; ++k){
+                        var operationItem = currentItem.operationsList[k]
+                        recreateFlows(operationItem, kvp)
+                    }
+                }
+            }else if ( node.type === "operationnode"){
+                currentItem = createOperationItem(node.operationid,node.nodeid,node.x, node.y, wfCanvas)
+                if ( currentItem)
+                    kvp[currentItem.itemid] = currentItem
+            }else if ( node.type === "junctionnode"){
+                var comp = Qt.createComponent("JunctionItem.qml");
+                if (comp.status === Component.Ready){
+                    currentItem = comp.createObject(wfCanvas, {"x": node.x, "y": node.y, "height" : node.h, "width" : node.w,"itemid" : node.nodeid, "scale": wfCanvas.scale});
+                    kvp[currentItem.itemid] = currentItem
+                    unlinkedJunctions.push({"condition": node.linkedcondition, "junction" : currentItem})
+                }
             }
         }
         for(i=0; i < operationsList.length; ++i){
-            var operationItem = operationsList[i]
-            node = workflow.getNode(operationItem.itemid)
-            if(!node)
-                continue;
-
-            var parameters = node.parameters
-            for(var j=0; j < parameters.length; ++j){
-                var parm = parameters[j]
-                if ( parm.outputIndex !== -1){
-                    var flowPoints = { "fromParameterIndex" :  j, "toParameterIndex" : parm.outputIndex};
-                    var sourceItem = kvp[parm.outputNodeId]
-                    var sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
-                    var targetRect = parm.targetRect
-                    operationItem.flowConnections.push({
-                                             "target" : operationItem,
-                                             "source" :sourceItem,
-                                             "attachtarget" : targetRect,
-                                             "attachsource" : sourceRect,
-                                             "flowPoints" : flowPoints,
-                                             "isSelected" : false
-                                         })
-                }
-            }
+            operationItem = operationsList[i]
+            recreateFlows(operationItem, kvp)
 
         }
+        for(i=0; i < unlinkedJunctions.length;++i){
+            var conditionItem  = getItem(unlinkedJunctions[i].condition)
+                var junction = unlinkedJunctions[i].junction
+                if ( junction){
+                    conditionItem.junctionsList.push(junction)
+                    junction.linkedCondition = conditionItem
+                }
+                recreateJunctionFlow(junction, kvp)
+        }
+
         if ( workflowManager){
             workflowManager.updateRunForm()
         }
@@ -160,6 +296,8 @@ Modeller.ModellerWorkArea {
     }
 
     function zoom(amount, absolute, cx, cy){
+         var op = operationsList[0]
+        var dz = wfCanvas.zoomScale /wfCanvas.oldZoomScale
 
         wfCanvas.oldZoomScale = wfCanvas.zoomScale;
         if ( absolute){
@@ -170,29 +308,35 @@ Modeller.ModellerWorkArea {
         }else{
             wfCanvas.zoomScale = Math.max(0.05,wfCanvas.zoomScale - Math.abs(amount)/100.0)
         }
+        var dzoom = wfCanvas.zoomScale /wfCanvas.oldZoomScale
         for(var i=0; i < operationsList.length; ++i){
-            var dzoom = wfCanvas.zoomScale / wfCanvas.oldZoomScale
             var operation = operationsList[i]
-            var dx = (operation.x - width / 2.0)
-            var dy = (operation.y - height / 2.0)
-            operation.x = width / 2.0 + dx * dzoom
-            operation.y = height / 2.0 + dy *dzoom
+            if ( !operation.condition){
+                zoomItem(operation, dzoom)
+            }
         }
         for(i=0; i < conditionsList.length; ++i){
-            dzoom = wfCanvas.zoomScale / wfCanvas.oldZoomScale
+
             var condition = conditionsList[i]
-            dx = (condition.x - width / 2.0)
-            dy = (condition.y - height / 2.0)
-            condition.x = width / 2.0 + dx * dzoom
-            condition.y = height / 2.0 + dy *dzoom
+            zoomItem(condition, dzoom)
+            for(var j=0; j < condition.junctionsList.length; ++j){
+                zoomItem(condition.junctionsList[j], dzoom)
+            }
         }
         wfCanvas.canvasValid = false
 
     }
 
+    function zoomItem(item, dzoom,cx,cy){
+        item.x = item.x * dzoom - (item.width * (1.0 - dzoom))/2.0
+        item.y = item.y * dzoom - (item.height * (1.0 - dzoom))/2.0
+    }
+
     function pan(px, py){
         for(var i=0; i < operationsList.length; ++i){
             var operation = operationsList[i]
+            if ( operation.condition)
+                continue;
             operation.x += px;
             operation.y += py;
 
@@ -201,6 +345,10 @@ Modeller.ModellerWorkArea {
             var conditions = conditionsList[i]
             conditions.x += px;
             conditions.y += py;
+            for(var j=0; j < conditions.junctionsList.length;++j){
+                conditions.junctionsList[j].x += px;
+                conditions.junctionsList[j].y += py;
+            }
 
         }
         wfCanvas.canvasValid = false
@@ -225,14 +373,27 @@ Modeller.ModellerWorkArea {
         for(i=0; i < conditionsList.length; ++i){
 
             item = conditionsList[i]
-            startCoords = Qt.point(item.x, item.y)
 
+            for( var j=0; j < item.operationsList.length; ++j){
+                var op = item.operationsList[i]
+                var  p = item.mapToItem(wfCanvas, op.x, op.y)
+                startCoords = Qt.point(p.x, p.y)
+
+                endX = (startCoords.x + (op.width * op.scale));
+                endY = (startCoords.y + (op.height * op.scale));
+
+                if (x >= (startCoords.x) && y >= (startCoords.y) && x <= endX && y <= endY){
+                    return op
+                }
+            }
+            startCoords = Qt.point(item.x, item.y)
             endX = (startCoords.x + (item.width * item.scale));
             endY = (startCoords.y + (item.height * item.scale));
 
             if (x >= (startCoords.x) && y >= (startCoords.y) && x <= endX && y <= endY){
                 return item
             }
+
             for( var j=0; j < item.junctionsList.length; ++j){
                 var junction = item.junctionsList[i]
                 startCoords = Qt.point(junction.x, junction.y)

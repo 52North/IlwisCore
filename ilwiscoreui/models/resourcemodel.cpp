@@ -162,6 +162,14 @@ QString ResourceModel::url() const
     return "";
 }
 
+QString ResourceModel::rawUrl() const
+{
+    try{
+        return itemRef().url(true).toString();
+    } catch (const ErrorObject&){}
+    return "";
+}
+
 QString ResourceModel::container() const
 {
     try{

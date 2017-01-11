@@ -37,7 +37,9 @@ ToolBar{
             onClicked: {
                 var url = mastercatalog.currentCatalog.url
                 if ( url.indexOf("file://") !== 0) {
-                    return
+                    url = workflow.rawUrl
+                    if(url.indexOf("file://") !== 0)
+                        return
                 }
                 workflow.store("","")
             }
@@ -100,6 +102,17 @@ ToolBar{
                 workarea.dropCondition = checked
             }
         }
+
+        Controls.ToolButton {
+            height : buttonSize
+            width : buttonSize
+            id : loop
+            checked: false
+            checkable: true
+            exclusiveGroup: toolgroup
+            iconSource: iconsource("loop.png")
+        }
+
 
         ExclusiveGroup {
             id: toolgroup

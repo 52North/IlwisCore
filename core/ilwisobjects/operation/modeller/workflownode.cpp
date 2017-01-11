@@ -47,7 +47,7 @@ void WorkFlowNode::addInput(const WorkFlowParameter &param, int index)
     }else{
         if ( index >= _inputParameters1.size())
             _inputParameters1.resize(index+1);
-        _inputParameters1.insert(_inputParameters1.begin() + index, param);
+        _inputParameters1[index] = param;
     }
 }
 
@@ -75,6 +75,16 @@ void WorkFlowNode::box(const BoundingBox &box)
 BoundingBox WorkFlowNode::box() const
 {
     return _box;
+}
+
+bool WorkFlowNode::collapsed() const
+{
+    return _collapsed;
+}
+
+void WorkFlowNode::collapsed(bool yesno)
+{
+    _collapsed = yesno;
 }
 
 std::shared_ptr<WorkFlowNode> WorkFlowNode::owner() const

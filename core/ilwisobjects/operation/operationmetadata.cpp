@@ -14,6 +14,7 @@ OperationMetaData::OperationMetaData()
 
 OperationMetaData::OperationMetaData(const Resource &resource) : IlwisObject(resource)
 {
+    init();
 }
 
 OperationMetaData::~OperationMetaData()

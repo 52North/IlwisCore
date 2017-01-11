@@ -14,8 +14,9 @@ Rectangle {
     property int standardWidth: 360
     property int padding: 1
     property string type : "conditionitem"
+    property var flowConnections: []
     property var operationsList : []
-    property var conditions : []
+    //property var conditions : []
     property var junctionsList: []
     property var itemid
     property bool isSelected : false
@@ -41,7 +42,7 @@ Rectangle {
         changeBox()
     }
 
-    transform: Scale { origin.x:  width /2; origin.y : height / 2; xScale : wfCanvas.zoomScale; yScale: wfCanvas.zoomScale}
+    transform: Scale { origin.x:  conditionItem.width /2; origin.y : conditionItem.height / 2; xScale : wfCanvas.zoomScale; yScale: wfCanvas.zoomScale}
     z : 4
 
     AttachmentRectangle{
@@ -53,6 +54,7 @@ Rectangle {
         anchors.topMargin: 15
         owner : conditionItem
         z : 2
+
     }
 
     Rectangle {
@@ -81,6 +83,9 @@ Rectangle {
                anchors.centerIn: parent
                text : qsTr("Drop test operation(s) here")
                color : "grey"
+            }
+            onDropped: {
+                addTestOperation(drag.source.ilwisobjectid)
             }
 
             ListView{
@@ -121,15 +126,16 @@ Rectangle {
                             }
                             onClicked: {
                                 if ( testDetails.height == 0){
-                                    //var operation = modelData.parameters
-                                    //var names = operation.inParamNames
+                                    testDetails.model = null
                                     testDetails.model = modelData.parameters
+                                    detailsBack.height = testDetails.model.length * 20
                                     testList.currentIndex = index
                                 }else{
                                     for(var t=0; t < detailsBack.values.length; ++t)
                                         workflow.setTestValues(itemid, testList.currentIndex, t, detailsBack.values[t])
                                     detailsBack.values = []
                                     testDetails.model = null
+                                    detailsBack.height = 0
 
                                 }
                             }
@@ -179,7 +185,7 @@ Rectangle {
 
                                 Controls.TextEditLabelPair{
                                     id : parmvalues
-                                    width : parent.width - 20
+                                    width : Math.max(0,parent.width - 20)
                                     labelWidth: 160
                                     labelText: modelData.label
                                     height : 20
@@ -187,6 +193,7 @@ Rectangle {
                                     onContentChanged: {
                                         detailsBack.values[index] = content
                                     }
+
                                 }
                             }
                         }
@@ -282,14 +289,12 @@ Rectangle {
         onExited: {
             cursorShape = Qt.ArrowCursor
         }
-
-
     }
 
     function addToOperationList(operation) {
-            operationsList.push(operation);
-            operation.condition = conditionItem
-            resize()
+        operationsList.push(operation);
+        operation.condition = conditionItem
+        resize()
     }
 
     function removeFromOperationList(operationIndex) {
@@ -318,6 +323,10 @@ Rectangle {
         if ( yChanged)
             conditionItem.height = newHeight + (padding * 2)
 
+    }
+
+    function setTests() {
+        testList.model = workflow.getTests(itemid)
     }
 
     function addTest(index, pre, operation, value, post,type) {
@@ -357,10 +366,7 @@ Rectangle {
      }
 
     function attachTestFlow(type, toIndex){
-        console.debug(type, toIndex)
-        wfCanvas.showTestForm(conditionItem, att1.index, type, toIndex)
-//        var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
-//        currentItem.setFlow(conditionItem, att1.index, flowPoints)
+        wfCanvas.showTestForm(conditionItem, att1.index, testList.currentIndex, type, toIndex)
     }
 
     function changeBox(){
@@ -369,7 +375,7 @@ Rectangle {
 
     function addTestOperation(operationid){
         var operation = operations.operation(operationid)
-        if ( operation){
+        if ( operation && operation.booleanOperation){
             addTest(-1, "", operation,"","","")
         }
     }
@@ -388,11 +394,14 @@ Rectangle {
             px = conditionItem.x + conditionItem.width + 80
             py = conditionItem.y + conditionItem.height / 2 - 15
         }
-        component = Qt.createComponent("JunctionItem.qml");
+        var component = Qt.createComponent("JunctionItem.qml");
         if (component.status === Component.Ready){
-            var nodeid = workflow.addNode(0,{x : px, y:py,type:'junctionnode'})
-            currentItem = component.createObject(wfCanvas, {"x": px, "y": py, "itemid" : nodeid, "scale": wfCanvas.scale});
+            var nodeid = workflow.addNode(0,{x : px, y:py,w:39, h:39,type:'junctionnode'})
+            workflow.addCondition2Junction(itemid, nodeid)
+            currentItem = component.createObject(wfCanvas, {"x": px, "y": py, "width":39, "height":39, "itemid" : nodeid, "scale": wfCanvas.scale});
             junctionsList.push(currentItem)
+            currentItem.linkedCondition = conditionItem
+
             wfCanvas.canvasValid = false
         }
     }
@@ -402,7 +411,6 @@ Rectangle {
             var item = junctionsList[i]
             var ep = Qt.point(conditionItem.x + width / 2, conditionItem.y + height/2)
             var sp = item.center()
-            //console.debug("aa", sp,ep, conditionItem.x, conditionItem.y, conditionItem.width, conditionItem.height)
 
             if ( sp.x < conditionItem.x){
                 ep.x = conditionItem.x
@@ -416,12 +424,21 @@ Rectangle {
             if ( sp.y > (conditionItem.y + conditionItem.height)){
                 ep.y = conditionItem.y + conditionItem.height
             }
+            Global.drawLine(wfCanvas, ctx, sp, ep, false, "lightgrey", 1)
 
+            item.drawFlows(ctx)
+        }
+        for(i=0; i < flowConnections.length; i++){
+            item = flowConnections[i]
+            var index = item.attachtarget
+            sp = item.attachsource.center()
+            ep = item.target.attachementPoint(wfCanvas,index)
 
+            var pt1 = Qt.point(sp.x, sp.y)
+            var pt2 = Qt.point( ep.x, ep.y);
 
-            //console.debug("a", sp,ep)
+            Global.drawArrow(wfCanvas, ctx, pt1, pt2, item.isSelected)
 
-            Global.drawLine(wfCanvas, ctx, sp, ep, false, "green", 1)
         }
     }
 

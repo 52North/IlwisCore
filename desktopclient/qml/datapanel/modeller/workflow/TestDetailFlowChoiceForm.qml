@@ -14,6 +14,7 @@ WorkflowChoiceForm {
     property var attachRect
     property int toIndex
     property var toType
+    property int testIndex
 
     onOperationFromChanged: {
         fillInputModel()
@@ -24,9 +25,6 @@ WorkflowChoiceForm {
         flowParameterForm.state = "invisible"
         wfCanvas.canvasValid = false
         canvasActive = true
-//        operationFrom = null
-//        conditionTo = null
-//        attachRect = 0
         fromModel.clear()
     }
 
@@ -112,8 +110,7 @@ WorkflowChoiceForm {
 
             var fromIndex = getIndex(fromComboBox.currentText)
             var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : 0};
-            operationFrom.setFlow(conditionTo, attachRect, flowPoints)
-            console.debug("z", fromIndex, toIndex)
+            operationFrom.setFlow(conditionTo, conditionTo.att1, flowPoints, testIndex)
             conditionTo.setValue(operationFrom.itemid, fromIndex, toIndex)
             refresh()
         }

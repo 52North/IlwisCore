@@ -31,9 +31,11 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
     std::set<NodeId> usedNodes;
     for(const auto& item : graph){
 
-        for(int i=0; i < item->inputCount(); ++i){
-            if ( item->inputRef(i).inputLink())
-                usedNodes.insert(item->inputRef(i).inputLink()->id());
+        if ( item->type() == "operationnode"){ // only operations can have direct inputs; the inputs of a condition or junction are always set by the system
+            for(int i=0; i < item->inputCount(); ++i){
+                if ( item->inputRef(i).inputLink())
+                    usedNodes.insert(item->inputRef(i).inputLink()->id());
+            }
         }
     }
     //if a node is not used as input somewhere it must be an output
@@ -63,6 +65,17 @@ void Workflow::setFixedParameter(const QString &data, NodeId nodeId, qint32 parm
         }
     }
 
+}
+void Workflow::addConditionFlow(NodeId fromNode, NodeId toNode, qint32 testIndex, qint32 inParmIndex, qint32 outParmIndex, int attachRctIndxFrom, int attachRctIndxTo){
+    SPWorkFlowNode from = nodeById(fromNode);
+    SPWorkFlowNode to = nodeById(toNode);
+    if ( from && to){
+        std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(to);
+        if ( testIndex < condition->testCount()){
+            WorkFlowCondition::Test test = condition->test(testIndex);
+            addFlow(fromNode, test._operation->id(), inParmIndex, outParmIndex, attachRctIndxFrom, attachRctIndxTo);
+        }
+    }
 }
 
 void Workflow::addFlow(NodeId fromNode, NodeId toNode, qint32 inParmIndex, qint32 outParmIndex, int attachRctIndxFrom, int attachRctIndxTo)
@@ -166,6 +179,29 @@ quint32 Workflow::generateId()
     return ++_idCounter;
 }
 
+void Workflow::updateIdCounter()
+{
+    Workflow::ExecutionOrder order = executionOrder();
+    std::vector<SPWorkFlowNode> nodes = order._independentOrder;
+    qint64 maxid = 0;
+
+    for(SPWorkFlowNode node : order._independentOrder){
+        maxid = Ilwis::max(maxid, (qint64)node->id());
+    }
+    for(auto item : order._dependentOrder){
+        nodes = item.second;
+        for(const SPWorkFlowNode& node : nodes){
+            maxid = Ilwis::max(maxid, node->id());
+        }
+    }
+    _idCounter = maxid + 1;
+}
+
+const std::vector<SPWorkFlowNode> &Workflow::graph() const
+{
+    return _graph;
+}
+
 std::vector<WorkFlowParameter> Workflow::freeInputParameters() const
 {
    std::vector<WorkFlowParameter> result;
@@ -182,22 +218,49 @@ std::vector<WorkFlowParameter> Workflow::freeInputParameters() const
 
 std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
 {
+    auto CheckLinks =[](WorkFlowParameter& p,std::map<NodeId, std::vector<SPOperationParameter>>& outparams)->void {
+        // if an outputParameterIndex is defined it can be scrapped from the list of potential free parameters
+        if ( p.outputParameterIndex() != iUNDEF){
+            // junctionnodes are not regular operations and can be skipped; they are always intermediaries
+            if ( p.inputLink()->type() != "junctionnode")
+                if ( outparams.find(p.inputLink()->id()) != outparams.end())
+                    outparams[p.inputLink()->id()][p.outputParameterIndex()] = SPOperationParameter();
+        }
+    };
     std::vector<SPOperationParameter> result;
     std::map<NodeId, std::vector<SPOperationParameter>> outparams;
     for(const auto& item : _graph){
-        IOperationMetaData md = item->operation();
-        if ( md.isValid()){
-            outparams[item->id()] = md->getOutputParameters();
-        }
-    }
-    for(const auto& item : _graph){
-        for(int i=0; i < item->inputCount(); ++i){
-            WorkFlowParameter& p = item->inputRef(i);
-            if ( p.outputParameterIndex() != iUNDEF){
-                outparams[p.inputLink()->id()][p.outputParameterIndex()] = SPOperationParameter();
+        if (item->type() == "operationnode"){
+            IOperationMetaData md = item->operation();
+            if ( md.isValid()){
+                outparams[item->id()] = md->getOutputParameters();
             }
         }
     }
+    //we have collected a list of all outputs and are now going to check which ones are linked
+    // linked to a previous input and thus not being free; they are scrapped from the list by
+    // making its value invalied
+    for(const auto& item : _graph){
+        if (item->type() == "conditionnode")
+            continue;
+
+        if ( item->type() == "junctionnode"){
+             //note that the true case (2 == false) isnt under consideration as
+            // its output always goes to a junction so it will never appear in the outparams
+            // outparams are build on 'visible'nodes and the inside of a condition is not visibile
+            // to the outside and the true value comes from there
+             WorkFlowParameter& p = item->inputRef(2);
+             CheckLinks(p, outparams);
+
+        }else if ( item->type() == "operationnode"){
+            for(int i=0; i < item->inputCount(); ++i){
+                WorkFlowParameter& p = item->inputRef(i);
+                CheckLinks(p, outparams);
+           }
+        }
+
+    }
+    //collect now all parameters which have not been invalidated; these are the output parameters that are free and must be entered from the outside
     for(auto item : outparams){
         for(auto parm : item.second) {
             if ( parm)    {

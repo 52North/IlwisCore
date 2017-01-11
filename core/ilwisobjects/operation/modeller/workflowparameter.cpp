@@ -19,7 +19,7 @@ QString WorkFlowParameter::label() const
 {
     if ( _label != "")
         return _label;
-    return QString::number(_nodeid) + ": " + name();
+    return QString::number(_order) + ": " + name();
 }
 
 void WorkFlowParameter::label(const QString &lbl)
@@ -91,6 +91,11 @@ int WorkFlowParameter::attachement(bool source) const
 void WorkFlowParameter::nodeId(int nid)
 {
     _nodeid = nid;
+}
+
+int WorkFlowParameter::nodeId() const
+{
+    return _nodeid;
 }
 
 bool WorkFlowParameter::isValid() const

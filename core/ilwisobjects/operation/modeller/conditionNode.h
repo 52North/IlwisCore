@@ -32,7 +32,7 @@ public:
     QString testValue(int testIndex, int parameterIndex, const IWorkflow &wf) const;
     Test test(int index) const;
     int testCount() const;
-
+    void nodeId(quint64 id);
 private:
     std::vector<Test> _tests;
     std::vector<SPWorkFlowNode> _operations;

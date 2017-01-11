@@ -49,6 +49,10 @@ std::vector<SPWorkFlowNode> WorkFlowCondition::subnodes(const QString &reason) c
 void WorkFlowCondition::addSubNode(const SPWorkFlowNode &node, const QString &reason)
 {
     if (reason == "operations"){
+        if ( node->id() == i64UNDEF){
+            kernel()->issues()->log(TR("Attempt to add invalid node to workflow; it has no id "));
+            return;
+        }
         _operations.push_back(node);
     }
 }
@@ -141,3 +145,8 @@ bool WorkFlowCondition::execute(ExecutionContext *ctx, SymbolTable &symTable, co
     return true;
 }
 
+void WorkFlowCondition::nodeId(quint64 id)
+{
+    WorkFlowNode::nodeId(id);
+    name(QString("condition_%1").arg(id));
+}

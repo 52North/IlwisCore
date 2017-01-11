@@ -5,7 +5,6 @@ import OperationModel 1.0
 import WorkflowModel 1.0
 import QtQuick.Dialogs 1.1
 import ".." as Modeller
-import "forms" as Forms
 import "../../../matrix.js" as Matrix
 import "../../../Global.js" as Global
 
@@ -40,26 +39,24 @@ Canvas {
         id : testForm
     }
 
-
-
     WFCanvasMouseArea{
         id :mousearea
     }
 
 
-    function createItem(x,y, resource, nodeId) {
+    function createItem(x,y, resource, nodeId, parentItem) {
         component = Qt.createComponent("OperationItem.qml");
         if (component.status == Component.Ready)
-            finishCreation(x,y,resource, nodeId);
+            finishCreation(x,y,resource, nodeId, parentItem);
         else
             component.statusChanged.connect(finishCreation);
 
     }
 
-    function finishCreation(x,y,resource, nodeId) {
+    function finishCreation(x,y,resource, nodeId, parentItem) {
         if (component.status === Component.Ready) {
 
-            currentItem = component.createObject(wfcanvas, {"x": x, "y":y, "operation" : resource, "itemid" : nodeId, "scale": wfCanvas.scale});
+            currentItem = component.createObject(parentItem, {"x": x, "y":y, "operation" : resource, "itemid" : nodeId, "scale": wfCanvas.scale});
             if (currentItem == null) {
                 // Error Handling
                 console.log("Error creating object");
@@ -111,22 +108,23 @@ Canvas {
         wfCanvas.requestPaint();
     }
 
-    function showAttachmentForm(target, attachRect){
+    function showAttachmentForm(target, attachRectTo, typeFilter){
         canvasActive = false;
-        attachementForm.operationOut = workarea.currentItem
-        attachementForm.operationIn = target
-        attachementForm.attachRect = attachRect
-        attachementForm.target = target
+        attachementForm.operationFrom = workarea.currentItem
+        attachementForm.nodeTo = target
+        attachementForm.attachRectTo = attachRectTo
         attachementForm.state = "visible"
+        attachementForm.typeFilter = typeFilter
     }
 
-    function showTestForm(target, attachRect, type, toIndex){
+    function showTestForm(target, attachRectTo, testIndex, type, toIndex){
         canvasActive = false;
         testForm.operationFrom = workarea.currentItem
         testForm.conditionTo = target
-        testForm.attachRect = attachRect
+        testForm.attachRect = attachRectTo
         testForm.toType = type
         testForm.toIndex = toIndex
+        testForm.testIndex = testIndex
         testForm.state = "visible"
     }
 

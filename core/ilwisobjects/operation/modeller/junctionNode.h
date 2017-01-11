@@ -9,6 +9,7 @@ class KERNELSHARED_EXPORT Junction : public WorkFlowNode
 {
 public:
     Junction();
+    Junction(quint64 nodeid);
     QString type() const;
 
 
@@ -18,6 +19,8 @@ public:
     void link2trueCase(SPWorkFlowNode trueNode, int parmIndex);
     void link2falseCase(SPWorkFlowNode falseNode, int parmIndex);
     void link2condition(Ilwis::SPWorkFlowNode conditionnode);
+    void nodeId(quint64 id);
+
 private:
 };
 }

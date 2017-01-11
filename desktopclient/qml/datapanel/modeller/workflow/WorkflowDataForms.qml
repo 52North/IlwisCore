@@ -24,7 +24,7 @@ TabView {
     }
     Tab{
         id : selectedTab
-        title: qsTr("Selected operation Form")
+        title: qsTr("Selected operation")
         SelectedOperationForm{
         }
     }

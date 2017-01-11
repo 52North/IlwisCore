@@ -44,7 +44,9 @@ public:
     Q_PROPERTY(QQmlListProperty<IlwisObjectModel> selectedOperation READ selectedOperation NOTIFY selectionChanged)
     Q_INVOKABLE quint32 addNode(const QString &id, const QVariantMap &parameters);
     Q_INVOKABLE void addFlow(int nodeIdFrom, int nodeIdTo, qint32 inParmIndex, qint32 outParmIndex, int rectFrom, int rectTo);
+    Q_INVOKABLE void addConditionFlow(int conditionIdTo, const QString &operationIdFrom, int testIndex, int inParameterIndex, int outParmIndex, int rectFrom, int rectTo);
     Q_INVOKABLE void addTest2Condition(int conditionId, const QString& operationId, const QString& pre, const QString& post);
+    Q_INVOKABLE void addCondition2Junction(int conditionId, int junctionId);
     Q_INVOKABLE void setTestValues(int conditionId, int testIndex, int parameterIndex, const QString& value);
     Q_INVOKABLE QString testValueDataType(quint32 conditionId, quint32 testIndex, quint32 parameterIndex) const;
     Q_INVOKABLE QString testValue(int conditionId, int testIndex, int parameterIndex);
@@ -70,6 +72,7 @@ public:
     Q_INVOKABLE void selectOperation(const QString& id);
     QString modelType() const;
 
+
 signals:
     void sendMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
     void selectionChanged();
@@ -77,9 +80,6 @@ public slots:
     void acceptMessage(const QString &type, const QString &subtype, const QVariantMap &parameters);
 private:
     Ilwis::IWorkflow _workflow;
-    //nodeFrom, nodeTo,attachRectIn, attachRectOut
-    std::vector<std::tuple<int, int, int,int>> _flows;
-
 
     bool _stepMode = false;
     OperationExpression _expression;
@@ -91,6 +91,7 @@ private:
     int lastOperationNode() const;
 
     QList<IlwisObjectModel*> _selectedOperation;
+    QVariantMap getParameter(const SPWorkFlowNode& node, int i);
 };
 
 

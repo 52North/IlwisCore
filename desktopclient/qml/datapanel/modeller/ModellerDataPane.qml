@@ -132,7 +132,7 @@ Item {
                             workflowView.workflow = model.addWorkflow(filter);
                         model.currentWorkflow = workflowView.workflow
                         if (resource) {
-                            workflowView.drawFromWorkflow()
+                            workflowView.recreateWorkflow()
                         }
                         createParameters = [filter, sourceName, sourceType]
                         manager.updateLists()
@@ -147,7 +147,7 @@ Item {
              workflowView.workflow = wf
              model.currentWorkflow = workflowView.workflow
              if (model.currentWorkflow) {
-                 workflowView.drawFromWorkflow()
+                 workflowView.recreateWorkflow()
              }
              createParameters = ['itemid=' + wf.id, wf.name, 'workflow']
 

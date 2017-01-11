@@ -9,37 +9,48 @@ import OperationModel 1.0
 
 WorkflowChoiceForm {
     id : flowParameterForm
-    property var operationOut
-    property var operationIn
-    property var attachRect
+    property var operationFrom
+    property var nodeTo
+    property var attachRectTo
     property var target
-    property var source
+    property int fromParameterIndex : -1
+    property int toParameterIndex : -1
+    property string typeFilter : ""
 
-    onOperationInChanged: {
-        if ( operationOut && operationIn){
-            var inParameterIndexes = operationIn.operation.parameterIndexes("",false),
-                outParameterIndexes = [],
-                count = 0,
+    onNodeToChanged: {
+        if ( operationFrom && nodeTo){
+            var outParameterNames = [], count=0
+            if ( nodeTo.type === "junctionitem"){
+                outParameterNames = operationFrom.parameterNames(type,true)
+
+                count = outParameterNames.length
+
+                for (var j in outParameterNames) {
+                    outModel.append({'text': outParameterNames[j]})
+                }
+                return
+            }
+            var inParameterNames = nodeTo.parameterNames(typeFilter,false),
                 validTypes = [],
                 type
 
             // Get valid types
-            for (var i in inParameterIndexes) {
-                type = operationIn.operation.inputparameterType(i, false)
+            for (var i in inParameterNames) {
+                type = nodeTo.parameterType(i,false)
                 if (validTypes.indexOf(type) === -1) {
                     validTypes.push(type)
-                    outParameterIndexes = operationOut.operation.parameterIndexes(type,true)
+                    outParameterNames = operationFrom.parameterNames(type,true)
 
-                    count += outParameterIndexes.length
+                    count += outParameterNames.length
 
-                    for (var j in outParameterIndexes) {
-                        outModel.append({'text': outParameterIndexes[j]})
+                    for (var j in outParameterNames) {
+                        outModel.append({'text': outParameterNames[j]})
                     }
                 }
             }
 
             if (count === 0) {
-                modellerDataPane.addError(1, 'There were no possible matches found between ' + operationOut.name.text + ' and ' + operationIn.name.text)
+                modellerDataPane.addError(1, 'There were no possible matches found between ' + operationFrom.itemid + ' and ' + nodeTo.itemid)
                 refresh()
             } else {
                 fillInputModel(0)
@@ -52,24 +63,22 @@ WorkflowChoiceForm {
         flowParameterForm.state = "invisible"
         wfCanvas.canvasValid = false
         canvasActive = true
-        source = null
-        operationOut = null
-        operationIn = null
-        attachRect = 0
-        target = null
+        operationFrom = null
+        nodeTo = null
+        attachRectTo = 0
         inModel.clear()
         outModel.clear()
     }
 
     function fillInputModel(index) {
-        if (operationIn) {
+        if (nodeTo) {
             inModel.clear()
-            var parameterIndexes = operationIn.operation.parameterIndexes(operationOut.operation.inputparameterType(index), false)
+            var parameterName = nodeTo.parameterNames(operationFrom.parameterType(index), false)
 
-            for (var i in parameterIndexes) {
-                var name = parameterIndexes[i]
+            for (var i in parameterName) {
+                var name = parameterName[i]
 
-                if (!workarea.workflow.hasValueDefined(operationIn.itemid, name.split(':')[0])) {
+                if (!workarea.workflow.hasValueDefined(nodeTo.itemid, name.split(':')[0])) {
                     inModel.append({'text': name})
                 }
             }
@@ -129,6 +138,7 @@ WorkflowChoiceForm {
         x : 5
         width : parent.width
         height : 20
+        opacity : (nodeTo && nodeTo.type === "operationitem") ? 1 : 0
         Text {
             id : labelIn
             height : 20
@@ -156,7 +166,6 @@ WorkflowChoiceForm {
         anchors.rightMargin: 5
         anchors.top : applyButton.top
         onClicked: {
-            console.debug(operationIn, target, source)
             refresh()
         }
     }
@@ -174,16 +183,20 @@ WorkflowChoiceForm {
                 var parts = txt.split(":")
                 return parts[0]
             }
-
-            var fromIndex = getIndex(outComboBox.currentText)
-            var toIndex = getIndex(inComboBox.currentText)
-            var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
-
-            if (!source) {
-                if ( workarea.currentItem.type === "operationitem")
-                source = workarea.currentItem
+            fromParameterIndex = getIndex(outComboBox.currentText)
+            if ( nodeTo.type === "operationitem")
+                toParameterIndex = getIndex(inComboBox.currentText)
+            else{
+                toParameterIndex = nodeTo.containedInLinkedCondition(operationFrom) ? 1 : 2 // 0=condition, 1=truecase, 2=falsecase
+                nodeTo.dataType = operationFrom.parameterType(fromParameterIndex, true)
             }
-            source.setFlow(target, attachRect, flowPoints)
+            var flowPoints = { "fromParameterIndex" : fromParameterIndex, "toParameterIndex" : toParameterIndex};
+
+            if (!operationFrom) {
+                if ( workarea.currentItem.type === "operationitem")
+                    operationFrom = workarea.currentItem
+            }
+            operationFrom.setFlow(nodeTo, attachRectTo, flowPoints,nodeTo.type === "operationitem" ? -1 : -2)
             refresh()
         }
     }

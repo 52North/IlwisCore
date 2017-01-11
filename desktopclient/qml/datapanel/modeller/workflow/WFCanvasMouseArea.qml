@@ -5,7 +5,6 @@ import OperationModel 1.0
 import WorkflowModel 1.0
 import QtQuick.Dialogs 1.1
 import ".." as Modeller
-import "forms" as Forms
 import "../../../Global.js" as Global
 
 MouseArea {
@@ -18,17 +17,10 @@ MouseArea {
     property int lastY: height/2;
     property int lastOpX: width/2;
     property int lastOpY: height/2;
-    property int oldAngle : 0
 
     onWheel: {
         var delta = wheel.angleDelta.y / 40
-        if (delta){
-            if ( wheel.angleDelta.y > oldAngle)
-                zoom(-delta, false, mouseX, mouseY)
-            else
-                zoom(delta, false, mouseX, mouseY)
-            oldAngle = wheel.angleDelta.y
-        }
+        zoom(delta, false, mouseX, mouseY)
     }
     onPressed: {
         selectThing()
@@ -61,7 +53,6 @@ MouseArea {
 
 
         }
-        console.debug("dropped here")
     }
 
     function selectThing(){
@@ -208,7 +199,8 @@ MouseArea {
                         currentItem.x += mouseX - oldx
                         currentItem.y += mouseY - oldy
                         if ( currentItem.type === "conditionitem"){
-                            currentItem.moveContent( mouseX - oldx, mouseY - oldy)
+                            //currentItem.moveContent( mouseX - oldx, mouseY - oldy)
+                            canvasValid = false
                         }
                         else if ( currentItem.type === "junctionitem"){
                             canvasValid = false

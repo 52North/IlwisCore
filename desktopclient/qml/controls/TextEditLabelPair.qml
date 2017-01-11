@@ -14,7 +14,7 @@ DropArea {
     property bool transparentBackgrond : true
     property var regexvalidator
     property bool boldLabel : true
-    property int editWidth : width - label.width
+    property int editWidth : Math.max(0,width - label.width)
     property string ilwisobjectid // not always set
     height : Global.rowHeight
     width : parent.width

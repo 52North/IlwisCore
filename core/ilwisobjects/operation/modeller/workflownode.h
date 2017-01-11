@@ -21,9 +21,11 @@ public:
     WorkFlowParameter& inputRef(int index);
     void addInput(const WorkFlowParameter& param, int index=iUNDEF);
     void removedInput(int index);
-    void nodeId(quint64 id);
+    virtual void nodeId(quint64 id);
     void box(const BoundingBox& box);
     BoundingBox box() const;
+    bool collapsed() const;
+    void collapsed(bool yesno);
     std::shared_ptr<WorkFlowNode> owner() const;
     void owner(std::shared_ptr<WorkFlowNode> own);
 
@@ -36,6 +38,7 @@ public:
 protected:
     std::vector<WorkFlowParameter> _inputParameters1;
     BoundingBox _box;
+    bool _collapsed = false;
     std::shared_ptr<WorkFlowNode> _owner;
 };
 
