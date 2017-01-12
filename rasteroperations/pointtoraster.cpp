@@ -146,15 +146,18 @@ Ilwis::OperationImplementation::State PointToRaster::prepare(ExecutionContext *c
     // but that complicates things for this example. We choose a value domain to support rUNDEF.
     IDomain dom("value");
     // initialize the output rastercoverage.
-    _outputraster = IRasterCoverage(outputName);
-    _outputraster->datadefRef().domain(dom);
+    _outputraster.prepare();
+    if (outputName != sUNDEF)
+         _outputraster->name(outputName);
+
     _outputraster->coordinateSystem(_inputgrf->coordinateSystem());
     // we need to set the envelope of the output raster. For this we need to convert the envelope of the input to the output. If the
     // coordinatesystem of both coverage are the same this is ofcourse a simple copy, else a real coordinate transformation will be done
     Envelope env = _inputgrf->coordinateSystem()->convertEnvelope(_inputfeatures->coordinateSystem(), _inputfeatures->envelope());
     _outputraster->envelope(env);
     _outputraster->georeference(_inputgrf);
-
+    std::vector<double> indexes = {0};
+    _outputraster->setDataDefintions(dom,indexes);
     return sPREPARED;
 }
 
