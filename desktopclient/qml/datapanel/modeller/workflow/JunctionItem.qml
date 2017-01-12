@@ -22,7 +22,7 @@ Rectangle {
     width : 39
     height : 39
     radius : 30
-    color : Global.lightgreen
+    color : workflow.isValidNode(itemid,"") ? Global.lightgreen : Global.errorColor
     border.width: 1
     border.color: Global.darkgreen
 

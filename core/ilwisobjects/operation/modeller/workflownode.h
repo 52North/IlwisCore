@@ -10,15 +10,17 @@
 namespace Ilwis {
 
 class OperationExpression;
+class Workflow;
 
 class KERNELSHARED_EXPORT WorkFlowNode : public Identity
 {
 public:
-
+    enum ValidityCheck{vcALLDEFINED,vcPARTIAL, vcTESTS, vcOPERATIONS, vcJUNCTIONS};
     WorkFlowNode(const QString &name, const QString &description="", quint64 id=i64UNDEF);
 
     virtual int inputCount() const;
     WorkFlowParameter& inputRef(int index);
+    WorkFlowParameter input(int index) const;
     void addInput(const WorkFlowParameter& param, int index=iUNDEF);
     void removedInput(int index);
     virtual void nodeId(quint64 id);
@@ -34,6 +36,7 @@ public:
     virtual std::vector<std::shared_ptr<WorkFlowNode>> subnodes(const QString& reason="") const;
     virtual void addSubNode(const std::shared_ptr<WorkFlowNode>& node, const QString& reason);
     virtual bool execute(ExecutionContext *ctx, SymbolTable &symTable, const OperationExpression &expression, const std::map<quint64, int> &idmap);
+    virtual bool isValid(Workflow* workflow, WorkFlowNode::ValidityCheck) const = 0;
 
 protected:
     std::vector<WorkFlowParameter> _inputParameters1;

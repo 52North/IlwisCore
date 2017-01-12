@@ -191,7 +191,7 @@ MouseArea {
                 if ( currentItem ){
                     var xrelative = scaleMousePosition(mouseX) - currentItem.x
                     var yrelative = scaleMousePosition(mouseY) - currentItem.y
-                    scaleMousePosition(mouseX)
+                    //scaleMousePosition(mouseX)
                     cursorShape = getCursorShape(xrelative, yrelative)
                     var prevXCorner = currentItem.x
                     var prevYCorner = currentItem.y

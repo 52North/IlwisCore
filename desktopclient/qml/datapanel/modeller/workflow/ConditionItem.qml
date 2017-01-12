@@ -12,7 +12,7 @@ Rectangle {
 
     property int standardHeight: 180
     property int standardWidth: 360
-    property int padding: 1
+    property int padding: 10
     property string type : "conditionitem"
     property var flowConnections: []
     property var operationsList : []
@@ -25,7 +25,7 @@ Rectangle {
     height: standardHeight
     color: "transparent"
     border.width: 1
-    border.color: "grey"
+    border.color: workflow.isValidNode(itemid,"") ? "grey" : Global.errorColor
     transformOrigin: Item.TopLeft;
     radius : 5
 
@@ -58,12 +58,12 @@ Rectangle {
     }
 
     Rectangle {
-        id: listRectangle
+        id: testRectangle
         property int detailsHeight : 0
 
         border.width: 1
         border.color: "grey"
-        color: "#b3e6c9"
+        color: workflow.isValidNode(itemid,"tests") ? "#b3e6c9" : Global.errorColor
         height : 35 + detailsHeight
         width : parent.width - 8
         x : 4
@@ -136,6 +136,7 @@ Rectangle {
                                     detailsBack.values = []
                                     testDetails.model = null
                                     detailsBack.height = 0
+                                    resetColors()
 
                                 }
                             }
@@ -157,7 +158,7 @@ Rectangle {
                             anchors.fill: parent
                             onModelChanged: {
                                 detailsBack.height = model ? model.length * 20 : 0
-                                listRectangle.detailsHeight = detailsBack.height
+                                testRectangle.detailsHeight = detailsBack.height
                             }
 
                             delegate : Item{
@@ -205,22 +206,22 @@ Rectangle {
     }
 
     Rectangle {
-        id: conditionRectangle
+        id: operationsRectangle
 
         anchors.topMargin: 4
-        anchors.top: listRectangle.bottom
+        anchors.top: testRectangle.bottom
         border.width: 1
         border.color: "grey"
-        color : "lightblue"
+        color : workflow.isValidNode(itemid,"operations") ? "lightblue" : Global.errorColor
         opacity : 0.1
-        height: parent.height - listRectangle.height - 10 - bottombuttons.height
+        height: parent.height - testRectangle.height - 10 - bottombuttons.height
         width : parent.width - 8
         x : 4
         radius : 5
     }
     Rectangle {
         id : bottombuttons
-        anchors.top : conditionRectangle.bottom
+        anchors.top : operationsRectangle.bottom
         width : parent.width - 8
         anchors.horizontalCenter: parent.horizontalCenter
         height : 24
@@ -292,6 +293,7 @@ Rectangle {
     }
 
     function addToOperationList(operation) {
+        console.debug("yup")
         operationsList.push(operation);
         operation.condition = conditionItem
         resize()
@@ -302,26 +304,49 @@ Rectangle {
 
 
     function resize() {
-        var newWidth = -1000000, newHeight = -1000000, operation, xChanged = false, yChanged = false;
+        var newWidth = -1000000, newHeight = -1000000, operation, xChanged = false, yChanged = false, wChanged=false, hChanged=false;
 
-
+        var newX = conditionItem.x, newY = conditionItem.y
         for (var i in operationsList) {
             operation = operationsList[i]
 
-            if ((operation.x  - conditionItem.x + operation.width) > conditionItem.width) {
-                newWidth = operation.x  - conditionItem.x + operation.width
-                xChanged = true
+            //console.debug(operation.x, conditionItem.x, operation.width,conditionItem.width)
+            if ((operation.x + operation.width) > conditionItem.width) {
+                newWidth = operation.x + operation.width
+                wChanged = true
             }
 
-            if ((operation.y  - conditionItem.y + operation.height) > conditionItem.height) {
-               newHeight = operation.y  - conditionItem.y + operation.height
-                yChanged = true
+            if ((operation.y  + operation.height) > conditionItem.height) {
+               newHeight = operation.y  + operation.height
+                hChanged = true
             }
+
+            if (operation.x  < 0) {
+               newWidth = Math.abs(operation.x) + conditionItem.width
+               xChanged = wChanged = true
+               newX = newX + operation.x - padding * 2
+            }
+            if (operation.y  < 0) {
+               newHeight = Math.abs(operation.y) + conditionItem.height
+               yChanged = hChanged = true
+               newY = newY + operation.y - padding * 2
+
+            }
+
+
         }
-        if ( xChanged)
+        if ( wChanged)
             conditionItem.width = newWidth + (padding * 2)
-        if ( yChanged)
-            conditionItem.height = newHeight + (padding * 2)
+        if ( hChanged)
+            conditionItem.height = newHeight + (padding * 2 + 10)
+        if ( xChanged){
+            conditionItem.x = newX
+            operation.x = padding *2
+        }
+        if ( yChanged){
+            conditionItem.y = newY
+            operation.y = padding * 2 + 35
+        }
 
     }
 
@@ -330,7 +355,7 @@ Rectangle {
     }
 
     function addTest(index, pre, operation, value, post,type) {
-        if ( index == -1)
+        if ( index === -1)
             index = testList.tests.length
         workflow.addTest2Condition(itemid,operation.id,pre, post)
         testList.model = null
@@ -339,7 +364,7 @@ Rectangle {
 
     function inOperationList(my) {
         var yrelative = my - y
-        return yrelative > conditionRectangle.y
+        return yrelative > operationsRectangle.y
     }
 
     function moveContent(dx, dy){
@@ -354,7 +379,7 @@ Rectangle {
 
     function inSideCondtion(centerY){
         var relY = centerY - y;
-        return relY < listRectangle.height
+        return relY < testRectangle.height
     }
 
     function attachementPoint(canvas, index){
@@ -447,6 +472,12 @@ Rectangle {
         workflow.setTestValues(itemid, testList.currentIndex, toParam, value)
         testList.model = null
         testList.model = workflow.getTests(itemid)
+    }
+
+    function resetColors(){
+        operationsRectangle.color = workflow.isValidNode(itemid, "operations") ? "#b3e6c9" : Global.errorColor
+        testRectangle.color = workflow.isValidNode(itemid, "tests") ? "lightblue" : Global.errorColor
+        conditionItem.border.color = workflow.isValidNode(itemid,"") ? "grey" : Global.errorColor
     }
 
     function resetInputModel(){

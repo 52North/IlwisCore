@@ -391,6 +391,8 @@ Rectangle {
                 currentItem.setFlow(target, attachRectTo, flowPoints,-1)
 
             }
+            if ( condition)
+                condition.resetColors()
 
             wfCanvas.canvasValid = false
         }

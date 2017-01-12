@@ -16,6 +16,7 @@ public:
     void label(const QString& lbl);
     void inputLink(const std::shared_ptr<WorkFlowNode> link, qint32 outputIndex = 0);
     std::shared_ptr<WorkFlowNode> inputLink();
+    const std::shared_ptr<WorkFlowNode> inputLink() const;
     qint32 outputParameterIndex() const;
     QString value() const;
     void value(const QString& v, IlwisTypes type);
@@ -42,6 +43,8 @@ private:
     std::pair<int, int> _attachements;
     static quint64 _baseParmId;
 };
+
+
 }
 
 #endif // WORKFLOWPARAMETER_H

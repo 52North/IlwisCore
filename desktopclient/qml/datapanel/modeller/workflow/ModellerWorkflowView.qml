@@ -337,17 +337,17 @@ Modeller.ModellerWorkArea {
             var operation = operationsList[i]
             if ( operation.condition)
                 continue;
-            operation.x += px;
-            operation.y += py;
+            operation.x -= px;
+            operation.y -= py;
 
         }
         for(i=0; i < conditionsList.length; ++i){
             var conditions = conditionsList[i]
-            conditions.x += px;
-            conditions.y += py;
+            conditions.x -= px;
+            conditions.y -= py;
             for(var j=0; j < conditions.junctionsList.length;++j){
-                conditions.junctionsList[j].x += px;
-                conditions.junctionsList[j].y += py;
+                conditions.junctionsList[j].x -= px;
+                conditions.junctionsList[j].y -= py;
             }
 
         }
@@ -375,7 +375,7 @@ Modeller.ModellerWorkArea {
             item = conditionsList[i]
 
             for( var j=0; j < item.operationsList.length; ++j){
-                var op = item.operationsList[i]
+                var op = item.operationsList[j]
                 var  p = item.mapToItem(wfCanvas, op.x, op.y)
                 startCoords = Qt.point(p.x, p.y)
 
@@ -395,8 +395,9 @@ Modeller.ModellerWorkArea {
             }
 
             for( var j=0; j < item.junctionsList.length; ++j){
-                var junction = item.junctionsList[i]
+                var junction = item.junctionsList[j]
                 startCoords = Qt.point(junction.x, junction.y)
+
 
                 endX = (startCoords.x + (junction.width * junction.scale));
                 endY = (startCoords.y + (junction.height * junction.scale));

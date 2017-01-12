@@ -150,3 +150,28 @@ void WorkFlowCondition::nodeId(quint64 id)
     WorkFlowNode::nodeId(id);
     name(QString("condition_%1").arg(id));
 }
+
+bool WorkFlowCondition::isValid(Workflow *workflow, WorkFlowNode::ValidityCheck check) const
+{
+    bool testsOk = _tests.size() > 0;
+    for(Test test : _tests){
+        testsOk &= test.isValid();
+    }
+    if ( check == vcTESTS)
+        return testsOk;
+    // all operations in a condition must have a defined value  ( calculated or fixed) else you get optional parameters which is for the moment not supported
+    bool operationsOk = _operations.size() > 0;
+    for(SPWorkFlowNode node : _operations){
+       if ( !node->isValid(workflow, WorkFlowNode::vcALLDEFINED))
+           operationsOk = false;
+
+    }
+    if ( check == vcOPERATIONS)
+        return operationsOk;
+    return testsOk && operationsOk;
+}
+
+bool WorkFlowCondition::Test::isValid() const
+{
+    return _operation && _operation->isValid(0, WorkFlowNode::vcALLDEFINED);
+}

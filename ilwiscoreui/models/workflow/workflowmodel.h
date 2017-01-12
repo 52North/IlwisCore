@@ -68,6 +68,7 @@ public:
     Q_INVOKABLE quint32 runid() const;
     Q_INVOKABLE void store(const QString &container, const QString &name);
     Q_INVOKABLE void setFixedValues(qint32 nodeid, const QString& formValues);
+    Q_INVOKABLE bool isValidNode(qint32 nodeId, const QString &part) const;
     QQmlListProperty<IlwisObjectModel> selectedOperation();
     Q_INVOKABLE void selectOperation(const QString& id);
     QString modelType() const;
