@@ -40,6 +40,11 @@ void WorkFlowParameter::inputLink(const std::shared_ptr<WorkFlowNode> link, qint
         _state = pkCALCULATED;
 }
 
+const std::shared_ptr<WorkFlowNode> WorkFlowParameter::inputLink() const
+{
+    return _link;
+}
+
 std::shared_ptr<WorkFlowNode> WorkFlowParameter::inputLink()
 {
     return _link;

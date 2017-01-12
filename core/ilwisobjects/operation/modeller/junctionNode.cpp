@@ -12,6 +12,7 @@
 #include "mastercatalog.h"
 #include "operationhelper.h"
 #include "workflownode.h"
+#include "workflow.h"
 #include "conditionNode.h"
 #include "junctionNode.h"
 
@@ -51,6 +52,31 @@ void Junction::nodeId(quint64 id)
 {
     WorkFlowNode::nodeId(id);
     name(QString("junction_%1").arg(id));
+}
+
+bool Junction::isValid(Workflow *workflow, WorkFlowNode::ValidityCheck) const
+{
+    WorkFlowParameter parm1 = input(1);
+    WorkFlowParameter parm2 = input(2);
+
+    bool ok = parm1.inputLink() && parm2.inputLink();
+    if ( ok){
+        ok = parm1.valueType() == parm2.valueType();
+        if ( ok){
+            // we now try to find the junction as input in one of the nodes of the graph, else the junction is not correctly linked and thus invalid(incomplete)
+           const std::vector<SPWorkFlowNode>& nodes = workflow->graph();
+           for(auto node : nodes){
+               for(int i=0; i < node->inputCount(); ++i)
+               if ( node->input(i).inputLink()){
+                   if (node->input(i).inputLink()->id() == id())
+                       return true;
+               }
+           }
+           return false;
+        }
+    }
+    return ok;
+
 }
 
 void Junction::link2trueCase(SPWorkFlowNode trueNode, int parmIndex)

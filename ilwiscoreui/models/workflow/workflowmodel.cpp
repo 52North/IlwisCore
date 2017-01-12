@@ -504,6 +504,25 @@ void WorkflowModel::setFixedValues(qint32 nodeid, const QString &formValues)
 
 }
 
+bool WorkflowModel::isValidNode(qint32 nodeid,const QString& part) const
+{
+    SPWorkFlowNode node = _workflow->nodeById(nodeid);
+    if (!node)
+        return false;
+    WorkFlowNode::ValidityCheck vc = WorkFlowNode::vcPARTIAL;
+    if (part != ""){
+        if ( node->type() == "conditionnode"){
+            if ( part == "tests")
+                vc = WorkFlowNode::vcTESTS ;
+            if ( part == "operations")
+                vc = WorkFlowNode::vcOPERATIONS;
+            if ( part == "junctions")
+                vc = WorkFlowNode::vcJUNCTIONS;
+        }
+    }
+    return node->isValid(_workflow.ptr(), vc);
+}
+
 QQmlListProperty<IlwisObjectModel> WorkflowModel::selectedOperation()
 {
     return  QQmlListProperty<IlwisObjectModel>(this, _selectedOperation);

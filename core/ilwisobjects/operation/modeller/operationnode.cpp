@@ -121,3 +121,17 @@ QString OperationNode::type() const
 {
     return "operationnode";
 }
+
+bool OperationNode::isValid(Workflow *, WorkFlowNode::ValidityCheck vc) const
+{
+    if ( vc == WorkFlowNode::vcPARTIAL)
+        return true;
+    if ( vc == WorkFlowNode::vcALLDEFINED){
+        bool ok = true;
+        for(int i=0; i < inputCount() && ok; ++i){
+            ok &= input(i).state() != WorkFlowParameter::pkFREE;
+        }
+        return ok;
+    }
+    return false;
+}

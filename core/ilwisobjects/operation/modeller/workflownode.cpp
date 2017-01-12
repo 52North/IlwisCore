@@ -40,6 +40,13 @@ WorkFlowParameter &WorkFlowNode::inputRef(int index)
     throw ErrorObject(TR("Parameter index out of range"));
 }
 
+WorkFlowParameter WorkFlowNode::input(int index) const
+{
+    if ( index < _inputParameters1.size())
+        return _inputParameters1[index];
+    throw ErrorObject(TR("Parameter index out of range"));
+}
+
 void WorkFlowNode::addInput(const WorkFlowParameter &param, int index)
 {
     if ( index == iUNDEF)    {
