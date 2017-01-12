@@ -337,17 +337,17 @@ Modeller.ModellerWorkArea {
             var operation = operationsList[i]
             if ( operation.condition)
                 continue;
-            operation.x += px;
-            operation.y += py;
+            operation.x -= px;
+            operation.y -= py;
 
         }
         for(i=0; i < conditionsList.length; ++i){
             var conditions = conditionsList[i]
-            conditions.x += px;
-            conditions.y += py;
+            conditions.x -= px;
+            conditions.y -= py;
             for(var j=0; j < conditions.junctionsList.length;++j){
-                conditions.junctionsList[j].x += px;
-                conditions.junctionsList[j].y += py;
+                conditions.junctionsList[j].x -= px;
+                conditions.junctionsList[j].y -= py;
             }
 
         }

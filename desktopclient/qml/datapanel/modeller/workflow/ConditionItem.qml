@@ -25,7 +25,7 @@ Rectangle {
     height: standardHeight
     color: "transparent"
     border.width: 1
-    border.color: "grey"
+    border.color: workflow.isValidNode(itemid,"") ? "grey" : Global.errorColor
     transformOrigin: Item.TopLeft;
     radius : 5
 
@@ -58,12 +58,12 @@ Rectangle {
     }
 
     Rectangle {
-        id: listRectangle
+        id: testRectangle
         property int detailsHeight : 0
 
         border.width: 1
         border.color: "grey"
-        color: "#b3e6c9"
+        color: workflow.isValidNode(itemid,"tests") ? "#b3e6c9" : Global.errorColor
         height : 35 + detailsHeight
         width : parent.width - 8
         x : 4
@@ -136,6 +136,7 @@ Rectangle {
                                     detailsBack.values = []
                                     testDetails.model = null
                                     detailsBack.height = 0
+                                    resetColors()
 
                                 }
                             }
@@ -157,7 +158,7 @@ Rectangle {
                             anchors.fill: parent
                             onModelChanged: {
                                 detailsBack.height = model ? model.length * 20 : 0
-                                listRectangle.detailsHeight = detailsBack.height
+                                testRectangle.detailsHeight = detailsBack.height
                             }
 
                             delegate : Item{
@@ -205,22 +206,22 @@ Rectangle {
     }
 
     Rectangle {
-        id: conditionRectangle
+        id: operationsRectangle
 
         anchors.topMargin: 4
-        anchors.top: listRectangle.bottom
+        anchors.top: testRectangle.bottom
         border.width: 1
         border.color: "grey"
-        color : "lightblue"
+        color : workflow.isValidNode(itemid,"operations") ? "lightblue" : Global.errorColor
         opacity : 0.1
-        height: parent.height - listRectangle.height - 10 - bottombuttons.height
+        height: parent.height - testRectangle.height - 10 - bottombuttons.height
         width : parent.width - 8
         x : 4
         radius : 5
     }
     Rectangle {
         id : bottombuttons
-        anchors.top : conditionRectangle.bottom
+        anchors.top : operationsRectangle.bottom
         width : parent.width - 8
         anchors.horizontalCenter: parent.horizontalCenter
         height : 24
@@ -330,7 +331,7 @@ Rectangle {
     }
 
     function addTest(index, pre, operation, value, post,type) {
-        if ( index == -1)
+        if ( index === -1)
             index = testList.tests.length
         workflow.addTest2Condition(itemid,operation.id,pre, post)
         testList.model = null
@@ -339,7 +340,7 @@ Rectangle {
 
     function inOperationList(my) {
         var yrelative = my - y
-        return yrelative > conditionRectangle.y
+        return yrelative > operationsRectangle.y
     }
 
     function moveContent(dx, dy){
@@ -354,7 +355,7 @@ Rectangle {
 
     function inSideCondtion(centerY){
         var relY = centerY - y;
-        return relY < listRectangle.height
+        return relY < testRectangle.height
     }
 
     function attachementPoint(canvas, index){
@@ -447,6 +448,12 @@ Rectangle {
         workflow.setTestValues(itemid, testList.currentIndex, toParam, value)
         testList.model = null
         testList.model = workflow.getTests(itemid)
+    }
+
+    function resetColors(){
+        operationsRectangle.color = workflow.isValidNode(itemid, "operations") ? "#b3e6c9" : Global.errorColor
+        testRectangle.color = workflow.isValidNode(itemid, "tests") ? "lightblue" : Global.errorColor
+        conditionItem.border.color = workflow.isValidNode(itemid,"") ? "grey" : Global.errorColor
     }
 
     function resetInputModel(){

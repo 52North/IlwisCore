@@ -29,6 +29,7 @@ var lightgreen = "#DDE6DE"
 var lightestgreen = "#EBF0EC"
 var lightergreen = "#E4EBE5"
 var formBackGround = lightestgreen
+var errorColor = "#ffcccc"
 
 function isNumber(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
