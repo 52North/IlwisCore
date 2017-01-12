@@ -160,7 +160,7 @@ bool WorkFlowCondition::isValid(Workflow *workflow, WorkFlowNode::ValidityCheck 
     if ( check == vcTESTS)
         return testsOk;
     // all operations in a condition must have a defined value  ( calculated or fixed) else you get optional parameters which is for the moment not supported
-    bool operationsOk = true;
+    bool operationsOk = _operations.size() > 0;
     for(SPWorkFlowNode node : _operations){
        if ( !node->isValid(workflow, WorkFlowNode::vcALLDEFINED))
            operationsOk = false;

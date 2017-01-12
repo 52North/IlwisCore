@@ -12,7 +12,7 @@ Rectangle {
 
     property int standardHeight: 180
     property int standardWidth: 360
-    property int padding: 1
+    property int padding: 10
     property string type : "conditionitem"
     property var flowConnections: []
     property var operationsList : []
@@ -293,6 +293,7 @@ Rectangle {
     }
 
     function addToOperationList(operation) {
+        console.debug("yup")
         operationsList.push(operation);
         operation.condition = conditionItem
         resize()
@@ -303,26 +304,49 @@ Rectangle {
 
 
     function resize() {
-        var newWidth = -1000000, newHeight = -1000000, operation, xChanged = false, yChanged = false;
+        var newWidth = -1000000, newHeight = -1000000, operation, xChanged = false, yChanged = false, wChanged=false, hChanged=false;
 
-
+        var newX = conditionItem.x, newY = conditionItem.y
         for (var i in operationsList) {
             operation = operationsList[i]
 
-            if ((operation.x  - conditionItem.x + operation.width) > conditionItem.width) {
-                newWidth = operation.x  - conditionItem.x + operation.width
-                xChanged = true
+            //console.debug(operation.x, conditionItem.x, operation.width,conditionItem.width)
+            if ((operation.x + operation.width) > conditionItem.width) {
+                newWidth = operation.x + operation.width
+                wChanged = true
             }
 
-            if ((operation.y  - conditionItem.y + operation.height) > conditionItem.height) {
-               newHeight = operation.y  - conditionItem.y + operation.height
-                yChanged = true
+            if ((operation.y  + operation.height) > conditionItem.height) {
+               newHeight = operation.y  + operation.height
+                hChanged = true
             }
+
+            if (operation.x  < 0) {
+               newWidth = Math.abs(operation.x) + conditionItem.width
+               xChanged = wChanged = true
+               newX = newX + operation.x - padding * 2
+            }
+            if (operation.y  < 0) {
+               newHeight = Math.abs(operation.y) + conditionItem.height
+               yChanged = hChanged = true
+               newY = newY + operation.y - padding * 2
+
+            }
+
+
         }
-        if ( xChanged)
+        if ( wChanged)
             conditionItem.width = newWidth + (padding * 2)
-        if ( yChanged)
-            conditionItem.height = newHeight + (padding * 2)
+        if ( hChanged)
+            conditionItem.height = newHeight + (padding * 2 + 10)
+        if ( xChanged){
+            conditionItem.x = newX
+            operation.x = padding *2
+        }
+        if ( yChanged){
+            conditionItem.y = newY
+            operation.y = padding * 2 + 35
+        }
 
     }
 
