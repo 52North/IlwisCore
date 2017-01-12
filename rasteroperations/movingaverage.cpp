@@ -68,40 +68,48 @@ bool MovingAverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     PixelIterator pixiter(_outputraster);
     Pixel pix;
+    double mmax = -1e308, mmin = 1e308;
     for (long ypos = 0; ypos < ysize; ypos++)  {
         pix.y = ypos;
         for (long xpos = 0; xpos < xsize; xpos++)  {
             pix.x = xpos;
-            Coordinate crdRC = _inputgrf->pixel2Coord(pix);
-            double rSumW   = 0.0;     // Sum Weight's
-            double rSumWtA = 0.0;     // Sum of Weight times atrribute
-            for (long iPc = 0; iPc < iNrValidPnts; iPc++)  {
-                double rDistance = crdRC.distance(cPoints[iPc]);
-                if (rDistance < rMinDist && _wft == wfEXACT ) {
-                    rSumWtA = rAttrib[iPc];  // only 1 point exactly in center of estimated
-                    rSumW = 1;               // pixel contributes to its value
-                    break;                   // no more points, even if they coincide with this first-found point
-                } else if (rDistance < _limDist)  {
-                    double rW;
-                    if(_wft == wfEXACT) {
-                        rW = rInvDist(rDistance);
-                    } else {
-                        rW = rLinDecr(rDistance);
+            if (pix.isValid() && pixiter.contains(pix)) {
+                Coordinate crdRC = _inputgrf->pixel2Coord(pix);
+                double rSumW   = 0.0;     // Sum Weight's
+                double rSumWtA = 0.0;     // Sum of Weight times atrribute
+                for (long iPc = 0; iPc < iNrValidPnts; iPc++)  {
+                    double rDistance = crdRC.distance(cPoints[iPc]);
+                    if (rDistance < rMinDist && _wft == wfEXACT ) {
+                        rSumWtA = rAttrib[iPc];  // only 1 point exactly in center of estimated
+                        rSumW = 1;               // pixel contributes to its value
+                        break;                   // no more points, even if they coincide with this first-found point
+                    } else if (rDistance < _limDist)  {
+                        double rW;
+                        if(_wft == wfEXACT) {
+                            rW = rInvDist(rDistance);
+                        } else {
+                            rW = rLinDecr(rDistance);
+                        }
+                        rSumW   += rW;
+                        rSumWtA += rW * rAttrib[iPc];
                     }
-                    rSumW   += rW;
-                    rSumWtA += rW * rAttrib[iPc];
                 }
+                double value;
+                if (rSumW == 0.0) {
+                    value = rUNDEF;
+                } else {
+                    value = rSumWtA / rSumW;  // apply normalized weights
+                    mmax = Ilwis::max(mmax, value);
+                    mmin = Ilwis::min(mmin, value);
+                }
+                pixiter = pix;
+                *pixiter = value;
             }
-            double rV;
-            if (rSumW == 0.0) {
-                rV = rUNDEF;
-            } else {
-                rV = rSumWtA / rSumW;  // apply normalized weights
-            }
-            pixiter = pix;
-            *pixiter = rV;
         }
     }
+
+    NumericRange *rng = new NumericRange(mmin, mmax, 0);
+    _outputraster->datadefRef().range(rng);
     QVariant value;
     value.setValue<IRasterCoverage>( _outputraster );
     ctx->setOutput(symTable,value,_outputraster->name(), itRASTER, _outputraster->resource() );
@@ -129,6 +137,10 @@ Ilwis::OperationImplementation::State MovingAverage::prepare(ExecutionContext *c
     }
     _exp = _expression.parm(3).value().toDouble();
     _limDist = _expression.parm(4).value().toDouble();
+    if (_limDist == rUNDEF || _limDist < EPS10) {
+        ERROR1("Invalid limiting distance '%1'", _expression.parm(4).value());
+        return sPREPAREFAILED;
+    }
     if ( _expression.parameterCount() == 6) { // the georef case
         QString georefname = _expression.parm(5).value();
         if (!_inputgrf.prepare(georefname, itGEOREF)) {
@@ -157,16 +169,17 @@ Ilwis::OperationImplementation::State MovingAverage::prepare(ExecutionContext *c
         dom = datadef.domain();
     else
         dom = IDomain("code=domain:value");
-    _outputraster = IRasterCoverage(outputName);
-    _outputraster->datadefRef().domain(dom);
+
+    _outputraster.prepare();
+    if (outputName != sUNDEF)
+         _outputraster->name(outputName);
+
     _outputraster->coordinateSystem(_inputgrf->coordinateSystem());
     Envelope env = _inputgrf->coordinateSystem()->convertEnvelope(_inputfeatures->coordinateSystem(), _inputfeatures->envelope());
     _outputraster->envelope(env);
     _outputraster->georeference(_inputgrf);
-
-    if (_limDist == rUNDEF || _limDist < EPS10) {
-        return sPREPAREFAILED;
-    }
+    std::vector<double> indexes = {0};
+    _outputraster->setDataDefintions(dom,indexes);
     return sPREPARED;
 }
 
