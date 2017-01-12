@@ -21,7 +21,6 @@ private:
     IFeatureCoverage _inputfeatures;
     IRasterCoverage _outputraster;
     IGeoReference _inputgrf;
-    Envelope env;
     bool _needCoordinateTransformation = false;
     bool _getsAttributeTable;
 

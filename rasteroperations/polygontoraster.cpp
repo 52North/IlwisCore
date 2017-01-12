@@ -151,7 +151,7 @@ Ilwis::OperationImplementation::State PolygonToRaster::prepare(ExecutionContext 
          _outputraster->name(outputName);
 
     _outputraster->coordinateSystem(_inputgrf->coordinateSystem());
-    env = _inputgrf->coordinateSystem()->convertEnvelope(_inputfeatures->coordinateSystem(), _inputfeatures->envelope());
+    Envelope env = _inputgrf->coordinateSystem()->convertEnvelope(_inputfeatures->coordinateSystem(), _inputfeatures->envelope());
     _outputraster->envelope(env);
     _outputraster->georeference(_inputgrf);
     std::vector<double> indexes = {0};
