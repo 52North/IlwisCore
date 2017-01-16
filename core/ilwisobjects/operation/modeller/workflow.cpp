@@ -241,8 +241,19 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
     // linked to a previous input and thus not being free; they are scrapped from the list by
     // making its value invalied
     for(const auto& item : _graph){
-        if (item->type() == "conditionnode")
-            continue;
+        if (item->type() == "conditionnode"){
+            //we have to check all operations in the test to see if their input matches an output
+            std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(item);
+            for(int i=0; i < condition->testCount(); ++i){
+                WorkFlowCondition::Test test = condition->test(i);
+                if ( test._operation){
+                    for(int j=0; j < test._operation->inputCount(); ++j){
+                        WorkFlowParameter& p = test._operation->inputRef(j);
+                        CheckLinks(p, outparams);
+                    }
+                }
+            }
+        }
 
         if ( item->type() == "junctionnode"){
              //note that the true case (2 == false) isnt under consideration as
@@ -408,7 +419,8 @@ quint64 Workflow::createMetadata()
     operation.setInParameterCount({inputparams.size()});
     for(WorkFlowParameter parm : inputparams){
         _parmid2order[parm.id()] = count;
-        operation.addInParameter(count,parm.valueType(), parm.label(),parm.description());
+        QString label = QString("%1:%2 %3").arg(parm.nodeId()).arg(parm.order()).arg(parm.name());
+        operation.addInParameter(count,parm.valueType(), label,parm.description());
         if ( count != 0 )
             syntax += ",";
         syntax += parm.syntax();
