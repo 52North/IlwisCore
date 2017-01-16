@@ -69,6 +69,7 @@ Rectangle {
         x : 4
         y: 4
         radius : 5
+        z : 10
 
         DropArea {
             x : 2
@@ -467,7 +468,7 @@ Rectangle {
     }
 
     function setValue(operationItemid, fromParam, toParam){
-        var value = "link=" + operationItemid + "|" +fromParam
+        var value = "link=" + operationItemid + ":" +fromParam
         workflow.setTestValues(itemid, testList.currentIndex, toParam, value)
         testList.model = null
         testList.model = workflow.getTests(itemid)
