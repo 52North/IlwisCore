@@ -103,7 +103,7 @@ int WorkFlowParameter::nodeId() const
     return _nodeid;
 }
 
-int WorkFlowParameter::order() const
+qint32 WorkFlowParameter::order() const
 {
     return _order;
 }

@@ -28,7 +28,7 @@ public:
     int attachement(bool source) const;
     void nodeId(int nid);
     int nodeId() const;
-    int order() const;
+    qint32 order() const;
     bool isValid() const;
 
 private:
@@ -39,7 +39,7 @@ private:
     QString _label;
     ParameterKind _state = pkFREE;
     QString _syntax;
-    int _order = iUNDEF;
+    qint32 _order = iUNDEF;
     int _nodeid = iUNDEF;
     std::pair<int, int> _attachements;
     static quint64 _baseParmId;
