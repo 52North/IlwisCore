@@ -106,6 +106,10 @@ Rectangle {
                     selectedAttach.index,
                     attachRectIndex
                     )
+        workflow.createMetadata();
+        workflowManager.updateRunForm()
+        target.resetInputModel()
+        wfCanvas.stopWorkingLine()
     }
 
     function drawFlows(ctx){
