@@ -330,6 +330,9 @@ quint64 OperationCatalogModel::operationId(const QString &name)
 {
     // query for operations and workflows
     QString query = QString("type=%1 and name='%2'").arg(itOPERATIONMETADATA).arg(name);
+    if ( name.indexOf("ilwis://operations") == 0){
+        query = "rawresource='" + name + "'";
+    }
     std::vector<Resource> items = mastercatalog()->select(query);
     if ( items.size() == 0)
         return i64UNDEF;

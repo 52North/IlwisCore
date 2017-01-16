@@ -48,13 +48,23 @@ Modeller.ModellerWorkArea {
                     nodeId = workflow.addNode(objectid,{x : dx, y:dy, w:240, h:130,type:'operationnode',owner:ownerid,reason : "operations"})
                 wfCanvas.createItem(dx, dy,operation, nodeId,parentItem)
             }
-
-
-
             if ( workflowManager){
                 workflowManager.updateRunForm()
             }
             return operation
+        }
+
+        function addConnect(objectid,dx,dy,ownerid, parentItem){
+            var connectid = operations.operationId("ilwis://operations/connect")
+            addOperation(connectid,dx,dy,ownerid, parentItem)
+            var object = mastercatalog.id2Resource(objectid, 0)
+            console.debug(object, objectid)
+            if ( object){
+                workflow.setFixedValues(currentItem.itemid, object.url)
+                workflow.createMetadata()
+                updateInputNamesList()
+                object.suicide()
+            }
         }
 
         onDropped: {
@@ -79,6 +89,8 @@ Modeller.ModellerWorkArea {
                         }
                     }
                 }
+            }else {
+               addConnect(drag.source.ilwisobjectid,drag.x,drag.y,-1, wfCanvas)
             }
         }
     }
@@ -211,11 +223,9 @@ Modeller.ModellerWorkArea {
             return
 
         var parameters = node.parameters
-        console.debug(node, node.name)
         for(var j=0; j < parameters.length; ++j){
             recreateFlow(parameters[j], kvp,operationItem,j)
         }
-
     }
 
     function recreateWorkflow() {
