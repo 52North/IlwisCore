@@ -338,6 +338,7 @@ Rectangle {
                              })
 
         if ( testIndex === -1){
+
             workflow.addFlow(
                         itemid,
                         target.itemid,
