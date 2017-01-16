@@ -78,17 +78,17 @@ OperationImplementation::State Compare::prepare(ExecutionContext *ctx,const Symb
     _numeric = ok1 && ok2;
 
    QString type = _expression.parm(1).value();
-   if ( type == "equals"){
+   if ( type == "equals" || type == "=="){
        _operator = loEQ;
-   }else if ( type == "not equals"){
+   }else if ( type == "not equals" || type == "!="){
        _operator = loNEQ;
-   }else if ( type == "greater than"){
+   }else if ( type == "greater than" || type == ">"){
        _operator = loGREATER;
-   } else if ( type == "less than"){
+   } else if ( type == "less than" || type == "<"){
        _operator = loLESS;
-   }else if ( type == "greater or equal"){
+   }else if ( type == "greater or equal" || type == "<="){
        _operator = loGREATEREQ;
-   }else if ( type == "less or equal"){
+   }else if ( type == "less or equal" || type == ">="){
        _operator = loGREATEREQ;
    }
 
