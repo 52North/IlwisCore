@@ -109,8 +109,9 @@ Canvas {
     }
 
     function showAttachmentForm(target, attachRectTo, typeFilter){
+
         canvasActive = false;
-        attachementForm.operationFrom = workarea.currentItem
+        attachementForm.nodeFrom = workarea.currentItem
         attachementForm.nodeTo = target
         attachementForm.attachRectTo = attachRectTo
         attachementForm.state = "visible"
@@ -119,7 +120,7 @@ Canvas {
 
     function showTestForm(target, attachRectTo, testIndex, type, toIndex){
         canvasActive = false;
-        testForm.operationFrom = workarea.currentItem
+        testForm.nodeFrom = workarea.currentItem
         testForm.conditionTo = target
         testForm.attachRect = attachRectTo
         testForm.toType = type
