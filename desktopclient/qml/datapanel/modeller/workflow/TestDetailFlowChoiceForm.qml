@@ -10,13 +10,13 @@ import OperationModel 1.0
 WorkflowChoiceForm {
     id : flowParameterForm
     property var conditionTo
-    property var operationFrom
+    property var nodeFrom
     property var attachRect
     property int toIndex
     property var toType
     property int testIndex
 
-    onOperationFromChanged: {
+    onNodeFromChanged: {
         fillInputModel()
     }
 
@@ -30,7 +30,7 @@ WorkflowChoiceForm {
 
     function fillInputModel() {
         fromModel.clear()
-        var parameterIndexes = operationFrom.operation.parameterIndexes(toType, false)
+        var parameterIndexes = nodeFrom.operation.parameterIndexes(toType, false)
 
         for (var i in parameterIndexes) {
             var name = parameterIndexes[i]
@@ -110,8 +110,8 @@ WorkflowChoiceForm {
 
             var fromIndex = getIndex(fromComboBox.currentText)
             var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : 0};
-            operationFrom.setFlow(conditionTo, conditionTo.att1, flowPoints, testIndex)
-            conditionTo.setValue(operationFrom.itemid, fromIndex, toIndex)
+            nodeFrom.setFlow(conditionTo, conditionTo.att1, flowPoints, testIndex)
+            conditionTo.setValue(nodeFrom.itemid, fromIndex, toIndex)
             refresh()
         }
     }
