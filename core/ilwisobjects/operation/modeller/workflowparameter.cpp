@@ -103,6 +103,11 @@ int WorkFlowParameter::nodeId() const
     return _nodeid;
 }
 
+int WorkFlowParameter::order() const
+{
+    return _order;
+}
+
 bool WorkFlowParameter::isValid() const
 {
     return _nodeid != iUNDEF;

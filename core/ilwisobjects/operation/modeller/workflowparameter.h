@@ -28,6 +28,7 @@ public:
     int attachement(bool source) const;
     void nodeId(int nid);
     int nodeId() const;
+    int order() const;
     bool isValid() const;
 
 private:
