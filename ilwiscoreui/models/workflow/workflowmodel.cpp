@@ -266,6 +266,8 @@ QVariantMap WorkflowModel::getParameter(const SPWorkFlowNode& node, int index)
     return parm;
 }
 
+
+
 QVariantMap WorkflowModel::getNode(int nodeId){
     QVariantMap data;
     if (_workflow.isValid()){
@@ -320,12 +322,34 @@ QVariantMap WorkflowModel::getNode(int nodeId){
     return data;
 }
 
+QVariantList WorkflowModel::getTestParameters(int nodeId, int testIndex) {
+    QVariantList parameters;
+//    SPWorkFlowNode node = _workflow->nodeById(nodeId)    ;
+//    if ( node && node->type() == "conditionnode"){
+//        std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
+//        if ( testIndex < condition->testCount()){
+//            WorkFlowCondition::Test tst = condition->test(testIndex);
+//            if ( tst._operation){
+//                for(int i=0; i < tst._operation->inputCount(); ++i){
+//                    QVariantMap parm = getParameter(tst._operation, i);
+//                    parm["label"] = tst._operation->inputRef(j).name();
+//                    parameters.push_back(getParameter(tst._operation, i));
+//                }
+//            }
+//        }
+//    }
+    QVariantList all = getTests(nodeId);
+    if ( all.size() > 0 && testIndex < all.size()){
+        parameters = all[testIndex].toMap()["parameters"].toList();
+    }
+    return parameters;
+}
 QVariantList WorkflowModel::getTests(int conditionId) const
 {
     QVariantList result;
     if (_workflow.isValid()){
         SPWorkFlowNode node = _workflow->nodeById(conditionId)    ;
-        if (!node)
+        if (!node || node->type() != "conditionnode")
             return result;
 
         std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);

@@ -50,6 +50,7 @@ public:
     Q_INVOKABLE void setTestValues(int conditionId, int testIndex, int parameterIndex, const QString& value);
     Q_INVOKABLE QString testValueDataType(quint32 conditionId, quint32 testIndex, quint32 parameterIndex) const;
     Q_INVOKABLE QString testValue(int conditionId, int testIndex, int parameterIndex);
+    Q_INVOKABLE QVariantList getTestParameters(int nodeId, int testIndex);
     Q_INVOKABLE void addJunctionFlows(int junctionIdTo, const QString& operationIdFrom, int paramterIndex, int rectFrom, int rectTo, bool truecase);
     Q_INVOKABLE void changeBox(int nodeId, int x, int y, int w, int h);
     Q_INVOKABLE bool hasValueDefined(int nodeId, int parameterIndex);
@@ -72,6 +73,7 @@ public:
     QQmlListProperty<IlwisObjectModel> selectedOperation();
     Q_INVOKABLE void selectOperation(const QString& id);
     QString modelType() const;
+
 
 
 signals:

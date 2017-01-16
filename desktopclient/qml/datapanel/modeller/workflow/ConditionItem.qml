@@ -127,7 +127,7 @@ Rectangle {
                             onClicked: {
                                 if ( testDetails.height == 0){
                                     testDetails.model = null
-                                    testDetails.model = modelData.parameters
+                                    testDetails.model = workflow.getTestParameters(itemid, index)
                                     detailsBack.height = testDetails.model.length * 20
                                     testList.currentIndex = index
                                 }else{
