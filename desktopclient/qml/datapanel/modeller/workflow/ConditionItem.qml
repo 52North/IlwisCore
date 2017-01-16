@@ -293,7 +293,6 @@ Rectangle {
     }
 
     function addToOperationList(operation) {
-        console.debug("yup")
         operationsList.push(operation);
         operation.condition = conditionItem
         resize()
