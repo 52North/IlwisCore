@@ -64,7 +64,9 @@ HEADERS += \
     baseoperations/data/aggregatetable.h \
     baseoperations/data/selectionbase.h \
     baseoperations/data/setattributetabel.h \
-    baseoperations/conditions/compare.h
+    baseoperations/conditions/compare.h \
+    baseoperations/data/property.h \
+    baseoperations/data/connect.h
     baseoperations/data/setattributetabel.h
 
 SOURCES += \
@@ -116,7 +118,9 @@ SOURCES += \
     baseoperations/data/aggregatetable.cpp \
     baseoperations/data/selectionbase.cpp \
     baseoperations/data/setattributetabel.cpp \
-    baseoperations/conditions/compare.cpp
+    baseoperations/conditions/compare.cpp \
+    baseoperations/data/property.cpp \
+    baseoperations/data/connect.cpp
     baseoperations/data/setattributetabel.cpp
 
 
