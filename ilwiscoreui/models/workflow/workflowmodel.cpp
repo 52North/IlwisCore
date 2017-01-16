@@ -324,20 +324,6 @@ QVariantMap WorkflowModel::getNode(int nodeId){
 
 QVariantList WorkflowModel::getTestParameters(int nodeId, int testIndex) {
     QVariantList parameters;
-//    SPWorkFlowNode node = _workflow->nodeById(nodeId)    ;
-//    if ( node && node->type() == "conditionnode"){
-//        std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
-//        if ( testIndex < condition->testCount()){
-//            WorkFlowCondition::Test tst = condition->test(testIndex);
-//            if ( tst._operation){
-//                for(int i=0; i < tst._operation->inputCount(); ++i){
-//                    QVariantMap parm = getParameter(tst._operation, i);
-//                    parm["label"] = tst._operation->inputRef(j).name();
-//                    parameters.push_back(getParameter(tst._operation, i));
-//                }
-//            }
-//        }
-//    }
     QVariantList all = getTests(nodeId);
     if ( all.size() > 0 && testIndex < all.size()){
         parameters = all[testIndex].toMap()["parameters"].toList();
@@ -365,7 +351,7 @@ QVariantList WorkflowModel::getTests(int conditionId) const
                 QVariantMap parameterKeys;
                 QString value;
                 if ( test._operation->inputRef(j).inputLink()){
-                   value = "link=" + QString::number(test._operation->inputRef(j).inputLink()->id()) + "|" + QString::number(j);
+                   value = "link=" + QString::number(test._operation->inputRef(j).inputLink()->id()) + ":" + QString::number(j);
                 }else
                     value = operNode->inputRef(j).value();
                 QString label = operNode->inputRef(j).label();
