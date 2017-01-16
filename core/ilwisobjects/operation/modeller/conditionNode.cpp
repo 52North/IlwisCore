@@ -84,11 +84,15 @@ void WorkFlowCondition::setTestValue(int testIndex, int parameterIndex, const QS
             }
         }else {
             QStringList parts = value.split("=");
-            parts = parts[1].split("|");
-            NodeId linkedNodeId = parts[0].toULongLong();
-            int outParmIndex = parts[1].toInt();
-            SPWorkFlowNode linkNode = wf->nodeById(linkedNodeId);
-            test._operation->inputRef(parameterIndex).inputLink(linkNode,outParmIndex);
+            if ( parts.size() == 2){
+                parts = parts[1].split(":");
+                if (parts.size() == 2) {
+                    NodeId linkedNodeId = parts[0].toULongLong();
+                    int outParmIndex = parts[1].toInt();
+                    SPWorkFlowNode linkNode = wf->nodeById(linkedNodeId);
+                    test._operation->inputRef(parameterIndex).inputLink(linkNode,outParmIndex);
+                }
+            }
         }
     }
 }
