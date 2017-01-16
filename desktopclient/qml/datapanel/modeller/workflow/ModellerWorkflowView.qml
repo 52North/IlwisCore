@@ -183,6 +183,9 @@ Modeller.ModellerWorkArea {
                 recreateFlow(testParameters[j], kvp,conditionItem,j)
             }
         }
+        for(var k=0; k < conditionItem.operationsList.length; ++k){
+            recreateFlows(conditionItem.operationsList[k], kvp)
+        }
     }
 
     function recreateFlow(parm,kvp,item, index){
@@ -208,6 +211,7 @@ Modeller.ModellerWorkArea {
             return
 
         var parameters = node.parameters
+        console.debug(node, node.name)
         for(var j=0; j < parameters.length; ++j){
             recreateFlow(parameters[j], kvp,operationItem,j)
         }
@@ -229,7 +233,7 @@ Modeller.ModellerWorkArea {
                     currentItem.setTests()
                     kvp[currentItem.itemid] = currentItem
                     var ownedoperations = node.ownedoperations;
-                    recreateConditionFlow(currentItem, kvp)
+                   // recreateConditionFlow(currentItem, kvp)
                     for(var j = 0;  j < ownedoperations.length; ++j){
                         var oper = ownedoperations[j]
                         var item = createOperationItem(oper.operationid, oper.nodeid,oper.x, oper.y,currentItem)
@@ -239,10 +243,7 @@ Modeller.ModellerWorkArea {
                             currentItem.operationsList.push(item)
                         }
                     }
-                    for(var k=0; k < currentItem.operationsList.length; ++k){
-                        var operationItem = currentItem.operationsList[k]
-                        recreateFlows(operationItem, kvp)
-                    }
+
                 }
             }else if ( node.type === "operationnode"){
                 currentItem = createOperationItem(node.operationid,node.nodeid,node.x, node.y, wfCanvas)
@@ -258,12 +259,20 @@ Modeller.ModellerWorkArea {
             }
         }
         for(i=0; i < operationsList.length; ++i){
-            operationItem = operationsList[i]
+            var operationItem = operationsList[i]
             recreateFlows(operationItem, kvp)
 
         }
+
+        for(i=0; i < conditionsList.length; ++i){
+            var conditionItem = conditionsList[i]
+            recreateConditionFlow(conditionItem, kvp)
+
+
+        }
+
         for(i=0; i < unlinkedJunctions.length;++i){
-            var conditionItem  = getItem(unlinkedJunctions[i].condition)
+             conditionItem  = getItem(unlinkedJunctions[i].condition)
                 var junction = unlinkedJunctions[i].junction
                 if ( junction){
                     conditionItem.junctionsList.push(junction)
