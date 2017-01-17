@@ -67,10 +67,9 @@ MouseArea {
                 item.isSelected = false
                 currentItem = itemAt(mouseX, mouseY)
 
-                if ( item.type === "operationitem") {
+                if ( item.type === "operationitem" || item.type == "conditionitem") {
                     for(var j=0; j < item.flowConnections.length; j++)
                     {
-
                         var flow = item.flowConnections[j];
 
                         // Retrieve basic X and Y positions of the line
@@ -105,6 +104,7 @@ MouseArea {
                 }
             }
         }
+
         oldx = mouseX
         oldy = mouseY
 
@@ -126,6 +126,9 @@ MouseArea {
             workarea.showSelectedOperation(false)
         }
 
+        if ( selectedFlow)
+            console.debug("a", selectedFlow.source.itemid, selectedFlow.target.itemid, selectedFlow.isSelected)
+        wfCanvas.canvasValid = false
     }
 
     function openWorkflow() {
