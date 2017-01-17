@@ -57,30 +57,99 @@ Rectangle {
         x : 15
         text : itemid + ". " + (operation ? operation.name : "??")
         font.bold : true
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                if ( contentItem.height != 0){
+                    contentItem.height = 0
+                    operationItem.height = operationName.height + 20
+                }
+                else{
+                    operationItem.height = 130
+                    contentItem.height = 130 - operationName.height
+
+                }
+                wfCanvas.canvasValid = false
+
+            }
+        }
     }
-    Text {
-        id : labelInput
+    Item {
         anchors.top : operationName.bottom
         anchors.topMargin: 4
-        font.pixelSize: 10
-        x : 15
-        text : qsTr("Input parameters")
-        font.bold: true
-    }
-
-    ScrollView {
-        id : operationInParameters
-        anchors.top : labelInput.bottom
-        anchors.topMargin: 3
-        height : 40
-        width : box.width - 20
+        height : parent.height - operationName.height
+        width : parent.width
+        id : contentItem
         clip : true
-        x : 15
+        Text {
+            font.pixelSize: 10
+            id : labelInput
+            x : 15
+            text : qsTr("Input parameters")
+            font.bold: true
+        }
+
+        ScrollView {
+            id : operationInParameters
+            anchors.top : labelInput.bottom
+            anchors.topMargin: 3
+            height : 40
+            width : box.width - 20
+            clip : true
+            x : 15
+            ListView{
+                id : operationInParametersList
+                anchors.fill: parent
+                model : operation ? operation.inParamNames : null
+                interactive: false
+                delegate:
+                    Item {
+                    width : box.width
+                    height: 10
+                    Row {
+                        spacing : 4
+                        width : box.width - 15
+                        height : 10
+                        Text{
+                            text : index
+                            width : 20
+                            height : 11
+                            font.pixelSize: 10
+                        }
+
+                        Text {
+                            text : modelData
+                            width : parent.width - 30
+                            height : 11
+                            font.bold: workflow.hasValueDefined(itemid, index) ? false : true
+                            color : textColor(itemid, index)
+                            elide: Text.ElideMiddle
+                        }
+                    }
+                }
+            }
+        }
+
+        Text {
+            id : labelOutput
+            anchors.top : operationInParameters.bottom
+            anchors.topMargin: 3
+            font.pixelSize: 10
+            x : 15
+            text : qsTr("Output parameters")
+            font.bold: true
+        }
+
         ListView{
-            id : operationInParametersList
-            anchors.fill: parent
-            model : operation ? operation.inParamNames : null
+            id : operationOutParameters
+            anchors.top : labelOutput.bottom
+            anchors.bottom: contentItem.bottom
+            anchors.bottomMargin: 2
+            width : box.width
+            clip : true
             interactive: false
+            x : 15
+            model : operation ? operation.outParamNames : null
             delegate:
                 Item {
                 width : box.width
@@ -92,68 +161,21 @@ Rectangle {
                     Text{
                         text : index
                         width : 20
-                        height : 11
-                        font.pixelSize: 10
+                        height : 10
+                        font.pixelSize: 9
                     }
 
                     Text {
                         text : modelData
-                        width : parent.width - 30
-                        height : 11
-                        font.bold: workflow.hasValueDefined(itemid, index) ? false : true
-                        color : textColor(itemid, index)
+                        height : 10
+                        font.pixelSize: 9
                         elide: Text.ElideMiddle
+                        width : parent.width - 22
                     }
                 }
             }
+
         }
-    }
-
-    Text {
-        id : labelOutput
-        anchors.top : operationInParameters.bottom
-        anchors.topMargin: 3
-        font.pixelSize: 10
-        x : 15
-        text : qsTr("Output parameters")
-        font.bold: true
-    }
-
-    ListView{
-        id : operationOutParameters
-        anchors.top : labelOutput.bottom
-        anchors.bottom: operationItem.bottom
-        anchors.bottomMargin: 2
-        width : box.width
-        clip : true
-        interactive: false
-        x : 15
-        model : operation ? operation.outParamNames : null
-        delegate:
-            Item {
-            width : box.width
-            height: 10
-            Row {
-                spacing : 4
-                width : box.width - 15
-                height : 10
-                Text{
-                    text : index
-                    width : 20
-                    height : 10
-                    font.pixelSize: 9
-                }
-
-                Text {
-                    text : modelData
-                    height : 10
-                    font.pixelSize: 9
-                    elide: Text.ElideMiddle
-                    width : parent.width - 22
-                }
-            }
-        }
-
     }
 
 
@@ -264,12 +286,12 @@ Rectangle {
 
     function getBackground(lastitem) {
         var isSelected = false
-         if (operation) {
-             if ( operation.typeName == "workflow"){
-                 if ( isSelected){
-                     return iconsource("workflowitemSelected.png")
-                 }
-                 return iconsource("workflowitem.png")
+        if (operation) {
+            if ( operation.typeName == "workflow"){
+                if ( isSelected){
+                    return iconsource("workflowitemSelected.png")
+                }
+                return iconsource("workflowitem.png")
             }
         }
         if ( isSelected){
@@ -279,7 +301,7 @@ Rectangle {
         }else {
             if ( itemid === lastitem)
                 return iconsource("operationitemStep.png")
-           return iconsource("operationitem.png")
+            return iconsource("operationitem.png")
         }
     }
 
