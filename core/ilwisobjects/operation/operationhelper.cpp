@@ -102,6 +102,8 @@ IIlwisObject OperationHelper::variant2ilwisobject(const QVariant& variant, Ilwis
         return variant.value<IConventionalCoordinateSystem>();
     case itDOMAIN:
         return variant.value<IDomain>();
+    default:
+        return variant.value<IIlwisObject>();
         //TODO rest of the cases
     }
     return IIlwisObject();
@@ -112,6 +114,9 @@ QString OperationHelper::unquote(const QString& name){
         return name;
 
     if (name[0] == '\'' && name[name.size()-1] == '\''){
+        return name.mid(1,name.size() - 2);
+    }
+    if (name[0] == '\"' && name[name.size()-1] == '\"'){
         return name.mid(1,name.size() - 2);
     }
     return name;
@@ -127,6 +132,10 @@ QString OperationHelper::variant2string(const QVariant& v, IlwisTypes tp){
     if ( inttype)
         return QString::number(v.toLongLong());
 
+    if ( tp == itBOOL){
+        QString b =  v.toString();
+        return b;
+    }
     if ( metatype == QMetaType::Double || metatype == QMetaType::Float)
         return QString::number(v.toDouble());
     if ( metatype == QMetaType::QString)
