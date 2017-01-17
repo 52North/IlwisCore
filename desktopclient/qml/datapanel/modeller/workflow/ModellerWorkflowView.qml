@@ -58,7 +58,6 @@ Modeller.ModellerWorkArea {
             var connectid = operations.operationId("ilwis://operations/connect")
             addOperation(connectid,dx,dy,ownerid, parentItem)
             var object = mastercatalog.id2Resource(objectid, 0)
-            console.debug(object, objectid)
             if ( object){
                 workflow.setFixedValues(currentItem.itemid, object.url)
                 workflow.createMetadata()
@@ -151,9 +150,6 @@ Modeller.ModellerWorkArea {
             return
 
         var parm = node.linkedtrueoperation
-//            recreateFlow(parm,kvp,junctionItem,1)
-//        parm = node.linkedfalseoperation
-//        recreateFlow(parm,kvp,junctionItem,2)
             var flowPoints = { "fromParameterIndex" :  parm.outputIndex, "toParameterIndex" :1};
             var sourceItem = kvp[parm.outputNodeId]
             var sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
