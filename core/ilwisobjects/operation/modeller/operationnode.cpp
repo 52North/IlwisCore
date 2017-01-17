@@ -86,7 +86,7 @@ bool OperationNode::execute(ExecutionContext *ctx, SymbolTable &symTable, const 
         } else if ( hasType(inParam.valueType(),itDOUBLE | itFLOAT)) {
             parms += QString::number(getValue(inParam,expression, idmap).toDouble());
         } else if (hasType(inParam.valueType(),itSTRING)){
-            parms += "'" + getValue(inParam,expression, idmap).toString() + "'";
+            parms += "\"" + getValue(inParam,expression, idmap).toString() + "\"";
         }else
             parms += getValue(inParam,expression, idmap).toString();
     }
