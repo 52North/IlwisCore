@@ -62,14 +62,12 @@ QVariant SymbolTable::getValue(const QString &name, int scope) const
 
     QHash<QString, Symbol>::const_iterator   iter = _symbols.find(name);
     while (iter != _symbols.end() && iter.key() == name) {
-        if ( iter.value()._scope == scope) {
-            QString tp = iter.value()._var.typeName();
-            if ( tp == "QVariantList"){
-                QVariantList lst = iter.value()._var.value<QVariantList>();
-                return lst[0];
-            }
-            return iter.value()._var;
+        QString tp = iter.value()._var.typeName();
+        if ( tp == "QVariantList"){
+            QVariantList lst = iter.value()._var.value<QVariantList>();
+            return lst[0];
         }
+        return iter.value()._var;
         ++iter;
     }
     return QVariant();
@@ -82,13 +80,11 @@ Symbol SymbolTable::getSymbol(const QString &name, GetAction act, int scope)
 
     QHash<QString, Symbol>::iterator   iter = _symbols.find(name);
     while (iter != _symbols.end() && iter.key() == name) {
-        if ( iter.value()._scope <= scope) {
-            Symbol sym = iter.value();
-            bool isAnonymous = name.indexOf(ANONYMOUS_PREFIX) == 0;
-            if ((isAnonymous && act == gaREMOVEIFANON) || act == gaREMOVE)
-                _symbols.erase(iter);
-            return sym;
-        }
+        Symbol sym = iter.value();
+        bool isAnonymous = name.indexOf(ANONYMOUS_PREFIX) == 0;
+        if ((isAnonymous && act == gaREMOVEIFANON) || act == gaREMOVE)
+            _symbols.erase(iter);
+        return sym;
         ++iter;
     }
     return Symbol();
