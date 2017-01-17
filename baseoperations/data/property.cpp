@@ -119,8 +119,8 @@ Ilwis::OperationImplementation::State Property::prepare(ExecutionContext *, cons
         return sPREPAREFAILED;
     }
     std::vector<QString> names {"name","xsize","ysize","zsize","rowcount","columncount","type","valuetype","featurecount","pointcount","linecount","polygoncount","pixelcount","domain","projection","ellipsoid","url","rawurl"};
-    QString _property = _expression.parm(1).value().toLower().trimmed();
-    if (std::find(names.begin(), names.end(), _property) != names.end()){
+     _property = _expression.parm(1).value().toLower().trimmed();
+    if (std::find(names.begin(), names.end(), _property) == names.end()){
         kernel()->issues()->log(TR("Property is not in the list of recognized properties:" + _property));
         return sPREPAREFAILED;
     }
