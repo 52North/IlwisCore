@@ -97,11 +97,15 @@ void Junction::link2falseCase(SPWorkFlowNode falseNode, int parmIndex)
 bool Junction::execute(ExecutionContext *ctx, SymbolTable &symTable, const OperationExpression &expression, const std::map<quint64, int> &idmap)
 {
     WorkFlowParameter& condParm = inputRef(0);
-    if (condParm.value() != sUNDEF){
+     // if the value of the condition (basically the test value
+    // is not set we are going to execute the tests of the condition
+    // the result of the tests is the "value" of the condition node (true or false)
+    // of course this isnt the result of the operations inside the condition; those have their own logic
+    if (condParm.value() == sUNDEF){
         ExecutionContext ctxLocal;
         SymbolTable symTableLocal(symTable);
         if (condParm.inputLink()->execute(&ctxLocal, symTableLocal, expression, idmap)){
-            QString outputName = ctxLocal._results[condParm.outputParameterIndex()];
+            QString outputName = ctxLocal._results[0];
             QVariant val = symTableLocal.getValue(outputName);
             QString sval = OperationHelper::variant2string(val, symTableLocal.getSymbol(outputName)._type);
             condParm.value(sval, symTableLocal.getSymbol(outputName)._type);
