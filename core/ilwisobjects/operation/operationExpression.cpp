@@ -10,6 +10,7 @@
 #include "dataformat.h"
 #include "mastercatalog.h"
 #include "ilwiscontext.h"
+#include "operationhelper.h"
 #include "operationExpression.h"
 
 using namespace Ilwis;
@@ -41,7 +42,7 @@ Ilwis::Parameter::~Parameter()
 
 QString Parameter::value() const
 {
-    return _value;
+    return OperationHelper::unquote(_value);
 }
 
 QString Parameter::domain() const
