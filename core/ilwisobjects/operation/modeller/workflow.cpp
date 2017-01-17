@@ -31,16 +31,30 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
     std::set<NodeId> usedNodes;
     for(const auto& item : graph){
 
-        if ( item->type() == "operationnode"){ // only operations can have direct inputs; the inputs of a condition or junction are always set by the system
+        if ( item->type() == "operationnode"){ // only operations can have direct inputs; the inputs of a  junction are always set by the system,
+            //condtions have input through their tests
             for(int i=0; i < item->inputCount(); ++i){
                 if ( item->inputRef(i).inputLink())
                     usedNodes.insert(item->inputRef(i).inputLink()->id());
+            }
+        }else if ( item->type() == "conditionnode"){
+            // test have operations which have parameters that might be linked to the rest of the graph
+            std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(item);
+            for(int i=0; i < condition->testCount(); ++i){
+                WorkFlowCondition::Test test = condition->test(i);
+                for(int j = 0; j < test._operation->inputCount(); ++j){
+                    if ( test._operation->inputRef(j).inputLink()){
+                        usedNodes.insert(test._operation->inputRef(j).inputLink()->id());
+                    }
+                }
             }
         }
     }
     //if a node is not used as input somewhere it must be an output
     std::vector<SPWorkFlowNode> nodes;
     for(auto node : graph){
+        if ( node->type() != "operationnode") // only operationnodes can create outputs
+            continue;
         auto iter = usedNodes.find(node->id());
         if (iter == usedNodes.end()){
             nodes.push_back(node);
