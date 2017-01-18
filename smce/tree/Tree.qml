@@ -104,17 +104,19 @@ Item {
              property var m_parentModel: model.parentModel
              property alias objMouseArea: objMouseArea
              property int selectedNode: -1
+
              function toggleNode() {
+                 var enabled
+                 if (objDisplayRowRect.state == "open") {
+                     objDisplayRowRect.state = "collapsed"
+                     enabled = false
+                 } else {
+                     objDisplayRowRect.state = "open"
+                     enabled = true
+                 }
                  for(var i = 0; i < children.length; ++i) {
-                    if(children[i].objectName !== "objMouseArea") {
-                       children[i].visible = !children[i].visible
-                       if (children[i].visible) {
-                           objDisplayRowRect.state = "open"
-                       }
-                       else
-                       {
-                           objDisplayRowRect.state = "collapsed"
-                       }
+                    if(children[i].objectName == "objRecursiveColumn") {
+                       children[i].visible = enabled
                     }
                  }
              }
@@ -156,6 +158,7 @@ Item {
                       id: objDisplayRowRect
                       height: objNodeName.implicitHeight + 5
                       width: subArrow.width + icon.width + objNodeName.implicitWidth + 5
+                      state: "open"
 
                       function getIcon(nodetype) {
                         if (nodetype === "Goal")
