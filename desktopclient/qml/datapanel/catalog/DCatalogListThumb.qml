@@ -220,13 +220,6 @@ Rectangle{
         property variant image
         drag.target: image
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: {
-            thumbGrid.currentIndex = index;
-            isSelected = !isSelected
-            setSelected(id)
-            if (catalogViews && !catalogViews.tabmodel.selected)
-                catalogViews.tabmodel.selectTab()
-        }
 
         onDoubleClicked: {
             if ( name == "..")
@@ -245,6 +238,11 @@ Rectangle{
         }
 
         onPressed: {
+            thumbGrid.currentIndex = index;
+            isSelected = !isSelected
+            setSelected(id)
+            if (catalogViews && !catalogViews.tabmodel.selected)
+                catalogViews.tabmodel.selectTab()
             image = Qt.createQmlObject('import QtQuick 2.0; Image{
                 id : image
                 width : 20; height : 20

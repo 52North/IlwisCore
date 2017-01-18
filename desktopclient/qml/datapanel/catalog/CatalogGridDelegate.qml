@@ -82,13 +82,7 @@ Item {
         drag.target: image
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         hoverEnabled: true
-        onClicked: {
-            itemgrid.currentIndex = index;
-            isSelected = !isSelected
-            catalogViews.setSelected(id)
-            if (catalogViews && catalogViews.tabmodel && !catalogViews.tabmodel.selected)
-                catalogViews.tabmodel.selectTab()
-        }
+
         onPositionChanged: {
             if ( floatingProps.item){
                 floatingProps.item.setObject(id)
@@ -119,6 +113,11 @@ Item {
             }
         }
         onPressed: {
+            itemgrid.currentIndex = index;
+            isSelected = !isSelected
+            catalogViews.setSelected(id)
+            if (catalogViews && catalogViews.tabmodel && !catalogViews.tabmodel.selected)
+                catalogViews.tabmodel.selectTab()
             var key = uicontext.currentKey
  //           if ( key !== Qt.Key_Alt){
                 image = Qt.createQmlObject('import QtQuick 2.0; Image{
