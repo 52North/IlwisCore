@@ -107,11 +107,11 @@ Item {
 
              function toggleNode() {
                  var enabled
-                 if (objDisplayRowRect.state == "open") {
+                 if (objDisplayRowRect.state == "expanded") {
                      objDisplayRowRect.state = "collapsed"
                      enabled = false
                  } else {
-                     objDisplayRowRect.state = "open"
+                     objDisplayRowRect.state = "expanded"
                      enabled = true
                  }
                  for(var i = 0; i < children.length; ++i) {
@@ -158,7 +158,7 @@ Item {
                       id: objDisplayRowRect
                       height: objNodeName.implicitHeight + 5
                       width: subArrow.width + icon.width + objNodeName.implicitWidth + 5
-                      state: "open"
+                      state: "expanded"
 
                       function getIcon(nodetype) {
                         if (nodetype === "Goal")
@@ -234,7 +234,7 @@ Item {
                               }
                           },
                           State{
-                              name: "open"
+                              name: "expanded"
                               PropertyChanges {
                                   target: subArrow
                                   rotation: 90
