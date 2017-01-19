@@ -501,6 +501,7 @@ Rectangle {
         for(j=0; j < operationsList.length; ++j){
             junctionsList[j].removeLinkTo(currentItem.itemid)
         }
+        resetColors()
     }
 
     function addFlowConnection(targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter){

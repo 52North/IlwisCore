@@ -82,6 +82,10 @@ Rectangle {
         wfCanvas.showJunctionForm(junctionItem, att.index, dataType, toIndex)
     }
 
+    function resetColors(){
+        color = workflow.isValidNode(itemid,"") ? Global.lightgreen : Global.errorColor
+    }
+
     function resetInputModel() {
 
     }
@@ -177,6 +181,7 @@ Rectangle {
             }else
                 ++i
         }
+        resetColors()
     }
 
 }

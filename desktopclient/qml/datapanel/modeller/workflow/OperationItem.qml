@@ -463,4 +463,7 @@ Rectangle {
     function addFlowConnection(targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter){
         workarea.addFlowConnection(flowConnections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter)
     }
+
+     function resetColors(){
+     }
 }

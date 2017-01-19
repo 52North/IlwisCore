@@ -433,7 +433,7 @@ Modeller.ModellerWorkArea {
                     item = removeItemFromList(operationsList, currentItem.itemid)
                     removeLinkTo(currentItem.itemid)
 
-                }else if ( currentItem.type == "conditionitem"){
+                }else if ( currentItem.type === "conditionitem"){
                     item = removeItemFromList(conditionsList, currentItem.itemid)
                     removeLinkTo(currentItem.itemid)
                     item.removeContent()
@@ -444,6 +444,10 @@ Modeller.ModellerWorkArea {
                     currentItem = null
                     wfCanvas.canvasValid = false
                 }
+            }else if ( currentItem.type === "flowconnection"){
+                workflow.deleteFlow(currentItem.target.itemid, currentItem.flowPoints.fromParameterIndex)
+                removeLinkTo(currentItem.target.itemid)
+                wfCanvas.canvasValid = false
             }
         }
 
