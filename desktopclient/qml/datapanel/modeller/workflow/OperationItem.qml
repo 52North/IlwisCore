@@ -316,6 +316,7 @@ Rectangle {
     }
 
     function drawFlows(ctx){
+        console.debug("no of connections ", itemid , flowConnections.length)
         for(var i=0; i < flowConnections.length; i++){
             var item = flowConnections[i]
             var index = item.attachtarget
@@ -348,18 +349,8 @@ Rectangle {
 
 
     function setFlow(target, attachRectIndex, flowPoints, testIndex){
-        flowConnections.push({
-                                 "target" : target,
-                                 "source" :operationItem,
-                                 "attachtarget" : attachRectIndex,
-                                 "attachsource" : selectedAttach,
-                                 "flowPoints" : flowPoints,
-                                 "isSelected" : false,
-                                 "testindex" : -1,
-                                 "testparameter" : -1
-                             })
-
-        if ( testIndex === -1){
+        addFlowConnection(target, operationItem, attachRectIndex, selectedAttach, flowPoints, -1, -1)
+       if ( testIndex === -1){
 
             workflow.addFlow(
                         itemid,
@@ -390,34 +381,42 @@ Rectangle {
 
     }
 
-    function allParmsDefined(operationid){
-        var maxcount = workarea.workflow.operationInputParameterCount(operationid)
-        if ( maxcount === 0){
+    function usableLink(){
+        // we only me draw links from items within the same condition
+        // all links to the outside must use the junction
+        if ( currentItem.type == "operationitem"){
+            if ( currentItem.condition){
+                if ( condition){
+                    if ( currentItem.condition.itemid !== condition.itemid)
+                        return false
+                }else
+                    return false
+            }
             return true
         }
-        return false
+        var maxcount = workarea.workflow.freeInputParameterCount(itemid)
+        if ( maxcount === 0){
+            return false
+        }
+        return true
     }
 
     function attachFlow(target, attachRectTo){
         //If not connected to itself
         if ( currentItem !== target){
-            if ( allParmsDefined(target.itemid))
-                return
+            if ( usableLink()){
+                if (operation.needChoice(target.operation)) {
+                    wfCanvas.showAttachmentForm(target, attachRectTo,"")
+                } else {
+                    var fromIndex = 0
+                    var toIndex = 0
+                    var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
+                    currentItem.setFlow(target, attachRectTo, flowPoints,-1)
 
-
-            if (operation.needChoice(target.operation)) {
-                wfCanvas.showAttachmentForm(target, attachRectTo,"")
-            } else {
-                var fromIndex = 0
-                var toIndex = 0
-                var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
-                currentItem.setFlow(target, attachRectTo, flowPoints,-1)
-
+                }
+                if ( condition)
+                    condition.resetColors()
             }
-            if ( condition)
-                condition.resetColors()
-
-            wfCanvas.canvasValid = false
         }
     }
 
@@ -451,5 +450,18 @@ Rectangle {
     function parameterNames(typefilter, isOutput){
         return operation.parameterIndexes(typefilter,isOutput)
     }
-
+    function removeLinkTo(nodeid){
+        var i=0
+        var len = flowConnections.length
+        while(i < len){
+            if ( flowConnections[i].target.itemid == nodeid){
+                flowConnections.splice(i,1)
+                --len
+            }else
+                ++i
+        }
+    }
+    function addFlowConnection(targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter){
+        workarea.addFlowConnection(flowConnections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter)
+    }
 }

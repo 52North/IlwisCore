@@ -69,7 +69,7 @@ Canvas {
         ctx.clearRect(0,0,width, height);
 
         if (canvasValid == false || (force !== null && force)) {
-
+            console.debug("start draw")
             canvasValid = true
             if ( workingLineBegin.x !== -1 && workingLineEnd.x !== -1){
                 ctx.beginPath();
@@ -93,6 +93,13 @@ Canvas {
                 ctx.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
 
                 ctx.stroke()
+            }
+
+            for( var i=0; i < operationsList.length; i++){
+                if ( operationsList[i])
+                    console.debug(operationsList[i].itemid)
+                else
+                    console.debug("missing")
             }
 
             for( var i=0; i < operationsList.length; i++){

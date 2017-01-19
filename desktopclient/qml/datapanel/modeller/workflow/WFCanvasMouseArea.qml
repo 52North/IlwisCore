@@ -50,9 +50,8 @@ MouseArea {
                 workarea.conditionsList.push(currentItem)
             }
             workarea.dropCondition = false
-
-
         }
+        wfCanvas.canvasValid = false
     }
 
     function selectThing(){
@@ -118,6 +117,7 @@ MouseArea {
 
         if (selectedFlow && !currentItem) {
             selectedFlow.isSelected = true
+            currentItem = selectedFlow
         } else if (currentItem) {
             currentItem.isSelected = true
             workarea.showSelectedOperation(currentItem.type === "operationitem")
@@ -126,9 +126,7 @@ MouseArea {
             workarea.showSelectedOperation(false)
         }
 
-        if ( selectedFlow)
-            console.debug("a", selectedFlow.source.itemid, selectedFlow.target.itemid, selectedFlow.isSelected)
-        wfCanvas.canvasValid = false
+         wfCanvas.canvasValid = false
     }
 
     function openWorkflow() {

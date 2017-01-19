@@ -310,7 +310,6 @@ Rectangle {
         for (var i in operationsList) {
             operation = operationsList[i]
 
-            //console.debug(operation.x, conditionItem.x, operation.width,conditionItem.width)
             if ((operation.x + operation.width) > conditionItem.width) {
                 newWidth = operation.x + operation.width
                 wChanged = true
@@ -425,7 +424,7 @@ Rectangle {
             workflow.addCondition2Junction(itemid, nodeid)
             currentItem = component.createObject(wfCanvas, {"x": px, "y": py, "width":39, "height":39, "itemid" : nodeid, "scale": wfCanvas.scale});
             junctionsList.push(currentItem)
-            currentItem.linkedCondition = conditionItem
+            currentItem.condition = conditionItem
 
             wfCanvas.canvasValid = false
         }
@@ -481,5 +480,32 @@ Rectangle {
     }
 
     function resetInputModel(){
+    }
+
+    function removeContent(){
+       for(var j=0; j < operationsList.length; ++j){
+           workarea.removeLinkTo(operationsList[j].itemid)
+           workarea.removeItemFromList(workarea.operationsList, operationsList[j].itemid)
+           operationsList[j].destroy()
+       }
+       for( j=0; j < junctionsList.length; ++j){
+           workarea.removeLinkTo(junctionsList[j].itemid)
+           junctionsList[j].destroy()
+       }
+    }
+
+    function removeLinkTo(nodeid){
+        for(var j=0; j < operationsList.length; ++j){
+            operationsList[j].removeLinkTo(currentItem.itemid)
+        }
+        for(j=0; j < operationsList.length; ++j){
+            junctionsList[j].removeLinkTo(currentItem.itemid)
+        }
+    }
+
+    function addFlowConnection(targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter){
+        console.debug("in condition", sourceItem.itemid, targetItem.itemid)
+        workarea.addFlowConnection(flowConnections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter)
+
     }
 }

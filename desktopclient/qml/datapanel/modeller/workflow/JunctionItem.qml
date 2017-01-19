@@ -13,7 +13,7 @@ Rectangle {
     property bool isSelected : false
     property var selectedAttach
     property string dataType : ""
-    property var linkedCondition
+    property var condition
     property var flowConnections: []
     property var attachementRectangles : []
 
@@ -64,20 +64,18 @@ Rectangle {
         owner : junctionItem
     }
 
-    function attachFlow(target, attachRectTo){
-        if ( currentItem !== target){
-            wfCanvas.showAttachmentForm(target, attachRectTo, dataType)
-//            var fromIndex = 0
-//             var toIndex = 0
-//            if ( 'condition' in currentItem){
-//                if ( !currentItem.condition)
-//                    toIndex = 1
-//            }
-//            var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
-//            currentItem.setFlow(target, attachRectTo, flowPoints,-2)
+    function usableLink(sourceItemId, targetItemId){
+        return workarea.workflow.usableLink(sourceItemId, targetItemId,-1,-1)
+    }
 
-            wfCanvas.canvasValid = false
+    function attachFlow(target, attachRectTo){
+        if ( currentItem === target)
+            return false
+        if ( usableLink(currentItem.itemid, target.itemid)){
+            wfCanvas.showAttachmentForm(target, attachRectTo, dataType)
         }
+
+        wfCanvas.canvasValid = false
     }
 
     function attachJunctionFlow(att,toIndex){
@@ -89,15 +87,7 @@ Rectangle {
     }
 
     function setFlow(target, attachRectIndex, flowPoints, testIndex){
-        flowConnections.push({
-                                 "target" : target,
-                                 "source" :junctionItem,
-                                 "attachtarget" : attachRectIndex,
-                                 "attachsource" : selectedAttach,
-                                 "flowPoints" : flowPoints,
-                                 "isSelected" : false,
-                                 "testindex" : -1,
-                                 "testparameter" : -1 })
+        addFlowConnection(target, junctionItem,attachRectIndex,selectedAttach, flowPoints, -1,-1)
         workflow.addFlow(
                     itemid,
                     target.itemid,
@@ -163,7 +153,7 @@ Rectangle {
 
     function containedInLinkedCondition(operationItem){
         if ( operationItem.condition)
-            return operationItem.condition.itemid === linkedCondition.itemid
+            return operationItem.condition.itemid === condition.itemid
         return false
     }
     Component.onCompleted: {
@@ -171,6 +161,22 @@ Rectangle {
         attachementRectangles.push(att2)
         attachementRectangles.push(att3)
         attachementRectangles.push(att4)
+    }
+
+    function addFlowConnection(target, operationItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter){
+        workarea.addFlowConnection(flowConnections, target, operationItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter)
+    }
+
+    function removeLinkTo(nodeid){
+        var i=0
+        var len = flowConnections.length
+        while(i < len){
+            if ( flowConnections[i].target.itemid == nodeid){
+                flowConnections.splice(i,1)
+                --len
+            }else
+                ++i
+        }
     }
 
 }

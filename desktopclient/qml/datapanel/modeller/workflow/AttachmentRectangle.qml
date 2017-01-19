@@ -38,6 +38,9 @@ Rectangle {
         if ( pnt.x !== -1 && pnt.y !== -1){
             attachFlow(owner, index)
             wfCanvas.workingLineBegin = Qt.point(-1,-1)
+            currentItem.isSelected = false
+            wfCanvas.canvasValid = false
+
         }else {
             var newpoint = mapToItem(wfCanvas, 4, 4) // center of rectangle
             wfCanvas.workingLineBegin = Qt.point(newpoint.x, newpoint.y)
