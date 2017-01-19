@@ -171,7 +171,7 @@ quint64 IssueLogger::log(const QString &message, int it)
     }
 #ifdef QT_DEBUG
     if ( it == IssueObject::itError){
-        qDebug() << "Error occured: " << message;
+        qDebug() << QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss") << "Error occured:" << message;
     }
 #endif
 

@@ -104,6 +104,23 @@ Item {
              property var m_parentModel: model.parentModel
              property alias objMouseArea: objMouseArea
              property int selectedNode: -1
+
+             function toggleNode() {
+                 var enabled
+                 if (objDisplayRowRect.state == "expanded") {
+                     objDisplayRowRect.state = "collapsed"
+                     enabled = false
+                 } else {
+                     objDisplayRowRect.state = "expanded"
+                     enabled = true
+                 }
+                 for(var i = 0; i < children.length; ++i) {
+                    if(children[i].objectName == "objRecursiveColumn") {
+                       children[i].visible = enabled
+                    }
+                 }
+             }
+
              MouseArea {
                 id: objMouseArea
                 objectName: "objMouseArea"
@@ -113,18 +130,7 @@ Item {
                    if (model.type == "Constraint" || model.type == "Factor" || model.type == "AArea") {
                        openMap(model.fileName)
                    } else {
-                       for(var i = 0; i < parent.children.length; ++i) {
-                          if(parent.children[i].objectName !== "objMouseArea") {
-                             parent.children[i].visible = !parent.children[i].visible
-                             if (parent.children[i].visible) {
-                                 objDisplayRowRect.state = "open"
-                             }
-                             else
-                             {
-                                 objDisplayRowRect.state = "collapsed"
-                             }
-                          }
-                       }
+                       toggleNode()
                    }
                 }
                 onClicked: {
@@ -151,7 +157,8 @@ Item {
                    Rectangle {
                       id: objDisplayRowRect
                       height: objNodeName.implicitHeight + 5
-                      width: icon.width + subArrow.width + objNodeName.implicitWidth + 5
+                      width: subArrow.width + icon.width + objNodeName.implicitWidth + 5
+                      state: "expanded"
 
                       function getIcon(nodetype) {
                         if (nodetype === "Goal")
@@ -180,6 +187,13 @@ Item {
                           source: "arrowrightlight.png"
                           rotation: 90
                           visible: objRepeater.count > 0
+                          MouseArea {
+                             id: objMouseAreaArrow
+                             objectName: "objMouseAreaArrow"
+                             width: subArrow.implicitWidth
+                             height: subArrow.implicitHeight
+                             onClicked: toggleNode()
+                         }
                       }
 
                       Image {
@@ -220,7 +234,7 @@ Item {
                               }
                           },
                           State{
-                              name: "open"
+                              name: "expanded"
                               PropertyChanges {
                                   target: subArrow
                                   rotation: 90
