@@ -59,8 +59,7 @@ ToolBar{
             iconSource : iconsource("trash20.png")
             tooltip: qsTr("Removes a selected flow or operation)")
             onClicked: {
-                // modellerDataPane.deleteSelectedOperation()
-                // modellerDataPane.deleteSelectedEdge()
+                workarea.deleteSelectedItem()
 
             }
         }
