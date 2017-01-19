@@ -232,8 +232,77 @@ int WorkflowModel::operationOutputParameterCount(int nodeId){
     return iUNDEF;
 }
 
+int WorkflowModel::freeInputParameterCount(int nodeId)
+{
+    int count = 0;
+    if ( _workflow.isValid()){
+        SPWorkFlowNode node = _workflow->nodeById(nodeId);
+        if ( node && node->type() == "operationnode"){
+            for(int i=0; i < node->inputCount(); ++i){
+                if ( node->inputRef(i).state() == WorkFlowParameter::pkFREE)
+                    ++count;
+            }
+        }
+    }
+    return count;
+}
 
-void WorkflowModel::deleteOperation(int nodeId)
+bool checkJunctionParameters(SPWorkFlowNode source,SPWorkFlowNode target, int sourceParmIndex, int targetParmIndex, bool trueCase){
+    bool checkParameters = sourceParmIndex >= 0 && targetParmIndex >= 0;
+    bool ok =  !target->inputRef(trueCase ? 1 : 2).inputLink();
+    // if no checkparameter is need we can leave here
+    if (!checkParameters || !ok){
+        if (!ok)
+            kernel()->issues()->log(TR("Tried to set a link that is already in use"), IssueObject::itWarning);
+        return ok;
+    }
+    // we can only check parameters if the false link of the junction points to something
+    if (!target->inputRef(trueCase ? 2 : 1).inputLink())
+        return ok;
+    if ( targetParmIndex >= target->inputCount() || sourceParmIndex >= source->inputCount())
+        return false;
+    IlwisTypes tpFalse = target->inputRef(2).inputLink()->inputRef(targetParmIndex).valueType();
+    IlwisTypes tpTrue = source->inputRef(sourceParmIndex).valueType();
+    ok =  hasType(tpFalse, tpTrue);
+    if (!ok)
+        kernel()->issues()->log(TR("Value types of the true and false case (links) are not compatible"), IssueObject::itWarning);
+    return ok;
+}
+
+bool WorkflowModel::usableLink(int sourceNodeId, int targetNodeId, int sourceParmIndex, int targetParmIndex)
+{
+    if ( sourceNodeId == targetNodeId)
+        return false;
+    SPWorkFlowNode source = _workflow->nodeById(sourceNodeId);
+    SPWorkFlowNode target = _workflow->nodeById(targetNodeId);
+    if (!source || !target)
+        return false;
+
+    // from operation in a condition to a junction
+    if ( source->owner() && target->type() == "junctionnode"){
+        //this is a "true" case going to the junction. valid if parameter 1 is empty (not used)
+        return checkJunctionParameters(source, target,sourceParmIndex, targetParmIndex, true);
+    }else if ( source->type() == "operationnode" && target->type() == "junctionnode"){ // false case of junction
+        return checkJunctionParameters(source, target,sourceParmIndex, targetParmIndex, false);
+    }else if ( source->type() == "operationnode" && target->type() == "operationnode"){
+        if (sourceParmIndex >= 0 && targetParmIndex >= 0 ){
+            IlwisTypes tpTarget = target->inputRef(targetParmIndex).valueType();
+            SPOperationParameter outs = source->operation()->outputParameter(sourceParmIndex);
+            if ( outs){
+                IlwisTypes tpSource = outs->type();
+                bool ok = hasType(tpTarget, tpSource);
+                if (!ok){
+                    kernel()->issues()->log(TR("Value types of input and output of connected operations is not compatible"), IssueObject::itWarning);
+                }
+                return ok;
+            }
+        }
+    }
+    return false;
+}
+
+
+void WorkflowModel::removeNode(int nodeId)
 {
     if ( _workflow.isValid()){
         _workflow->removeNode(nodeId);
