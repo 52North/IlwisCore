@@ -39,12 +39,11 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
             }
         }else if ( item->type() == "conditionnode"){
             // test have operations which have parameters that might be linked to the rest of the graph
-            std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(item);
-            for(int i=0; i < condition->testCount(); ++i){
-                WorkFlowCondition::Test test = condition->test(i);
-                for(int j = 0; j < test._operation->inputCount(); ++j){
-                    if ( test._operation->inputRef(j).inputLink()){
-                        usedNodes.insert(test._operation->inputRef(j).inputLink()->id());
+            auto subnodes = item->subnodes("tests");
+            for(auto subnode : subnodes){
+                for(int i=0; i < subnode->inputCount(); ++i){
+                    if ( subnode->inputRef(i).inputLink()){
+                        usedNodes.insert(subnode->inputRef(i).inputLink()->id());
                     }
                 }
             }
@@ -195,18 +194,13 @@ quint32 Workflow::generateId()
 
 void Workflow::updateIdCounter()
 {
-    Workflow::ExecutionOrder order = executionOrder();
-    std::vector<SPWorkFlowNode> nodes = order._independentOrder;
     qint64 maxid = 0;
 
-    for(SPWorkFlowNode node : order._independentOrder){
+    for(SPWorkFlowNode node : _graph){
         maxid = Ilwis::max(maxid, (qint64)node->id());
-    }
-    for(auto item : order._dependentOrder){
-        nodes = item.second;
-        for(const SPWorkFlowNode& node : nodes){
-            maxid = Ilwis::max(maxid, node->id());
-        }
+        auto subnodes = node->subnodes("all");
+        for(SPWorkFlowNode subnode : subnodes)
+            maxid = Ilwis::max(maxid, (qint64)subnode->id());
     }
     _idCounter = maxid + 1;
 }
@@ -257,14 +251,21 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
     for(const auto& item : _graph){
         if (item->type() == "conditionnode"){
             //we have to check all operations in the test to see if their input matches an output
-            std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(item);
-            for(int i=0; i < condition->testCount(); ++i){
-                WorkFlowCondition::Test test = condition->test(i);
-                if ( test._operation){
-                    for(int j=0; j < test._operation->inputCount(); ++j){
-                        WorkFlowParameter& p = test._operation->inputRef(j);
-                        CheckLinks(p, outparams);
-                    }
+//            std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(item);
+//            for(int i=0; i < condition->testCount(); ++i){
+//                WorkFlowCondition::Test test = condition->test(i);
+//                if ( test._operation){
+//                    for(int j=0; j < test._operation->inputCount(); ++j){
+//                        WorkFlowParameter& p = test._operation->inputRef(j);
+//                        CheckLinks(p, outparams);
+//                    }
+//                }
+//            }
+            auto subnodes = item->subnodes("tests");
+            for(auto subnode : subnodes){
+                for(int j=0; j < subnode->inputCount(); ++j){
+                    WorkFlowParameter& p = subnode->inputRef(j);
+                    CheckLinks(p, outparams);
                 }
             }
         }
@@ -395,21 +396,32 @@ const SPWorkFlowNode Workflow::nodeById(NodeId id) const
 
 void Workflow::removeNode(NodeId id)
 {
-    for(auto node : _graph){
-        if ( node->id() == id){
-            for(auto linkedNode : _graph){
-                int n;
-                if ( (n =linkedNode->inputCount()) > 0){
-                    for(int i=0; i < n; ++i)    {
-                        WorkFlowParameter& param = linkedNode->inputRef(i);
-                        if ( param.inputLink()){
-                            if ( param.inputLink()->id() == id){
-                                param.inputLink(SPWorkFlowNode());
-                            }
+    auto removeLinks = [&](NodeId deleteNodeId)->void {
+        for(auto linkedNode : _graph){
+            int n = linkedNode->type() == "junctionnode" ? 3 :linkedNode->inputCount() ;
+            if ( n > 0){
+                for(int i=0; i < n; ++i)    {
+                    WorkFlowParameter& param = linkedNode->inputRef(i);
+                    if ( param.inputLink()){
+                        if ( param.inputLink()->id() == deleteNodeId){
+                            param.inputLink(SPWorkFlowNode());
                         }
                     }
                 }
             }
+        }
+    };
+
+    for(auto iter = _graph.begin(); iter != _graph.end(); ++iter){
+        SPWorkFlowNode node = (*iter);
+        if ( node->id() == id){
+            std::vector<SPWorkFlowNode> subnodes = node->subnodes("all");
+            removeLinks(id);
+
+            for(auto subnode : subnodes)
+                removeLinks(subnode->id());
+            _graph.erase(iter);
+            break;
         }
     }
 }
@@ -458,3 +470,5 @@ IlwisTypes Workflow::ilwisType() const
 {
     return itWORKFLOW;
 }
+
+
