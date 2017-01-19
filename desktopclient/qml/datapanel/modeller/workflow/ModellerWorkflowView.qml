@@ -185,8 +185,6 @@ Modeller.ModellerWorkArea {
     }
 
     function recreateFlow(parm,kvp,item, index){
-        if ( item.itemid == 8)
-            console.debug("aa", item.flowConnections.length)
         if ( parm && item && parm.outputIndex !== -1){
             var flowPoints = { "fromParameterIndex" :  index, "toParameterIndex" : parm.outputIndex};
             var sourceItem = kvp[parm.outputNodeId]
@@ -194,8 +192,6 @@ Modeller.ModellerWorkArea {
             var targetRect = parm.targetRect
             sourceItem.addFlowConnection(item, sourceItem, targetRect, sourceRect, flowPoints, -1,-1)
        }
-        if ( item.itemid == 8)
-            console.debug("aa2", item.flowConnections.length, sourceItem.itemid)
     }
 
     function recreateFlows(operationItem, kvp) {
@@ -454,8 +450,6 @@ Modeller.ModellerWorkArea {
     }
 
     function addFlowConnection(connections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter){
-        console.debug("flow", sourceItem.itemid, targetItem.itemid, flowPoints.toParameterIndex, flowPoints.fromParameterIndex)
-
         for(var i=0; i < connections.length; ++i){
             var flow = connections[i]
             if ( flow.target.itemid === targetItem.itemid && flow.source.itemid === sourceItem.itemid){
@@ -465,7 +459,6 @@ Modeller.ModellerWorkArea {
                 }
             }
         }
-        //console.debug("adding", sourceItem.itemid, targetItem.itemid, flowPoints.fromParameterIndex, flowPoints.toParameterIndex)
         connections.push({
                                  "target" : targetItem,
                                  "source" :sourceItem,

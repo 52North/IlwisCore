@@ -316,7 +316,6 @@ Rectangle {
     }
 
     function drawFlows(ctx){
-        console.debug("no of connections ", itemid , flowConnections.length)
         for(var i=0; i < flowConnections.length; i++){
             var item = flowConnections[i]
             var index = item.attachtarget
