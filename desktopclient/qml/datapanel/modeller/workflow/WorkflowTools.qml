@@ -48,6 +48,9 @@ ToolBar{
             height : buttonSize
             width : buttonSize
             iconSource: iconsource("saveasb.png")
+            onClicked: {
+                workarea.dropSaveBox(x)
+            }
         }
 
 

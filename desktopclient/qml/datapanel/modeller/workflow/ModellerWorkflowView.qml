@@ -7,6 +7,7 @@ import QtQuick.Dialogs 1.1
 import ".." as Modeller
 import "../../../matrix.js" as Matrix
 import "../../../Global.js" as Global
+import "../../../controls" as Controls
 
 Modeller.ModellerWorkArea {
     id : workarea
@@ -30,6 +31,15 @@ Modeller.ModellerWorkArea {
     WorkflowTools{
         id : tools
         z : 10
+
+    }
+    SaveAsBox {
+        id : savestuff
+        anchors.top : tools.bottom
+        anchors.topMargin: 2
+        state : "invisible"
+        clip:true
+        z : 1000
     }
 
     DropArea {
@@ -452,6 +462,12 @@ Modeller.ModellerWorkArea {
                 wfCanvas.canvasValid = false
             }
         }
+
+    }
+    function dropSaveBox(xpos) {
+        savestuff.x = xpos
+        savestuff.toggle()
+
 
     }
 

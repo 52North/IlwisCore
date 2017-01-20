@@ -556,8 +556,13 @@ void WorkflowModel::store(const QString& container, const QString& name)
             _workflow->store();
         }
     }else {
+        QString cont = container;
+        if ( container.indexOf(".ilwis") != 0){ // oops somebody put a file, not a container
+            int index = container.lastIndexOf("/");
+            cont = container.left(index);
+        }
         QString newName = name == "" ? _workflow->name() : name;
-        QUrl newUrl = container + "/" + newName;
+        QUrl newUrl = cont + "/" + newName;
         _workflow->connectTo(newUrl,"workflow","stream",IlwisObject::cmOUTPUT);
         _workflow->store();
     }

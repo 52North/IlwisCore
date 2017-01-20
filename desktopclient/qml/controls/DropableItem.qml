@@ -5,8 +5,15 @@ Item {
     width: parent.width
     height: 0
     visible: false
+    enabled : height > 0
     property int maxHeight : 0
     property int interval : 200
+
+    function toggle() {
+        console.debug(dropableItem.state)
+        dropableItem.state = dropableItem.state == "invisible" ? "visible" : "invisible"
+        console.debug(dropableItem.state)
+    }
 
     states: [
         State { name: "visible"
