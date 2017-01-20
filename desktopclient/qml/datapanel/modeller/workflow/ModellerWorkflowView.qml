@@ -290,40 +290,42 @@ Modeller.ModellerWorkArea {
     }
 
     function zoom(amount, absolute, cx, cy){
-         var op = operationsList[0]
-        var dz = wfCanvas.zoomScale /wfCanvas.oldZoomScale
 
         wfCanvas.oldZoomScale = wfCanvas.zoomScale;
+        if ( cx === -1 || cy === -1){
+            cx = width / 2.0
+            cy = height / 2.0
+        }
         if ( absolute){
             wfCanvas.zoomScale = amount / 100.0
+        }else
+            wfCanvas.zoomScale = Math.min(20,wfCanvas.zoomScale + amount/100.0)
 
-        }else if ( amount > 0){
-            wfCanvas.zoomScale = Math.min(20,wfCanvas.zoomScale + Math.abs(amount)/100.0)
-        }else{
-            wfCanvas.zoomScale = Math.max(0.05,wfCanvas.zoomScale - Math.abs(amount)/100.0)
-        }
         var dzoom = wfCanvas.zoomScale /wfCanvas.oldZoomScale
         for(var i=0; i < operationsList.length; ++i){
             var operation = operationsList[i]
             if ( !operation.condition){
-                zoomItem(operation, dzoom)
+                zoomItem(operation, dzoom, cx,cy)
             }
         }
         for(i=0; i < conditionsList.length; ++i){
 
             var condition = conditionsList[i]
-            zoomItem(condition, dzoom)
+            zoomItem(condition, dzoom, cx,cy)
             for(var j=0; j < condition.junctionsList.length; ++j){
-                zoomItem(condition.junctionsList[j], dzoom)
+                zoomItem(condition.junctionsList[j], dzoom, cx,cy)
             }
         }
         wfCanvas.canvasValid = false
+        var num = Math.round(wfCanvas.zoomScale * 100)
+        tools.setZoomEdit(num + "%")
 
     }
 
-    function zoomItem(item, dzoom,cx,cy){
-        item.x = item.x * dzoom - (item.width * (1.0 - dzoom))/2.0
-        item.y = item.y * dzoom - (item.height * (1.0 - dzoom))/2.0
+    function zoomItem(item, dzoom, cx,cy){
+        item.x = dzoom *(item.x - cx) + cx
+        item.y = dzoom * (item.y - cy) + cy
+        item.scale  = wfCanvas.zoomScale
     }
 
     function pan(px, py){

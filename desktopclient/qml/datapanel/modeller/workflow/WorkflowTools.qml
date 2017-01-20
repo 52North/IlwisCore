@@ -149,7 +149,7 @@ ToolBar{
             editable: true
             height : buttonSize
             width : 75
-            model : ["10%","25%","50%","70%","80%","90%","100%","125%","150%", "200%"]
+              model : ["10%","25%","50%","70%","80%","90%","100%","125%","150%", "200%"]
 
             onCurrentIndexChanged: {
                 if ( currentText == "")
@@ -159,7 +159,7 @@ ToolBar{
             }
 
             Component.onCompleted: {
-                currentIndex = 6
+                setZoomEdit(100 + "%")
             }
 
         }

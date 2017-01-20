@@ -41,8 +41,6 @@ Rectangle {
     onHeightChanged: {
         changeBox()
     }
-
-    transform: Scale { origin.x:  conditionItem.width /2; origin.y : conditionItem.height / 2; xScale : wfCanvas.zoomScale; yScale: wfCanvas.zoomScale}
     z : 4
 
     AttachmentRectangle{

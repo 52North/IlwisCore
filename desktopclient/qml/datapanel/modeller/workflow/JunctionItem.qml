@@ -17,8 +17,6 @@ Rectangle {
     property var flowConnections: []
     property var attachementRectangles : []
 
-    transform: Scale { origin.x:  junctionItem.width /2; origin.y : junctionItem.height / 2; xScale : wfCanvas.zoomScale; yScale: wfCanvas.zoomScale}
-
     width : 39
     height : 39
     radius : 30

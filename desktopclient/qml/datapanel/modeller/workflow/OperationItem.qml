@@ -16,10 +16,10 @@ Rectangle {
     property var itemid;
     property var condition
     property string type : "operationitem"
-    transform: Scale {
-        origin.x:  0; origin.y : 0; xScale : condition ? 1.0 : wfCanvas.zoomScale; yScale :condition ? 1.0: wfCanvas.zoomScale
-    }
+    transformOrigin: Item.TopLeft
+
     z : 4
+
 
     color:"transparent"
     width: 240
