@@ -98,7 +98,7 @@ public:
      */
     PixelIterator();
     PixelIterator(const IRasterCoverage& raster, geos::geom::Geometry *selection);
-    PixelIterator(const IRasterCoverage& raster, UPGeometry selection) : PixelIterator(raster, selection.get()){
+    PixelIterator(const IRasterCoverage& raster, const UPGeometry& selection) : PixelIterator(raster, selection.get()){
 
     }
 
