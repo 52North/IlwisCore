@@ -48,6 +48,9 @@ ToolBar{
             height : buttonSize
             width : buttonSize
             iconSource: iconsource("saveasb.png")
+            onClicked: {
+                workarea.dropSaveBox(x)
+            }
         }
 
 
@@ -59,8 +62,7 @@ ToolBar{
             iconSource : iconsource("trash20.png")
             tooltip: qsTr("Removes a selected flow or operation)")
             onClicked: {
-                // modellerDataPane.deleteSelectedOperation()
-                // modellerDataPane.deleteSelectedEdge()
+                workarea.deleteSelectedItem()
 
             }
         }
@@ -103,15 +105,15 @@ ToolBar{
             }
         }
 
-        Controls.ToolButton {
-            height : buttonSize
-            width : buttonSize
-            id : loop
-            checked: false
-            checkable: true
-            exclusiveGroup: toolgroup
-            iconSource: iconsource("loop.png")
-        }
+//        Controls.ToolButton {
+//            height : buttonSize
+//            width : buttonSize
+//            id : loop
+//            checked: false
+//            checkable: true
+//            exclusiveGroup: toolgroup
+//            iconSource: iconsource("loop.png")
+//        }
 
 
         ExclusiveGroup {
@@ -150,7 +152,7 @@ ToolBar{
             editable: true
             height : buttonSize
             width : 75
-            model : ["10%","25%","50%","70%","80%","90%","100%","125%","150%", "200%"]
+              model : ["10%","25%","50%","70%","80%","90%","100%","125%","150%", "200%"]
 
             onCurrentIndexChanged: {
                 if ( currentText == "")
@@ -160,7 +162,7 @@ ToolBar{
             }
 
             Component.onCompleted: {
-                currentIndex = 6
+                setZoomEdit(100 + "%")
             }
 
         }

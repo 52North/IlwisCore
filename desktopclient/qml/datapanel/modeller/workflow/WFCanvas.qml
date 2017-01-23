@@ -69,7 +69,6 @@ Canvas {
         ctx.clearRect(0,0,width, height);
 
         if (canvasValid == false || (force !== null && force)) {
-
             canvasValid = true
             if ( workingLineBegin.x !== -1 && workingLineEnd.x !== -1){
                 ctx.beginPath();
@@ -94,6 +93,7 @@ Canvas {
 
                 ctx.stroke()
             }
+
 
             for( var i=0; i < operationsList.length; i++){
                 operationsList[i].drawFlows(ctx)

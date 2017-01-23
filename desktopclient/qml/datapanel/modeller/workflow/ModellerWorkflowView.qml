@@ -7,6 +7,7 @@ import QtQuick.Dialogs 1.1
 import ".." as Modeller
 import "../../../matrix.js" as Matrix
 import "../../../Global.js" as Global
+import "../../../controls" as Controls
 
 Modeller.ModellerWorkArea {
     id : workarea
@@ -24,11 +25,21 @@ Modeller.ModellerWorkArea {
         tools.dropCondition(dropCondition)
     }
 
+
     state : "visible"
 
     WorkflowTools{
         id : tools
         z : 10
+
+    }
+    SaveAsBox {
+        id : savestuff
+        anchors.top : tools.bottom
+        anchors.topMargin: 2
+        state : "invisible"
+        clip:true
+        z : 1000
     }
 
     DropArea {
@@ -150,35 +161,22 @@ Modeller.ModellerWorkArea {
             return
 
         var parm = node.linkedtrueoperation
-            var flowPoints = { "fromParameterIndex" :  parm.outputIndex, "toParameterIndex" :1};
-            var sourceItem = kvp[parm.outputNodeId]
-            var sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
-            var targetRect = parm.targetRect
-            sourceItem.flowConnections.push({
-                                                   "target" : junctionItem,
-                                                   "source" :sourceItem,
-                                                   "attachtarget" : targetRect,
-                                                   "attachsource" : sourceRect,
-                                                   "flowPoints" : flowPoints,
-                                                   "isSelected" : false
-                                               })
+        var flowPoints = { "fromParameterIndex" :  parm.outputIndex, "toParameterIndex" :1};
+        var sourceItem = kvp[parm.outputNodeId]
+        var sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
+        var targetRect = parm.targetRect
+        sourceItem.addFlowConnection(junctionItem, sourceItem, targetRect, sourceRect, flowPoints, -1,-1)
+
         parm = node.linkedfalseoperation
         flowPoints = { "fromParameterIndex" :  parm.outputIndex, "toParameterIndex" :2};
         sourceItem = kvp[parm.outputNodeId]
         sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
         targetRect = parm.targetRect
-        sourceItem.flowConnections = []
-        sourceItem.flowConnections.push({
-                                               "target" : junctionItem,
-                                               "source" :sourceItem,
-                                               "attachtarget" : targetRect,
-                                               "attachsource" : sourceRect,
-                                               "flowPoints" : flowPoints,
-                                               "isSelected" : false
-                                           })
-     }
+       // sourceItem.flowConnections = []
+        sourceItem.addFlowConnection(junctionItem, sourceItem, targetRect, sourceRect, flowPoints, -1,-1)
+    }
 
-    function recreateConditionFlow(conditionItem, kvp){
+    function recreateConditionFlow(conditionItem, kvp, op){
         var node = workflow.getNode(conditionItem.itemid)
         if(!node)
             return
@@ -202,15 +200,8 @@ Modeller.ModellerWorkArea {
             var sourceItem = kvp[parm.outputNodeId]
             var sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
             var targetRect = parm.targetRect
-            item.flowConnections.push({
-                                     "target" : item,
-                                     "source" :sourceItem,
-                                     "attachtarget" : targetRect,
-                                     "attachsource" : sourceRect,
-                                     "flowPoints" : flowPoints,
-                                     "isSelected" : false
-                                 })
-        }
+            sourceItem.addFlowConnection(item, sourceItem, targetRect, sourceRect, flowPoints, -1,-1)
+       }
     }
 
     function recreateFlows(operationItem, kvp) {
@@ -269,22 +260,20 @@ Modeller.ModellerWorkArea {
             recreateFlows(operationItem, kvp)
 
         }
-
         for(i=0; i < conditionsList.length; ++i){
             var conditionItem = conditionsList[i]
             recreateConditionFlow(conditionItem, kvp)
 
 
         }
-
         for(i=0; i < unlinkedJunctions.length;++i){
-             conditionItem  = getItem(unlinkedJunctions[i].condition)
-                var junction = unlinkedJunctions[i].junction
-                if ( junction){
-                    conditionItem.junctionsList.push(junction)
-                    junction.linkedCondition = conditionItem
-                }
-                recreateJunctionFlow(junction, kvp)
+            conditionItem  = getItem(unlinkedJunctions[i].condition)
+            var junction = unlinkedJunctions[i].junction
+            if ( junction){
+                conditionItem.junctionsList.push(junction)
+                junction.condition = conditionItem
+            }
+            recreateJunctionFlow(junction, kvp)
         }
 
         if ( workflowManager){
@@ -311,40 +300,42 @@ Modeller.ModellerWorkArea {
     }
 
     function zoom(amount, absolute, cx, cy){
-         var op = operationsList[0]
-        var dz = wfCanvas.zoomScale /wfCanvas.oldZoomScale
 
         wfCanvas.oldZoomScale = wfCanvas.zoomScale;
+        if ( cx === -1 || cy === -1){
+            cx = width / 2.0
+            cy = height / 2.0
+        }
         if ( absolute){
             wfCanvas.zoomScale = amount / 100.0
+        }else
+            wfCanvas.zoomScale = Math.min(20,wfCanvas.zoomScale + amount/100.0)
 
-        }else if ( amount > 0){
-            wfCanvas.zoomScale = Math.min(20,wfCanvas.zoomScale + Math.abs(amount)/100.0)
-        }else{
-            wfCanvas.zoomScale = Math.max(0.05,wfCanvas.zoomScale - Math.abs(amount)/100.0)
-        }
         var dzoom = wfCanvas.zoomScale /wfCanvas.oldZoomScale
         for(var i=0; i < operationsList.length; ++i){
             var operation = operationsList[i]
             if ( !operation.condition){
-                zoomItem(operation, dzoom)
+                zoomItem(operation, dzoom, cx,cy)
             }
         }
         for(i=0; i < conditionsList.length; ++i){
 
             var condition = conditionsList[i]
-            zoomItem(condition, dzoom)
+            zoomItem(condition, dzoom, cx,cy)
             for(var j=0; j < condition.junctionsList.length; ++j){
-                zoomItem(condition.junctionsList[j], dzoom)
+                zoomItem(condition.junctionsList[j], dzoom, cx,cy)
             }
         }
         wfCanvas.canvasValid = false
+        var num = Math.round(wfCanvas.zoomScale * 100)
+        tools.setZoomEdit(num + "%")
 
     }
 
-    function zoomItem(item, dzoom,cx,cy){
-        item.x = item.x * dzoom - (item.width * (1.0 - dzoom))/2.0
-        item.y = item.y * dzoom - (item.height * (1.0 - dzoom))/2.0
+    function zoomItem(item, dzoom, cx,cy){
+        item.x = dzoom *(item.x - cx) + cx
+        item.y = dzoom * (item.y - cy) + cy
+        item.scale  = wfCanvas.zoomScale
     }
 
     function pan(px, py){
@@ -423,6 +414,84 @@ Modeller.ModellerWorkArea {
             }
         }
         return null
+    }
+    function removeItemFromList(list, nodeid){
+        var item
+        for(var i=0; i < list.length; ++i)    {
+            if ( list[i].itemid == nodeid){
+                item = list[i]
+                list.splice(i,1)
+                break;
+            }
+        }
+        return item
+    }
+
+    function removeLinkTo(nodeid){
+        for(var j=0; j < operationsList.length; ++j){
+            operationsList[j].removeLinkTo(nodeid)
+        }
+        for(j=0; j < conditionsList.length; ++j){
+            conditionsList[j].removeLinkTo(nodeid)
+        }
+    }
+
+    function deleteSelectedItem(){
+        if ( currentItem){
+            if ( currentItem.type !== "flowconnection"){
+                workflow.removeNode(currentItem.itemid)
+                var item
+                if ( currentItem.type === "operationitem"){
+                    item = removeItemFromList(operationsList, currentItem.itemid)
+                    removeLinkTo(currentItem.itemid)
+
+                }else if ( currentItem.type === "conditionitem"){
+                    item = removeItemFromList(conditionsList, currentItem.itemid)
+                    removeLinkTo(currentItem.itemid)
+                    item.removeContent()
+                }
+
+                if ( item){
+                    item.destroy()
+                    currentItem = null
+                    wfCanvas.canvasValid = false
+                }
+            }else if ( currentItem.type === "flowconnection"){
+                workflow.deleteFlow(currentItem.target.itemid, currentItem.flowPoints.fromParameterIndex)
+                removeLinkTo(currentItem.target.itemid)
+                wfCanvas.canvasValid = false
+            }
+        }
+
+    }
+    function dropSaveBox(xpos) {
+        savestuff.x = xpos
+        savestuff.toggle()
+
+
+    }
+
+    function addFlowConnection(connections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter){
+        for(var i=0; i < connections.length; ++i){
+            var flow = connections[i]
+            if ( flow.target.itemid === targetItem.itemid && flow.source.itemid === sourceItem.itemid){
+                if ( flow.flowPoints.fromParameterIndex === flowPoints.fromParameterIndex &&
+                     flow.flowPoints.toParameterIndex === flowPoints.toParameterIndex   ){
+                    return
+                }
+            }
+        }
+        connections.push({
+                                 "target" : targetItem,
+                                 "source" :sourceItem,
+                                 "attachtarget" : attachRectIndex,
+                                 "attachsource" : attachSource,
+                                 "flowPoints" : flowPoints,
+                                 "isSelected" : false,
+                                 "testindex" : testIndex,
+                                 "testparameter" : testParameter,
+                                 "type" : "flowconnection"
+                             })
     }
 
 }

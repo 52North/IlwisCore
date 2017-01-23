@@ -56,7 +56,9 @@ public:
     Q_INVOKABLE bool hasValueDefined(int nodeId, int parameterIndex);
     Q_INVOKABLE int operationInputParameterCount(int nodeId);
     Q_INVOKABLE int operationOutputParameterCount(int nodeId);
-    Q_INVOKABLE void deleteOperation(int index);
+    Q_INVOKABLE int freeInputParameterCount(int nodeId);
+    Q_INVOKABLE bool usableLink(int sourceNodeId, int targetNodeId, int sourceParmIndex, int targetParmIndex);
+    Q_INVOKABLE void removeNode(int nodeId);
     Q_INVOKABLE void deleteFlow(int nodeId, int parameterIndex);
     Q_INVOKABLE QVariantList getNodes();
     Q_INVOKABLE QVariantMap getNode(int nodeId);
