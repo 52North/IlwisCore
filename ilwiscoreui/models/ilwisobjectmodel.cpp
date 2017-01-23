@@ -864,9 +864,16 @@ QString IlwisObjectModel::copy(const QString &newUrl, const QString &format, con
                     }
                 }
                 _ilwisobject->connectTo(bareUrl,format.toLower(), provider.toLower(), IlwisObject::cmOUTPUT);
+                QString newUrl = _ilwisobject->resource(IlwisObject::cmOUTPUT).url(true).toString();
+                QUrl oldUrl = _ilwisobject->resource().url();
+                QUrl oldUrlraw = _ilwisobject->resource().url(true);
+                _ilwisobject->resourceRef().setUrl(newUrl,false,false);
+                _ilwisobject->resourceRef().setUrl(newUrl,true,false);
                 _ilwisobject->store();
                 // original object must forget about its copy
                 _ilwisobject->resetOutputConnector();
+                _ilwisobject->resourceRef().setUrl(oldUrl,false,false);
+                _ilwisobject->resourceRef().setUrl(oldUrlraw,true,false);
             }else{
                 return "exists";
             }

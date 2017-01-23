@@ -105,15 +105,15 @@ ToolBar{
             }
         }
 
-        Controls.ToolButton {
-            height : buttonSize
-            width : buttonSize
-            id : loop
-            checked: false
-            checkable: true
-            exclusiveGroup: toolgroup
-            iconSource: iconsource("loop.png")
-        }
+//        Controls.ToolButton {
+//            height : buttonSize
+//            width : buttonSize
+//            id : loop
+//            checked: false
+//            checkable: true
+//            exclusiveGroup: toolgroup
+//            iconSource: iconsource("loop.png")
+//        }
 
 
         ExclusiveGroup {
