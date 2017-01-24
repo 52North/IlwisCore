@@ -98,7 +98,6 @@ Item {
           Column {
              id: objRecursiveColumn
              objectName: "objRecursiveColumn"
-             property alias objMouseArea: objMouseArea
 
              function toggleNode() {
                  var enabled
