@@ -98,10 +98,7 @@ Item {
           Column {
              id: objRecursiveColumn
              objectName: "objRecursiveColumn"
-             property int m_iIndex: model.index
-             property var m_parentModel: model.parentModel
              property alias objMouseArea: objMouseArea
-             property int selectedNode: -1
 
              function toggleNode() {
                  var enabled
