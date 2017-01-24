@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.0
 import QtQuick.Controls 1.0
 import QtQuick.Dialogs 1.1
 
-
+import "../../../../qml/Global.js" as Global
 
 Item {
     id: treeArea
@@ -23,28 +23,29 @@ Item {
        ListModel {
           id: objModel
           objectName: "objModel"
+          property Rectangle selectedRow: null
 
           function setGoal(description, outFile) {
               objModel.clear(); // only one goal for the tree
-              objModel.append({"id" : 0, "type" : "Goal", "name" : description, "weight": -1, "selected" : false, "parent" : objModel, "level" : 0, "subNodes" : [], "fileName" : outFile})
+              objModel.append({"id" : 0, "type" : "Goal", "name" : description, "weight": -1, "parent" : objModel, "level" : 0, "subNodes" : [], "fileName" : outFile})
               return objModel.get(0)
           }
 
           function addMask(node, description, inFile) {
-              node.subNodes.append({"id" : node.subNodes.count, "type" : "AArea", "name" : description, "weight": -1, "selected" : false, "parent" : node, "level" : 1, "subNodes" : [], "fileName" : inFile})
+              node.subNodes.append({"id" : node.subNodes.count, "type" : "AArea", "name" : description, "weight": -1, "parent" : node, "level" : 1, "subNodes" : [], "fileName" : inFile})
           }
 
           function addGroup(node, description, weight, outFile) {
-              node.subNodes.append({"id" : node.subNodes.count, "type" : "Group", "weight": weight, "name" : description, "selected" : false, "parent" : node, "level" : node.level + 1, "subNodes" : [], "fileName" : outFile})
+              node.subNodes.append({"id" : node.subNodes.count, "type" : "Group", "weight": weight, "name" : description, "parent" : node, "level" : node.level + 1, "subNodes" : [], "fileName" : outFile})
               return node.subNodes.get(node.subNodes.count - 1)
           }
 
           function addFactor(node, description, weight, inFile) {
-              node.subNodes.append({"id" : node.subNodes.count, "type" : "Factor", "weight": weight, "name" : description, "selected" : false, "parent" : node, "level" : node.level + 1, "subNodes" : [], "fileName" : inFile})
+              node.subNodes.append({"id" : node.subNodes.count, "type" : "Factor", "weight": weight, "name" : description, "parent" : node, "level" : node.level + 1, "subNodes" : [], "fileName" : inFile})
           }
 
           function addConstraint(node, description, weight, inFile) {
-              node.subNodes.append({"id" : node.subNodes.count, "type" : "Constraint", "weight": weight, "name" : description, "selected" : false, "parent" : node, "level" : node.level + 1, "subNodes" : [], "fileName" : inFile})
+              node.subNodes.append({"id" : node.subNodes.count, "type" : "Constraint", "weight": weight, "name" : description, "parent" : node, "level" : node.level + 1, "subNodes" : [], "fileName" : inFile})
           }
 
           function traverse(node) {
@@ -130,19 +131,6 @@ Item {
                        toggleNode()
                    }
                 }
-                onClicked: {
-                    model.selected = "true"
-                    console.log(model.id, model.name + " is selected...")
-                    // propagate to the form..... how????
-                    selectedNode = model.id
-
-                    console.log(selectedNode + " is selected")
-
-                    //var selNode = objModel.getById(undefined, model.id)
-                    //console.log(selNode.name)
-                    //selNodeChanged(selNode.id)
-                    //console.log("sent signal for: " + selNode.name)
-                }
 
                 Row {
                    id: objRow
@@ -154,7 +142,7 @@ Item {
                    Rectangle {
                       id: objDisplayRowRect
                       height: objNodeName.implicitHeight + 5
-                      width: subArrow.width + icon.width + objNodeName.implicitWidth + 5
+                      width: subArrow.width + icon.width + objNodeWeight.implicitWidth + objNodeName.implicitWidth + 5
                       state: "expanded"
 
                       function getIcon(nodetype) {
@@ -203,23 +191,60 @@ Item {
                           source: parent.getIcon(model.type)
                       }
 
+                      Rectangle {
+                          id: objTextRowRect
+                          height: parent.height
+                          width: objNodeWeight.implicitWidth + objNodeName.implicitWidth + 5
+                          anchors { left: icon.right; top: parent.top; bottom: parent.bottom }
+                          state: "unselected"
 
-                      Text {
-                         id: objNodeWeight
-                         anchors { left: icon.right; top: parent.top; bottom: parent.bottom }
-                         //text: model.type + " -> " + model.weight + " " + model.name
-                         text: qsTr("  " + ((model.weight >= 0) ? model.weight.toFixed(2).toString() : "") + "  ")
-                         color: "black"
-                         verticalAlignment: Text.AlignVCenter
-                      }
+                          MouseArea {
+                              id: objTextRowMousearea
+                              width: parent.width
+                              height: parent.height
+                              onPressed: {
+                                  if (objModel.selectedRow != null) {
+                                      objModel.selectedRow.state = "unselected"
+                                  }
+                                  objTextRowRect.state = "selected"
+                                  objModel.selectedRow = objTextRowRect
+                              }
 
-                      Text {
-                         id: objNodeName
-                         anchors { left: objNodeWeight.right; top: parent.top; bottom: parent.bottom }
-                         //text: model.type + " -> " + model.weight + " " + model.name
-                         text: qsTr(model.name)
-                         color: "black"
-                         verticalAlignment: Text.AlignVCenter
+                              Text {
+                                  id: objNodeWeight
+                                  anchors { top: parent.top; bottom: parent.bottom }
+                                  //text: model.type + " -> " + model.weight + " " + model.name
+                                  text: qsTr("  " + ((model.weight >= 0) ? model.weight.toFixed(2).toString() : "") + "  ")
+                                  color: "black"
+                                  verticalAlignment: Text.AlignVCenter
+                              }
+
+                              Text {
+                                  id: objNodeName
+                                  anchors { left: objNodeWeight.right; top: parent.top; bottom: parent.bottom }
+                                  //text: model.type + " -> " + model.weight + " " + model.name
+                                  text: qsTr(model.name)
+                                  color: "black"
+                                  verticalAlignment: Text.AlignVCenter
+                              }
+                          }
+
+                          states: [
+                              State {
+                                  name: "unselected"
+                                  PropertyChanges {
+                                      target: objTextRowRect
+                                      color: "white"
+                                  }
+                              },
+                              State {
+                                  name: "selected"
+                                  PropertyChanges {
+                                      target: objTextRowRect
+                                      color: Global.selectedColor
+                                  }
+                              }
+                          ]
                       }
 
                       states: [
@@ -328,7 +353,7 @@ Item {
                 function add() {
                     var szSplit = text.split(',')
                     if(szSplit.length === 1) {
-                       objModel.append({"type":inputtype.text , "weight": inputweight.text,    "name": szSplit[0], "selected": "false", "level": 0, "parentModel": objModel, "subNode": []})
+                       objModel.append({"type":inputtype.text , "weight": inputweight.text,    "name": szSplit[0], "level": 0, "parentModel": objModel, "subNode": []})
                     }
                     else {
                        if(objModel.get(parseInt(szSplit[0])) === undefined) {
@@ -343,7 +368,7 @@ Item {
                           }
                           node = node.subNode.get(parseInt(szSplit[i]))
                        }
-                       node.subNode.append({"type":inputtype.text , "weight": inputweight.text,    "name": szSplit[i], "selected": "false", "level": i, "parentModel": node.subNode, "subNode": []})
+                       node.subNode.append({"type":inputtype.text , "weight": inputweight.text,    "name": szSplit[i], "level": i, "parentModel": node.subNode, "subNode": []})
                     }
                 }
 
