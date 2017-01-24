@@ -193,12 +193,11 @@ Item {
 
                       Image {
                           id: icon
-                          width:  15
-                          height:  15
                           anchors.left: subArrow.right
                           anchors.leftMargin: 10
                           anchors.verticalCenter: parent.verticalCenter
                           source: parent.getIcon(model.type)
+                          fillMode: Image.Pad
                       }
 
                       Rectangle {
