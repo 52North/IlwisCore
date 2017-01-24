@@ -180,7 +180,14 @@ Item {
                              objectName: "objMouseAreaArrow"
                              width: subArrow.implicitWidth
                              height: subArrow.implicitHeight
-                             onPressed: toggleNode()
+                             onPressed: {
+                                 if (objModel.selectedRow != null) {
+                                     objModel.selectedRow.state = "unselected"
+                                 }
+                                 objTextRowRect.state = "selected"
+                                 objModel.selectedRow = objTextRowRect
+                                 toggleNode()
+                             }
                          }
                       }
 
