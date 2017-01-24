@@ -174,7 +174,7 @@ Item {
                              objectName: "objMouseAreaArrow"
                              width: subArrow.implicitWidth
                              height: subArrow.implicitHeight
-                             onClicked: toggleNode()
+                             onPressed: toggleNode()
                          }
                       }
 
