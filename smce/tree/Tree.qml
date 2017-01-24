@@ -32,7 +32,7 @@ Item {
           }
 
           function addMask(node, description, inFile) {
-              node.subNodes.append({"id" : node.subNodes.count, "type" : "AArea", "name" : description, "weight": -1, "parent" : node, "level" : 1, "subNodes" : [], "fileName" : inFile})
+              node.subNodes.append({"id" : node.subNodes.count, "type" : "MaskArea", "name" : description, "weight": -1, "parent" : node, "level" : 1, "subNodes" : [], "fileName" : inFile})
           }
 
           function addGroup(node, description, weight, outFile) {
@@ -121,7 +121,7 @@ Item {
                 width: objRow.implicitWidth
                 height: objRow.implicitHeight
                 onDoubleClicked: {
-                   if (model.type == "Constraint" || model.type == "Factor" || model.type == "AArea") {
+                   if (model.type == "Constraint" || model.type == "Factor" || model.type == "MaskArea") {
                        openMap(model.fileName)
                    } else {
                        toggleNode()
@@ -134,7 +134,6 @@ Item {
                     objTextRowRect.state = "selected"
                     objModel.selectedRow = objTextRowRect
                 }
-
 
                 Row {
                    id: objRow
@@ -162,7 +161,7 @@ Item {
                         if (nodetype === "Group")
                             return "Objective.png"
 
-                        if (nodetype === "AArea")
+                        if (nodetype === "MaskArea")
                             return "raster.png"
                       }
 
