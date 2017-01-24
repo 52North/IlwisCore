@@ -127,6 +127,14 @@ Item {
                        toggleNode()
                    }
                 }
+                onPressed: {
+                    if (objModel.selectedRow != null) {
+                        objModel.selectedRow.state = "unselected"
+                    }
+                    objTextRowRect.state = "selected"
+                    objModel.selectedRow = objTextRowRect
+                }
+
 
                 Row {
                    id: objRow
@@ -194,35 +202,22 @@ Item {
                           anchors { left: icon.right; top: parent.top; bottom: parent.bottom }
                           state: "unselected"
 
-                          MouseArea {
-                              id: objTextRowMousearea
-                              width: parent.width
-                              height: parent.height
-                              onPressed: {
-                                  if (objModel.selectedRow != null) {
-                                      objModel.selectedRow.state = "unselected"
-                                  }
-                                  objTextRowRect.state = "selected"
-                                  objModel.selectedRow = objTextRowRect
-                              }
+                          Text {
+                              id: objNodeWeight
+                              anchors { top: parent.top; bottom: parent.bottom }
+                              //text: model.type + " -> " + model.weight + " " + model.name
+                              text: qsTr("  " + ((model.weight >= 0) ? model.weight.toFixed(2).toString() : "") + "  ")
+                              color: "black"
+                              verticalAlignment: Text.AlignVCenter
+                          }
 
-                              Text {
-                                  id: objNodeWeight
-                                  anchors { top: parent.top; bottom: parent.bottom }
-                                  //text: model.type + " -> " + model.weight + " " + model.name
-                                  text: qsTr("  " + ((model.weight >= 0) ? model.weight.toFixed(2).toString() : "") + "  ")
-                                  color: "black"
-                                  verticalAlignment: Text.AlignVCenter
-                              }
-
-                              Text {
-                                  id: objNodeName
-                                  anchors { left: objNodeWeight.right; top: parent.top; bottom: parent.bottom }
-                                  //text: model.type + " -> " + model.weight + " " + model.name
-                                  text: qsTr(model.name)
-                                  color: "black"
-                                  verticalAlignment: Text.AlignVCenter
-                              }
+                          Text {
+                              id: objNodeName
+                              anchors { left: objNodeWeight.right; top: parent.top; bottom: parent.bottom }
+                              //text: model.type + " -> " + model.weight + " " + model.name
+                              text: qsTr(model.name)
+                              color: "black"
+                              verticalAlignment: Text.AlignVCenter
                           }
 
                           states: [
