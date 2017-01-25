@@ -162,18 +162,22 @@ Modeller.ModellerWorkArea {
 
         var parm = node.linkedtrueoperation
         var flowPoints = { "fromParameterIndex" :  parm.outputIndex, "toParameterIndex" :1};
-        var sourceItem = kvp[parm.outputNodeId]
-        var sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
-        var targetRect = parm.targetRect
-        sourceItem.addFlowConnection(junctionItem, sourceItem, targetRect, sourceRect, flowPoints, -1,-1)
+        var sourceItem = kvp[parm.outputNodeId] // need not to exist in case incomplete flows are saved
+        if ( sourceItem){
+            var sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
+            var targetRect = parm.targetRect
+            sourceItem.addFlowConnection(junctionItem, sourceItem, targetRect, sourceRect, flowPoints, -1,-1)
+        }
 
         parm = node.linkedfalseoperation
         flowPoints = { "fromParameterIndex" :  parm.outputIndex, "toParameterIndex" :2};
         sourceItem = kvp[parm.outputNodeId]
-        sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
-        targetRect = parm.targetRect
-       // sourceItem.flowConnections = []
-        sourceItem.addFlowConnection(junctionItem, sourceItem, targetRect, sourceRect, flowPoints, -1,-1)
+        if ( sourceItem){ // need not to exist in case incomplete flows are saved
+            sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
+            targetRect = parm.targetRect
+            // sourceItem.flowConnections = []
+            sourceItem.addFlowConnection(junctionItem, sourceItem, targetRect, sourceRect, flowPoints, -1,-1)
+        }
     }
 
     function recreateConditionFlow(conditionItem, kvp, op){
@@ -216,7 +220,6 @@ Modeller.ModellerWorkArea {
     }
 
     function recreateWorkflow() {
-
         var nodes = workflow.getNodes()
         var kvp = []
         var unlinkedJunctions = []
@@ -244,8 +247,11 @@ Modeller.ModellerWorkArea {
                 }
             }else if ( node.type === "operationnode"){
                 currentItem = createOperationItem(node.operationid,node.nodeid,node.x, node.y, wfCanvas)
-                if ( currentItem)
+                if ( currentItem){
                     kvp[currentItem.itemid] = currentItem
+                    var collapsed = workflow.collapsed(node.nodeid)
+                    currentItem.state = collapsed ? "minimized" : "maximized"
+                }
             }else if ( node.type === "junctionnode"){
                 var comp = Qt.createComponent("JunctionItem.qml");
                 if (comp.status === Component.Ready){
@@ -270,11 +276,16 @@ Modeller.ModellerWorkArea {
             conditionItem  = getItem(unlinkedJunctions[i].condition)
             var junction = unlinkedJunctions[i].junction
             if ( junction){
+
                 conditionItem.junctionsList.push(junction)
                 junction.condition = conditionItem
             }
             recreateJunctionFlow(junction, kvp)
         }
+        wfCanvas.zoomScale = workflow.scale
+        zoom(workflow.scale * 100,true,-1,-1)
+        var xytranslation = workflow.translation
+        pan(-xytranslation["x"], -xytranslation["y"])
 
         if ( workflowManager){
             workflowManager.updateRunForm()
@@ -329,6 +340,7 @@ Modeller.ModellerWorkArea {
         wfCanvas.canvasValid = false
         var num = Math.round(wfCanvas.zoomScale * 100)
         tools.setZoomEdit(num + "%")
+        workflow.scale = wfCanvas.zoomScale
 
     }
 
@@ -357,6 +369,7 @@ Modeller.ModellerWorkArea {
             }
 
         }
+        workflow.translateObject(px,py,true)
         wfCanvas.canvasValid = false
     }
 
@@ -457,8 +470,9 @@ Modeller.ModellerWorkArea {
                     wfCanvas.canvasValid = false
                 }
             }else if ( currentItem.type === "flowconnection"){
-                workflow.deleteFlow(currentItem.target.itemid, currentItem.flowPoints.fromParameterIndex)
-                removeLinkTo(currentItem.target.itemid)
+                console.debug("a", currentItem.type, currentItem.target.itemid, currentItem.flowPoints.toParameterIndex)
+                workflow.deleteFlow(currentItem.target.itemid, currentItem.flowPoints.toParameterIndex)
+                currentItem.source.removeLinkTo(currentItem.target.itemid)
                 wfCanvas.canvasValid = false
             }
         }
