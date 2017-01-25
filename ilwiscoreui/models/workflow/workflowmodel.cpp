@@ -472,6 +472,7 @@ QVariantList WorkflowModel::getTests(int conditionId) const
                 }else
                     value = operNode->inputRef(j).value();
                 QString label = operNode->inputRef(j).label();
+                testEntry["name2"] = testEntry["name2"].toString() + " " + value;
                 parameterKeys["value"] = value;
                 parameterKeys["label"] = label;
                 parameters.push_back(parameterKeys);
@@ -651,6 +652,9 @@ bool WorkflowModel::isValidNode(qint32 nodeid,const QString& part) const
             if ( part == "junctions")
                 vc = WorkFlowNode::vcJUNCTIONS;
         }
+    }
+    if ( node->owner()){
+        vc = WorkFlowNode::vcALLDEFINED;
     }
     return node->isValid(_workflow.ptr(), vc);
 }
