@@ -17,7 +17,7 @@ Rectangle {
     property var condition
     property string type : "operationitem"
     transformOrigin: Item.TopLeft
-
+    state : "maximized"
     z : 4
 
 
@@ -61,16 +61,12 @@ Rectangle {
             anchors.fill: parent
             onClicked: {
                 if ( contentItem.height != 0){
-                    contentItem.height = 0
-                    operationItem.height = operationName.height + 20
+                    operationItem.state = "minimized"
                 }
                 else{
-                    operationItem.height = 130
-                    contentItem.height = 130 - operationName.height
-
+                    operationItem.state = "maximized"
                 }
-                wfCanvas.canvasValid = false
-
+                workflow.collapsed(itemid, operationItem.state == "minimized")
             }
         }
     }
@@ -268,6 +264,41 @@ Rectangle {
         attachementRectangles.push(att8)
     }
 
+    states: [
+        State { name: "maximized"
+
+            PropertyChanges {
+                target: operationItem
+                height : 130
+            }
+            PropertyChanges {
+                target: contentItem
+                height : 100
+            }
+        },
+        State {
+            name : "minimized"
+            PropertyChanges {
+                target: operationItem
+                height : 30
+            }
+            PropertyChanges {
+                target: contentItem
+                height : 0
+            }
+
+        }
+    ]
+    transitions: [
+        Transition {
+            NumberAnimation { properties: "height"; duration : 300 ; easing.type: Easing.InOutCubic }
+
+            onRunningChanged: {
+                wfCanvas.canvasValid = false
+            }
+        }
+    ]
+
     function textColor(nodeid, parmIndex){
         var node = workflow.getNode(nodeid)
         if (node){
@@ -383,7 +414,7 @@ Rectangle {
     function usableLink(){
         // we only me draw links from items within the same condition
         // all links to the outside must use the junction
-        if ( currentItem.type == "operationitem"){
+        if ( currentItem && currentItem.type == "operationitem"){
             if ( currentItem.condition){
                 if ( condition){
                     if ( currentItem.condition.itemid !== condition.itemid)
@@ -411,6 +442,7 @@ Rectangle {
                     var toIndex = 0
                     var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
                     currentItem.setFlow(target, attachRectTo, flowPoints,-1)
+                    target.resetColors()
 
                 }
                 if ( condition)
