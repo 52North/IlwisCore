@@ -317,11 +317,13 @@ WorkSpaceModel *UIContextModel::currentWorkSpace() const
 
 MasterCatalogModel *UIContextModel::masterCatalogModel() const
 {
-    QVariant mastercatalog = _qmlcontext->contextProperty("mastercatalog");
-    if ( mastercatalog.isValid()){
-        MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel *>();
-        if (mcmodel){
-            return mcmodel;
+    if ( _qmlcontext){
+        QVariant mastercatalog = _qmlcontext->contextProperty("mastercatalog");
+        if ( mastercatalog.isValid()){
+            MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel *>();
+            if (mcmodel){
+                return mcmodel;
+            }
         }
     }
     return 0;
@@ -444,9 +446,12 @@ QString UIContextModel::consoleScriptId() const
 
 QString UIContextModel::worldmapCommand(const QString& id) const
 {
-    QString cmd = QString("adddrawer(%1,%2, \"itemid=%3\",featurecoverage)").arg(id).arg(_worldMap->resource().url().toString()).arg(_worldMap->id());
+    try{
+        QString cmd = QString("adddrawer(%1,%2, \"itemid=%3\",featurecoverage)").arg(id).arg(_worldMap->resource().url().toString()).arg(_worldMap->id());
 
-    return cmd;
+        return cmd;
+    } catch (const ErrorObject&){}
+    return "";
 }
 
 QColor UIContextModel::code2color(const QString &code) const
