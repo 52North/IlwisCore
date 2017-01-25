@@ -16,18 +16,15 @@ Item {
 
     Rectangle {
        id: objRoot
-       objectName: "objRoot"
        width: parent.width
        height: parent.height
 
        ColumnLayout {
-          objectName: "objColLayout"
           anchors.fill: parent
           ScrollView {
              Layout.fillHeight: true
              Layout.fillWidth: true
              ListView {
-                objectName: "objListView"
                 model: objModel
                 delegate: objRecursiveDelegate
                 interactive: false
@@ -44,7 +41,6 @@ Item {
 
        ListModel {
           id: objModel
-          objectName: "objModel"
           property Rectangle selectedRow: null
 
           function setGoal(description, outFile) {
@@ -139,7 +135,6 @@ Item {
 
              MouseArea {
                 id: objMouseArea
-                objectName: "objMouseArea"
                 width: objRow.implicitWidth
                 height: objRow.implicitHeight
                 onDoubleClicked: {
@@ -199,7 +194,6 @@ Item {
                           visible: objRepeater.count > 0
                           MouseArea {
                              id: objMouseAreaArrow
-                             objectName: "objMouseAreaArrow"
                              width: subArrow.implicitWidth
                              height: subArrow.implicitHeight
                              onPressed: {
@@ -292,7 +286,6 @@ Item {
              }
              Repeater {
                 id: objRepeater
-                objectName: "objRepeater"
                 model: subNodes
                 delegate: objRecursiveDelegate
              }
