@@ -54,7 +54,7 @@ void Junction::nodeId(quint64 id)
     name(QString("junction_%1").arg(id));
 }
 
-bool Junction::isValid(Workflow *workflow, WorkFlowNode::ValidityCheck) const
+bool Junction::isValid(const Workflow *workflow, WorkFlowNode::ValidityCheck) const
 {
     WorkFlowParameter parm1 = input(1);
     WorkFlowParameter parm2 = input(2);
