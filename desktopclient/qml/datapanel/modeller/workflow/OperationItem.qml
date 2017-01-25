@@ -19,6 +19,9 @@ Rectangle {
     transformOrigin: Item.TopLeft
     state : "maximized"
     z : 4
+    border.width: workflow.isValidNode(itemid,"all") ? 0 : 1
+    border.color: workflow.isValidNode(itemid,"all") ? "transparent" : "red"
+
 
 
     color:"transparent"
@@ -315,6 +318,7 @@ Rectangle {
 
     }
 
+
     function getBackground(lastitem) {
         var isSelected = false
         if (operation) {
@@ -496,6 +500,11 @@ Rectangle {
         workarea.addFlowConnection(flowConnections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter)
     }
 
-     function resetColors(){
-     }
+    function resetColors(){
+        if ( condition){
+            border.width = workflow.isValidNode(itemid,"all") ? 0 : 1
+            border.color = workflow.isValidNode(itemid,"all") ? "transparent" : "red"
+            condition.resetColors()
+        }
+    }
 }
