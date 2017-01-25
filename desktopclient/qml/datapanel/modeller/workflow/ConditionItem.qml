@@ -327,10 +327,7 @@ Rectangle {
                newHeight = Math.abs(operation.y) + conditionItem.height
                yChanged = hChanged = true
                newY = newY + operation.y - padding * 2
-
             }
-
-
         }
         if ( wChanged)
             conditionItem.width = newWidth + (padding * 2)
@@ -431,7 +428,8 @@ Rectangle {
     function drawFlows(ctx){
         for(var i=0; i < junctionsList.length; i++){
             var item = junctionsList[i]
-            var ep = Qt.point(conditionItem.x + width / 2, conditionItem.y + height/2)
+            var ep = Qt.point(conditionItem.x + width * wfCanvas.zoomScale/ 2.0, conditionItem.y + height * wfCanvas.zoomScale/2.0)
+            console.debug("aa condition xy =", conditionItem.x, conditionItem.y, "epXY=",ep.x, ep.y, "wh=", width , height,"zoom=", wfCanvas.zoomScale)
             var sp = item.center()
 
             if ( sp.x < conditionItem.x){
@@ -440,12 +438,14 @@ Rectangle {
             if ( sp.y < conditionItem.y){
                 ep.y = conditionItem.y
             }
-            if ( sp.x > (conditionItem.x + conditionItem.width)){
-                ep.x = conditionItem.x +conditionItem.width
+            if ( sp.x > (conditionItem.x + conditionItem.width* wfCanvas.zoomScale)){
+                ep.x = conditionItem.x +conditionItem.width* wfCanvas.zoomScale
             }
-            if ( sp.y > (conditionItem.y + conditionItem.height)){
-                ep.y = conditionItem.y + conditionItem.height
+            if ( sp.y > (conditionItem.y + conditionItem.height* wfCanvas.zoomScale)){
+                ep.y = conditionItem.y + conditionItem.height* wfCanvas.zoomScale
             }
+
+            console.debug("bb condition xy =", conditionItem.x, conditionItem.y, "epXY=",ep.x, ep.y, "wh=", width , height,"zoom=", wfCanvas.zoomScale)
             Global.drawLine(wfCanvas, ctx, sp, ep, false, "lightgrey", 1)
 
             item.drawFlows(ctx)
