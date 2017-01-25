@@ -39,7 +39,7 @@ TabView {
 
 
 
-    style: Base.TabStyle1 {
+    style: WorkflowTabStyle {
         id : tabstyle
     }
 
