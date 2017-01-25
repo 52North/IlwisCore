@@ -108,10 +108,8 @@ void Workflow::removeFlow(NodeId toNode, qint32 parameterIndex)
 {
     SPWorkFlowNode node = nodeById(toNode);
     if (node){
-        if (  parameterIndex < node->inputCount()){
-            WorkFlowParameter& param = node->inputRef(parameterIndex);
-            param.inputLink(SPWorkFlowNode());
-        }
+        WorkFlowParameter& param = node->inputRef(parameterIndex);
+        param.inputLink(SPWorkFlowNode());
     }
 }
 
@@ -182,9 +180,12 @@ std::pair<int, int> Workflow::translation() const
     return _translation;
 }
 
-void Workflow::translation(double x, double y)
+void Workflow::translation(double x, double y, bool relative)
 {
-    _translation = std::pair<int, int>(x,y);
+    if ( relative)
+        _translation = std::pair<int,int>(_translation.first + x, _translation.second + y);
+    else
+        _translation = std::pair<int, int>(x,y);
 }
 
 quint32 Workflow::generateId()
@@ -208,6 +209,15 @@ void Workflow::updateIdCounter()
 const std::vector<SPWorkFlowNode> &Workflow::graph() const
 {
     return _graph;
+}
+
+bool Workflow::isValid() const
+{
+    bool ok = true;
+    for(const auto& node : _graph){
+        ok &= node->isValid(this,WorkFlowNode::vcAGGREGATE);
+    }
+    return ok;
 }
 
 std::vector<WorkFlowParameter> Workflow::freeInputParameters() const
