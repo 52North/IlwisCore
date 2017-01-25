@@ -429,7 +429,6 @@ Rectangle {
         for(var i=0; i < junctionsList.length; i++){
             var item = junctionsList[i]
             var ep = Qt.point(conditionItem.x + width * wfCanvas.zoomScale/ 2.0, conditionItem.y + height * wfCanvas.zoomScale/2.0)
-            console.debug("aa condition xy =", conditionItem.x, conditionItem.y, "epXY=",ep.x, ep.y, "wh=", width , height,"zoom=", wfCanvas.zoomScale)
             var sp = item.center()
 
             if ( sp.x < conditionItem.x){
@@ -445,7 +444,6 @@ Rectangle {
                 ep.y = conditionItem.y + conditionItem.height* wfCanvas.zoomScale
             }
 
-            console.debug("bb condition xy =", conditionItem.x, conditionItem.y, "epXY=",ep.x, ep.y, "wh=", width , height,"zoom=", wfCanvas.zoomScale)
             Global.drawLine(wfCanvas, ctx, sp, ep, false, "lightgrey", 1)
 
             item.drawFlows(ctx)
