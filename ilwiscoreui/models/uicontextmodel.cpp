@@ -389,6 +389,16 @@ QString UIContextModel::ilwisFolder() const
     return url.toString();
 }
 
+bool UIContextModel::debugMode() const
+{
+#ifdef QT_DEBUG
+    return true;
+#else
+    return false;
+#endif
+
+}
+
 QStringList UIContextModel::formatList(const QString& query, const QString& selectParm) const
 {
     if ( selectParm == "format"){
@@ -442,6 +452,30 @@ QString UIContextModel::consoleScriptId() const
         return QString::number(_consoleScript->id());
     }
     return QString::number(iUNDEF);
+}
+
+QVariantList UIContextModel::debugProperty(const QString &property)
+{
+    QVariantList results;
+#ifdef QT_DEBUG
+
+    if ( property == "references"){
+        const QHash<quint64, ESPIlwisObject>& lookup = mastercatalog()->dumpLookup();
+        for(auto object : lookup){
+         //   ESPIlwisObject object = objectentry.second;
+            QVariantMap mp;
+            mp["name"] = object->name();
+            mp["id"] = object->id();
+            QVariant v;
+            v.setValue(object.use_count());
+            mp["referenceCount"] = v;
+            mp["type"] = TypeHelper::type2name(object->ilwisType());
+            results.push_back(mp);
+        }
+    }
+
+#endif
+    return results;
 }
 
 QString UIContextModel::worldmapCommand(const QString& id) const

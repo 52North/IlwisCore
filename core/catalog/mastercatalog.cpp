@@ -766,11 +766,9 @@ void CalcLatLon::calculatelatLonEnvelopes(const QString& query, const QString& n
 
 #ifdef QT_DEBUG
 
-void MasterCatalog::dumpLookup() const
+const QHash<quint64, ESPIlwisObject>& MasterCatalog::dumpLookup() const
 {
-    for(auto pr : _lookup) {
-        qDebug() << pr->name();
-    }
+    return _lookup;
 }
 
 quint32 MasterCatalog::usecount(quint64 id)

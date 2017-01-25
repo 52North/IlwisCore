@@ -113,6 +113,15 @@ WorkBenchShifter {
             anchors.fill: parent
 
         }
+        Tab {
+            title : "debug"
+            enabled: uicontext.debugMode
+            visible: uicontext.debugMode
+            DebugInfo{
+                anchors.fill: parent
+            }
+        }
+
         style: Base.TabStyle1 {
             id : tabstyle
         }

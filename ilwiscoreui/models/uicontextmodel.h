@@ -49,6 +49,7 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
     Q_PROPERTY(QStringList colorNames READ colorNames CONSTANT)
     Q_PROPERTY(WorkSpaceModel * currentWorkSpace READ currentWorkSpace WRITE setCurrentWorkSpace NOTIFY currentWorkSpaceChanged)
     Q_PROPERTY(QString ilwisFolder READ ilwisFolder CONSTANT)
+    Q_PROPERTY(bool debugMode READ debugMode CONSTANT)
 
 
 public:
@@ -68,6 +69,7 @@ public:
     Q_INVOKABLE QStringList formatList(const QString &query, const QString& ilwtype) const;
     Q_INVOKABLE QObject *getItem(const QString &name, QObject *parent);
     Q_INVOKABLE QString consoleScriptId() const;
+    Q_INVOKABLE QVariantList debugProperty(const QString& property);
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
     QList<VisualAttributeEditor *> propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;
@@ -123,6 +125,8 @@ private:
     Ilwis::IScript _consoleScript; // script that used for console use
 
     static std::unique_ptr<UIContextModel>_uicontext;
+
+    bool debugMode() const;
 
 };
 
