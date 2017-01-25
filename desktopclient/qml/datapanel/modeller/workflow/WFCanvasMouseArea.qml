@@ -29,7 +29,7 @@ MouseArea {
         openWorkflow()
     }
     onPositionChanged: {
-        move()
+        move(mouseX, mouseY)
     }
     onReleased: {
         wfCanvas.stopWorkingLine()
@@ -59,6 +59,9 @@ MouseArea {
             var operationSelected = -1, highestZ = -1, smallestDistance = 100000, selectedFlow=false
             var alllist = operationsList
             alllist  = alllist.concat(conditionsList)
+            for(var k=0; k<conditionsList.length; ++k){
+                alllist = alllist.concat( conditionsList[k].junctionsList)
+            }
 
             for(var i=0; i < alllist.length; ++i){
 
@@ -66,40 +69,35 @@ MouseArea {
                 item.isSelected = false
                 currentItem = itemAt(mouseX, mouseY)
 
-                if ( item.type === "operationitem" || item.type == "conditionitem") {
-                    for(var j=0; j < item.flowConnections.length; j++)
-                    {
-                        var flow = item.flowConnections[j];
+                for(var j=0; j < item.flowConnections.length; j++)
+                {
+                    var flow = item.flowConnections[j];
 
-                        // Retrieve basic X and Y positions of the line
-                        var startPoint = flow.attachsource.center();
-                        var index = -1
-                        if ( flow.target.type !== "conditionitem"){
-                            index = flow.attachtarget
-                        }
-                        var endPoint = flow.target.attachementPoint(wfCanvas,index)
-                        var ax = startPoint.x;
-                        var ay = startPoint.y;
-                        var bx = endPoint.x;
-                        var by = endPoint.y;
-
-                        // Calculate distance to check mouse hits a line
-                        var distanceAC = Math.sqrt(Math.pow((ax-mouseX), 2) + Math.pow((ay-mouseY), 2));
-                        var distanceBC = Math.sqrt(Math.pow((bx-mouseX), 2) + Math.pow((by-mouseY), 2));
-                        var distanceAB = Math.sqrt(Math.pow((ax-bx), 2) + Math.pow((ay-by), 2));
-                        var distanceLine = distanceAC + distanceBC;
-
-
-                        // Check if mouse intersects the line with offset of 10
-                        if(distanceLine >= distanceAB &&
-                                distanceLine < (distanceAB + wfCanvas.scale) &&
-                                distanceLine - distanceAB < smallestDistance)
-                        {
-                            smallestDistance = distanceLine - distanceAB;
-                            selectedFlow = flow;
-                        }
-                        flow.isSelected = false;
+                    // Retrieve basic X and Y positions of the line
+                    var startPoint = flow.attachsource.center();
+                    var index = -1
+                    if ( flow.target.type !== "conditionitem"){
+                        index = flow.attachtarget
                     }
+                    var endPoint = flow.target.attachementPoint(wfCanvas,index)
+                    var x1 = startPoint.x;
+                    var y1 = startPoint.y;
+                    var x2 = endPoint.x;
+                    var y2 = endPoint.y;
+
+                    var dy = y2 - y1
+                    var dx = x2 - x1
+                    var v1 = Math.abs((dy) * mouseX - (dx)*mouseY + x2*y1 - y2*x1)
+                    var v2 = Math.sqrt(Math.pow(dy,2) + Math.pow(dx,2))
+                    var d = v1/v2
+
+                    //   console.debug(x1,y1, x2,y2, v1,v2, d )
+                    if(d < smallestDistance && d < 8)
+                    {
+                        smallestDistance = d;
+                        selectedFlow = flow;
+                    }
+                    flow.isSelected = false;
                 }
             }
         }
@@ -179,9 +177,9 @@ MouseArea {
         return scaledNum;
     }
 
-    function move() {
-        lastX = mouseX
-        lastY = mouseY
+    function move(xt, yt) {
+        lastX = xt
+        lastY = yt
 
         if (attachementForm.state === "invisible") {
             if (workingLineBegin.x !== -1) {
