@@ -494,16 +494,15 @@ Rectangle {
 
     function removeLinkTo(nodeid){
         for(var j=0; j < operationsList.length; ++j){
-            operationsList[j].removeLinkTo(currentItem.itemid)
+            operationsList[j].removeLinkTo(nodeid)
         }
         for(j=0; j < operationsList.length; ++j){
-            junctionsList[j].removeLinkTo(currentItem.itemid)
+            junctionsList[j].removeLinkTo(nodeid)
         }
         resetColors()
     }
 
     function addFlowConnection(targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter){
-        console.debug("in condition", sourceItem.itemid, targetItem.itemid)
         workarea.addFlowConnection(flowConnections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter)
 
     }
