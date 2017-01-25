@@ -155,7 +155,7 @@ void WorkFlowCondition::nodeId(quint64 id)
     name(QString("condition_%1").arg(id));
 }
 
-bool WorkFlowCondition::isValid(Workflow *workflow, WorkFlowNode::ValidityCheck check) const
+bool WorkFlowCondition::isValid(const Workflow *workflow, WorkFlowNode::ValidityCheck check) const
 {
     bool testsOk = _tests.size() > 0;
     for(Test test : _tests){
