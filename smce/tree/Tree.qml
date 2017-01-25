@@ -12,11 +12,7 @@ Item {
     anchors.left: parent.left*/
     visible: true
 
-
-    property int idcounter : 0
-
     signal selNodeChanged (string node)
-
 
     Rectangle {
        id: objRoot
@@ -28,26 +24,27 @@ Item {
           id: objModel
           objectName: "objModel"
 
-          function add2(nodeinfo, fileName) {
-              var szSplit = nodeinfo.split('---')
-              if(szSplit.length === 3 && szSplit[1] === "Goal") {
-                 objModel.append({"id" : idcounter++, "type": "Goal", "weight": "", "name": szSplit[0], "selected": "false", "level": 0, "parentModel": objModel, "subNode": [], "fileName": fileName})
-              }
-              else {
-                 if(objModel.get(parseInt(szSplit[0])) === undefined) {
-                    console.log("1 - Error - Given node does not exist !")
-                    return
-                 }
-                 var node = objModel.get(parseInt(szSplit[0]))
-                 for(var i = 1; i < szSplit.length - 3; ++i) {
-                    if(node.subNode.get(parseInt(szSplit[i])) === undefined) {
-                       console.log("2 - Error - Given node does not exist !")
-                       return
-                    }
-                    node = node.subNode.get(parseInt(szSplit[i]))
-                 }
-                 node.subNode.append({"id" : idcounter++, "type": szSplit[i+1], "weight": szSplit[i+2], "name": szSplit[i], "selected": "false", "level": i, "parentModel": node.subNode, "subNode": [], "fileName": fileName})
-              }
+          function setGoal(description, outFile) {
+              objModel.clear(); // only one goal for the tree
+              objModel.append({"id" : 0, "type" : "Goal", "name" : description, "weight": -1, "selected" : false, "parent" : objModel, "level" : 0, "subNodes" : [], "fileName" : outFile})
+              return objModel.get(0)
+          }
+
+          function addMask(node, description, inFile) {
+              node.subNodes.append({"id" : node.subNodes.count, "type" : "AArea", "name" : description, "weight": -1, "selected" : false, "parent" : node, "level" : 1, "subNodes" : [], "fileName" : inFile})
+          }
+
+          function addGroup(node, description, weight, outFile) {
+              node.subNodes.append({"id" : node.subNodes.count, "type" : "Group", "weight": weight, "name" : description, "selected" : false, "parent" : node, "level" : node.level + 1, "subNodes" : [], "fileName" : outFile})
+              return node.subNodes.get(node.subNodes.count - 1)
+          }
+
+          function addFactor(node, description, weight, inFile) {
+              node.subNodes.append({"id" : node.subNodes.count, "type" : "Factor", "weight": weight, "name" : description, "selected" : false, "parent" : node, "level" : node.level + 1, "subNodes" : [], "fileName" : inFile})
+          }
+
+          function addConstraint(node, description, weight, inFile) {
+              node.subNodes.append({"id" : node.subNodes.count, "type" : "Constraint", "weight": weight, "name" : description, "selected" : false, "parent" : node, "level" : node.level + 1, "subNodes" : [], "fileName" : inFile})
           }
 
           function traverse(node) {
@@ -58,13 +55,13 @@ Item {
                 node = objModel.get(0)
                 console.log(node.id + node.name)
               }
-              if (node.subNode !== undefined) {
-                //console.log("3 traverse:" + node.subNode.count)
-                for(var i = 0; i < node.subNode.count; ++i) {
-                    var subNode = node.subNode.get(i)
+              if (node.subNodes !== undefined) {
+                //console.log("3 traverse:" + node.subNodes.count)
+                for(var i = 0; i < node.subNodes.count; ++i) {
+                    var subNode = node.subNodes.get(i)
                     //console.log(subNode.id+subNode.name)
                     console.log(subNode.id+subNode.name)
-                    if (subNode.subNode !== undefined)
+                    if (subNode.subNodes !== undefined)
                         traverse(subNode)
                   }
               }
@@ -80,15 +77,15 @@ Item {
                   if (node.id === id)
                       return node
               }
-              if (node.subNode !== undefined) {
-                //console.log("3 traverse:" + node.subNode.count)
-                for(var i = 0; i < node.subNode.count; ++i) {
-                    var subNode = node.subNode.get(i)
+              if (node.subNodes !== undefined) {
+                //console.log("3 traverse:" + node.subNodes.count)
+                for(var i = 0; i < node.subNodes.count; ++i) {
+                    var subNode = node.subNodes.get(i)
                     console.log(subNode.id+subNode.name)
                     if (subNode.id === id) {
                         return subNode
                     } else {
-                        if (subNode.subNode !== undefined)
+                        if (subNode.subNodes !== undefined)
                             return getById(subNode, id)
                     }
                   }
@@ -170,7 +167,7 @@ Item {
                         if (nodetype === "Factor")
                             return "Factorplus.png"
 
-                        if (nodetype === "Objective")
+                        if (nodetype === "Group")
                             return "Objective.png"
 
                         if (nodetype === "AArea")
@@ -211,7 +208,7 @@ Item {
                          id: objNodeWeight
                          anchors { left: icon.right; top: parent.top; bottom: parent.bottom }
                          //text: model.type + " -> " + model.weight + " " + model.name
-                         text: qsTr("  " + model.weight + "  ")
+                         text: qsTr("  " + ((model.weight >= 0) ? model.weight.toFixed(2).toString() : "") + "  ")
                          color: "black"
                          verticalAlignment: Text.AlignVCenter
                       }
@@ -253,7 +250,7 @@ Item {
              Repeater {
                 id: objRepeater
                 objectName: "objRepeater"
-                model: subNode
+                model: subNodes
                 delegate: objRecursiveDelegate
              }
           }
@@ -306,7 +303,7 @@ Item {
                  verticalAlignment: TextInput.AlignTop
                  horizontalAlignment: TextInput.AlignHCenter
                  focus: true
-                 text: qsTr("Objective")
+                 text: qsTr("Group")
                  // ???
                  onFocusChanged: {
                     if(focus) {
@@ -362,24 +359,23 @@ Item {
 
           Component.onCompleted: {
               loadSmceCatalog()
-              objModel.add2("(We want to) ... Establish biophysical priority within a potential Green Belt buffer of a maximum 1000m width along all coast lines of Bangladesh, with exception of the Sundarbans, in which the proposed Green Belt can be established to provide protection from cyclones storm surges and other natural hazards---Goal---", "Greenbelt_development_priority_sub.mpr")
-              objModel.add2("0---Analysis area---AArea---", "Vulnerability_reduction_priority_sub.mpr")
-              objModel.add2("0---(We want to) ... Reduce the vulnerability of population, economy and environment---Objective---0.33", "")
-              objModel.add2("0---1---The higher the vulnerability is in the Green Belt buffer, as measured by the coastal vulnerability index, the higher the priority for development of the Green Belt---Factor---1.0", "Greenbelt_development_priority_sub.mpr")
-              objModel.add2("0---(We want to) ... Protect areas that are exposed to storm surges.---Objective---0.33", "")
-              objModel.add2("0---2---The higher the surge hight the higher the priority to develop the Greenbelt---Factor---1.0", "surgeh1_positive_LT_6m_resampl_25m_sub.mpr")
-              objModel.add2("0---(We want to)...  Protect infrastructure and reduce the cost of upgrading and maintenance of infrastucture to---Objective---0.33", "")
-              objModel.add2("0---3---Inside an embankment a Greenbelt is not necessary.---Constraint---0.33", "Embanked_areas_dist_sub.mpr")
-              objModel.add2("0---3---If the distance of an embankment to the shore inside a Greenbelt is less than 1000m there is no need for a Greenbelt, otherwise there is full priority to develop the Greenbelt---Constraint---0.33", "Embanked_areas_dist_sub.mpr")
-              objModel.add2("0---3---The closer critical infrastructure is within 20 km of the Green Belt, the higher the priority an area receives.---Factor---0.33", "Coastal_stabilization_reclamation_prioirty_sub.mpr")
-
-              /*objModel.add2("0---(We want to)... Stabilize the coastal zone and reclaim land---Objective---0.2")
-              objModel.add2("0---4---Within 50 meters of an erosion area inside the Greenbelt development receives full priority whereas beyond that disatnce from erosion areas priority is none---Factor---0.5")
-              objModel.add2("0---4---Accretion areas inside the Greenbelt have higher priority than other areas---Factor---0.5")
-              objModel.add2("0---(We want to).. Make use of existing forest inside the Green Belt and connect to these---Objective---0.1")
-              objModel.add2("0---5---The closer to forest land inside the Green Belt, the higher the priority of the area for Green Belt development---Factor---1.0")
-              objModel.add2("0---(We want to)... Minimize the costs of land acquisition---Objective---0.1")
-              objModel.add2("0---6---Public land is better than public leased land, which in turn is better than private land---Factor---1.0")*/
+              var goal = objModel.setGoal("(We want to) ... Establish biophysical priority within a potential Green Belt buffer of a maximum 1000m width along all coast lines of Bangladesh, with exception of the Sundarbans, in which the proposed Green Belt can be established to provide protection from cyclones storm surges and other natural hazards", "Greenbelt_development_priority_sub.mpr")
+              objModel.addMask(goal, "Analysis area", "Vulnerability_reduction_priority_sub.mpr")
+              var group = objModel.addGroup(goal, "(We want to) ... Reduce the vulnerability of population, economy and environment", 0.33, "")
+              objModel.addFactor(group, "The higher the vulnerability is in the Green Belt buffer, as measured by the coastal vulnerability index, the higher the priority for development of the Green Belt", 1.0, "Greenbelt_development_priority_sub.mpr")
+              group = objModel.addGroup(goal, "(We want to) ... Protect areas that are exposed to storm surges.", 0.33, "")
+              objModel.addFactor(group, "The higher the surge hight the higher the priority to develop the Greenbelt", 1.0, "surgeh1_positive_LT_6m_resampl_25m_sub.mpr")
+              group = objModel.addGroup(goal, "(We want to)...  Protect infrastructure and reduce the cost of upgrading and maintenance of infrastucture to", 0.33, "")
+              objModel.addConstraint(group, "Inside an embankment a Greenbelt is not necessary.", 0.33, "Embanked_areas_dist_sub.mpr")
+              objModel.addConstraint(group, "If the distance of an embankment to the shore inside a Greenbelt is less than 1000m there is no need for a Greenbelt, otherwise there is full priority to develop the Greenbelt", 0.33, "Embanked_areas_dist_sub.mpr")
+              objModel.addFactor(group, "The closer critical infrastructure is within 20 km of the Green Belt, the higher the priority an area receives.", 0.33, "Coastal_stabilization_reclamation_prioirty_sub.mpr")
+              group = objModel.addGroup(goal, "(We want to)... Stabilize the coastal zone and reclaim land", 0.2, "Dummy_map.mpr")
+              objModel.addFactor(group, "Within 50 meters of an erosion area inside the Greenbelt development receives full priority whereas beyond that disatnce from erosion areas priority is none", 0.5, "Dummy_map.mpr")
+              objModel.addFactor(group, "Accretion areas inside the Greenbelt have higher priority than other areas", 0.5, "Dummy_map.mpr")
+              group = objModel.addGroup(goal, "(We want to).. Make use of existing forest inside the Green Belt and connect to these", 0.1, "Dummy_map.mpr")
+              objModel.addFactor(group, "The closer to forest land inside the Green Belt, the higher the priority of the area for Green Belt development", 1.0, "Dummy_map.mpr")
+              group = objModel.addGroup(goal, "(We want to)... Minimize the costs of land acquisition", 0.1, "Dummy_map.mpr")
+              objModel.addFactor(group, "Public land is better than public leased land, which in turn is better than private land", 1.0, "Dummy_map.mpr")
 
               // objModel.traverse()
           }
