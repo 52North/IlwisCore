@@ -12,6 +12,7 @@
 #include "mastercatalog.h"
 #include "operationhelper.h"
 #include "workflownode.h"
+#include "workflow.h"
 #include "operationnode.h"
 
 using namespace Ilwis;
@@ -122,7 +123,7 @@ QString OperationNode::type() const
     return "operationnode";
 }
 
-bool OperationNode::isValid(const Workflow *, WorkFlowNode::ValidityCheck vc) const
+bool OperationNode::isValid(const Workflow *workflow, WorkFlowNode::ValidityCheck vc) const
 {
     if ( vc == WorkFlowNode::vcPARTIAL || vc == WorkFlowNode::vcAGGREGATE)
         return true;
@@ -131,6 +132,20 @@ bool OperationNode::isValid(const Workflow *, WorkFlowNode::ValidityCheck vc) co
         for(int i=0; i < inputCount() && ok; ++i){
             ok &= input(i).state() != WorkFlowParameter::pkFREE;
         }
+        if ( workflow){
+            const std::vector<SPWorkFlowNode>& nodes = workflow->graph();
+            int outputsLinked = 0;
+            for(auto node : nodes){
+                int count = node->type() == "junctionnode" ? 3 : node->inputCount();
+                for(int i=0; i < count; ++i)
+                    if ( node->input(i).inputLink()){
+                        if (node->input(i).inputLink()->id() == id())
+                            outputsLinked++;
+                    }
+            }
+            ok &= outputsLinked == operation()->outputParameterCount();
+        }
+
         return ok;
     }
     return false;
