@@ -10,13 +10,16 @@ import "../../../workbench" as Bench
 import "../../../Global.js" as Global
 
 Rectangle  {
-    width : parent.width
+    width : 600
     height : parent.height
     color : "white"
+
+
     ScrollView{
         id: runFormScrollView
         width : parent.width
-        height : parent.height - 30
+        height : parent.height
+        anchors.top: parent.top
         property var operationid;
 
 
