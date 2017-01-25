@@ -274,6 +274,9 @@ Item {
                 model: subNodes
                 delegate: objRecursiveDelegate
              }
+             move: Transition {
+                 NumberAnimation { property: "y"; duration: 100 }
+             }
           }
        }
 
