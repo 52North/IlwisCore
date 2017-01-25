@@ -115,7 +115,7 @@ Item {
           id: objRecursiveDelegate
           Column {
              id: objRecursiveColumn
-             objectName: "objRecursiveColumn"
+             property bool treeChild: true
 
              function toggleNode() {
                  var enabled
@@ -127,7 +127,7 @@ Item {
                      enabled = true
                  }
                  for(var i = 0; i < children.length; ++i) {
-                    if(children[i].objectName == "objRecursiveColumn") {
+                    if(children[i].treeChild) {
                        children[i].visible = enabled
                     }
                  }
