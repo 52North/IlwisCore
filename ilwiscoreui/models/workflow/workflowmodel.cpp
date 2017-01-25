@@ -78,6 +78,7 @@ quint32 WorkflowModel::addNode(const QString &id, const QVariantMap& parameters)
             }
         }
     }
+    emit validChanged();
     return iUNDEF;
 }
 
@@ -88,6 +89,7 @@ void WorkflowModel::addFlow(int nodeIdFrom, int nodeIdTo, qint32 inParmIndex, qi
     try {
         if ( _workflow.isValid()){
             _workflow->addFlow(nodeIdFrom, nodeIdTo, inParmIndex, outParmIndex, rectFrom, rectTo);
+            emit validChanged();
         }
     }
     catch(const ErrorObject&){}
@@ -99,6 +101,7 @@ void WorkflowModel::addJunctionFlows(int junctionIdTo, const QString &operationI
         if ( _workflow.isValid()){
 
             _workflow->addJunctionFlow(junctionIdTo, operationIdFrom, parameterIndex, rectFrom, rectTo, truecase);
+               emit validChanged();
         }
     } catch ( const ErrorObject& ){}
 }
@@ -109,6 +112,7 @@ void WorkflowModel::addConditionFlow(int conditionIdTo, const QString &operation
         if ( _workflow.isValid()){
 
             _workflow->addConditionFlow(conditionIdTo, operationIdFrom.toULongLong(), testIndex, inParameterIndex, outParmIndex, rectFrom, rectTo);
+               emit validChanged();
         }
     }
     catch(const ErrorObject&){}
@@ -127,6 +131,7 @@ void WorkflowModel::addTest2Condition(int conditionId, const QString &operationI
             LogicalOperator lpost = MathHelper::string2logicalOperator(post);
 
             condition->addTest(operNode, lpre, lpost);
+               emit validChanged();
         }
     } catch(const ErrorObject&){}
 }
@@ -141,6 +146,7 @@ void WorkflowModel::addCondition2Junction(int conditionId,int junctionId)
             if ( jnode){
                 std::shared_ptr<Junction> junction = std::static_pointer_cast<Junction>(jnode);
                 junction->link2condition(node);
+                   emit validChanged();
             }
 
         }
@@ -155,6 +161,7 @@ void WorkflowModel::setTestValues(int conditionId, int testIndex, int parameterI
             if ( node){
                 std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
                 condition->setTestValue(testIndex, parameterIndex, value, _workflow);
+                   emit validChanged();
             }
         }
     } catch(const ErrorObject&){}
@@ -304,16 +311,22 @@ bool WorkflowModel::usableLink(int sourceNodeId, int targetNodeId, int sourcePar
 
 void WorkflowModel::removeNode(int nodeId)
 {
-    if ( _workflow.isValid()){
-        _workflow->removeNode(nodeId);
-    }
+    try{
+        if ( _workflow.isValid()){
+            _workflow->removeNode(nodeId);
+               emit validChanged();
+        }
+    } catch(ErrorObject& err){}
 }
 
 void WorkflowModel::deleteFlow(int nodeId, int parameterIndex)
 {
-    if ( _workflow.isValid()){
-        _workflow->removeFlow(nodeId, parameterIndex);
-    }
+    try {
+        if ( _workflow.isValid()){
+            _workflow->removeFlow(nodeId, parameterIndex);
+               emit validChanged();
+        }
+    } catch(ErrorObject& err){}
 }
 
 QVariantMap WorkflowModel::getParameter(const SPWorkFlowNode& node, int index)
@@ -333,6 +346,41 @@ QVariantMap WorkflowModel::getParameter(const SPWorkFlowNode& node, int index)
     parm["value"] = p.value();
 
     return parm;
+}
+
+QVariantMap WorkflowModel::translation() const
+{
+    QVariantMap xy;
+    if ( _workflow.isValid()){
+        std::pair<int,int> tr = _workflow->translation();
+        xy["x"] = tr.first;
+        xy["y"] = tr.second;
+    }else{
+        xy["x"] = 0;
+        xy["y"] = 0;
+    }
+    return xy;
+}
+
+void WorkflowModel::translateObject(int x,int y,bool relative)
+{
+    if ( _workflow.isValid()){
+        _workflow->translation(x,y, relative);
+    }
+}
+
+double WorkflowModel::scale() const
+{
+    if (_workflow.isValid())
+        return _workflow->scale();
+    return 1.0;
+}
+
+void WorkflowModel::scale(double s)
+{
+    if ( _workflow.isValid()){
+        _workflow->scale(s);
+    }
 }
 
 
@@ -622,6 +670,33 @@ void WorkflowModel::selectOperation(const QString& id)
     }
     emit selectionChanged();
 
+}
+
+bool WorkflowModel::collapsed(int nodeid) const
+{
+   if ( _workflow.isValid())    {
+       SPWorkFlowNode node =  _workflow->nodeById(nodeid);
+       if ( node)
+           return node->collapsed();
+   }
+   return false;
+}
+
+void WorkflowModel::collapsed(int nodeid, bool yesno)
+{
+    if ( _workflow.isValid())    {
+        SPWorkFlowNode node =  _workflow->nodeById(nodeid);
+        if ( node)
+            node->collapsed(yesno);
+    }
+}
+
+bool WorkflowModel::isValid() const
+{
+    if ( _workflow.isValid())    {
+        return _workflow->isValid();
+    }
+    return false;
 }
 
 void WorkflowModel::acceptMessage(const QString &type, const QString &subtype, const QVariantMap &parameters)
