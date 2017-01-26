@@ -54,11 +54,13 @@ TabView {
 
     function updateMetadata() {
         metaTab.active = true
+        if ( currentIndex != 2)
+            currentIndex = 2
         metaTab.item.selectedOperation()
     }
 
-    function showSelectedOperation(opIndex){
-        if ( opIndex){
+    function showSelectedOperation(item){
+        if ( item){
             selectedTab.active = true
             metaTab.active = true
             if ( currentIndex != 2)
