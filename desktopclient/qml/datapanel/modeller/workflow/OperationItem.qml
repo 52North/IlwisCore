@@ -314,7 +314,7 @@ Rectangle {
                     return "darkslategray"
             }
         }
-        return "red"
+        return "blue"
 
     }
 
