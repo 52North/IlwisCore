@@ -81,6 +81,7 @@ public:
     Q_INVOKABLE void selectOperation(const QString& id);
     Q_INVOKABLE bool collapsed(int nodeid) const;
     Q_INVOKABLE void collapsed(int nodeid, bool yesno);
+    Q_INVOKABLE void setNodeProperty(int nodeid, int paramindex, const QString& property, const QString &value);
 
     QString modelType() const;
 
