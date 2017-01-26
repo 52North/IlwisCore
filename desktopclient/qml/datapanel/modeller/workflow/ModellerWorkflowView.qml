@@ -488,7 +488,9 @@ Modeller.ModellerWorkArea {
 
 
     }
-
+    function refreshCanvas() {
+        wfCanvas.canvasValid = false
+    }
 
     function addFlowConnection(connections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter){
         for(var i=0; i < connections.length; ++i){
