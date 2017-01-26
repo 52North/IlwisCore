@@ -58,7 +58,7 @@ Rectangle {
         elide: Text.ElideMiddle
         font.pointSize: 11
         x : 15
-        text : itemid + ". " + (operation ? operation.name : "??")
+        text : itemid + ". " + (operation ? label() : "??")
         font.bold : true
         MouseArea{
             anchors.fill: parent
@@ -302,6 +302,15 @@ Rectangle {
         }
     ]
 
+    function label(){
+        var node = workflow.getNode(itemid)
+        return node.label
+    }
+
+    function setLabel(value){
+        operationName.text =  itemid + ". " + value
+    }
+
     function textColor(nodeid, parmIndex){
         var node = workflow.getNode(nodeid)
         if (node){
@@ -314,7 +323,7 @@ Rectangle {
                     return "darkslategray"
             }
         }
-        return "blue"
+        return condition ? "red": "blue"
 
     }
 
@@ -351,6 +360,7 @@ Rectangle {
     }
 
     function drawFlows(ctx){
+
         for(var i=0; i < flowConnections.length; i++){
             var item = flowConnections[i]
             var index = item.attachtarget
@@ -362,21 +372,25 @@ Rectangle {
             Global.drawArrow(wfCanvas, ctx, pt1, pt2, item.isSelected)
 
             if ( item.flowPoints){
-                drawInfoBox(ctx, pt1,pt2, item.flowPoints.fromParameterIndex, item.flowPoints.toParameterIndex)
+                var node = workflow.getNode(item.target.itemid)
+                var lst = node["parameters"]
+                //console.debug(item.source.itemid, item.target.itemid, lst.length, item.flowPoints.toParameterIndex,lst[item.flowPoints.toParameterIndex].flowlabel)
+                var label = node["parameters"][item.flowPoints.toParameterIndex].flowlabel
+                drawInfoBox(ctx, pt1,pt2, label)
             }
         }
     }
 
-    function drawInfoBox(ctx, pt1, pt2, p1,p2 ){
+    function drawInfoBox(ctx, pt1, pt2, label ){
         var fromx = pt1.x
         var fromy = pt1.y
         var tox = pt2.x
         var toy = pt2.y
         var xcenter = (fromx + tox) / 2
         var ycenter = (fromy + toy) / 2
-        var label = p1 + " -> "+  p2
         ctx.fillStyle="#D8F6CE";
-        ctx.fillRect(xcenter - 15 ,ycenter - 10,35,15);
+        var sz = ctx.measureText(label)
+        ctx.fillRect(xcenter - 15 ,ycenter - 10,sz.width + 4,15);
         ctx.fillStyle = "#000";
         ctx.fillText(label, xcenter-10, ycenter + 2);
     }
