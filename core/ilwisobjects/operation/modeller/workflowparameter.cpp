@@ -11,7 +11,7 @@ WorkFlowParameter::WorkFlowParameter() : _attachements({iUNDEF, iUNDEF})
 }
 
 WorkFlowParameter::WorkFlowParameter(int order, int nodeid, const QString &name, const QString &description) :
-    Identity(name, _baseParmId++, description), _order(order), _nodeid(nodeid), _attachements({iUNDEF, iUNDEF})
+    Identity(name, _baseParmId++, QString::number(_baseParmId-1), description), _order(order), _nodeid(nodeid), _attachements({iUNDEF, iUNDEF})
 {
 }
 
