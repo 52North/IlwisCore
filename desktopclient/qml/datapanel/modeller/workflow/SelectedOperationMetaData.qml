@@ -28,7 +28,9 @@ Rectangle {
             content: getText()
             readOnly: false
             onContentChanged: {
-                if (workflowView.currentItem && workflowView.currentItem.type !== "flowconnection")
+                if (!workflowView.currentItem){
+                    workflowView.workflow.description = content
+                } else if (workflowView.currentItem.type !== "flowconnection")
                     workflowView.workflow.setNodeProperty(workflowView.currentItem.itemid, -1, "description", content)
                 else {
                     var flow = workflowView.currentItem
@@ -39,21 +41,19 @@ Rectangle {
         }
     }
     function getText(){
-        if ( workflowView.currentItem)    {
-            if ( workflowView.currentItem.type !== "flowconnection"){
-                return workflowView.workflow.getNode(workflowView.currentItem.itemid).description
-            }else {
-                var flow = workflowView.currentItem
-                var node = workflowView.workflow.getNode(flow.target.itemid)
-                var txt = node["parameters"][flow.flowPoints.toParameterIndex].description
-                return txt
-            }
+        if (!workflowView.currentItem){
+            return workflowView.workflow.description
+        }if ( workflowView.currentItem.type !== "flowconnection"){
+            return workflowView.workflow.getNode(workflowView.currentItem.itemid).description
+        }else {
+            var flow = workflowView.currentItem
+            var node = workflowView.workflow.getNode(flow.target.itemid)
+            var txt = node["parameters"][flow.flowPoints.toParameterIndex].description
+            return txt
         }
-        return "?"
     }
 
     function selectedOperation() {
-        if (workflowView.currentItem)
-            txt.content = getText()
+           txt.content = getText()
       }
 }
