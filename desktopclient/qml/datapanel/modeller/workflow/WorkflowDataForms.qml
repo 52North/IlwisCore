@@ -67,8 +67,11 @@ TabView {
                 currentIndex = 1
             selectedTab.item.fillAppFrame()
             metaTab.item.selectedOperation()
-        }else
+        }else{
             currentIndex = 0
+            metaTab.active = true
+            metaTab.item.selectedOperation()
+        }
     }
 
 }
