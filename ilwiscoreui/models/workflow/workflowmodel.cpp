@@ -695,6 +695,24 @@ void WorkflowModel::collapsed(int nodeid, bool yesno)
     }
 }
 
+void WorkflowModel::setNodeProperty(int nodeid, int paramindex, const QString &property, const QString& value)
+{
+    if ( _workflow.isValid())    {
+        SPWorkFlowNode node =  _workflow->nodeById(nodeid);
+        if ( node){
+            if ( property == "description"){
+                if (   paramindex < 0){
+                    node->setDescription(value);
+                }else {
+                    if ( paramindex < node->inputCount()){
+                        node->inputRef(paramindex).setDescription(value);
+                    }
+                }
+            }
+        }
+    }
+}
+
 bool WorkflowModel::isValid() const
 {
     if ( _workflow.isValid())    {
