@@ -296,6 +296,10 @@ Modeller.ModellerWorkArea {
         workflowManager.showSelectedOperation(item)
     }
 
+    function updateMetadata() {
+        workflowManager.updateMetadata()
+    }
+
     function updateInputNamesList() {
         var oper = currentOperation()
         if ( oper){
@@ -484,6 +488,7 @@ Modeller.ModellerWorkArea {
 
     }
 
+
     function addFlowConnection(connections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter){
         for(var i=0; i < connections.length; ++i){
             var flow = connections[i]
@@ -506,5 +511,7 @@ Modeller.ModellerWorkArea {
                                  "type" : "flowconnection"
                              })
     }
+
+
 
 }
