@@ -7,23 +7,53 @@ import "../../../controls" as Controls
 import "../../../Global.js" as Global
 import "../../../workbench/propertyform" as MetaData
 
-ScrollView {
+Rectangle {
+    id : meta
     width : 464
     height : parent.height
+    color: "white"
+    ScrollView {
+        x : 5
+        y : 5
+        width : 600
+        height : meta.height
 
-    ListView {
-        id : props
-        anchors.fill: parent
-        property int lastIndex : 0
-        model :  workflowView.workflow.selectedOperation
-        delegate : MetaData.DPropertyForm{}
+        Controls.TextAreaLabelPair{
+            width : 600
+            height : (lineCount + 1) * 20
+
+            id : txt
+            labelText: qsTr("Comments")
+            labelWidth: 80
+            content: getText()
+            readOnly: false
+            onContentChanged: {
+                if (workflowView.currentItem && workflowView.currentItem.type !== "flowconnection")
+                    workflowView.workflow.setNodeProperty(workflowView.currentItem.itemid, -1, "description", content)
+                else {
+                    var flow = workflowView.currentItem
+                    workflowView.workflow.setNodeProperty(flow.target.itemid, flow.flowPoints.toParameterIndex, "description", content)
+
+                }
+            }
+        }
+    }
+    function getText(){
+        if ( workflowView.currentItem)    {
+            if ( workflowView.currentItem.type !== "flowconnection"){
+                return workflowView.workflow.getNode(workflowView.currentItem.itemid).description
+            }else {
+                var flow = workflowView.currentItem
+                var node = workflowView.workflow.getNode(flow.target.itemid)
+                var txt = node["parameters"][flow.flowPoints.toParameterIndex].description
+                return txt
+            }
+        }
+        return "?"
     }
 
     function selectedOperation() {
-        var op = workflowView.currentOperation()
-        if ( op){
-            workflowView.workflow.selectOperation(op.operation.id)
-
-        }
-    }
+        if (workflowView.currentItem)
+            txt.content = getText()
+      }
 }
