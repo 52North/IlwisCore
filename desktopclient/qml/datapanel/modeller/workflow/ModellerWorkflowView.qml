@@ -290,6 +290,7 @@ Modeller.ModellerWorkArea {
         if ( workflowManager){
             workflowManager.updateRunForm()
         }
+        currentItem = null // nothing is current now
     }
 
     function showSelectedOperation(item){
