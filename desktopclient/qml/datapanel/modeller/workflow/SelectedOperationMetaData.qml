@@ -12,11 +12,32 @@ Rectangle {
     width : 464
     height : parent.height
     color: "white"
+    Controls.TextEditLabelPair{
+        id : label
+        labelText: qsTr("Label")
+        labelWidth: 80
+        content : getLabel()
+        onContentChanged: {
+            if (workflowView.currentItem){
+                if ( workflowView.currentItem.type !== "flowconnection"){
+                    workflowView.workflow.setNodeProperty(workflowView.currentItem.itemid,-1,"label", content)
+                    workflowView.currentItem.setLabel(content)
+                }else{
+                    var flow = workflowView.currentItem
+                    workflowView.workflow.setNodeProperty(flow.target.itemid, flow.flowPoints.toParameterIndex,"flowlabel", content)
+                    workflowView.refreshCanvas()
+                }
+            }
+        }
+    }
+
     ScrollView {
         x : 5
         y : 5
-        width : 600
+        width : 700
         height : meta.height
+        anchors.top: label.bottom
+        anchors.topMargin: 4
 
         Controls.TextAreaLabelPair{
             width : 600
@@ -40,6 +61,20 @@ Rectangle {
             }
         }
     }
+    function getLabel() {
+        if (workflowView.currentItem){
+            if ( workflowView.currentItem.type !== "flowconnection"){
+                return workflowView.workflow.getNode(workflowView.currentItem.itemid).label
+            } else{
+                var flow = workflowView.currentItem
+                var node = workflowView.workflow.getNode(flow.target.itemid)
+                var txt = node["parameters"][flow.flowPoints.toParameterIndex].flowlabel
+                return txt
+            }
+        }
+        return ""
+    }
+
     function getText(){
         if (!workflowView.currentItem){
             return workflowView.workflow.description
