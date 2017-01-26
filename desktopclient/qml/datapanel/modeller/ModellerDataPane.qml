@@ -244,9 +244,7 @@ Item {
         return workflowView.workflow
     }
 
-    function nextStep() {
-        workflowView.showLastSteppedItem()
-    }
+
 
     function setSelectedOperationId(metaid){
         datapane.setSelectedOperationId(metaid)
