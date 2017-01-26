@@ -39,6 +39,7 @@ Rectangle  {
             if ( currentOperation){
                 workflowView.workflow.setFixedValues(currentOperation.itemid, appFrame.currentAppForm.formresult)
                 workflowView.workflow.createMetadata()
+                currentOperation.resetColors()
                 workflowView.updateInputNamesList()
             }
         }
