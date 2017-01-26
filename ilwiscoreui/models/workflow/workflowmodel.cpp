@@ -336,6 +336,7 @@ QVariantMap WorkflowModel::getParameter(const SPWorkFlowNode& node, int index)
     parm["name"] = p.name();
     parm["description"] = p.description();
     parm["index"] = index;
+    parm["flowlabel"] = p.flowLabel();
     parm["outputIndex"] = p.outputParameterIndex() == iUNDEF ? -1 : p.outputParameterIndex();
     if ( p.outputParameterIndex() != iUNDEF)
         parm["outputNodeId"] = p.inputLink()->id();
@@ -396,6 +397,7 @@ QVariantMap WorkflowModel::getNode(int nodeId){
         quint64 nid = node->id();
         BoundingBox box = node->box();
         data["name"] = node->name();
+        data["label"] = node->label();
         data["description"]= node->description();
         data["operationid"] = QString::number(oid);
         data["nodeid"] = QString::number(nid);
@@ -708,10 +710,23 @@ void WorkflowModel::setNodeProperty(int nodeid, int paramindex, const QString &p
                         node->inputRef(paramindex).setDescription(value);
                     }
                 }
+            }else if ( property == "label"){
+                if (   paramindex < 0){
+                    node->label(value);
+                }else {
+                    if ( paramindex < node->inputCount()){
+                        node->inputRef(paramindex).label(value);
+                    }
+                }
+            }else if ( property == "flowlabel"){
+                if ( paramindex < node->inputCount() && paramindex >=0){
+                    node->inputRef(paramindex).flowLabel(value);
+                }
             }
         }
     }
 }
+
 
 bool WorkflowModel::isValid() const
 {
