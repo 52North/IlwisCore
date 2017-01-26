@@ -504,4 +504,7 @@ Rectangle {
         workarea.addFlowConnection(flowConnections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter)
 
     }
+
+    function setLabel(value){
+    }
 }

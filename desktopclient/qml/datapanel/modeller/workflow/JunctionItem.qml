@@ -24,11 +24,20 @@ Rectangle {
     border.width: 1
     border.color: Global.darkgreen
 
+
     onXChanged: {
         changeBox()
     }
     onYChanged: {
         changeBox()
+    }
+
+    Text {
+        id : lbl
+        anchors.centerIn: parent
+        horizontalAlignment: Text.AlignHCenter
+        text : ""
+
     }
 
     AttachmentRectangle{
@@ -182,4 +191,7 @@ Rectangle {
         resetColors()
     }
 
+    function setLabel(value){
+        lbl.text = value
+    }
 }
