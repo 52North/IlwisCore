@@ -116,12 +116,13 @@ MouseArea {
         if (selectedFlow && !currentItem) {
             selectedFlow.isSelected = true
             currentItem = selectedFlow
+            workarea.updateMetadata()
         } else if (currentItem) {
             currentItem.isSelected = true
-            workarea.showSelectedOperation(currentItem.type === "operationitem")
+            workarea.showSelectedOperation(currentItem)
 
         }else {
-            workarea.showSelectedOperation(false)
+            workarea.showSelectedOperation(null)
         }
 
          wfCanvas.canvasValid = false
