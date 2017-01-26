@@ -104,6 +104,16 @@ void WorkFlowNode::owner(std::shared_ptr<WorkFlowNode> own)
     _owner = own;
 }
 
+QString WorkFlowNode::label() const
+{
+    return _label;
+}
+
+void WorkFlowNode::label(const QString &lbl)
+{
+    _label = lbl;
+}
+
 IOperationMetaData WorkFlowNode::operation() const
 {
     return IOperationMetaData();

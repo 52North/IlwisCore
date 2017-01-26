@@ -30,6 +30,8 @@ public:
     void collapsed(bool yesno);
     std::shared_ptr<WorkFlowNode> owner() const;
     void owner(std::shared_ptr<WorkFlowNode> own);
+    virtual QString label() const;
+    void label(const QString& lbl);
 
     virtual IOperationMetaData operation() const;
     virtual QString type() const = 0;
@@ -41,6 +43,7 @@ public:
 protected:
     std::vector<WorkFlowParameter> _inputParameters1;
     BoundingBox _box;
+    QString _label;
     bool _collapsed = false;
     std::shared_ptr<WorkFlowNode> _owner;
 };
