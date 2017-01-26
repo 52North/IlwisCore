@@ -18,6 +18,7 @@ public:
     void operationid(quint64 iod) ;
     QString type() const;
     bool isValid(const Ilwis::Workflow *workflow, WorkFlowNode::ValidityCheck vc) const ;
+    QString label() const;
 
 private:
     quint64 _operationid;

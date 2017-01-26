@@ -150,3 +150,11 @@ bool OperationNode::isValid(const Workflow *workflow, WorkFlowNode::ValidityChec
     }
     return false;
 }
+
+QString OperationNode::label() const
+{
+    QString lbl = WorkFlowNode::label();
+    if ( lbl == "")
+        return name();
+    return lbl;
+}
