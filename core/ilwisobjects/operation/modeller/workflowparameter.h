@@ -1,6 +1,7 @@
 #ifndef WORKFLOWPARAMETER_H
 #define WORKFLOWPARAMETER_H
 #include "kernel_global.h"
+#include "location.h"
 
 namespace Ilwis {
 class WorkFlowNode;
@@ -32,12 +33,15 @@ public:
     int nodeId() const;
     qint32 order() const;
     bool isValid() const;
+    std::vector<XY> line() const;
+    void line(const std::vector<XY>& l);
 
 private:
     QString _value = sUNDEF; // value(possible url) of the link or fixed value
     qint32 _outputParameterIndex = iUNDEF; // which parameter to select from the outputs of the link
     std::shared_ptr<WorkFlowNode> _link; // input for this parameter
     IlwisTypes _valueType = itUNKNOWN;
+    std::vector<XY> _line;
     QString _label;
     QString _flowLabel;
     ParameterKind _state = pkFREE;

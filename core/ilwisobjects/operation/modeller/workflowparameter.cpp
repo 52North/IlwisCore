@@ -126,6 +126,16 @@ bool WorkFlowParameter::isValid() const
     return _nodeid != iUNDEF;
 }
 
+std::vector<XY> WorkFlowParameter::line() const
+{
+    return _line;
+}
+
+void WorkFlowParameter::line(const std::vector<XY> &l)
+{
+    _line = l;
+}
+
 void WorkFlowParameter::attachement(int rectIndex, bool source)
 {
     if ( source)
