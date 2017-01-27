@@ -42,6 +42,10 @@ public:
     explicit WorkflowModel(const Ilwis::Resource &source, QObject *parent=0);
 
     Q_PROPERTY(QQmlListProperty<IlwisObjectModel> selectedOperation READ selectedOperation NOTIFY selectionChanged)
+    Q_PROPERTY(double scale  READ scale WRITE scale NOTIFY scaleChanged)
+    Q_PROPERTY(bool isValid READ isValid NOTIFY validChanged)
+    Q_PROPERTY(QVariantMap translation READ translation NOTIFY translationChanged)
+
     Q_INVOKABLE quint32 addNode(const QString &id, const QVariantMap &parameters);
     Q_INVOKABLE void addFlow(int nodeIdFrom, int nodeIdTo, qint32 inParmIndex, qint32 outParmIndex, int rectFrom, int rectTo);
     Q_INVOKABLE void addConditionFlow(int conditionIdTo, const QString &operationIdFrom, int testIndex, int inParameterIndex, int outParmIndex, int rectFrom, int rectTo);
@@ -72,8 +76,13 @@ public:
     Q_INVOKABLE void store(const QString &container, const QString &name);
     Q_INVOKABLE void setFixedValues(qint32 nodeid, const QString& formValues);
     Q_INVOKABLE bool isValidNode(qint32 nodeId, const QString &part) const;
+    Q_INVOKABLE void translateObject(int x, int y, bool relative);
     QQmlListProperty<IlwisObjectModel> selectedOperation();
     Q_INVOKABLE void selectOperation(const QString& id);
+    Q_INVOKABLE bool collapsed(int nodeid) const;
+    Q_INVOKABLE void collapsed(int nodeid, bool yesno);
+    Q_INVOKABLE void setNodeProperty(int nodeid, int paramindex, const QString& property, const QString &value);
+
     QString modelType() const;
 
 
@@ -81,6 +90,9 @@ public:
 signals:
     void sendMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
     void selectionChanged();
+    void scaleChanged();
+    void translationChanged();
+    void validChanged();
 public slots:
     void acceptMessage(const QString &type, const QString &subtype, const QVariantMap &parameters);
 private:
@@ -97,6 +109,11 @@ private:
 
     QList<IlwisObjectModel*> _selectedOperation;
     QVariantMap getParameter(const SPWorkFlowNode& node, int i);
+    QVariantMap translation() const;
+    bool isValid() const;
+    double scale() const;
+    void scale(double s);
+
 };
 
 

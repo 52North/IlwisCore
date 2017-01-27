@@ -14,6 +14,8 @@ public:
     WorkFlowParameter(int order, int nodeid, const QString& name, const QString& description="");
     QString label() const;
     void label(const QString& lbl);
+    QString flowLabel() const;
+    void flowLabel( const QString& lbl);
     void inputLink(const std::shared_ptr<WorkFlowNode> link, qint32 outputIndex = 0);
     std::shared_ptr<WorkFlowNode> inputLink();
     const std::shared_ptr<WorkFlowNode> inputLink() const;
@@ -37,6 +39,7 @@ private:
     std::shared_ptr<WorkFlowNode> _link; // input for this parameter
     IlwisTypes _valueType = itUNKNOWN;
     QString _label;
+    QString _flowLabel;
     ParameterKind _state = pkFREE;
     QString _syntax;
     qint32 _order = iUNDEF;

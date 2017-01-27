@@ -317,11 +317,13 @@ WorkSpaceModel *UIContextModel::currentWorkSpace() const
 
 MasterCatalogModel *UIContextModel::masterCatalogModel() const
 {
-    QVariant mastercatalog = _qmlcontext->contextProperty("mastercatalog");
-    if ( mastercatalog.isValid()){
-        MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel *>();
-        if (mcmodel){
-            return mcmodel;
+    if ( _qmlcontext){
+        QVariant mastercatalog = _qmlcontext->contextProperty("mastercatalog");
+        if ( mastercatalog.isValid()){
+            MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel *>();
+            if (mcmodel){
+                return mcmodel;
+            }
         }
     }
     return 0;
@@ -387,6 +389,16 @@ QString UIContextModel::ilwisFolder() const
     return url.toString();
 }
 
+bool UIContextModel::debugMode() const
+{
+#ifdef QT_DEBUG
+    return true;
+#else
+    return false;
+#endif
+
+}
+
 QStringList UIContextModel::formatList(const QString& query, const QString& selectParm) const
 {
     if ( selectParm == "format"){
@@ -442,11 +454,38 @@ QString UIContextModel::consoleScriptId() const
     return QString::number(iUNDEF);
 }
 
+QVariantList UIContextModel::debugProperty(const QString &property)
+{
+    QVariantList results;
+#ifdef QT_DEBUG
+
+    if ( property == "references"){
+        const QHash<quint64, ESPIlwisObject>& lookup = mastercatalog()->dumpLookup();
+        for(auto object : lookup){
+         //   ESPIlwisObject object = objectentry.second;
+            QVariantMap mp;
+            mp["name"] = object->name();
+            mp["id"] = object->id();
+            QVariant v;
+            v.setValue(object.use_count());
+            mp["referenceCount"] = v;
+            mp["type"] = TypeHelper::type2name(object->ilwisType());
+            results.push_back(mp);
+        }
+    }
+
+#endif
+    return results;
+}
+
 QString UIContextModel::worldmapCommand(const QString& id) const
 {
-    QString cmd = QString("adddrawer(%1,%2, \"itemid=%3\",featurecoverage)").arg(id).arg(_worldMap->resource().url().toString()).arg(_worldMap->id());
+    try{
+        QString cmd = QString("adddrawer(%1,%2, \"itemid=%3\",featurecoverage)").arg(id).arg(_worldMap->resource().url().toString()).arg(_worldMap->id());
 
-    return cmd;
+        return cmd;
+    } catch (const ErrorObject&){}
+    return "";
 }
 
 QColor UIContextModel::code2color(const QString &code) const

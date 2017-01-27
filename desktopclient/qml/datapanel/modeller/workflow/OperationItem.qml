@@ -17,8 +17,11 @@ Rectangle {
     property var condition
     property string type : "operationitem"
     transformOrigin: Item.TopLeft
-
+    state : "maximized"
     z : 4
+    border.width: workflow.isValidNode(itemid,"all") ? 0 : 1
+    border.color: workflow.isValidNode(itemid,"all") ? "transparent" : "red"
+
 
 
     color:"transparent"
@@ -55,22 +58,18 @@ Rectangle {
         elide: Text.ElideMiddle
         font.pointSize: 11
         x : 15
-        text : itemid + ". " + (operation ? operation.name : "??")
+        text : itemid + ". " + (operation ? label() : "??")
         font.bold : true
         MouseArea{
             anchors.fill: parent
             onClicked: {
                 if ( contentItem.height != 0){
-                    contentItem.height = 0
-                    operationItem.height = operationName.height + 20
+                    operationItem.state = "minimized"
                 }
                 else{
-                    operationItem.height = 130
-                    contentItem.height = 130 - operationName.height
-
+                    operationItem.state = "maximized"
                 }
-                wfCanvas.canvasValid = false
-
+                workflow.collapsed(itemid, operationItem.state == "minimized")
             }
         }
     }
@@ -268,6 +267,50 @@ Rectangle {
         attachementRectangles.push(att8)
     }
 
+    states: [
+        State { name: "maximized"
+
+            PropertyChanges {
+                target: operationItem
+                height : 130
+            }
+            PropertyChanges {
+                target: contentItem
+                height : 100
+            }
+        },
+        State {
+            name : "minimized"
+            PropertyChanges {
+                target: operationItem
+                height : 30
+            }
+            PropertyChanges {
+                target: contentItem
+                height : 0
+            }
+
+        }
+    ]
+    transitions: [
+        Transition {
+            NumberAnimation { properties: "height"; duration : 300 ; easing.type: Easing.InOutCubic }
+
+            onRunningChanged: {
+                wfCanvas.canvasValid = false
+            }
+        }
+    ]
+
+    function label(){
+        var node = workflow.getNode(itemid)
+        return node.label
+    }
+
+    function setLabel(value){
+        operationName.text =  itemid + ". " + value
+    }
+
     function textColor(nodeid, parmIndex){
         var node = workflow.getNode(nodeid)
         if (node){
@@ -280,9 +323,10 @@ Rectangle {
                     return "darkslategray"
             }
         }
-        return "red"
+        return condition ? "red": "blue"
 
     }
+
 
     function getBackground(lastitem) {
         var isSelected = false
@@ -316,6 +360,7 @@ Rectangle {
     }
 
     function drawFlows(ctx){
+
         for(var i=0; i < flowConnections.length; i++){
             var item = flowConnections[i]
             var index = item.attachtarget
@@ -327,21 +372,25 @@ Rectangle {
             Global.drawArrow(wfCanvas, ctx, pt1, pt2, item.isSelected)
 
             if ( item.flowPoints){
-                drawInfoBox(ctx, pt1,pt2, item.flowPoints.fromParameterIndex, item.flowPoints.toParameterIndex)
+                var node = workflow.getNode(item.target.itemid)
+                var lst = node["parameters"]
+                //console.debug(item.source.itemid, item.target.itemid, lst.length, item.flowPoints.toParameterIndex,lst[item.flowPoints.toParameterIndex].flowlabel)
+                var label = node["parameters"][item.flowPoints.toParameterIndex].flowlabel
+                drawInfoBox(ctx, pt1,pt2, label)
             }
         }
     }
 
-    function drawInfoBox(ctx, pt1, pt2, p1,p2 ){
+    function drawInfoBox(ctx, pt1, pt2, label ){
         var fromx = pt1.x
         var fromy = pt1.y
         var tox = pt2.x
         var toy = pt2.y
         var xcenter = (fromx + tox) / 2
         var ycenter = (fromy + toy) / 2
-        var label = p1 + " -> "+  p2
         ctx.fillStyle="#D8F6CE";
-        ctx.fillRect(xcenter - 15 ,ycenter - 10,35,15);
+        var sz = ctx.measureText(label)
+        ctx.fillRect(xcenter - 15 ,ycenter - 10,sz.width + 4,15);
         ctx.fillStyle = "#000";
         ctx.fillText(label, xcenter-10, ycenter + 2);
     }
@@ -383,7 +432,7 @@ Rectangle {
     function usableLink(){
         // we only me draw links from items within the same condition
         // all links to the outside must use the junction
-        if ( currentItem.type == "operationitem"){
+        if ( currentItem && currentItem.type == "operationitem"){
             if ( currentItem.condition){
                 if ( condition){
                     if ( currentItem.condition.itemid !== condition.itemid)
@@ -411,6 +460,7 @@ Rectangle {
                     var toIndex = 0
                     var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
                     currentItem.setFlow(target, attachRectTo, flowPoints,-1)
+                    target.resetColors()
 
                 }
                 if ( condition)
@@ -464,6 +514,11 @@ Rectangle {
         workarea.addFlowConnection(flowConnections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter)
     }
 
-     function resetColors(){
-     }
+    function resetColors(){
+        if ( condition){
+            border.width = workflow.isValidNode(itemid,"all") ? 0 : 1
+            border.color = workflow.isValidNode(itemid,"all") ? "transparent" : "red"
+            condition.resetColors()
+        }
+    }
 }

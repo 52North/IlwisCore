@@ -11,7 +11,7 @@ WorkFlowParameter::WorkFlowParameter() : _attachements({iUNDEF, iUNDEF})
 }
 
 WorkFlowParameter::WorkFlowParameter(int order, int nodeid, const QString &name, const QString &description) :
-    Identity(name, _baseParmId++, description), _order(order), _nodeid(nodeid), _attachements({iUNDEF, iUNDEF})
+    Identity(name, _baseParmId++, "", description), _order(order), _nodeid(nodeid), _attachements({iUNDEF, iUNDEF})
 {
 }
 
@@ -27,6 +27,16 @@ void WorkFlowParameter::label(const QString &lbl)
     _label = lbl;
 }
 
+QString WorkFlowParameter::flowLabel() const
+{
+    return _flowLabel;
+}
+
+void WorkFlowParameter::flowLabel(const QString &lbl)
+{
+    _flowLabel = lbl;
+}
+
 void WorkFlowParameter::inputLink(const std::shared_ptr<WorkFlowNode> link, qint32 outputIndex)
 {
 
@@ -36,8 +46,11 @@ void WorkFlowParameter::inputLink(const std::shared_ptr<WorkFlowNode> link, qint
         _state = pkFREE;
         _outputParameterIndex = iUNDEF;
         _value = sUNDEF;
-   }else
+   }else{
+        if ( _flowLabel == "")
+            _flowLabel = QString::number(outputIndex) + "->" + QString::number(_order);
         _state = pkCALCULATED;
+    }
 }
 
 const std::shared_ptr<WorkFlowNode> WorkFlowParameter::inputLink() const

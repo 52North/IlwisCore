@@ -23,7 +23,7 @@ bool Ilwis::operator<(const Ilwis::SPWorkFlowNode& node1, const Ilwis::SPWorkFlo
     return node1->id() < node2->id();
 }
 
-WorkFlowNode::WorkFlowNode(const QString& name, const QString& description, quint64 id) : Identity(name, id, description)
+WorkFlowNode::WorkFlowNode(const QString& name, const QString& description, quint64 id) : Identity(name, id, QString::number(id), description)
 {
 
 }
@@ -102,6 +102,16 @@ std::shared_ptr<WorkFlowNode> WorkFlowNode::owner() const
 void WorkFlowNode::owner(std::shared_ptr<WorkFlowNode> own)
 {
     _owner = own;
+}
+
+QString WorkFlowNode::label() const
+{
+    return _label;
+}
+
+void WorkFlowNode::label(const QString &lbl)
+{
+    _label = lbl;
 }
 
 IOperationMetaData WorkFlowNode::operation() const

@@ -69,6 +69,8 @@ ToolBar{
          Controls.ToolButton {
              height : buttonSize
              width : buttonSize
+             enabled : workflow ? workflow.isValid : false
+             opacity : enabled ? 1 : 0.2
             iconSource : iconsource("run20.png")
             onClicked: {
                 workflowManager.executeRunForm({"runid" :  workflow.id, "stepmode" :false})
@@ -78,7 +80,8 @@ ToolBar{
             height : buttonSize
             width : buttonSize
             id : stepButton
-            opacity : enabled ? 1 : 0.5
+            enabled : workflow ? workflow.isValid : false
+            opacity : enabled ? 1 : 0.2
             iconSource : iconsource("step20.png")
             onClicked :{
                 //  if ( stepModeCheck.checked )
@@ -90,6 +93,8 @@ ToolBar{
             height : buttonSize
             width : buttonSize
             iconSource : iconsource("stop20.png")
+            enabled : workflow ? workflow.isValid : false
+            opacity : enabled ? 1 : 0.2
         }
 
         Controls.ToolButton {

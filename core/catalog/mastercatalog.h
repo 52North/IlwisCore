@@ -198,7 +198,7 @@ public:
 
 #ifdef QT_DEBUG
     quint32 lookupSize() const { return _lookup.size(); }
-    void dumpLookup() const;
+    const QHash<quint64, ESPIlwisObject>& dumpLookup() const;
     quint32 usecount(quint64 id);
 
 #endif

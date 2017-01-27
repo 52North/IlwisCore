@@ -68,6 +68,7 @@ quint64 StringFind::createMetadata()
     resource.addOptionalInParameter(2, itINT32, TR("start_index"), TR("optional index from where to begin the search"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itINT32, TR("output index"), TR("index where the to be found string is found(0 based) or -1 if it can not be found"));
+    resource.setKeywords("string,workflow");
 
     //resource.prepare();
     //url += "=" + QString::number(resource.id());
@@ -144,9 +145,7 @@ quint64 StringSub::createMetadata()
     resource.setOutParameterCount({1});
     resource.addOutParameter(0,itSTRING,TR("sub string"),TR("a sub string from the input string"));
 
-    //resource.prepare();
-    //url += "=" + QString::number(resource.id());
-    //resource.setUrl(url);
+    resource.setKeywords("string,workflow");
 
     mastercatalog()->addItems({resource});
     return resource.id();
@@ -203,9 +202,7 @@ quint64 StringReplace::createMetadata()
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itINT32, TR("output index"), TR("index where the to be found string is found(0 based) or -1 if it can not be found"));
 
-    //resource.prepare();
-    //url += "=" + QString::number(resource.id());
-    //resource.setUrl(url);
+    resource.setKeywords("string,workflow");
 
     mastercatalog()->addItems({resource});
     return resource.id();

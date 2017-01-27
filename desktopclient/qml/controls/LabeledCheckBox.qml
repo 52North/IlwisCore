@@ -17,6 +17,6 @@ Item {
     width : parent.width
 
     Text { id : label; text : qsTr("Read-only"); font.bold: true}
-    CheckBox { id : cb; checked: isReadonly; x : labelWidth}
+    CheckBox { id : cb;  x : labelWidth}
 }
 

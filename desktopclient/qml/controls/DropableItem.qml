@@ -10,9 +10,7 @@ Item {
     property int interval : 200
 
     function toggle() {
-        console.debug(dropableItem.state)
         dropableItem.state = dropableItem.state == "invisible" ? "visible" : "invisible"
-        console.debug(dropableItem.state)
     }
 
     states: [

@@ -66,6 +66,10 @@ WorkflowChoiceForm {
         flowParameterForm.state = "invisible"
         wfCanvas.canvasValid = false
         canvasActive = true
+        if ( nodeFrom)
+            nodeFrom.resetColors()
+        if ( nodeTo)
+            nodeTo.resetColors();
         nodeFrom = null
         nodeTo = null
         attachRectTo = 0
@@ -188,9 +192,11 @@ WorkflowChoiceForm {
         onClicked: {
             function getIndex(txt){
                 var parts = txt.split(":")
-                return parts[0]
+                return Number(parts[0])
             }
             fromParameterIndex = getIndex(outComboBox.currentText)
+            if ( !nodeTo)
+                return
             if ( nodeTo.type === "operationitem")
                 toParameterIndex = getIndex(inComboBox.currentText)
             else{

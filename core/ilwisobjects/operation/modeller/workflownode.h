@@ -15,7 +15,7 @@ class Workflow;
 class KERNELSHARED_EXPORT WorkFlowNode : public Identity
 {
 public:
-    enum ValidityCheck{vcALLDEFINED,vcPARTIAL, vcTESTS, vcOPERATIONS, vcJUNCTIONS};
+    enum ValidityCheck{vcALLDEFINED,vcPARTIAL, vcTESTS, vcOPERATIONS, vcJUNCTIONS, vcAGGREGATE};
     WorkFlowNode(const QString &name, const QString &description="", quint64 id=i64UNDEF);
 
     virtual int inputCount() const;
@@ -30,17 +30,20 @@ public:
     void collapsed(bool yesno);
     std::shared_ptr<WorkFlowNode> owner() const;
     void owner(std::shared_ptr<WorkFlowNode> own);
+    virtual QString label() const;
+    void label(const QString& lbl);
 
     virtual IOperationMetaData operation() const;
     virtual QString type() const = 0;
     virtual std::vector<std::shared_ptr<WorkFlowNode>> subnodes(const QString& reason="") const;
     virtual void addSubNode(const std::shared_ptr<WorkFlowNode>& node, const QString& reason);
     virtual bool execute(ExecutionContext *ctx, SymbolTable &symTable, const OperationExpression &expression, const std::map<quint64, int> &idmap);
-    virtual bool isValid(Workflow* workflow, WorkFlowNode::ValidityCheck) const = 0;
+    virtual bool isValid(const Workflow* workflow, WorkFlowNode::ValidityCheck) const = 0;
 
 protected:
     std::vector<WorkFlowParameter> _inputParameters1;
     BoundingBox _box;
+    QString _label;
     bool _collapsed = false;
     std::shared_ptr<WorkFlowNode> _owner;
 };

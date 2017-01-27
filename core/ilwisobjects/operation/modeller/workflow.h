@@ -43,10 +43,11 @@ public:
     double scale() const;
     void scale(double s);
     std::pair<int, int> translation() const;
-    void translation(double x, double y);
+    void translation(double x, double y, bool relative);
     quint32 generateId();
     void updateIdCounter();
     const std::vector<SPWorkFlowNode>& graph() const;
+    bool isValid() const;
 
     static void reverseExecutionOrder(Ilwis::SPWorkFlowNode currentList, std::vector<SPWorkFlowNode> &executionOrder, std::set<SPWorkFlowNode> &usedNodes);
     static ExecutionOrder executionOrder(std::vector<Ilwis::SPWorkFlowNode> &graph);

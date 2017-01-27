@@ -35,7 +35,7 @@ public:
     Test test(int index) const;
     int testCount() const;
     void nodeId(quint64 id);
-    bool isValid(Workflow* workflow, WorkFlowNode::ValidityCheck check) const;
+    bool isValid(const Ilwis::Workflow *workflow, WorkFlowNode::ValidityCheck check) const;
 private:
     std::vector<Test> _tests;
     std::vector<SPWorkFlowNode> _operations;
