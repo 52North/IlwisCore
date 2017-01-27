@@ -69,6 +69,10 @@ Rectangle {
         radius : 5
         z : 10
 
+        onHeightChanged: {
+            console.debug(height)
+        }
+
         DropArea {
             x : 2
             y : 2
@@ -132,10 +136,12 @@ Rectangle {
                                 }else{
                                     for(var t=0; t < detailsBack.values.length; ++t)
                                         workflow.setTestValues(itemid, testList.currentIndex, t, detailsBack.values[t])
+                                    conditionItem.resetColors()
+                                    setTests()
+
                                     detailsBack.values = []
                                     testDetails.model = null
                                     detailsBack.height = 0
-                                    resetColors()
 
                                 }
                             }
@@ -178,6 +184,8 @@ Rectangle {
                                             var datatype = workflow.testValueDataType(itemid, testList.currentIndex, index)
                                             attachTestFlow(type,index )
                                             att1.finishFlow(0,index)
+                                            testRectangle.detailsHeight = 0
+                                            testRectangle.height = 35
                                         }
                                     }
 
@@ -502,6 +510,10 @@ Rectangle {
 
     function addFlowConnection(targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter){
         workarea.addFlowConnection(flowConnections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter)
+
+    }
+
+    function deselectAll(){
 
     }
 

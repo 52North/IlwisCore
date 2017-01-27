@@ -362,20 +362,26 @@ Rectangle {
     function drawFlows(ctx){
 
         for(var i=0; i < flowConnections.length; i++){
-            var item = flowConnections[i]
-            var index = item.attachtarget
-            var sp = item.attachsource.center()
-            var ep = item.target.attachementPoint(wfCanvas,index)
+            var flow = flowConnections[i]
+            var index = flow.attachtarget
+            var sp = flow.attachsource.center()
+            var ep = flow.target.attachementPoint(wfCanvas,index)
             var pt1 = Qt.point(sp.x, sp.y)
             var pt2 = Qt.point( ep.x, ep.y);
 
-            Global.drawArrow(wfCanvas, ctx, pt1, pt2, item.isSelected)
+            Global.drawArrow(wfCanvas, ctx, pt1, pt2, flow.isSelected)
 
-            if ( item.flowPoints){
-                var node = workflow.getNode(item.target.itemid)
-                var lst = node["parameters"]
-                //console.debug(item.source.itemid, item.target.itemid, lst.length, item.flowPoints.toParameterIndex,lst[item.flowPoints.toParameterIndex].flowlabel)
-                var label = node["parameters"][item.flowPoints.toParameterIndex].flowlabel
+            if ( flow.flowPoints){
+                var label = ""
+                var node = workflow.getNode(flow.target.itemid)
+                if ( node.type === "operationnode"){
+                    var lst = node["parameters"]
+                    console.debug(flow.source.itemid, flow.target.itemid) //, lst.length, item.flowPoints.toParameterIndex,lst[item.flowPoints.toParameterIndex].flowlabel)
+                    label = node["parameters"][flow.flowPoints.toParameterIndex].flowlabel
+                }else if ( node.type === "junctionnode"){
+                    label = flow.flowPoints.fromParameterIndex.toString()
+                }
+
                 drawInfoBox(ctx, pt1,pt2, label)
             }
         }
