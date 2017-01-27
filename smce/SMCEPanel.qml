@@ -77,7 +77,7 @@ Column {
     Rectangle {
         id : smcearea
         width : parent.width
-        height : parent.height - tools.height
+        height : parent.height - tools.height - mode.height
         color : "#FFF8DC"
         opacity : height > 0 ? 1 : 0
 
