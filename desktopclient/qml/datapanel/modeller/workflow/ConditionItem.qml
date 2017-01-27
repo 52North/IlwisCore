@@ -69,10 +69,6 @@ Rectangle {
         radius : 5
         z : 10
 
-        onHeightChanged: {
-            console.debug(height)
-        }
-
         DropArea {
             x : 2
             y : 2
