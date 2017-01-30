@@ -14,6 +14,23 @@ Rectangle {
         anchors.fill: parent
 
         Column {
+            TableView {
+                height: 17
+                width: Math.max(parent.parent.parent.width, criteriaTree.width + col1.width + 2)
+                TableViewColumn {
+                    id: criteriaTree
+                    title: "Criteria Tree"
+                    movable: false
+                    width: 250
+                }
+                TableViewColumn {
+                    id: col1
+                    title: ""
+                    movable: false
+                    width: 250
+                }
+            }
+
             Column {
                 ListView {
                     id: objView
@@ -127,7 +144,8 @@ Rectangle {
 
                     MouseArea {
                         id: objMouseArea
-                        width: childrenRect.width
+                        clip: true
+                        width: criteriaTree.width
                         height: childrenRect.height
                         onDoubleClicked: {
                             if (model.type == "Constraint" || model.type == "Factor" || model.type == "MaskArea") {
