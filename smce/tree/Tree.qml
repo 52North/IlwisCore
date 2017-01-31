@@ -171,110 +171,101 @@ Rectangle {
                                 }
 
                                 Row {
-                                    id: objRow
+                                    function getIcon(nodetype) {
+                                        if (nodetype === "Goal")
+                                            return "Goal.png"
+
+                                        if (nodetype === "Constraint")
+                                            return "Constraint.png"
+
+                                        if (nodetype === "Factor")
+                                            return "Factorplus.png"
+
+                                        if (nodetype === "Group")
+                                            return "Objective.png"
+
+                                        if (nodetype === "MaskArea")
+                                            return "raster.png"
+                                    }
                                     Item {
                                         id: objIndentation
                                         height: 20
                                         width: model.level * 30
                                     }
-                                    Rectangle {
-                                        id: objDisplayRowRect
-                                        width: childrenRect.width
-                                        height: childrenRect.height
-
-                                        Row {
-                                            function getIcon(nodetype) {
-                                                if (nodetype === "Goal")
-                                                    return "Goal.png"
-
-                                                if (nodetype === "Constraint")
-                                                    return "Constraint.png"
-
-                                                if (nodetype === "Factor")
-                                                    return "Factorplus.png"
-
-                                                if (nodetype === "Group")
-                                                    return "Objective.png"
-
-                                                if (nodetype === "MaskArea")
-                                                    return "raster.png"
-                                            }
-                                            Image {
-                                                id: subArrow
-                                                width:  15
-                                                height:  15
-                                                //anchors.left: parent.left
-                                                //anchors.leftMargin: 10
-                                                //anchors.verticalCenter: parent.verticalCenter
-                                                source: "arrowrightlight.png"
-                                                rotation: 90
-                                                visible: objRepeater.count > 0
-                                                MouseArea {
-                                                    id: objMouseAreaArrow
-                                                    width: subArrow.implicitWidth
-                                                    height: subArrow.implicitHeight
-                                                    onPressed: {
-                                                        if (objModel.selectedItem != null) {
-                                                            objModel.selectedItem.state = "unselected"
-                                                        }
-                                                        objTextRowRect.state = "selected"
-                                                        objModel.selectedItem = objTextRowRect
-                                                        toggleNode()
-                                                    }
+                                    Image {
+                                        id: subArrow
+                                        width:  15
+                                        height:  15
+                                        //anchors.left: parent.left
+                                        //anchors.leftMargin: 10
+                                        //anchors.verticalCenter: parent.verticalCenter
+                                        source: "arrowrightlight.png"
+                                        rotation: 90
+                                        visible: objRepeater.count > 0
+                                        MouseArea {
+                                            id: objMouseAreaArrow
+                                            width: subArrow.implicitWidth
+                                            height: subArrow.implicitHeight
+                                            onPressed: {
+                                                if (objModel.selectedItem != null) {
+                                                    objModel.selectedItem.state = "unselected"
                                                 }
-                                            }
-
-                                            Image {
-                                                id: icon
-                                                //anchors.left: subArrow.right
-                                                //anchors.leftMargin: 10
-                                                //anchors.verticalCenter: parent.verticalCenter
-                                                source: parent.getIcon(model.type)
-                                                fillMode: Image.Pad
-                                            }
-
-                                            Rectangle {
-                                                id: objTextRowRect
-                                                width: childrenRect.width
-                                                height: childrenRect.height
-                                                state: "unselected"
-                                                Row {
-
-                                                    Text {
-                                                        id: objNodeWeight
-                                                        text: "  " + ((model.weight >= 0) ? model.weight.toFixed(2).toString() : "") + "  "
-                                                        color: "black"
-                                                        verticalAlignment: Text.AlignVCenter
-                                                    }
-
-                                                    Text {
-                                                        id: objNodeName
-                                                        text: model.name
-                                                        color: "black"
-                                                        verticalAlignment: Text.AlignVCenter
-                                                        width: criteriaTree.width - objIndentation.width - (subArrow.visible ? subArrow.width : 0) - icon.width - objNodeWeight.width
-                                                        elide: Text.ElideRight
-                                                    }
-                                                }
-
-                                                states: [
-                                                    State {
-                                                        name: "unselected"
-                                                        PropertyChanges {
-                                                            target: objTextRowRect
-                                                            color: "white"
-                                                        }
-                                                    },
-                                                    State {
-                                                        name: "selected"
-                                                        PropertyChanges {
-                                                            target: objTextRowRect
-                                                            color: Global.selectedColor
-                                                        }
-                                                    }
-                                                ]
+                                                objTextRowRect.state = "selected"
+                                                objModel.selectedItem = objTextRowRect
+                                                toggleNode()
                                             }
                                         }
+                                    }
+
+                                    Image {
+                                        id: icon
+                                        //anchors.left: subArrow.right
+                                        //anchors.leftMargin: 10
+                                        //anchors.verticalCenter: parent.verticalCenter
+                                        source: parent.getIcon(model.type)
+                                        fillMode: Image.Pad
+                                    }
+
+                                    Rectangle {
+                                        id: objTextRowRect
+                                        width: childrenRect.width
+                                        height: childrenRect.height
+                                        state: "unselected"
+                                        Row {
+
+                                            Text {
+                                                id: objNodeWeight
+                                                text: "  " + ((model.weight >= 0) ? model.weight.toFixed(2).toString() : "") + "  "
+                                                color: "black"
+                                                verticalAlignment: Text.AlignVCenter
+                                            }
+
+                                            Text {
+                                                id: objNodeName
+                                                text: model.name
+                                                color: "black"
+                                                verticalAlignment: Text.AlignVCenter
+                                                width: criteriaTree.width - objIndentation.width - (subArrow.visible ? subArrow.width : 0) - icon.width - objNodeWeight.width
+                                                elide: Text.ElideRight
+                                            }
+                                        }
+
+                                        states: [
+                                            State {
+                                                name: "unselected"
+                                                PropertyChanges {
+                                                    target: objTextRowRect
+                                                    color: "white"
+                                                }
+                                            },
+                                            State {
+                                                name: "selected"
+                                                PropertyChanges {
+                                                    target: objTextRowRect
+                                                    color: Global.selectedColor
+                                                }
+                                            }
+                                        ]
                                     }
                                 }
                             }
