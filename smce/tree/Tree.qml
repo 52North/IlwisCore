@@ -49,7 +49,7 @@ Rectangle {
 
             ListModel {
                 id: objModel
-                property Rectangle selectedRow: null
+                property Rectangle selectedItem: null
 
                 function setGoal(description, outFile) {
                     objModel.clear(); // only one goal for the tree
@@ -156,11 +156,11 @@ Rectangle {
                                 }
                             }
                             onPressed: {
-                                if (objModel.selectedRow != null) {
-                                    objModel.selectedRow.state = "unselected"
+                                if (objModel.selectedItem != null) {
+                                    objModel.selectedItem.state = "unselected"
                                 }
                                 objTextRowRect.state = "selected"
-                                objModel.selectedRow = objTextRowRect
+                                objModel.selectedItem = objTextRowRect
                             }
 
                             Row {
@@ -207,11 +207,11 @@ Rectangle {
                                                 width: subArrow.implicitWidth
                                                 height: subArrow.implicitHeight
                                                 onPressed: {
-                                                    if (objModel.selectedRow != null) {
-                                                        objModel.selectedRow.state = "unselected"
+                                                    if (objModel.selectedItem != null) {
+                                                        objModel.selectedItem.state = "unselected"
                                                     }
                                                     objTextRowRect.state = "selected"
-                                                    objModel.selectedRow = objTextRowRect
+                                                    objModel.selectedItem = objTextRowRect
                                                     toggleNode()
                                                 }
                                             }
@@ -281,11 +281,11 @@ Rectangle {
                                     openMap(model.fileName)
                             }
                             onPressed: {
-                                if (objModel.selectedRow != null) {
-                                    objModel.selectedRow.state = "unselected"
+                                if (objModel.selectedItem != null) {
+                                    objModel.selectedItem.state = "unselected"
                                 }
-                                objTextRowRect.state = "selected"
-                                objModel.selectedRow = objTextRowRect
+                                col1TextRowRect.state = "selected"
+                                objModel.selectedItem = col1TextRowRect
                             }
 
                             Row {
@@ -322,14 +322,14 @@ Rectangle {
                                                 State {
                                                     name: "unselected"
                                                     PropertyChanges {
-                                                        target: objTextRowRect
+                                                        target: col1TextRowRect
                                                         color: "white"
                                                     }
                                                 },
                                                 State {
                                                     name: "selected"
                                                     PropertyChanges {
-                                                        target: objTextRowRect
+                                                        target: col1TextRowRect
                                                         color: Global.selectedColor
                                                     }
                                                 }
