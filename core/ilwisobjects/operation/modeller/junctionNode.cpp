@@ -32,9 +32,9 @@ Junction::Junction(quint64 nodeid) :  WorkFlowNode("")
     _inputParameters1.push_back(WorkFlowParameter(2,id(),"falseLink"));
 }
 
-QString Junction::type() const
+WorkFlowNode::NodeTypes Junction::type() const
 {
-    return "junctionnode"    ;
+    return WorkFlowNode::ntJUNCTION   ;
 }
 
 void Junction::link2condition(SPWorkFlowNode conditionnode)

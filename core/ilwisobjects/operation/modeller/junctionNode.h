@@ -10,7 +10,7 @@ class KERNELSHARED_EXPORT Junction : public WorkFlowNode
 public:
     Junction();
     Junction(quint64 nodeid);
-    QString type() const;
+    Ilwis::WorkFlowNode::NodeTypes type() const;
 
 
     bool execute(ExecutionContext *ctx, SymbolTable &symTable, const OperationExpression &expression, const std::map<quint64, int> &idmap);
