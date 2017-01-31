@@ -229,7 +229,7 @@ Rectangle {
                                     Rectangle {
                                         id: objTextRowRect
                                         width: childrenRect.width
-                                        height: childrenRect.height
+                                        height: parent.height
                                         state: "unselected"
                                         Row {
 
@@ -285,49 +285,46 @@ Rectangle {
                                     objModel.selectedItem = col1Rect
                                 }
 
-                                Row {
-                                    id: col1Row
-                                    Rectangle {
-                                        id: col1Rect
-                                        width: childrenRect.width
-                                        height: childrenRect.height
-                                        state: "unselected"
+                                Rectangle {
+                                    id: col1Rect
+                                    width: childrenRect.width
+                                    height: childrenRect.height
+                                    state: "unselected"
 
-                                        Row {
-                                            spacing: 5
-                                            Image {
-                                                id: col1IconRaster
-                                                source: "raster.png"
-                                                fillMode: Image.Pad
-                                            }
-
-                                            Text {
-                                                id: col1NodeName
-                                                text: model.fileName
-                                                color: "black"
-                                                verticalAlignment: Text.AlignVCenter
-                                                width: col1.width - col1IconRaster.width
-                                                elide: Text.ElideRight
-                                            }
+                                    Row {
+                                        spacing: 5
+                                        Image {
+                                            id: col1IconRaster
+                                            source: "raster.png"
+                                            fillMode: Image.Pad
                                         }
 
-                                        states: [
-                                            State {
-                                                name: "unselected"
-                                                PropertyChanges {
-                                                    target: col1Rect
-                                                    color: "white"
-                                                }
-                                            },
-                                            State {
-                                                name: "selected"
-                                                PropertyChanges {
-                                                    target: col1Rect
-                                                    color: Global.selectedColor
-                                                }
-                                            }
-                                        ]
+                                        Text {
+                                            id: col1NodeName
+                                            text: model.fileName
+                                            color: "black"
+                                            verticalAlignment: Text.AlignVCenter
+                                            width: col1.width - col1IconRaster.width
+                                            elide: Text.ElideRight
+                                        }
                                     }
+
+                                    states: [
+                                        State {
+                                            name: "unselected"
+                                            PropertyChanges {
+                                                target: col1Rect
+                                                color: "white"
+                                            }
+                                        },
+                                        State {
+                                            name: "selected"
+                                            PropertyChanges {
+                                                target: col1Rect
+                                                color: Global.selectedColor
+                                            }
+                                        }
+                                    ]
                                 }
                             }
                         }
