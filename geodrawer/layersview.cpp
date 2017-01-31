@@ -16,8 +16,6 @@ quint64 LayersView::_baseViewerId = 0;
 
 LayersView::LayersView()
 {
-    _viewerId = _baseViewerId++;
-    uicontext()->addViewer(this, _viewerId);
 }
 
 LayersView::~LayersView()
@@ -290,8 +288,12 @@ void LayersView::drawDone()
     }
 }
 
-QString LayersView::viewerId() const
+QString LayersView::viewerId()
 {
+    if ( _viewerId ==Ilwis::i64UNDEF){
+        _viewerId = _baseViewerId++;
+        uicontext()->addViewer(this, _viewerId);
+    }
     return QString::number(_viewerId);
 }
 
