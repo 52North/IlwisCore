@@ -134,6 +134,7 @@ Rectangle {
                 Column {
                     id: objRecursiveColumn
                     property bool treeChild: true
+                    spacing: 1
                     state: "expanded"
 
                     function toggleNode() {
