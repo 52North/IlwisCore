@@ -6,6 +6,11 @@
 
 namespace Ilwis {
 
+class WorkFlowNode;
+class WorkFlowParameter;
+
+typedef std::shared_ptr<WorkFlowNode> SPWorkFlowNode;
+
 typedef quint64 NodeId;
 typedef std::map<SPWorkFlowNode, std::vector<SPWorkFlowNode>>::iterator WorkFlowMIter;
 typedef std::map<SPWorkFlowNode, std::vector<SPWorkFlowNode>>::const_iterator CWorkFlowMIter;
@@ -14,6 +19,7 @@ typedef std::vector<SPWorkFlowNode>::iterator WorkFlowVIter;
 class KERNELSHARED_EXPORT Workflow : public OperationMetaData
 {
 public:
+
     struct ExecutionOrder {
         std::vector<SPWorkFlowNode> _independentOrder;
         std::map<NodeId, std::vector<SPWorkFlowNode>> _dependentOrder;
@@ -47,11 +53,9 @@ public:
     quint32 generateId();
     void updateIdCounter();
     const std::vector<SPWorkFlowNode>& graph() const;
+    const std::vector<SPWorkFlowNode> nodes(int filter=WorkFlowNode::ntALL) const;
     bool isValid() const;
-
-    static void reverseExecutionOrder(Ilwis::SPWorkFlowNode currentList, std::vector<SPWorkFlowNode> &executionOrder, std::set<SPWorkFlowNode> &usedNodes);
-    static ExecutionOrder executionOrder(std::vector<Ilwis::SPWorkFlowNode> &graph);
-    static std::vector<SPWorkFlowNode> outputNodes(const std::vector<Ilwis::SPWorkFlowNode> graph);
+    void clearCalculatedValues();
 
 
 
@@ -66,6 +70,7 @@ private:
 
     std::vector<WorkFlowParameter> freeInputParameters() const;
     std::vector<Ilwis::SPOperationParameter> freeOutputParameters() const;
+    static std::vector<SPWorkFlowNode> outputNodes(const std::vector<Ilwis::SPWorkFlowNode> graph);
 
 
 };
