@@ -24,7 +24,7 @@ public:
 
     WorkFlowCondition();
 
-    QString type() const;
+    Ilwis::WorkFlowNode::NodeTypes type() const;
 
     std::vector<SPWorkFlowNode> subnodes(const QString& reason="") const;
     void addSubNode(const SPWorkFlowNode &node, const QString &reason);
