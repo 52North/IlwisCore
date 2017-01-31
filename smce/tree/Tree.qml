@@ -125,14 +125,15 @@ Rectangle {
                 Column {
                     id: objRecursiveColumn
                     property bool treeChild: true
+                    state: "expanded"
 
                     function toggleNode() {
                         var enabled
-                        if (objDisplayRowRect.state == "expanded") {
-                            objDisplayRowRect.state = "collapsed"
+                        if (state == "expanded") {
+                            state = "collapsed"
                             enabled = false
                         } else {
-                            objDisplayRowRect.state = "expanded"
+                            state = "expanded"
                             enabled = true
                         }
                         for(var i = 0; i < children.length; ++i) {
@@ -173,7 +174,6 @@ Rectangle {
                                 id: objDisplayRowRect
                                 width: childrenRect.width
                                 height: childrenRect.height
-                                state: "expanded"
 
                                 Row {
                                     function getIcon(nodetype) {
@@ -266,39 +266,38 @@ Rectangle {
                                         ]
                                     }
                                 }
-
-                                states: [
-                                    State {
-                                        name: "collapsed"
-                                        PropertyChanges {
-                                            target: subArrow
-                                            rotation: 0
-                                        }
-                                    },
-                                    State{
-                                        name: "expanded"
-                                        PropertyChanges {
-                                            target: subArrow
-                                            rotation: 90
-                                        }
-                                    }
-                                ]
-
-                                transitions: [
-                                    Transition {
-                                        NumberAnimation { target: subArrow; property: "rotation"; duration: 100 }
-                                    }
-                                ]
                             }
                         }
+                    }
+                    states: [
+                        State {
+                            name: "collapsed"
+                            PropertyChanges {
+                                target: subArrow
+                                rotation: 0
+                            }
+                        },
+                        State{
+                            name: "expanded"
+                            PropertyChanges {
+                                target: subArrow
+                                rotation: 90
+                            }
+                        }
+                    ]
+
+                    transitions: [
+                        Transition {
+                            NumberAnimation { target: subArrow; property: "rotation"; duration: 100 }
+                        }
+                    ]
+                    move: Transition {
+                        NumberAnimation { property: "y"; duration: 100 }
                     }
                     Repeater {
                         id: objRepeater
                         model: subNodes
                         delegate: objRecursiveDelegate
-                    }
-                    move: Transition {
-                        NumberAnimation { property: "y"; duration: 100 }
                     }
                     Component.onCompleted: {
                         objView.width = Math.max(objView.width, width)
