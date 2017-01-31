@@ -232,7 +232,7 @@ Rectangle {
                                     Row {
                                         Text {
                                             id: objNodeWeight
-                                            text: "  " + ((model.weight >= 0) ? model.weight.toFixed(2).toString() : "") + "  "
+                                            text: "  " + ((model.weight >= 0) ? (model.weight.toFixed(2).toString() + "  ") : "")
                                             color: "black"
                                             verticalAlignment: Text.AlignVCenter
                                         }
@@ -289,7 +289,6 @@ Rectangle {
                             }
 
                             Row {
-                                spacing: 5
                                 Image {
                                     id: col1IconRaster
                                     source: "raster.png"
@@ -298,7 +297,7 @@ Rectangle {
 
                                 Text {
                                     id: col1NodeName
-                                    text: model.fileName
+                                    text: "  " + model.fileName
                                     color: "black"
                                     verticalAlignment: Text.AlignVCenter
                                     width: col1.width - col1IconRaster.width
