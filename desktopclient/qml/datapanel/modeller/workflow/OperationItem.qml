@@ -376,7 +376,7 @@ Rectangle {
                 var node = workflow.getNode(flow.target.itemid)
                 if ( node.type === "operationnode"){
                     var lst = node["parameters"]
-                    console.debug(flow.source.itemid, flow.target.itemid) //, lst.length, item.flowPoints.toParameterIndex,lst[item.flowPoints.toParameterIndex].flowlabel)
+                    //console.debug(flow.source.itemid, flow.target.itemid,node,node.type, node.itemid) //, lst.length, item.flowPoints.toParameterIndex,lst[item.flowPoints.toParameterIndex].flowlabel)
                     label = node["parameters"][flow.flowPoints.toParameterIndex].flowlabel
                 }else if ( node.type === "junctionnode"){
                     label = flow.flowPoints.fromParameterIndex.toString()
@@ -522,8 +522,9 @@ Rectangle {
 
     function resetColors(){
         if ( condition){
-            border.width = workflow.isValidNode(itemid,"all") ? 0 : 1
-            border.color = workflow.isValidNode(itemid,"all") ? "transparent" : "red"
+            var valid = workflow.isValidNode(itemid,"all")
+            border.width =  valid ? 0 : 1
+            border.color = valid ? "transparent" : "red"
             condition.resetColors()
         }
     }
