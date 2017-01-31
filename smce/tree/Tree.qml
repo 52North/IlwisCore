@@ -196,9 +196,6 @@ Rectangle {
                                         id: subArrow
                                         width:  15
                                         height:  15
-                                        //anchors.left: parent.left
-                                        //anchors.leftMargin: 10
-                                        //anchors.verticalCenter: parent.verticalCenter
                                         source: "arrowrightlight.png"
                                         rotation: 90
                                         visible: objRepeater.count > 0
@@ -219,9 +216,6 @@ Rectangle {
 
                                     Image {
                                         id: icon
-                                        //anchors.left: subArrow.right
-                                        //anchors.leftMargin: 10
-                                        //anchors.verticalCenter: parent.verticalCenter
                                         source: parent.getIcon(model.type)
                                         fillMode: Image.Pad
                                     }
