@@ -14,14 +14,13 @@ public:
 
     bool execute(ExecutionContext *ctx, SymbolTable &symTable, const OperationExpression &expression, const std::map<quint64, int> &idmap);
     IOperationMetaData operation() const;
-    quint64 operationid() const;
-    void operationid(quint64 iod) ;
-    QString type() const;
+    void operation(const QString& provider, const QString& syntax);
+    Ilwis::WorkFlowNode::NodeTypes type() const;
     bool isValid(const Ilwis::Workflow *workflow, WorkFlowNode::ValidityCheck vc) const ;
     QString label() const;
 
 private:
-    quint64 _operationid;
+    IOperationMetaData _operation;
 };
 }
 
