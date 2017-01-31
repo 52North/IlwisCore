@@ -10,6 +10,7 @@
 #include "workflownode.h"
 #include "operationnode.h"
 #include "conditionNode.h"
+#include "loopnode.h"
 #include "junctionNode.h"
 #include "workflow.h"
 #include "operationmetadata.h"
@@ -53,12 +54,14 @@ quint32 WorkflowModel::addNode(const QString &id, const QVariantMap& parameters)
         quint64 objid = id.toULongLong(&ok);
         if ( ok){
             WorkFlowNode *nodePtr = 0;
-            QString nodeType = parameters["type"].toString();
-            if ( nodeType == "conditionnode")
+            WorkFlowNode::NodeTypes nodeType = string2nodetype(parameters["type"].toString());
+            if ( nodeType == WorkFlowNode::ntCONDITION)
                 nodePtr = new WorkFlowCondition();
-            else if ( nodeType == "junctionnode")
+            else if ( nodeType == WorkFlowNode::ntJUNCTION)
                 nodePtr = new Junction();
-            else if ( nodeType == "operationnode")
+            else if ( nodeType == WorkFlowNode::ntLOOP)
+                nodePtr = new LoopNode();
+            else if ( nodeType== WorkFlowNode::ntOPERATION)
                 nodePtr = new OperationNode(objid);
             if ( nodePtr){
                 SPWorkFlowNode node;
@@ -140,7 +143,7 @@ void WorkflowModel::addCondition2Junction(int conditionId,int junctionId)
 {
     try{
         SPWorkFlowNode node = _workflow->nodeById(conditionId);
-        if ( node && node->type() == "conditionnode"){
+        if ( node && node->type() == WorkFlowNode::ntCONDITION){
             std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
             SPWorkFlowNode jnode = _workflow->nodeById(junctionId);
             if ( jnode){
@@ -244,7 +247,7 @@ int WorkflowModel::freeInputParameterCount(int nodeId)
     int count = 0;
     if ( _workflow.isValid()){
         SPWorkFlowNode node = _workflow->nodeById(nodeId);
-        if ( node && node->type() == "operationnode"){
+        if ( node && node->type()== WorkFlowNode::ntOPERATION){
             for(int i=0; i < node->inputCount(); ++i){
                 if ( node->inputRef(i).state() == WorkFlowParameter::pkFREE)
                     ++count;
@@ -286,12 +289,12 @@ bool WorkflowModel::usableLink(int sourceNodeId, int targetNodeId, int sourcePar
         return false;
 
     // from operation in a condition to a junction
-    if ( source->owner() && target->type() == "junctionnode"){
+    if ( source->owner() && target->type() == WorkFlowNode::ntJUNCTION){
         //this is a "true" case going to the junction. valid if parameter 1 is empty (not used)
         return checkJunctionParameters(source, target,sourceParmIndex, targetParmIndex, true);
-    }else if ( source->type() == "operationnode" && target->type() == "junctionnode"){ // false case of junction
+    }else if ( source->type()== WorkFlowNode::ntOPERATION && target->type() == WorkFlowNode::ntJUNCTION){ // false case of junction
         return checkJunctionParameters(source, target,sourceParmIndex, targetParmIndex, false);
-    }else if ( source->type() == "operationnode" && target->type() == "operationnode"){
+    }else if ( source->type()== WorkFlowNode::ntOPERATION && target->type()== WorkFlowNode::ntOPERATION){
         if (sourceParmIndex >= 0 && targetParmIndex >= 0 ){
             IlwisTypes tpTarget = target->inputRef(targetParmIndex).valueType();
             SPOperationParameter outs = source->operation()->outputParameter(sourceParmIndex);
@@ -385,6 +388,42 @@ void WorkflowModel::scale(double s)
 }
 
 
+QString WorkflowModel::nodetype2string(WorkFlowNode::NodeTypes ntype) const{
+    switch(ntype){
+    case WorkFlowNode::ntOPERATION:
+        return "operationnode";
+    case WorkFlowNode::ntJUNCTION:
+        return "junctionnode";
+    case WorkFlowNode::ntCONDITION:
+        return "conditionnode";
+    case WorkFlowNode::ntLOOP:
+        return "loopnode";
+    case WorkFlowNode::ntLOOPJUNCTION:
+        return "loopjunction";
+    default:
+        return sUNDEF;
+    }
+}
+
+WorkFlowNode::NodeTypes WorkflowModel::string2nodetype(const QString &ntype) const
+{
+    if (ntype == "operationnode"){
+        return WorkFlowNode::ntOPERATION;
+    }
+    if (ntype == "junctionnode"){
+        return WorkFlowNode::ntJUNCTION;
+    }
+    if (ntype == "conditionnode"){
+        return WorkFlowNode::ntCONDITION;
+    }
+    if (ntype == "loopnode"){
+        return WorkFlowNode::ntLOOP;
+    }
+    if (ntype == "loopjunctionnode"){
+        return WorkFlowNode::ntLOOPJUNCTION;
+    }
+    return WorkFlowNode::ntUNDEFINED;
+}
 
 QVariantMap WorkflowModel::getNode(int nodeId){
     QVariantMap data;
@@ -401,18 +440,18 @@ QVariantMap WorkflowModel::getNode(int nodeId){
         data["description"]= node->description();
         data["operationid"] = QString::number(oid);
         data["nodeid"] = QString::number(nid);
-        data["type"] = node->type();
+        data["type"] = nodetype2string(node->type());
         data["x"] = box.min_corner().x;
         data["y"] = box.min_corner().y;
         data["w"] = box.xlength();
         data["h"] = box.ylength();
-        if ( node->type() == "operationnode"){
+        if ( node->type()== WorkFlowNode::ntOPERATION){
             QVariantList parameters;
             for(int i=0; i < node->inputCount(); ++i){
                 parameters.push_back(getParameter(node, i));
             }
             data["parameters"] = parameters;
-        }else if ( node->type() == "conditionnode"){
+        }else if ( hasType(node->type(), WorkFlowNode::ntCONDITION | WorkFlowNode::ntLOOP)){
             QVariantList test;
             QVariantList operations;
             std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
@@ -430,7 +469,7 @@ QVariantMap WorkflowModel::getNode(int nodeId){
             }
             data["ownedoperations"] = operations;
             data["tests"] = test;
-        }else if ( node->type() == "junctionnode"){
+        }else if ( node->type() == WorkFlowNode::ntJUNCTION){
             std::shared_ptr<Junction> junction = std::static_pointer_cast<Junction>(node);
             SPWorkFlowNode condition =  junction->inputRef(0).inputLink();
             data["linkedcondition"] = condition ? condition->id() : i64UNDEF;
@@ -454,7 +493,7 @@ QVariantList WorkflowModel::getTests(int conditionId) const
     QVariantList result;
     if (_workflow.isValid()){
         SPWorkFlowNode node = _workflow->nodeById(conditionId)    ;
-        if (!node || node->type() != "conditionnode")
+        if (!node || !hasType(node->type(),WorkFlowNode::ntCONDITION |WorkFlowNode::ntLOOP))
             return result;
 
         std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
@@ -646,7 +685,7 @@ bool WorkflowModel::isValidNode(qint32 nodeid,const QString& part) const
         return false;
     WorkFlowNode::ValidityCheck vc = WorkFlowNode::vcPARTIAL;
     if (part != ""){
-        if ( node->type() == "conditionnode"){
+        if ( hasType(node->type(),WorkFlowNode::ntCONDITION|WorkFlowNode::ntLOOP)){
             if ( part == "tests")
                 vc = WorkFlowNode::vcTESTS ;
             if ( part == "operations")
