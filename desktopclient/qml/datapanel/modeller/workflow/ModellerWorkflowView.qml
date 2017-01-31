@@ -20,9 +20,16 @@ Modeller.ModellerWorkArea {
     property var currentItem
     property bool canvasActive : true;
     property bool dropCondition : false
+    property bool dropLoop : false
 
     onDropConditionChanged: {
+        tools.dropLoop(false)
         tools.dropCondition(dropCondition)
+    }
+
+    onDropLoopChanged: {
+        tools.dropCondition(false)
+        tools.dropLoop(dropLoop)
     }
 
 
@@ -87,7 +94,7 @@ Modeller.ModellerWorkArea {
                     addOperation(drag.source.ilwisobjectid,drag.x,drag.y,-1, wfCanvas)
 
                 }else {
-                    if ( onItem.type === "conditionitem"){
+                    if ( onItem.type === "conditionitem" || onItem.type === "loopitem"){
                         if (onItem.inOperationList(drag.y)){
                             var p = wfCanvas.mapToItem(onItem, drag.x, drag.y)
                             var operation = addOperation(drag.source.ilwisobjectid,p.x,p.y,onItem.itemid, onItem)
