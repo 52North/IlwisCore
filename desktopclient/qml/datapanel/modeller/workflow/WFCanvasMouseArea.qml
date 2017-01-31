@@ -51,6 +51,15 @@ MouseArea {
             }
             workarea.dropCondition = false
         }
+        if( workarea.dropLoop){
+            component = Qt.createComponent("LoopItem.qml");
+            if (component.status === Component.Ready){
+                nodeid = workflow.addNode(0,{x : mouseX, y:mouseY, w:360, h:160,type:'loopnode'})
+                currentItem = component.createObject(wfCanvas, {"x": mouseX, "y": mouseY, "h" : 160, "w" : 360,"itemid" : nodeid, "scale": wfCanvas.scale});
+                workarea.conditionsList.push(currentItem)
+            }
+            workarea.dropLoop = false
+        }
         wfCanvas.canvasValid = false
     }
 
@@ -91,7 +100,6 @@ MouseArea {
                     var v2 = Math.sqrt(Math.pow(dy,2) + Math.pow(dx,2))
                     var d = v1/v2
 
-                    //   console.debug(x1,y1, x2,y2, v1,v2, d )
                     if(d < smallestDistance && d < 8)
                     {
                         smallestDistance = d;
