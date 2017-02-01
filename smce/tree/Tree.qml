@@ -39,23 +39,19 @@ Rectangle {
                     width: 250
                 }
             }
-
-            Column {
-                ListView {
-                    id: objView
-                    model: objModel
-                    width: criteriaTree.width + col1.width
-                    height: childrenRect.height
-                    delegate: objRecursiveDelegate
-                }
-                Button {
-                    text: "Add node"
-                    onClicked: {
-                        objModalInput.show()
-                    }
+            ListView {
+                id: objView
+                model: objModel
+                width: criteriaTree.width + col1.width
+                height: childrenRect.height
+                delegate: objRecursiveDelegate
+            }
+            Button {
+                text: "Add node"
+                onClicked: {
+                    objModalInput.show()
                 }
             }
-
             ListModel {
                 id: objModel
                 property Rectangle selectedItem: null
