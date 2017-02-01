@@ -48,7 +48,7 @@ Column {
             ExclusiveGroup { id: modeGroup }
             RadioButton {
                 id: defModeButton
-                text: qsTr("Evaluation definition mode")
+                text: qsTr("Evaluation definition")
                 checked: true
                 exclusiveGroup: modeGroup
                 Layout.minimumWidth: 100
@@ -58,19 +58,22 @@ Column {
             }
             RadioButton {
                 id: evalModeButton
-                text: qsTr("Evaluation mode")
+                text: qsTr("Multicriteria evaluation")
                 exclusiveGroup: modeGroup
                 Layout.minimumWidth: 100
                 onClicked: {
                     message("evalMode")
                 }
             }
-            /*RadioButton {
-                id: analysisModeButton
-                text: qsTr("Analysis mode")
+            RadioButton {
+                id: resultModeButton
+                text: qsTr("Results analysis")
                 exclusiveGroup: modeGroup
                 Layout.minimumWidth: 100
-            }*/
+                onClicked: {
+                    message("resultMode")
+                }
+            }
         }
     }
 
