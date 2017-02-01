@@ -62,25 +62,32 @@ Rectangle {
 
                     function setGoal(description, outFile) {
                         objModel.clear(); // only one goal for the tree
-                        objModel.append({id : 0, type : "Goal", name : description, weight: -1, parent : objModel, level : 0, subNodes : [], fileName : outFile})
+                        objModel.append({id : 0, type : "Goal", name : description, weight: -1, parent : null, subNodes : [], fileName : outFile})
                         return objModel.get(0)
                     }
 
                     function addMask(node, description, inFile) {
-                        node.subNodes.append({id : node.subNodes.count, type : "MaskArea", name : description, weight: -1, parent : node, level : 1, subNodes : [], fileName : inFile})
+                        node.subNodes.append({id : node.subNodes.count, type : "MaskArea", name : description, weight: -1, parent : node, subNodes : [], fileName : inFile})
                     }
 
                     function addGroup(node, description, weight, outFile) {
-                        node.subNodes.append({id : node.subNodes.count, type : "Group", weight: weight, name : description, parent : node, level : node.level + 1, subNodes : [], fileName : outFile})
+                        node.subNodes.append({id : node.subNodes.count, type : "Group", weight: weight, name : description, parent : node, subNodes : [], fileName : outFile})
                         return node.subNodes.get(node.subNodes.count - 1)
                     }
 
                     function addFactor(node, description, weight, inFile) {
-                        node.subNodes.append({id : node.subNodes.count, type : "Factor", weight: weight, name : description, parent : node, level : node.level + 1, subNodes : [], fileName : inFile})
+                        node.subNodes.append({id : node.subNodes.count, type : "Factor", weight: weight, name : description, parent : node, subNodes : [], fileName : inFile})
                     }
 
                     function addConstraint(node, description, weight, inFile) {
-                        node.subNodes.append({id : node.subNodes.count, type : "Constraint", weight: weight, name : description, parent : node, level : node.level + 1, subNodes : [], fileName : inFile})
+                        node.subNodes.append({id : node.subNodes.count, type : "Constraint", weight: weight, name : description, parent : node, subNodes : [], fileName : inFile})
+                    }
+
+                    function level(node) {
+                        if (node.parent != null)
+                            return 1 + level(node.parent)
+                        else
+                            return 0
                     }
 
                     function traverse(node) {
@@ -195,7 +202,7 @@ Rectangle {
                                     Item {
                                         id: objIndentation
                                         height: 20
-                                        width: model.level * 30
+                                        width: objModel.level(model) * 30
                                     }
                                     Image {
                                         id: subArrow
