@@ -44,7 +44,7 @@ Rectangle {
                 ListView {
                     id: objView
                     model: objModel
-                    width: childrenRect.width
+                    width: criteriaTree.width + col1.width
                     height: childrenRect.height
                     delegate: objRecursiveDelegate
                 }
@@ -353,9 +353,6 @@ Rectangle {
                         id: objRepeater
                         model: subNodes
                         delegate: objRecursiveDelegate
-                    }
-                    Component.onCompleted: {
-                        objView.width = Math.max(objView.width, width)
                     }
                 }
             }
