@@ -62,7 +62,4 @@ Item {
             }
         }
     }
-    Component.onCompleted: {
-        console.debug("www", width)
-    }
 }

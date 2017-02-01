@@ -118,7 +118,7 @@ private:
     QString currentCoordinate() const;
     void setCurrentCoordinate(const QString &var);
     QString currentLatLon() const;
-    QString viewerId() const;
+    QString viewerId();
 
     std::deque<Ilwis::OperationExpression> _commands;
     std::deque<std::pair<QString, QVariantMap>> _attributeQueue;
@@ -127,7 +127,7 @@ private:
 
 
     QVariantMap _copiedAttributes;
-    quint64 _viewerId;
+    quint64 _viewerId = Ilwis::i64UNDEF;
     Ilwis::Coordinate _currentCoordinate;
     LayerManager *_manager = 0;
     bool _showLayerInfo = true;

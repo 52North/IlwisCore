@@ -15,6 +15,7 @@ class Workflow;
 class KERNELSHARED_EXPORT WorkFlowNode : public Identity
 {
 public:
+    enum NodeTypes{ ntUNDEFINED=0, ntOPERATION=1, ntCONDITION=2, ntJUNCTION=4, ntLOOP=8, ntLOOPJUNCTION=16, ntALL=255};
     enum ValidityCheck{vcALLDEFINED,vcPARTIAL, vcTESTS, vcOPERATIONS, vcJUNCTIONS, vcAGGREGATE};
     WorkFlowNode(const QString &name, const QString &description="", quint64 id=i64UNDEF);
 
@@ -34,7 +35,7 @@ public:
     void label(const QString& lbl);
 
     virtual IOperationMetaData operation() const;
-    virtual QString type() const = 0;
+    virtual Ilwis::WorkFlowNode::NodeTypes type() const = 0;
     virtual std::vector<std::shared_ptr<WorkFlowNode>> subnodes(const QString& reason="") const;
     virtual void addSubNode(const std::shared_ptr<WorkFlowNode>& node, const QString& reason);
     virtual bool execute(ExecutionContext *ctx, SymbolTable &symTable, const OperationExpression &expression, const std::map<quint64, int> &idmap);

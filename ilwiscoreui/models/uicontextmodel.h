@@ -118,11 +118,15 @@ private:
     QObject *_rootObject = 0;
     int _activeSplit = 1;
     int _currentKey = 0;
+    std::atomic<quint64> _lastAddedId;
     QStringList _colorNames;
     std::map<QString, QColor> _colorCodes;
     WorkSpaceModel *_currentWorkSpace = 0;
     IFeatureCoverage _worldMap;
     Ilwis::IScript _consoleScript; // script that used for console use
+    std::mutex _mutexAddPanel;
+    QMutex _mutex4viewLock;
+    QWaitCondition _wait4ViewCreate;
 
     static std::unique_ptr<UIContextModel>_uicontext;
 

@@ -20,6 +20,9 @@ Rectangle {
     property var junctionsList: []
     property var itemid
     property bool isSelected : false
+    property string testColor : "#b3e6c9"
+    property string junctionColor : "#85c2e0"
+    property string operationColor : "lightblue"
 
     width: standardWidth
     height: standardHeight
@@ -61,7 +64,7 @@ Rectangle {
 
         border.width: 1
         border.color: "grey"
-        color: workflow.isValidNode(itemid,"tests") ? "#b3e6c9" : Global.errorColor
+        color: workflow.isValidNode(itemid,"tests") ? testColor : Global.errorColor
         height : 35 + detailsHeight
         width : parent.width - 8
         x : 4
@@ -132,10 +135,12 @@ Rectangle {
                                 }else{
                                     for(var t=0; t < detailsBack.values.length; ++t)
                                         workflow.setTestValues(itemid, testList.currentIndex, t, detailsBack.values[t])
+                                    conditionItem.resetColors()
+                                    setTests()
+
                                     detailsBack.values = []
                                     testDetails.model = null
                                     detailsBack.height = 0
-                                    resetColors()
 
                                 }
                             }
@@ -178,6 +183,8 @@ Rectangle {
                                             var datatype = workflow.testValueDataType(itemid, testList.currentIndex, index)
                                             attachTestFlow(type,index )
                                             att1.finishFlow(0,index)
+                                            testRectangle.detailsHeight = 0
+                                            testRectangle.height = 35
                                         }
                                     }
 
@@ -224,7 +231,7 @@ Rectangle {
         width : parent.width - 8
         anchors.horizontalCenter: parent.horizontalCenter
         height : 24
-        color : "#d9f2e4"
+        color : junctionColor
         border.width: 1
         border.color: "darkgrey"
         Button {
@@ -494,7 +501,7 @@ Rectangle {
         for(var j=0; j < operationsList.length; ++j){
             operationsList[j].removeLinkTo(nodeid)
         }
-        for(j=0; j < operationsList.length; ++j){
+        for(j=0; j < junctionsList.length; ++j){
             junctionsList[j].removeLinkTo(nodeid)
         }
         resetColors()
@@ -502,6 +509,10 @@ Rectangle {
 
     function addFlowConnection(targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter){
         workarea.addFlowConnection(flowConnections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter)
+
+    }
+
+    function deselectAll(){
 
     }
 

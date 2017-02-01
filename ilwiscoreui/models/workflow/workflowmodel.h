@@ -114,6 +114,8 @@ private:
     double scale() const;
     void scale(double s);
 
+    QString nodetype2string(WorkFlowNode::NodeTypes ntype) const;
+    WorkFlowNode::NodeTypes string2nodetype(const QString& ntype) const;
 };
 
 

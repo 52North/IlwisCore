@@ -62,12 +62,18 @@ Ilwis::OperationImplementation::State ShowCoverage::prepare(ExecutionContext *ct
         kernel()->issues()->log(_url + TR(" is not a valid coverage"));
         return sPREPAREFAILED ;
     }
+    if ( cov->isAnonymous()){
+        QString newName = "output_" + QString::number(cov->id());
+        cov->name(newName);
+        cov->connectTo(cov->resource().url(true),TypeHelper::type2name(cov->ilwisType()),"stream",IlwisObject::cmOUTPUT);
+    }
     _id = cov->id();
     _side = _expression.input<QString>(1).toLower();
     if ( !(_side == "left" || _side == "right" || _side == "other")){
         kernel()->issues()->log(_side + TR(" is not a valid side type"));
         return sPREPAREFAILED ;
     }
+
 
     return sPREPARED;
 }

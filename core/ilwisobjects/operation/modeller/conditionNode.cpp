@@ -22,9 +22,9 @@ WorkFlowCondition::WorkFlowCondition() : WorkFlowNode("")
 
 }
 
-QString WorkFlowCondition::type() const
+WorkFlowNode::NodeTypes WorkFlowCondition::type() const
 {
-    return "conditionnode"    ;
+    return WorkFlowNode::ntCONDITION;
 }
 
 std::vector<SPWorkFlowNode> WorkFlowCondition::subnodes(const QString &reason) const

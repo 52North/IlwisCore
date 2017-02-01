@@ -24,14 +24,12 @@ OperationNode::OperationNode() : WorkFlowNode("")
 OperationNode::OperationNode(quint64 operationid) : WorkFlowNode("")
  {
      Resource res = mastercatalog()->id2Resource(operationid);
-     IOperationMetaData op;
-     op.prepare(res);
-     name(op->name());
-     setDescription(op->description());
-     _operationid = operationid;
-     std::vector<SPOperationParameter> parms = op->getInputParameters();
+     _operation.prepare(res);
+     name(_operation->name());
+     setDescription(_operation->description());
+     std::vector<SPOperationParameter> parms = _operation->getInputParameters();
      QStringList required, optional;
-     op->parametersFromSyntax(required, optional);
+     _operation->parametersFromSyntax(required, optional);
      for(int i=0; i < parms.size(); ++i){
          WorkFlowParameter wfp(i, this->id(), parms[i]->name(), parms[i]->description());
          wfp.value(sUNDEF, parms[i]->type()); // empty value be we know its type
@@ -93,6 +91,7 @@ bool OperationNode::execute(ExecutionContext *ctx, SymbolTable &symTable, const 
     }
   // expr = "script " + outNames +  "=" + expr + parms + ")";
     expr = expr + parms + ")";
+    qDebug() << "executing :" << expr;
     bool ok = commandhandler()->execute(expr,ctx,symTable2);
     symTable.copyFrom(ctx, symTable2);
 
@@ -102,25 +101,21 @@ bool OperationNode::execute(ExecutionContext *ctx, SymbolTable &symTable, const 
 
 IOperationMetaData OperationNode::operation() const
 {
-    Resource resource = mastercatalog()->id2Resource(_operationid);
-    IOperationMetaData metadata;
-    metadata.prepare(resource);
-    return metadata;
+    return _operation;
 }
 
-quint64 OperationNode::operationid() const
+void OperationNode::operation(const QString& provider, const QString& syntax)
 {
-    return _operationid;
+    std::vector<Resource> items = mastercatalog()->select("catalogitemproperties.propertyname='syntax' and catalogitemproperties.propertyvalue='" + syntax + "'");
+    if ( items.size() >= 1){
+        _operation.prepare(items[0]);
+
+    }
 }
 
-void OperationNode::operationid(quint64 iod)
+WorkFlowNode::NodeTypes OperationNode::type() const
 {
-    _operationid = iod;
-}
-
-QString OperationNode::type() const
-{
-    return "operationnode";
+    return WorkFlowNode::ntOPERATION;
 }
 
 bool OperationNode::isValid(const Workflow *workflow, WorkFlowNode::ValidityCheck vc) const
@@ -133,10 +128,10 @@ bool OperationNode::isValid(const Workflow *workflow, WorkFlowNode::ValidityChec
             ok &= input(i).state() != WorkFlowParameter::pkFREE;
         }
         if ( workflow){
-            const std::vector<SPWorkFlowNode>& nodes = workflow->graph();
+            const std::vector<SPWorkFlowNode>& nodes = workflow->nodes();
             int outputsLinked = 0;
             for(auto node : nodes){
-                int count = node->type() == "junctionnode" ? 3 : node->inputCount();
+                int count = node->type() == WorkFlowNode::ntJUNCTION ? 3 : node->inputCount();
                 for(int i=0; i < count; ++i)
                     if ( node->input(i).inputLink()){
                         if (node->input(i).inputLink()->id() == id())

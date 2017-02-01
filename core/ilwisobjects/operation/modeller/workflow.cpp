@@ -31,13 +31,20 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
     std::set<NodeId> usedNodes;
     for(const auto& item : graph){
 
-        if ( item->type() == "operationnode"){ // only operations can have direct inputs; the inputs of a  junction are always set by the system,
+        if ( item->type() == WorkFlowNode::ntOPERATION){ // only operations can have direct inputs; the inputs of a  junction are always set by the system,
             //condtions have input through their tests
             for(int i=0; i < item->inputCount(); ++i){
                 if ( item->inputRef(i).inputLink())
                     usedNodes.insert(item->inputRef(i).inputLink()->id());
             }
-        }else if ( item->type() == "conditionnode"){
+        }else if ( item->type() == WorkFlowNode::ntJUNCTION){
+            if ( item->inputRef(1).inputLink()){ // link to the a true output of an operation in the false branch
+                usedNodes.insert(item->inputRef(1).inputLink()->id());
+            }
+            if ( item->inputRef(2).inputLink()){ // link to the a end output of an operation in the false branch
+                usedNodes.insert(item->inputRef(2).inputLink()->id());
+            }
+        }else if ( item->type() == WorkFlowNode::ntCONDITION){
             // test have operations which have parameters that might be linked to the rest of the graph
             auto subnodes = item->subnodes("tests");
             for(auto subnode : subnodes){
@@ -52,7 +59,7 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
     //if a node is not used as input somewhere it must be an output
     std::vector<SPWorkFlowNode> nodes;
     for(auto node : graph){
-        if ( node->type() != "operationnode") // only operationnodes can create outputs
+        if ( node->type() != WorkFlowNode::ntOPERATION) // only operationnodes can create outputs
             continue;
         auto iter = usedNodes.find(node->id());
         if (iter == usedNodes.end()){
@@ -211,6 +218,22 @@ const std::vector<SPWorkFlowNode> &Workflow::graph() const
     return _graph;
 }
 
+const std::vector<SPWorkFlowNode> Workflow::nodes(int filter) const{
+    std::vector<SPWorkFlowNode> result;
+    for(SPWorkFlowNode node : _graph){
+        if ( hasType(node->type(), filter)){
+            result.push_back(node);
+        }
+        std::vector<SPWorkFlowNode> subnodes = node->subnodes("all");
+        for(auto subnode : subnodes){
+            if ( hasType(subnode->type(), filter)){
+                result.push_back(subnode);
+            }
+        }
+    }
+    return result;
+}
+
 bool Workflow::isValid() const
 {
     bool ok = true;
@@ -240,7 +263,7 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
         // if an outputParameterIndex is defined it can be scrapped from the list of potential free parameters
         if ( p.outputParameterIndex() != iUNDEF){
             // junctionnodes are not regular operations and can be skipped; they are always intermediaries
-            if ( p.inputLink()->type() != "junctionnode")
+            if ( p.inputLink()->type() != WorkFlowNode::ntJUNCTION)
                 if ( outparams.find(p.inputLink()->id()) != outparams.end())
                     outparams[p.inputLink()->id()][p.outputParameterIndex()] = SPOperationParameter();
         }
@@ -248,7 +271,7 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
     std::vector<SPOperationParameter> result;
     std::map<NodeId, std::vector<SPOperationParameter>> outparams;
     for(const auto& item : _graph){
-        if (item->type() == "operationnode"){
+        if (item->type() == WorkFlowNode::ntOPERATION){
             IOperationMetaData md = item->operation();
             if ( md.isValid()){
                 outparams[item->id()] = md->getOutputParameters();
@@ -259,18 +282,7 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
     // linked to a previous input and thus not being free; they are scrapped from the list by
     // making its value invalied
     for(const auto& item : _graph){
-        if (item->type() == "conditionnode"){
-            //we have to check all operations in the test to see if their input matches an output
-//            std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(item);
-//            for(int i=0; i < condition->testCount(); ++i){
-//                WorkFlowCondition::Test test = condition->test(i);
-//                if ( test._operation){
-//                    for(int j=0; j < test._operation->inputCount(); ++j){
-//                        WorkFlowParameter& p = test._operation->inputRef(j);
-//                        CheckLinks(p, outparams);
-//                    }
-//                }
-//            }
+        if (hasType(item->type(), WorkFlowNode::ntCONDITION|WorkFlowNode::ntLOOP)){
             auto subnodes = item->subnodes("tests");
             for(auto subnode : subnodes){
                 for(int j=0; j < subnode->inputCount(); ++j){
@@ -280,7 +292,7 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
             }
         }
 
-        if ( item->type() == "junctionnode"){
+        if ( item->type() == WorkFlowNode::ntJUNCTION){
              //note that the true case (2 == false) isnt under consideration as
             // its output always goes to a junction so it will never appear in the outparams
             // outparams are build on 'visible'nodes and the inside of a condition is not visibile
@@ -288,7 +300,7 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
              WorkFlowParameter& p = item->inputRef(2);
              CheckLinks(p, outparams);
 
-        }else if ( item->type() == "operationnode"){
+        }else if ( item->type() == WorkFlowNode::ntOPERATION){
             for(int i=0; i < item->inputCount(); ++i){
                 WorkFlowParameter& p = item->inputRef(i);
                 CheckLinks(p, outparams);
@@ -307,48 +319,6 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
     return result;
 }
 
-void Workflow::reverseExecutionOrder(SPWorkFlowNode node,std::vector<SPWorkFlowNode>& executionOrder , std::set<SPWorkFlowNode>& usedNodes){
-    auto iter = usedNodes.find(node);
-    if (iter == usedNodes.end()){
-        usedNodes.insert(node);
-
-        executionOrder.push_back(node);
-        for(int i=0; i < node->inputCount(); ++i){
-            if ( node->inputRef(i).inputLink()){
-                Workflow::reverseExecutionOrder(node->inputRef(i).inputLink(), executionOrder, usedNodes);
-            }
-        }
-    }
-}
-
-Workflow::ExecutionOrder Workflow::executionOrder(){
-    return  Workflow::executionOrder(_graph);
-}
-
-Workflow::ExecutionOrder Workflow::executionOrder(std::vector<SPWorkFlowNode>& graph) {
-
-   ExecutionOrder executionOrder;
-   std::vector<SPWorkFlowNode> nodes = Workflow::outputNodes(graph);
-   std::set<SPWorkFlowNode> usedNodes;
-
-    for(auto node : nodes ){
-        Workflow::reverseExecutionOrder(node,  executionOrder._independentOrder, usedNodes);
-    }
-
-   for(auto node : nodes ){
-       if ( node->type() == "conditionnode"){
-          std::vector<SPWorkFlowNode> conditionOperations = node->subnodes("operations") ;
-          std::vector<SPWorkFlowNode> outnodesCondition = Workflow::outputNodes(conditionOperations);
-          std::vector<SPWorkFlowNode> order;
-          for(auto node : outnodesCondition ){
-              Workflow::reverseExecutionOrder(node, order, usedNodes);
-          }
-          executionOrder._dependentOrder[node->id()] = order;
-       }
-   }
-
-    return executionOrder;
-}
 
 NodeId Workflow::addNode(SPWorkFlowNode node, NodeId parent)
 {
@@ -375,7 +345,7 @@ SPWorkFlowNode Workflow::nodeById(NodeId id)
         if ( node->id() == id)
             return node;
         //it might be part of a condition
-        if ( node->type() == "conditionnode"){
+        if ( hasType(node->type(), WorkFlowNode::ntCONDITION|WorkFlowNode::ntLOOP)){
             std::vector<SPWorkFlowNode> subnodes = node->subnodes("all");
             for(auto subnode : subnodes)
                 if ( subnode->id() == id)
@@ -392,7 +362,7 @@ const SPWorkFlowNode Workflow::nodeById(NodeId id) const
         if ( node->id() == id)
             return node;
         //it might be part of a condition
-        if ( node->type() == "conditionnode"){
+        if ( hasType(node->type(), WorkFlowNode::ntCONDITION|WorkFlowNode::ntLOOP)){
             std::vector<SPWorkFlowNode> subnodes = node->subnodes("all");
             for(auto subnode : subnodes)
                 if ( subnode->id() == id)
@@ -403,12 +373,23 @@ const SPWorkFlowNode Workflow::nodeById(NodeId id) const
 
 }
 
+void Workflow::clearCalculatedValues(){
+    std::vector<SPWorkFlowNode> operations = nodes(WorkFlowNode::ntOPERATION);
+    for(auto operation : operations){
+        for(int i=0; i < operation->inputCount(); ++i){
+            WorkFlowParameter& parm = operation->inputRef(i);
+            if ( parm.state() == WorkFlowParameter::pkCALCULATED){
+                parm.value(sUNDEF,WorkFlowParameter::pkCALCULATED);
+            }
+        }
+    }
+}
 
 void Workflow::removeNode(NodeId id)
 {
     auto removeLinks = [&](NodeId deleteNodeId)->void {
         for(auto linkedNode : _graph){
-            int n = linkedNode->type() == "junctionnode" ? 3 :linkedNode->inputCount() ;
+            int n = linkedNode->type() == WorkFlowNode::ntJUNCTION ? 3 :linkedNode->inputCount() ;
             if ( n > 0){
                 for(int i=0; i < n; ++i)    {
                     WorkFlowParameter& param = linkedNode->inputRef(i);

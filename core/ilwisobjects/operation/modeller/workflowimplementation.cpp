@@ -37,6 +37,7 @@ bool WorkflowImplementation::execute(ExecutionContext *ctx, SymbolTable &symTabl
     ExecutionContext ctx2;
     SymbolTable symTable2;
     std::vector<SPWorkFlowNode> nodes = _workflow->outputNodes();
+    _workflow->clearCalculatedValues();
     for(SPWorkFlowNode node : nodes ) {
         node->execute(&ctx2, symTable2, _expression, _workflow->parmid2order());
     }
