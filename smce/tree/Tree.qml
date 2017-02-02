@@ -79,8 +79,8 @@ Rectangle {
                         node.subNodes.append({id : node.subNodes.count, type : "Factor", weight: weight, name : description, parent : node, subNodes : [], fileName : inFile})
                     }
 
-                    function addConstraint(node, description, weight, inFile) {
-                        node.subNodes.append({id : node.subNodes.count, type : "Constraint", weight: weight, name : description, parent : node, subNodes : [], fileName : inFile})
+                    function addConstraint(node, description, inFile) {
+                        node.subNodes.append({id : node.subNodes.count, type : "Constraint", weight: -1, name : description, parent : node, subNodes : [], fileName : inFile})
                     }
 
                     function level(node) {
@@ -374,8 +374,8 @@ Rectangle {
                 group = objModel.addGroup(goal, "(We want to) ... Protect areas that are exposed to storm surges.", 0.33, "")
                 objModel.addFactor(group, "The higher the surge hight the higher the priority to develop the Greenbelt", 1.0, "surgeh1_positive_LT_6m_resampl_25m_sub.mpr")
                 group = objModel.addGroup(goal, "(We want to)...  Protect infrastructure and reduce the cost of upgrading and maintenance of infrastucture to", 0.33, "")
-                objModel.addConstraint(group, "Inside an embankment a Greenbelt is not necessary.", 0.33, "Embanked_areas_dist_sub.mpr")
-                objModel.addConstraint(group, "If the distance of an embankment to the shore inside a Greenbelt is less than 1000m there is no need for a Greenbelt, otherwise there is full priority to develop the Greenbelt", 0.33, "Embanked_areas_dist_sub.mpr")
+                objModel.addConstraint(group, "Inside an embankment a Greenbelt is not necessary.", "Embanked_areas_dist_sub.mpr")
+                objModel.addConstraint(group, "If the distance of an embankment to the shore inside a Greenbelt is less than 1000m there is no need for a Greenbelt, otherwise there is full priority to develop the Greenbelt", "Embanked_areas_dist_sub.mpr")
                 objModel.addFactor(group, "The closer critical infrastructure is within 20 km of the Green Belt, the higher the priority an area receives.", 0.33, "Coastal_stabilization_reclamation_prioirty_sub.mpr")
                 group = objModel.addGroup(goal, "(We want to)... Stabilize the coastal zone and reclaim land", 0.2, "Dummy_map.mpr")
                 objModel.addFactor(group, "Within 50 meters of an erosion area inside the Greenbelt development receives full priority whereas beyond that disatnce from erosion areas priority is none", 0.5, "Dummy_map.mpr")
