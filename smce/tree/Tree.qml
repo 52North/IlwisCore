@@ -62,7 +62,7 @@ Rectangle {
 
                     function setGoal(description, outFile) {
                         objModel.clear(); // only one goal for the tree
-                        objModel.append({id : 0, type : "Goal", name : description, weight: -1, parent : null, subNodes : [], fileName : outFile})
+                        objModel.append({id : 0, type : "Group", name : description, weight: -1, parent : null, subNodes : [], fileName : outFile})
                         return objModel.get(0)
                     }
 
@@ -167,9 +167,7 @@ Rectangle {
                                     id: objMouseArea
                                     anchors.fill: parent
                                     onDoubleClicked: {
-                                        if (model.type == "Constraint" || model.type == "Factor" || model.type == "MaskArea") {
-                                            openMap(model.fileName)
-                                        } else {
+                                        if (model.type === "Group") {
                                             toggleNode()
                                         }
                                     }
@@ -183,20 +181,17 @@ Rectangle {
                                 }
 
                                 Row {
-                                    function getIcon(nodetype) {
-                                        if (nodetype === "Goal")
-                                            return "Goal.png"
-
-                                        if (nodetype === "Constraint")
-                                            return "Constraint.png"
-
-                                        if (nodetype === "Factor")
-                                            return "Factorplus.png"
-
+                                    function getIcon(nodetype, level) {
                                         if (nodetype === "Group")
-                                            return "Objective.png"
-
-                                        if (nodetype === "MaskArea")
+                                            if (level === 0)
+                                                return "Goal.png"
+                                            else
+                                                return "Objective.png"
+                                        else if (nodetype === "Constraint")
+                                            return "Constraint.png"
+                                        else if (nodetype === "Factor")
+                                            return "Factorplus.png"
+                                        else if (nodetype === "MaskArea")
                                             return "raster.png"
                                     }
                                     Item {
@@ -228,7 +223,7 @@ Rectangle {
 
                                     Image {
                                         id: icon
-                                        source: parent.getIcon(model.type)
+                                        source: parent.getIcon(model.type, objModel.level(model))
                                         fillMode: Image.Pad
                                     }
 
@@ -284,7 +279,7 @@ Rectangle {
                                     id: col1MouseArea
                                     anchors.fill: parent
                                     onDoubleClicked: {
-                                        if (model.fileName != "")
+                                        if (model.fileName !== "")
                                             openMap(model.fileName)
                                     }
                                     onPressed: {
@@ -301,6 +296,7 @@ Rectangle {
                                         id: col1IconRaster
                                         source: "raster.png"
                                         fillMode: Image.Pad
+                                        visible: model.fileName !== ""
                                     }
 
                                     Text {
