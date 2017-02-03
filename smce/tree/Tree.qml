@@ -8,7 +8,7 @@ import "../../../../qml/Global.js" as Global
 
 Rectangle {
     anchors.fill: parent
-    signal selNodeChanged (string node)
+    signal selNodeChanged(Text node)
 
     MouseArea {
         anchors.fill: parent
@@ -177,6 +177,7 @@ Rectangle {
                                         }
                                         objTextRowRect.state = "selected"
                                         objModel.selectedItem = objTextRowRect
+                                        selNodeChanged(objNodeName)
                                     }
                                 }
 
@@ -216,6 +217,7 @@ Rectangle {
                                                 }
                                                 objTextRowRect.state = "selected"
                                                 objModel.selectedItem = objTextRowRect
+                                                selNodeChanged(objNodeName)
                                                 toggleNode()
                                             }
                                         }
@@ -288,6 +290,7 @@ Rectangle {
                                         }
                                         col1Rect.state = "selected"
                                         objModel.selectedItem = col1Rect
+                                        selNodeChanged(col1NodeName)
                                     }
                                 }
 
