@@ -9,11 +9,6 @@ import "../../../qml/Global.js" as Global
 import "../../../qml/controls" as Controls
 
 Item {
-    //width: parent.width
-    //height: parent.height
-
-    property SMCE smceModel
-
     Row {
         Column {
             id: goalColumn
