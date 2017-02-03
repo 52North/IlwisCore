@@ -7,14 +7,16 @@ import QtQuick.Dialogs 1.1
 import "../../../../qml/Global.js" as Global
 
 Rectangle {
+    id: smceTree
     anchors.fill: parent
     signal selNodeChanged(Text node)
+    property Rectangle selectedItem: null
 
     MouseArea {
         anchors.fill: parent
         onPressed: {
-            if (objModel.selectedItem != null) {
-                objModel.selectedItem.state = "unselected"
+            if (smceTree.selectedItem != null) {
+                smceTree.selectedItem.state = "unselected"
             }
         }
     }
@@ -58,7 +60,6 @@ Rectangle {
                 }
                 ListModel {
                     id: objModel
-                    property Rectangle selectedItem: null
 
                     function setGoal(description, outFile) {
                         objModel.clear(); // only one goal for the tree
@@ -172,11 +173,11 @@ Rectangle {
                                         }
                                     }
                                     onPressed: {
-                                        if (objModel.selectedItem != null) {
-                                            objModel.selectedItem.state = "unselected"
+                                        if (smceTree.selectedItem != null) {
+                                            smceTree.selectedItem.state = "unselected"
                                         }
                                         objTextRowRect.state = "selected"
-                                        objModel.selectedItem = objTextRowRect
+                                        smceTree.selectedItem = objTextRowRect
                                         selNodeChanged(objNodeName)
                                     }
                                 }
@@ -212,11 +213,11 @@ Rectangle {
                                             width: subArrow.implicitWidth
                                             height: subArrow.implicitHeight
                                             onPressed: {
-                                                if (objModel.selectedItem != null) {
-                                                    objModel.selectedItem.state = "unselected"
+                                                if (smceTree.selectedItem != null) {
+                                                    smceTree.selectedItem.state = "unselected"
                                                 }
                                                 objTextRowRect.state = "selected"
-                                                objModel.selectedItem = objTextRowRect
+                                                smceTree.selectedItem = objTextRowRect
                                                 selNodeChanged(objNodeName)
                                                 toggleNode()
                                             }
@@ -285,11 +286,11 @@ Rectangle {
                                             openMap(model.fileName)
                                     }
                                     onPressed: {
-                                        if (objModel.selectedItem != null) {
-                                            objModel.selectedItem.state = "unselected"
+                                        if (smceTree.selectedItem != null) {
+                                            smceTree.selectedItem.state = "unselected"
                                         }
                                         col1Rect.state = "selected"
-                                        objModel.selectedItem = col1Rect
+                                        smceTree.selectedItem = col1Rect
                                         selNodeChanged(col1NodeName)
                                     }
                                 }
