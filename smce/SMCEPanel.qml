@@ -11,6 +11,8 @@ Column {
     anchors.fill: parent
     property alias toolbar : tools
     property CatalogModel smceCatalog
+    property Item manager
+    property Item form
 
     function loadSmceCatalog() {
         scanCatalog(uicontext.ilwisFolder + "/smcedata")
@@ -39,8 +41,6 @@ Column {
         id : tools        
     }
 
-    //signal nodeChanged (string node)
-
     GroupBox {
         id: mode
         Layout.fillWidth: true
@@ -53,7 +53,8 @@ Column {
                 exclusiveGroup: modeGroup
                 Layout.minimumWidth: 100
                 onClicked: {
-                    message("defMode")
+                    if (manager.analysisManager.item.loaderItem != null)
+                        manager.analysisManager.item.loaderItem.setForm("defMode")
                 }
             }
             RadioButton {
@@ -62,7 +63,8 @@ Column {
                 exclusiveGroup: modeGroup
                 Layout.minimumWidth: 100
                 onClicked: {
-                    message("evalMode")
+                    if (manager.analysisManager.item.loaderItem != null)
+                        manager.analysisManager.item.loaderItem.setForm("evalMode")
                 }
             }
             RadioButton {
@@ -71,7 +73,8 @@ Column {
                 exclusiveGroup: modeGroup
                 Layout.minimumWidth: 100
                 onClicked: {
-                    message("resultMode")
+                    if (manager.analysisManager.item.loaderItem != null)
+                        manager.analysisManager.item.loaderItem.setForm("resultMode")
                 }
             }
         }
@@ -88,11 +91,14 @@ Column {
             id: evalTree
             width : parent.width
             height : parent.height
-
             onSelNodeChanged: {
-                console.log("onSelNodeChanged signal received...")
-                nodeChanged(node)
+                console.log(node.text)
             }
         }
+    }
+
+    Component.onCompleted: {
+        manager = column.parent.parent.parent.parent.children[1];
+        form = manager.analysisManager.item.loaderItem
     }
 }
