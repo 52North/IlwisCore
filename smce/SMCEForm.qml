@@ -28,21 +28,4 @@ Item {
 
         }
     }
-
-    function smcemodeChanged(msg) {
-        console.log("ModeChanged was called with: " + msg)
-        setForm(msg)
-    }
-
-
-    function updateNodeInfo(msg) {
-        console.log("SMCEForm.qml: updateNodeInfo was called with: " + msg)
-        formEditor.item.updateNodeInfo(msg)
-    }
-
-
-
-    Component.onCompleted: {
-
-    }
 }
