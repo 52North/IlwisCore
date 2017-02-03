@@ -56,7 +56,6 @@ Item {
 
             states: [
                 State { name: "smaller"
-
                     PropertyChanges {
                         target: datapane
                         height : parent.height - 340
@@ -83,41 +82,15 @@ Item {
             height : 340
             anchors.left: parent.left
             anchors.right: parent.right
-
-            Component.onCompleted: {                
-            }
         }
     }
+
     Component.onCompleted: {
         manager.workflowView= workflowView
         manager.analisysView = analysisView
         manager.applicationView= applicationView
         manager.conceptView= conceptualView
         workflowView.workflowManager = manager.workflowManager
-
-
-        // todo: refactor these into the SMCE proj. Find a way to decouple SMCE specifics from the desktopclient's
-        manager.analisysView.onMessage.connect(informManagerMessage) // analisysView is a ModellerAnalysisView
-        manager.analisysView.onNodeChanged.connect(informManagerSelNodeChanged)
-        manager.onMessage.connect(informModeller)
-    }
-
-
-    function informManagerMessage(msg) {
-        console.log("ModellerDataPane.qml: informManager: sending: " + msg)
-        manager.sendMessage(msg)
-    }
-
-    function informManagerSelNodeChanged(msg) {
-        console.log("ModellerDataPane.qml: informManagerSelNodeChanged: sending: " + msg)
-        manager.sendSelNodeChanged(msg)
-        workflowView.workflowManager = manager.workflowManager
-    }
-
-
-    function informModeller(msg) {
-        console.log("ModellerDataPane.qml: informModeller: sending: " + msg)
-        analysisView.sendMessage(msg)
     }
 
     function addDataSource(filter, sourceName, sourceType){
@@ -243,8 +216,6 @@ Item {
     function workflowModel() {
         return workflowView.workflow
     }
-
-
 
     function setSelectedOperationId(metaid){
         datapane.setSelectedOperationId(metaid)

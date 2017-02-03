@@ -19,11 +19,7 @@ Rectangle {
     property var analisysView
     property var applicationView
     property var conceptView
-
-    property alias  analysisManager : analysisManager
-
-    signal message(string msg)
-
+    property alias analysisManager : analysisManager
     property alias workflowManager : wfManager.item
 
     TabView{
@@ -47,10 +43,9 @@ Rectangle {
 
         Tab {
             id : conceptManager
-            title: qsTr("Conceptual View")
             active: true
-            Concepts.ManagerConceptualView{ }
-
+            title: qsTr("Conceptual View")
+            Concepts.ManagerConceptualView{}
         }
 
         Tab{
@@ -64,38 +59,18 @@ Rectangle {
             id : analysisManager
             active: true
             title: qsTr("Analysis View")
-
-            //property alias  analysisv : analysisv
-
-            Analysis.ManagerAnalysisView{
-                onMsg: {
-                    message(msg)
-                }
-
-                /*Component.onCompleted: {
-                    analysisv.sendthemessagetest()
-                }*/
-            }
-            /*function sendthemessagetest() {
-                analysisv.sendthemessagetest()
-            }*/
-
+            Analysis.ManagerAnalysisView{}
         }
 
-
-        Tab{
+        Tab {
             id : wfManager
             active: true
             title: qsTr("Workflow View")
             WorkFlow.ManagerWorkflowView{}
         }
 
-
         style: DataPanel.ButtonBarTabViewStyle{}
-
     }
-
-
 
     function setLayerIndex(index){
         workflowManager.item.setLayerIndex(index)
@@ -151,17 +126,6 @@ Rectangle {
         if ( workflowManager){
             workflowManager.updateLists()
         }
-    }
-
-    // todo: create a mechanism to decouple these SMCE-specific functions
-    function sendMessage(msg) {
-        console.log("ModelManager.qml: received: " + msg)
-        analysisManager.item.smcemodeChanged(msg)
-    }
-
-    function sendSelNodeChanged(msg) {
-        console.log("ModelManager.qml: received: " + msg)
-        analysisManager.item.updateNodeInfo(msg)
     }
 }
 

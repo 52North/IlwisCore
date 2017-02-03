@@ -21,28 +21,6 @@ Item {
         formArea.source = uicontext.ilwisFolder + "/extensions/ui/" + form
     }
 
-    function sendthemessagetest() {
-        //console.log("ManagerAnalysisView.qml: generating initial message...")
-        //msg("sending this message")
-    }
-
-    // todo: decouple these functions...
-    function smcemodeChanged(msg) {
-        console.log("ManagerAnalysisView.qml: smcemodeChanged: " + msg)
-        formArea.item.smcemodeChanged(msg)
-    }
-
-    function updateNodeInfo(msg) {
-        console.log("ManagerAnalysisView.qml: updateNodeInfo was called with: " + msg)
-        formArea.item.updateNodeInfo(msg)
-    }
-
-    function setFields(msg) {
-        console.log("ManagerAnalysisView.qml: setFields was called with: " + msg)
-        formArea.item.setFields(msg)
-    }
-
-
     SplitView {
         id : layerprops
         width : parent.width - 5
