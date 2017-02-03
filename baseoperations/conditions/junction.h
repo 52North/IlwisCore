@@ -3,6 +3,7 @@
 
 namespace Ilwis {
 namespace BaseOperations{
+
 class Junction : public OperationImplementation
 {
 public:

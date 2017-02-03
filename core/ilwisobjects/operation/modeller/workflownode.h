@@ -9,8 +9,11 @@
 
 namespace Ilwis {
 
+typedef quint64 NodeId;
+
 class OperationExpression;
 class Workflow;
+typedef IlwisData<Workflow> IWorkflow;
 
 class KERNELSHARED_EXPORT WorkFlowNode : public Identity
 {
@@ -38,7 +41,6 @@ public:
     virtual Ilwis::WorkFlowNode::NodeTypes type() const = 0;
     virtual std::vector<std::shared_ptr<WorkFlowNode>> subnodes(const QString& reason="") const;
     virtual void addSubNode(const std::shared_ptr<WorkFlowNode>& node, const QString& reason);
-    virtual bool execute(ExecutionContext *ctx, SymbolTable &symTable, const OperationExpression &expression, const std::map<quint64, int> &idmap);
     virtual bool isValid(const Workflow* workflow, WorkFlowNode::ValidityCheck) const = 0;
 
 protected:
