@@ -128,8 +128,4 @@ Item {
             }
         }
     }
-
-    function updateNodeInfo(id) {
-
-    }
 }
