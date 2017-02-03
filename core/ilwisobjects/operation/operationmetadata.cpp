@@ -218,6 +218,27 @@ SPOperationParameter OperationMetaData::addParameter(SPOperationParameter parame
     return parameter;
 }
 
+QStringList OperationMetaData::choiceList(quint32 paramIndex) const
+{
+    QString expr = resource()["syntax"].toString();
+    int index = expr.indexOf("(");
+    QString params = expr.mid(index + 1);
+    QStringList parmList = params.split(",");
+    if ( paramIndex < parmList.size()){
+        QString parm = parmList[paramIndex];
+        parm.remove("!");
+        QStringList cleanParts = parm.split("=");
+        int idx =  cleanParts.size() == 1 ? 0 : 1;
+        QStringList choices = cleanParts[idx].split("|");
+        if ( choices.size() > 1){
+            return choices;
+        }
+
+    }
+    return QStringList();
+}
+
+
 //-------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------
 OperationParameter::OperationParameter(const OperationParameter &operationParameter):
@@ -451,5 +472,6 @@ void OperationResource::addValidation(quint32 parent, quint32 child, const QStri
     addProperty(prefix + "validationsource", parent);
     addProperty(prefix + "validationcondition", validationCondition);
 }
+
 
 

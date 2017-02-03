@@ -20,13 +20,14 @@ public:
     bool execute(ExecutionContext *ctx,SymbolTable& symTable);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const SymbolTable &);
-
+    ExecutionNode& executionNode(const SPWorkFlowNode& node);
 
 
 private:
     IWorkflow _workflow;
+    std::map<NodeId, ExecutionNode> _nodes;
 
-
+    void clearCalculatedValues();
 };
 }
 

@@ -44,6 +44,7 @@ public:
     Q_INVOKABLE QString getProperty(const QString& propertyname) const;
     Q_INVOKABLE bool needChoice(OperationModel *other) const;
     Q_INVOKABLE bool isLegalFlow(OperationModel * from, OperationModel *to) const;
+    Q_INVOKABLE QStringList choiceList(quint32 paramIndex) const;
     Q_INVOKABLE QStringList parameterIndexes(const QString &typefilter, bool fromOperation);
 
 

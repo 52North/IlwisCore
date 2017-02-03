@@ -66,7 +66,8 @@ HEADERS += \
     baseoperations/data/setattributetabel.h \
     baseoperations/conditions/compare.h \
     baseoperations/data/property.h \
-    baseoperations/data/connect.h
+    baseoperations/data/connect.h \
+    baseoperations/conditions/rangeoperation.h
     baseoperations/data/setattributetabel.h
 
 SOURCES += \
@@ -120,7 +121,8 @@ SOURCES += \
     baseoperations/data/setattributetabel.cpp \
     baseoperations/conditions/compare.cpp \
     baseoperations/data/property.cpp \
-    baseoperations/data/connect.cpp
+    baseoperations/data/connect.cpp \
+    baseoperations/conditions/rangeoperation.cpp
     baseoperations/data/setattributetabel.cpp
 
 

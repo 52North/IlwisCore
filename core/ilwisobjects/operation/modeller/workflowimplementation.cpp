@@ -10,6 +10,7 @@
 #include "ilwisoperation.h"
 #include "workflownode.h"
 #include "modeller/workflow.h"
+#include "executionnode.h"
 #include "workflowimplementation.h"
 
 using namespace Ilwis;
@@ -29,6 +30,12 @@ template<class T> void setOutput(const QVariant& value,ExecutionContext *ctx, Sy
     ctx->addOutput(symTable,value,obj->name(), obj->ilwisType(), obj->resource() );
 }
 
+void WorkflowImplementation::clearCalculatedValues(){
+    for(auto& node : _nodes){
+        node.second.clearCalculatedValues();
+    }
+}
+
 bool WorkflowImplementation::execute(ExecutionContext *ctx, SymbolTable &symTable)
 {
     if (_prepState == sNOTPREPARED)
@@ -37,9 +44,12 @@ bool WorkflowImplementation::execute(ExecutionContext *ctx, SymbolTable &symTabl
     ExecutionContext ctx2;
     SymbolTable symTable2;
     std::vector<SPWorkFlowNode> nodes = _workflow->outputNodes();
-    _workflow->clearCalculatedValues();
+    clearCalculatedValues();
     for(SPWorkFlowNode node : nodes ) {
-        node->execute(&ctx2, symTable2, _expression, _workflow->parmid2order());
+        ExecutionNode& exnode = executionNode(node);
+        if(!exnode.execute(&ctx2, symTable2, this, _expression, _workflow->parmid2order())){
+            return false;
+        }
     }
     for(int i=0; i < ctx2._results.size(); ++i){
 
@@ -80,6 +90,16 @@ Ilwis::OperationImplementation::State WorkflowImplementation::prepare(ExecutionC
         return sPREPAREFAILED;
     }
     return sPREPARED;
+}
+
+ExecutionNode &WorkflowImplementation::executionNode(const SPWorkFlowNode &node)
+{
+    auto iter = _nodes.find(node->id());
+    if ( iter == _nodes.end()){
+        _nodes[node->id()] = ExecutionNode(node);
+        return _nodes[node->id()];
+    }
+    return (*iter).second;
 }
 
 

@@ -11,11 +11,7 @@ public:
     Junction();
     Junction(quint64 nodeid);
     Ilwis::WorkFlowNode::NodeTypes type() const;
-
-
-    bool execute(ExecutionContext *ctx, SymbolTable &symTable, const OperationExpression &expression, const std::map<quint64, int> &idmap);
     int inputCount() const;
-
     void link2trueCase(SPWorkFlowNode trueNode, int parmIndex);
     void link2falseCase(SPWorkFlowNode falseNode, int parmIndex);
     void link2condition(Ilwis::SPWorkFlowNode conditionnode);
@@ -24,6 +20,8 @@ public:
 
 private:
 };
+
+typedef std::shared_ptr<Junction> SPJunction;
 }
 
 #endif // JUNCTION_H

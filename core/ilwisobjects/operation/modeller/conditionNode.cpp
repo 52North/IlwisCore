@@ -119,36 +119,6 @@ int WorkFlowCondition::testCount() const
     return _tests.size();
 }
 
-
-bool WorkFlowCondition::execute(ExecutionContext *ctx, SymbolTable &symTable, const OperationExpression &expression, const std::map<quint64, int> &idmap)
-{
-    bool testRestult = true;
-    for(Test& test : _tests){
-       SymbolTable symTableLocal(symTable);
-       ExecutionContext ctx;
-       if (!test._operation->execute(&ctx,symTable,expression, idmap))
-           return false;
-       if ( ctx._results.size() == 1){
-           Symbol sym = symTableLocal.getSymbol(ctx._results[0]);
-           if ( sym._type == itBOOL){
-            bool val = sym._var.toBool();
-            if ( test._pre != loNONE){
-                if ( test._pre == loNOT)
-                    val = !val;
-            }
-            if ( test._post != loAND){
-                testRestult &= val;
-            }else
-                testRestult |= val;
-           }
-       }
-    }
-    ctx->_results.push_back("testresult") ;
-    symTable.addSymbol("testresult",10000, itBOOL, testRestult);
-
-    return true;
-}
-
 void WorkFlowCondition::nodeId(quint64 id)
 {
     WorkFlowNode::nodeId(id);

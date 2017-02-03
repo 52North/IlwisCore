@@ -2,9 +2,11 @@
 #include <QFileInfo>
 #include <QUrl>
 #include "kernel.h"
+#include "ilwisdata.h"
 #include "connectorinterface.h"
 #include "resource.h"
 #include "ilwisobject.h"
+#include "operationmetadata.h"
 #include "mastercatalog.h"
 #include "resourcemodel.h"
 #include "operationmodel.h"
@@ -252,6 +254,18 @@ bool OperationModel::isLegalFlow(OperationModel *from, OperationModel *to) const
     }
     //TODO: Error gooien
     return false;
+}
+
+QStringList OperationModel::choiceList(quint32 paramIndex) const
+{
+    Resource res = mastercatalog()->id2Resource(id().toULongLong());
+    if (res.isValid()){
+        Ilwis::IOperationMetaData metadata;
+        if ( metadata.prepare(res)){
+            return metadata->choiceList(paramIndex);
+        }
+    }
+    return QStringList();
 }
 
 QStringList OperationModel::parameterIndexes(const QString &typefilter, bool fromOperation)

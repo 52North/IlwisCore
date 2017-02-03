@@ -30,69 +30,6 @@ Item {
         sideChange()
     }
 
-    function sideChange() {
-        centerItem.activeSplit = Math.abs(side)
-        mastercatalog.activeSplit = Math.abs(side) - 1
-        var tab = centerItem.getCurrentCatalogTab()
-        if ( tab ){
-            if ( "currentCatalog" in tab){
-                mastercatalog.currentUrl = tab.currentCatalog.url
-                mastercatalog.currentCatalog = tab.currentCatalog
-            }
-        }
-    }
-
-    function canSeparate(index){
-        if ( index < datatab.count && index >= 0) {
-            var tab = datatab.getTab(index)
-            if ( tab && tab.item && tab.item.canSeparate)
-                return true;
-        }
-        return false;
-    }
-
-    function addTab(name, component){
-        return datatab.addTab(name, component)
-    }
-
-    function getTab(index){
-        return datatab.getTab(index)
-    }
-
-    function insertTab(index, title, comp){
-        return datatab.insertTab(index, title, comp)
-    }
-
-    /*
-     * Remove tab by index
-     */
-    function removeTab(index){
-        datatab.removeTab(index)
-    }
-
-    /*
-     * Remove tab by name
-     */
-    function removeTabFor(name){
-        for (var i = 0; i <  datatab.count; i++) {
-            if (getTab(i).title === name) {
-                 return removeTab(i);
-            }
-        }
-    }
-
-    /*
-     * Get tab by name
-     */
-    function getTabIndexFor(name){
-        for (var i = 0; i <  datatab.count; i++) {
-            if (getTab(i).title === name) {
-                 return i;
-            }
-        }
-        return -1;
-    }
-
     onCurrentIndexChanged: {
         datatab.currentIndex = currentIndex
     }
@@ -197,6 +134,71 @@ Item {
             }
         }
     ]
+
+    function sideChange() {
+        centerItem.activeSplit = Math.abs(side)
+        mastercatalog.activeSplit = Math.abs(side) - 1
+        var tab = centerItem.getCurrentCatalogTab()
+        if ( tab ){
+            if ( "currentCatalog" in tab){
+                mastercatalog.currentUrl = tab.currentCatalog.url
+                mastercatalog.currentCatalog = tab.currentCatalog
+            }
+        }
+    }
+
+    function canSeparate(index){
+        if ( index < datatab.count && index >= 0) {
+            var tab = datatab.getTab(index)
+            if ( tab && tab.item && tab.item.canSeparate)
+                return true;
+        }
+        return false;
+    }
+
+    function addTab(name, component){
+        return datatab.addTab(name, component)
+    }
+
+    function getTab(index){
+        return datatab.getTab(index)
+    }
+
+    function insertTab(index, title, comp){
+        return datatab.insertTab(index, title, comp)
+    }
+
+    /*
+     * Remove tab by index
+     */
+    function removeTab(index){
+        datatab.removeTab(index)
+    }
+
+    /*
+     * Remove tab by name
+     */
+    function removeTabFor(name){
+        for (var i = 0; i <  datatab.count; i++) {
+            if (getTab(i).title === name) {
+                 return removeTab(i);
+            }
+        }
+    }
+
+    /*
+     * Get tab by name
+     */
+    function getTabIndexFor(name){
+        for (var i = 0; i <  datatab.count; i++) {
+            if (getTab(i).title === name) {
+                 return i;
+            }
+        }
+        return -1;
+    }
+
+
 
 
 }

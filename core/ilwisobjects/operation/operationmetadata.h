@@ -84,6 +84,8 @@ public:
     SPOperationParameter inputParameter(int index) const;
     SPOperationParameter outputParameter(int index) const;
 
+
+    QStringList choiceList(quint32 paramIndex) const;
 protected:
     void clearInputParameters();
     void clearOutputParameters();

@@ -46,58 +46,7 @@ OperationNode::OperationNode(const QString &name, const QString &description, qu
 
 }
 
-bool OperationNode::execute(ExecutionContext *ctx, SymbolTable &symTable, const OperationExpression& expression, const std::map<quint64, int>& idmap)
-{
-    auto getValue = [&](const WorkFlowParameter& parm, const OperationExpression& expression, const std::map<quint64, int>& idmap)-> QVariant{
-        auto iter = idmap.find(parm.id());
-        if  ( iter != idmap.end())       {
-            int idx = (*iter).second;
-            return expression.parm(idx).value();
-        }
-        return parm.value();
-    };
-    SymbolTable symTable2(symTable);
-    for(WorkFlowParameter& parameter : _inputParameters1){ // check if all parameters are known
-        bool hasValue = parameter.value() != sUNDEF; // we only need to go up the excecution tree if the value is not set yet
-        if ( !hasValue){
-            ExecutionContext ctx2;
-            if (parameter.inputLink()) {
-                if ( parameter.inputLink()->execute(&ctx2, symTable2, expression, idmap)) {
-                    QString outputName = ctx2._results[parameter.outputParameterIndex()];
-                    QVariant val = symTable2.getValue(outputName);
-                    QString sval = OperationHelper::variant2string(val, symTable2.getSymbol(outputName)._type);
-                    parameter.value(sval, symTable2.getSymbol(outputName)._type);
-                }else
-                    return false;
-            }
-        }
-    }
-    IOperationMetaData metadata = operation();
-    QString expr = metadata->name()  + "(";
-    QString parms;
-    for(WorkFlowParameter& inParam : _inputParameters1){
-        if ( parms != "")
-            parms += ",";
-        if ( hasType(inParam.valueType(),itILWISOBJECT)){
-            parms += getValue(inParam, expression, idmap).toString();
-        }else if ( hasType(inParam.valueType(),itINTEGER )) {
-            parms += QString::number(getValue(inParam,expression, idmap).toLongLong());
-        } else if ( hasType(inParam.valueType(),itDOUBLE | itFLOAT)) {
-            parms += QString::number(getValue(inParam,expression, idmap).toDouble());
-        } else if (hasType(inParam.valueType(),itSTRING)){
-            parms += "\"" + getValue(inParam,expression, idmap).toString() + "\"";
-        }else
-            parms += getValue(inParam,expression, idmap).toString();
-    }
-  // expr = "script " + outNames +  "=" + expr + parms + ")";
-    expr = expr + parms + ")";
-    qDebug() << "executing :" << expr;
-    bool ok = commandhandler()->execute(expr,ctx,symTable2);
-    symTable.copyFrom(ctx, symTable2);
 
-    return ok;
-
-}
 
 IOperationMetaData OperationNode::operation() const
 {

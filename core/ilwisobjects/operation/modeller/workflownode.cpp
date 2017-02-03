@@ -12,6 +12,7 @@
 #include "mastercatalog.h"
 #include "operationhelper.h"
 #include "workflownode.h"
+#include "workflow.h"
 
 using namespace Ilwis;
 
@@ -129,10 +130,6 @@ void WorkFlowNode::addSubNode(const SPWorkFlowNode &node, const QString &reason)
 
 }
 
-bool WorkFlowNode::execute(ExecutionContext *ctx, SymbolTable &symTable, const OperationExpression &expression, const std::map<quint64, int> &idmap)
-{
-    return false;
-}
 
 
 

@@ -11,7 +11,6 @@ class WorkFlowParameter;
 
 typedef std::shared_ptr<WorkFlowNode> SPWorkFlowNode;
 
-typedef quint64 NodeId;
 typedef std::map<SPWorkFlowNode, std::vector<SPWorkFlowNode>>::iterator WorkFlowMIter;
 typedef std::map<SPWorkFlowNode, std::vector<SPWorkFlowNode>>::const_iterator CWorkFlowMIter;
 typedef std::vector<SPWorkFlowNode>::iterator WorkFlowVIter;
@@ -55,9 +54,6 @@ public:
     const std::vector<SPWorkFlowNode>& graph() const;
     const std::vector<SPWorkFlowNode> nodes(int filter=WorkFlowNode::ntALL) const;
     bool isValid() const;
-    void clearCalculatedValues();
-
-
 
 private:
     std::vector<SPWorkFlowNode> _graph;

@@ -63,9 +63,11 @@ Ilwis::OperationImplementation::State ShowCoverage::prepare(ExecutionContext *ct
         return sPREPAREFAILED ;
     }
     if ( cov->isAnonymous()){
-        QString newName = "output_" + QString::number(cov->id());
+        QString newName = "output_" + QString::number(cov->id()) + ".ilwis";
         cov->name(newName);
         cov->connectTo(cov->resource().url(true),TypeHelper::type2name(cov->ilwisType()),"stream",IlwisObject::cmOUTPUT);
+        cov->store();
+        _url = cov->resource().url(true).toString();
     }
     _id = cov->id();
     _side = _expression.input<QString>(1).toLower();

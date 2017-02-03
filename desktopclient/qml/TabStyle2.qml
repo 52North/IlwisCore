@@ -24,13 +24,8 @@ TabViewStyle {
 
         property TabModel tabmodel : datapane.tab(side == 1, styleData.index)
 
-
         width: 300
         height: tabHeight
-
-
-        //Layout.minimumWidth: 500
-
 
         Item {
             id : label
@@ -51,7 +46,7 @@ TabViewStyle {
                     color: tabmodel && tabmodel.selected ? "black" : "#403F3F"
                     elide: Text.ElideMiddle
                     font.pointSize: tabmodel && tabmodel.selected ? 9 : 8
-                    font.weight: tabmodel && tabmodel.selected ? Font.DemiBold : Font.Normal
+                    font.weight: tabmodel && tabmodel.selected ? Font.Bold : Font.Normal
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 2
                 }

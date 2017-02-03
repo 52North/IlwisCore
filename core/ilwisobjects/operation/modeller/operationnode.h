@@ -12,7 +12,6 @@ public:
     OperationNode(quint64 operationid);
     OperationNode(const QString &name, const QString &description="", quint64 id=i64UNDEF);
 
-    bool execute(ExecutionContext *ctx, SymbolTable &symTable, const OperationExpression &expression, const std::map<quint64, int> &idmap);
     IOperationMetaData operation() const;
     void operation(const QString& provider, const QString& syntax);
     Ilwis::WorkFlowNode::NodeTypes type() const;
@@ -22,6 +21,9 @@ public:
 private:
     IOperationMetaData _operation;
 };
+typedef std::shared_ptr<OperationNode> SPOperationNode;
 }
+
+
 
 #endif // OPERATIONNODE_H

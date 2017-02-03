@@ -18,7 +18,7 @@
 
 using namespace Ilwis;
 
-LoopNode::LoopNode()
+LoopNode::LoopNode() : WorkFlowNode("")
 {
 
 }
@@ -28,12 +28,13 @@ Ilwis::WorkFlowNode::NodeTypes Ilwis::LoopNode::type() const
     return WorkFlowNode::ntLOOP;
 }
 
-bool LoopNode::execute(ExecutionContext *ctx, SymbolTable &symTable, const OperationExpression &expression, const std::map<quint64, int> &idmap)
-{
-    return false;
-}
-
 bool LoopNode::isValid(const Ilwis::Workflow *workflow, WorkFlowNode::ValidityCheck check) const
 {
-    return WorkFlowCondition::isValid(workflow, check);
+    return true;
+}
+
+void LoopNode::nodeId(quint64 id)
+{
+    WorkFlowNode::nodeId(id);
+    name(QString("loop_%1").arg(id));
 }

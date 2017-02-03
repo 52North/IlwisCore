@@ -27,55 +27,7 @@ Rectangle {
      * Signal, thrown if a tab is closed
      */
     signal closedTab(string title)
-    function iconSource(name) {
-        if ( name.indexOf("/") !== -1)
-            return name
 
-        var iconP = "../images/" + name
-        return iconP
-
-    }
-    function getCurrentCatalogTab(){
-        var tabview = Math.abs(activeSplit) == 1 ? lefttab : righttab
-        if ( tabview && tabview.currentIndex >= 0 && tabview.count > 0) {
-            var tab = tabview.getTab(tabview.currentIndex)
-            if ( tab && tab.item){
-                if ( "currentCatalog" in tab.item){
-                    return tab.item
-                }else{ // apparently the tab has no catalog so we look at the other side
-                    tabview = Math.abs(activeSplit) == 2 ? lefttab : righttab
-                    if ( tabview && tabview.currentIndex >= 0 && tabview.count > 0) {
-                        tab = tabview.getTab(tabview.currentIndex)
-                        if ( tab && tab.item){
-                            if ( "currentCatalog" in tab.item){
-                                activeSplit = Math.abs(activeSplit) == 2 ? 1 : 2
-                                return tab.item
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    function newCatalog(filter,outputtype, url,side){
-        datapanesplit.newPanel(filter, outputtype, url,side)
-    }
-
-
-
-    function setCatalogByIndex(currentTab, tabindex){
-        currentTab.currentIndex = tabindex
-        var catalogtab = getCurrentCatalogTab()
-        if ( catalogtab && catalogtab.currentCatalog){
-            mastercatalog.currentUrl = catalogtab.currentCatalog.url
-            mastercatalog.currentCatalog = catalogtab.currentCatalog
-        }
-    }
-
-    function changeCatalog(filter, outputtype, url){
-        datapanesplit.changePanel(filter,outputtype, url)
-    }
 
     SplitView {
         id : datapanesplit
@@ -83,7 +35,27 @@ Rectangle {
         orientation: Qt.Horizontal
         anchors.fill: parent
         anchors.leftMargin: 3
-//        property int tel: 0
+
+        DataTabView2 {
+            id : lefttab
+            property bool fillWidth : true
+            side : 1
+            objectName: "datapane_lefttab_mainui"
+            Layout.fillWidth: fillWidth
+
+            Component.onCompleted: {
+                datapane.leftSide.setTabview(lefttab.objectName)
+            }
+        }
+
+        DataTabView2 {
+            id : righttab
+            side : 2
+            objectName: "datapane_righttab_mainui"
+            Component.onCompleted: {
+                datapane.rightSide.setTabview(righttab.objectName)
+            }
+        }
 
         function closeTab(isleft, tabindex){
             var ok = datapane.removeTab(isleft, tabindex)
@@ -172,7 +144,6 @@ Rectangle {
                 }
             }
             return insertetTab
-
         }
 
         function showTabInFloatingWindow(panelside, tabIndex) {
@@ -195,8 +166,6 @@ Rectangle {
             }
         }
 
-
-
         function changeWidth(pside, partside){
             if ( partside === 0){
                 lefttab.fillWidth = false
@@ -213,29 +182,54 @@ Rectangle {
         function totalTabCount(){
             return lefttab.count + righttab.count
         }
+    }
 
-        DataTabView2 {
-            id : lefttab
-            property bool fillWidth : true
-            side : 1
-            objectName: "datapane_lefttab_mainui"
-            Layout.fillWidth: fillWidth
+    function iconSource(name) {
+        if ( name.indexOf("/") !== -1)
+            return name
 
-            Component.onCompleted: {
-                datapane.leftSide.setTabview(lefttab.objectName)
+        var iconP = "../images/" + name
+        return iconP
+
+    }
+    function getCurrentCatalogTab(){
+        var tabview = Math.abs(activeSplit) == 1 ? lefttab : righttab
+        if ( tabview && tabview.currentIndex >= 0 && tabview.count > 0) {
+            var tab = tabview.getTab(tabview.currentIndex)
+            if ( tab && tab.item){
+                if ( "currentCatalog" in tab.item){
+                    return tab.item
+                }else{ // apparently the tab has no catalog so we look at the other side
+                    tabview = Math.abs(activeSplit) == 2 ? lefttab : righttab
+                    if ( tabview && tabview.currentIndex >= 0 && tabview.count > 0) {
+                        tab = tabview.getTab(tabview.currentIndex)
+                        if ( tab && tab.item){
+                            if ( "currentCatalog" in tab.item){
+                                activeSplit = Math.abs(activeSplit) == 2 ? 1 : 2
+                                return tab.item
+                            }
+                        }
+                    }
+                }
             }
         }
+    }
 
+    function newCatalog(filter,outputtype, url,side){
+        datapanesplit.newPanel(filter, outputtype, url,side)
+    }
 
-        DataTabView2 {
-            id : righttab
-            side : 2
-            objectName: "datapane_righttab_mainui"
-            Component.onCompleted: {
-                datapane.rightSide.setTabview(righttab.objectName)
-            }
+    function setCatalogByIndex(currentTab, tabindex){
+        currentTab.currentIndex = tabindex
+        var catalogtab = getCurrentCatalogTab()
+        if ( catalogtab && catalogtab.currentCatalog){
+            mastercatalog.currentUrl = catalogtab.currentCatalog.url
+            mastercatalog.currentCatalog = catalogtab.currentCatalog
         }
+    }
 
+    function changeCatalog(filter, outputtype, url){
+        datapanesplit.changePanel(filter,outputtype, url)
     }
 
 }

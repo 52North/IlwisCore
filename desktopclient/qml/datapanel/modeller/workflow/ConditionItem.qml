@@ -20,9 +20,12 @@ Rectangle {
     property var junctionsList: []
     property var itemid
     property bool isSelected : false
-    property string testColor : "#b3e6c9"
-    property string junctionColor : "#85c2e0"
-    property string operationColor : "lightblue"
+    property string testColor : "#b6cee2"
+    property string junctionColor : "#c9d7e8"
+    property string operationColor : "#edf2f7"
+    property string icon : "../../../images/choice20.png"
+    property var conditionTest
+    property string testItem: "ConditionTests.qml"
 
     width: standardWidth
     height: standardHeight
@@ -58,156 +61,13 @@ Rectangle {
 
     }
 
-    Rectangle {
-        id: testRectangle
-        property int detailsHeight : 0
-
-        border.width: 1
-        border.color: "grey"
-        color: workflow.isValidNode(itemid,"tests") ? testColor : Global.errorColor
-        height : 35 + detailsHeight
+    Loader {
+        id : testRectangle
+        height : 35 + (item ? item.detailsHeight : 0)
         width : parent.width - 8
-        x : 4
-        y: 4
-        radius : 5
-        z : 10
-
-        DropArea {
-            x : 2
-            y : 2
-            z: 1
-
-            height : parent.height
-            width : parent.width - 4
-            enabled : true
-
-            Text {
-               anchors.centerIn: parent
-               text : qsTr("Drop test operation(s) here")
-               color : "grey"
-            }
-            onDropped: {
-                addTestOperation(drag.source.ilwisobjectid)
-            }
-
-            ListView{
-                id :testList
-                property var tests : []
-                anchors.fill: parent
-                z : 2
-                delegate: Column {
-                    id : testPart
-                    width : parent.width
-                    height : 25
-                    Row {
-                        width : parent.width
-                        height : 25
-                        ComboBox{
-                            width : 45
-                            height : parent.height
-                            model: [" ", "not"]
-                        }
-
-                        TextField{
-                            id : testText
-                            width : parent.width - 115
-                            height : parent.height
-                            readOnly: true
-                            text : modelData.name2
-                        }
-
-
-                        Button {
-                            width : 25
-                            height : 25
-                            Image {
-                                width : 20
-                                height : 20
-                                anchors.centerIn: parent
-                                source : "../../../images/zoomin20.png"
-                            }
-                            onClicked: {
-                                if ( testDetails.height == 0){
-                                    testDetails.model = null
-                                    testDetails.model = workflow.getTestParameters(itemid, index)
-                                    detailsBack.height = testDetails.model.length * 20
-                                    testList.currentIndex = index
-                                }else{
-                                    for(var t=0; t < detailsBack.values.length; ++t)
-                                        workflow.setTestValues(itemid, testList.currentIndex, t, detailsBack.values[t])
-                                    conditionItem.resetColors()
-                                    setTests()
-
-                                    detailsBack.values = []
-                                    testDetails.model = null
-                                    detailsBack.height = 0
-
-                                }
-                            }
-                        }
-
-                        ComboBox{
-                            width : 45
-                            height : parent.height
-                            model: [" ", "and", "or"]
-                        }
-                    }
-                    Rectangle {
-                        id : detailsBack
-                        width : parent.width
-                        height : 0
-                        property var values : []
-                        ListView {
-                            id : testDetails
-                            anchors.fill: parent
-                            onModelChanged: {
-                                detailsBack.height = model ? model.length * 20 : 0
-                                testRectangle.detailsHeight = detailsBack.height
-                            }
-
-                            delegate : Item{
-                                id : parmRow
-                                width : parent.width
-                                height : 20
-                                Rectangle{
-                                    id : attachDetail
-                                    anchors.right : parmvalues.left
-                                    anchors.rightMargin: 15
-                                    width : 10
-                                    height : 10
-                                    border.width: 1
-                                    MouseArea{
-                                        anchors.fill : parent
-                                        onClicked: {
-                                            testDetails.currentIndex = index
-                                            var datatype = workflow.testValueDataType(itemid, testList.currentIndex, index)
-                                            attachTestFlow(type,index )
-                                            att1.finishFlow(0,index)
-                                            testRectangle.detailsHeight = 0
-                                            testRectangle.height = 35
-                                        }
-                                    }
-
-                                }
-
-                                Controls.TextEditLabelPair{
-                                    id : parmvalues
-                                    width : Math.max(0,parent.width - 20)
-                                    labelWidth: 160
-                                    labelText: modelData.label
-                                    height : 20
-                                    content : modelData.value
-                                    onContentChanged: {
-                                        detailsBack.values[index] = content
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
+        source : testItem
+        onLoaded: {
+            conditionTest = item
         }
     }
 
@@ -352,15 +212,13 @@ Rectangle {
     }
 
     function setTests() {
-        testList.model = workflow.getTests(itemid)
+        if ( conditionTest)
+            conditionTest.setTests()
     }
 
     function addTest(index, pre, operation, value, post,type) {
-        if ( index === -1)
-            index = testList.tests.length
-        workflow.addTest2Condition(itemid,operation.id,pre, post)
-        testList.model = null
-        testList.model = workflow.getTests(itemid)
+        if ( conditionTest)
+            conditionTest.addTest(index, pre, operation, value, post,type)
     }
 
     function inOperationList(my) {
@@ -392,18 +250,11 @@ Rectangle {
      }
 
     function attachTestFlow(type, toIndex){
-        wfCanvas.showTestForm(conditionItem, att1.index, testList.currentIndex, type, toIndex)
+        wfCanvas.showTestForm(conditionItem, att1.index, testRectangle.item.currentTestIndex, type, toIndex)
     }
 
     function changeBox(){
         workflow.changeBox(itemid, x,y,width, height)
-    }
-
-    function addTestOperation(operationid){
-        var operation = operations.operation(operationid)
-        if ( operation && operation.booleanOperation){
-            addTest(-1, "", operation,"","","")
-        }
     }
 
     function createJunction(side){
@@ -470,15 +321,14 @@ Rectangle {
     }
 
     function setValue(operationItemid, fromParam, toParam){
-        var value = "link=" + operationItemid + ":" +fromParam
-        workflow.setTestValues(itemid, testList.currentIndex, toParam, value)
-        testList.model = null
-        testList.model = workflow.getTests(itemid)
+        if(conditionTest)
+            conditionTest.setValue(operationItemid, fromParam, toParam)
     }
 
     function resetColors(){
-        operationsRectangle.color = workflow.isValidNode(itemid, "operations") ? "#b3e6c9" : Global.errorColor
-        testRectangle.color = workflow.isValidNode(itemid, "tests") ? "lightblue" : Global.errorColor
+        operationsRectangle.color = workflow.isValidNode(itemid, "operations") ? operationColor : Global.errorColor
+        if ( conditionTest)
+            conditionTest.color = workflow.isValidNode(itemid, "tests") ? testColor : Global.errorColor
         conditionItem.border.color = workflow.isValidNode(itemid,"") ? "grey" : Global.errorColor
     }
 
@@ -510,6 +360,10 @@ Rectangle {
     function addFlowConnection(targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter){
         workarea.addFlowConnection(flowConnections, targetItem, sourceItem, attachRectIndex,attachSource, flowPoints, testIndex, testParameter)
 
+    }
+
+    function addTestOperation(operationid){
+        testRectangle.item.addTestOperation(operationid)
     }
 
     function deselectAll(){

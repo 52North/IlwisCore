@@ -1,14 +1,15 @@
-#ifndef NUMBERCONDITION_H
-#define NUMBERCONDITION_H
+#ifndef RANGE1_H
+#define RANGE1_H
+
 
 namespace Ilwis {
 namespace BaseOperations{
 
-class Junction : public OperationImplementation
+class RangeOperation : public OperationImplementation
 {
 public:
-    Junction();
-    Junction(quint64 metaid, const Ilwis::OperationExpression &expr);
+    RangeOperation();
+    RangeOperation(quint64 metaid, const Ilwis::OperationExpression &expr);
 
     bool execute(ExecutionContext *ctx, SymbolTable& symTable);
     static OperationImplementation * create(quint64 metaid,const Ilwis::OperationExpression& expr);
@@ -16,12 +17,11 @@ public:
 
     static quint64 createMetadata();
 
-    NEW_OPERATION(Junction);
+    NEW_OPERATION(RangeOperation);
 private:
-    QString _firstValue, _secondValue, _type;
+
 
 };
 }
 }
-
-#endif // NUMBERCONDITION_H
+#endif // RANGE1_H
