@@ -11,8 +11,8 @@ Column {
     anchors.fill: parent
     property alias toolbar : tools
     property CatalogModel smceCatalog
-    property Item manager
-    property Item form
+    property var manager
+    property var form
 
     function loadSmceCatalog() {
         scanCatalog(uicontext.ilwisFolder + "/smcedata")
