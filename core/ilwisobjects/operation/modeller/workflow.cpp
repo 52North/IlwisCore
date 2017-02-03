@@ -11,6 +11,8 @@
 #include "workflownode.h"
 #include "conditionNode.h"
 #include "junctionNode.h"
+#include "loopnode.h"
+#include "executionnode.h"
 #include "workflowimplementation.h"
 #include "modeller/workflow.h"
 
@@ -104,6 +106,19 @@ void Workflow::addFlow(NodeId fromNode, NodeId toNode, qint32 inParmIndex, qint3
     SPWorkFlowNode to = nodeById(toNode);
     if ( from && to){
         if ( inParmIndex < to->inputCount()){
+            // is this a link from an operation in a loop to a operation outside a loop, special case
+            if ( from->owner() && from->owner()->type() == WorkFlowNode::ntLOOP){
+                if ( !to->owner()){ // the target is not in the loop
+                   SPLoopNode loop = std::static_pointer_cast<LoopNode>(from->owner());
+                   int current = loop->inputCount();
+                   WorkFlowParameter parm(current, loop->id(), "parm" + QString::number(current));
+                   parm.inputLink(from, outParmIndex);
+                   loop->addInput(parm);
+                   to->inputRef(inParmIndex).inputLink(loop,current);
+
+                   return;
+                }
+            }
             to->inputRef(inParmIndex).inputLink(from,outParmIndex);
             to->inputRef(inParmIndex).attachement(attachRctIndxFrom, true);
             to->inputRef(inParmIndex).attachement(attachRctIndxTo, false);
@@ -373,17 +388,7 @@ const SPWorkFlowNode Workflow::nodeById(NodeId id) const
 
 }
 
-void Workflow::clearCalculatedValues(){
-    std::vector<SPWorkFlowNode> operations = nodes(WorkFlowNode::ntOPERATION);
-    for(auto operation : operations){
-        for(int i=0; i < operation->inputCount(); ++i){
-            WorkFlowParameter& parm = operation->inputRef(i);
-            if ( parm.state() == WorkFlowParameter::pkCALCULATED){
-                parm.value(sUNDEF,WorkFlowParameter::pkCALCULATED);
-            }
-        }
-    }
-}
+
 
 void Workflow::removeNode(NodeId id)
 {
