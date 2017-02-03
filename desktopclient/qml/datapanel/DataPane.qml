@@ -94,7 +94,6 @@ Rectangle {
                                 var ind = tabview.currentIndex
                                 tabview.currentIndex = -1;
                                 tabview.currentIndex = ind; // forces a reset of the index and thus a redraw
-                                console.log("going to call addDataSource (1)...")
                                 insertetTab.item.addDataSource(filter, url, outputtype)
                                 insertetTab.item.tabmodel = newPanel
                                 datapane.select(sidePanel.side === "left", tabview.currentIndex, true)
@@ -126,7 +125,6 @@ Rectangle {
                     insertetTab = tabview.addTab(data, component)
                     insertetTab.active = true
                     insertetTab.item.tabmodel = newPanel
-                    console.log("going to call addDataSource (2)...")
                     id = insertetTab.item.addDataSource(filter, url, outputtype)
                     activeItem = insertetTab.item
 
