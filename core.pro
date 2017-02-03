@@ -451,7 +451,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/operation/modeller/junctionNode.cpp \
     core/ilwisobjects/operation/modeller/conditionNode.cpp \
     core/ilwisobjects/operation/modeller/operationnode.cpp \
-    core/ilwisobjects/operation/modeller/loopnode.cpp
+    core/ilwisobjects/operation/modeller/loopnode.cpp \
+    core/ilwisobjects/operation/modeller/executionnode.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -978,7 +979,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/operation/modeller/conditionNode.h \
     core/ilwisobjects/operation/modeller/junctionNode.h \
     core/ilwisobjects/operation/modeller/operationnode.h \
-    core/ilwisobjects/operation/modeller/loopnode.h
+    core/ilwisobjects/operation/modeller/loopnode.h \
+    core/ilwisobjects/operation/modeller/executionnode.h
 
 OTHER_FILES += \
     core/resources/referencesystems.csv \
