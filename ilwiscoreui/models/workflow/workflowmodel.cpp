@@ -516,6 +516,11 @@ QVariantList WorkflowModel::getTests(int conditionId) const
                 testEntry["name2"] = testEntry["name2"].toString() + " " + value;
                 parameterKeys["value"] = value;
                 parameterKeys["label"] = label;
+                QStringList choices = operNode->operation()->choiceList(j);
+                QVariantList lst;
+                for(QString choice : choices)
+                    lst.append(choice);
+                parameterKeys["choicelist"] = lst;
                 parameters.push_back(parameterKeys);
             }
             testEntry["parameters"] = parameters;
