@@ -108,9 +108,9 @@ Item {
                 image.anchors.fill = mouseArea
                 image.destroy();
             }
-            if ( floatingProps && floatingProps.item){
-                floatingProps.source=""
-            }
+//            if ( floatingProps && floatingProps.item){
+//                floatingProps.source=""
+//            }
         }
         onPressed: {
             itemgrid.currentIndex = index;
