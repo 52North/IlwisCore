@@ -57,7 +57,7 @@ Rectangle {
     }
 
     function executeRunForm(runparms){
-        dataForm.executeRunForm(runparms)
+        return dataForm.executeRunForm(runparms)
     }
 
     function showSelectedOperation(item) {
