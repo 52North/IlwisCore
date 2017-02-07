@@ -115,6 +115,16 @@ void WorkFlowNode::label(const QString &lbl)
     _label = lbl;
 }
 
+NodeId WorkFlowNode::conditionIdOfTest() const
+{
+    return _conditionIdOfTest;
+}
+
+void WorkFlowNode::conditionIdOfTest(NodeId id)
+{
+    _conditionIdOfTest = id;
+}
+
 IOperationMetaData WorkFlowNode::operation() const
 {
     return IOperationMetaData();
