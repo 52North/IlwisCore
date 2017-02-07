@@ -431,7 +431,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
         IOperationMetaData metadata;
         metadata.prepare(operationid);
         auto opExpr = OperationExpression::createExpression(operationid, parameters);
-        if ( metadata.isValid()){
+        if ( metadata.isValid() && opExpr.isValid()){
             if ( metadata->resource().hasProperty("runinmainthread")){ // some operations may not run in a different thread. particular operations that invoke methods from the qml which must run in the mainthread
                 OperationWorker::run(opExpr);
             }else {
@@ -450,6 +450,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
 
             }
         }
+        return sUNDEF;
     } catch (const ErrorObject& err){
         emit error(err.message());
     }
