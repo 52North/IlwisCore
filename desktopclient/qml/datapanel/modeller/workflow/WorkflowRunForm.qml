@@ -44,7 +44,9 @@ Rectangle  {
     }
 
     function executeRunForm(runparms) {
-        operations.executeoperation(runparms.runid,appFrame.currentAppForm.formresult, runparms)
+        var ret = operations.executeoperation(runparms.id,appFrame.currentAppForm.formresult, runparms)
+        if ( ret === "?")
+            return "?"
         return appFrame.currentAppForm.formresult
     }
 }
