@@ -27,7 +27,6 @@ public:
     Workflow();
     Workflow(const Resource &resource);
 
-    Workflow::ExecutionOrder executionOrder();
     NodeId addNode(SPWorkFlowNode node, NodeId parent = i64UNDEF);
     SPWorkFlowNode nodeById(NodeId id);
     const SPWorkFlowNode nodeById(NodeId id) const;
