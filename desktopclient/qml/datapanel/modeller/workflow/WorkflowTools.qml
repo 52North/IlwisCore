@@ -73,7 +73,7 @@ ToolBar{
              opacity : enabled ? 1 : 0.2
             iconSource : iconsource("run20.png")
             onClicked: {
-                workflowManager.executeRunForm({"runid" :  workflow.id, "stepmode" :false})
+                workflowManager.executeRunForm({"id" :  workflow.id, "runid" : workflow.runid, "stepmode" :false})
             }
         }
         Controls.ToolButton {
@@ -84,9 +84,17 @@ ToolBar{
             opacity : enabled ? 1 : 0.2
             iconSource : iconsource("step20.png")
             onClicked :{
-                //  if ( stepModeCheck.checked )
-                //      modellerDataPane.workflowModel().nextStep()
-                //     modellerDataPane.nextStep()
+                var wasInStepMode = workarea.workflow.stepMode
+                workarea.workflow.stepMode = true
+                if ( !wasInStepMode){ // start the workflow; after this
+                    var ret = workflowManager.executeRunForm({"id" :  workflow.id, "runid" : workflow.runid, "stepmode" :true})
+                    console.debug("ccc", ret)
+                    if ( ret === "?"){
+                       workarea.workflow.stepMode = false
+                    }
+                }else {
+                    workarea.workflow.nextStep()
+                }
             }
         }
         Controls.ToolButton {
@@ -95,6 +103,9 @@ ToolBar{
             iconSource : iconsource("stop20.png")
             enabled : workflow ? workflow.isValid : false
             opacity : enabled ? 1 : 0.2
+            onClicked: {
+                workarea.workflow.stopExecution()
+            }
         }
 
         Controls.ToolButton {
@@ -110,18 +121,18 @@ ToolBar{
             }
         }
 
-        Controls.ToolButton {
-            height : buttonSize
-            width : buttonSize
-            id : loop
-            checked: false
-            checkable: true
-            exclusiveGroup: toolgroup
-            iconSource: iconsource("loop.png")
-            onClicked: {
-                workarea.dropLoop = checked
-            }
-        }
+//        Controls.ToolButton {
+//            height : buttonSize
+//            width : buttonSize
+//            id : loop
+//            checked: false
+//            checkable: true
+//            exclusiveGroup: toolgroup
+//            iconSource: iconsource("loop.png")
+//            onClicked: {
+//                workarea.dropLoop = checked
+//            }
+//        }
 
 
         ExclusiveGroup {
