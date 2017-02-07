@@ -504,25 +504,47 @@ void PixelIterator::cleanUp4PolyBoundaries(const std::vector<Pixel>& selectionPi
         borders.insert(_box.min_corner().x);
         borders.insert(_box.max_corner().x);
         std::vector<qint32> cleaned;
-        qint32 xposprev = iUNDEF;
+        std::vector<std::pair<qint32,qint32>> pairs;
+        qint32 prev = iUNDEF;
+        qint32 run = iUNDEF;
         for (qint32 xpos : borders) {
-            if (xposprev != iUNDEF) {
-                double middle = (xposprev + xpos) / 2.0;
-                Pixeld position (middle + 0.5, y + 0.5); // inspect relationship with the given geometry in the middle between two borders
-                Coordinate crd = _raster->georeference()->pixel2Coord(position);
-                geos::geom::Point *pnt = geometryFactory->createPoint(crd);
-                if (selection->contains(pnt)) {
-                    if ((cleaned.size() > 0) && (cleaned[cleaned.size() - 1]) == xposprev) {
-                        cleaned[cleaned.size() - 1] = xpos;
-                    } else {
-                        cleaned.push_back(xposprev);
-                        cleaned.push_back(xpos);
+            if (run == iUNDEF)
+                run = xpos;
+            if (prev != iUNDEF) {
+                if (xpos - prev != 1) {
+                    if (run != prev) {
+                        // if a run was detected save it
+                        std::pair<qint32,qint32> p1(run, prev);
+                        pairs.push_back(p1);
                     }
+                    // regular case: save pair
+                    std::pair<qint32,qint32> p(prev, xpos);
+                    pairs.push_back(p);
+                    run = xpos;
+                } else if (xpos == _box.max_corner().x) {   // special case
+                    // happens when we have a run up until and including the right edge
+                    std::pair<qint32,qint32> p(run, xpos);
+                    pairs.push_back(p);
                 }
-                delete pnt;
             }
-            xposprev = xpos;
+            prev = xpos;
         }
+        for (std::pair<qint32,qint32> p : pairs) {
+            double middle = (p.first + p.second - 1) / 2.0;
+            Pixeld position (middle + 0.5, y + 0.5); // inspect relationship with the given geometry in the middle between two borders
+            Coordinate crd = _raster->georeference()->pixel2Coord(position);
+            geos::geom::Point *pnt = geometryFactory->createPoint(crd);
+            if (selection->contains(pnt)) {
+                if ((cleaned.size() > 0) && (cleaned[cleaned.size() - 1]) == p.first) {
+                    cleaned[cleaned.size() - 1] = p.second;
+                } else {
+                    cleaned.push_back(p.first);
+                    cleaned.push_back(p.second);
+                }
+            }
+            delete pnt;
+        }
+
         _selectionPixels[y].resize(cleaned.size());
         std::copy(cleaned.begin(), cleaned.end(), _selectionPixels[y].begin() ); //copy pixels to output vector
         if (ystart == iUNDEF && cleaned.size() != 0) {

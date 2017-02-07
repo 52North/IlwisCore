@@ -1,0 +1,12 @@
+#ifndef HYDROFLOW_GLOBAL_H
+#define HYDROFLOW_GLOBAL_H
+
+#include <QtCore/qglobal.h>
+
+#if defined(GIACIS_LIBRARY)
+#  define HYDROFLOWSHARED_EXPORT Q_DECL_EXPORT
+#else
+#  define HYDROFLOWSHARED_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // HYDROFLOW_GLOBAL_H
