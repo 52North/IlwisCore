@@ -116,8 +116,24 @@ ToolBar{
             checkable: true
             exclusiveGroup: toolgroup
             iconSource: iconsource("choice20.png")
+            tooltip : qsTr("When activated the next click on the workflow panel will create a new condition item")
             onClicked: {
                 workarea.dropCondition = checked
+            }
+        }
+
+        Controls.ToolButton {
+            id : colbut
+            property bool collapsed: false
+            height : buttonSize
+            width : buttonSize
+            checkable: true
+            exclusiveGroup: toolgroup
+            iconSource: iconsource("collapse.png")
+            tooltip : qsTr("Collapses all operation to a minimized for or vice versa")
+            onClicked: {
+                colbut.collapsed = !colbut.collapsed
+                workarea.collapse(colbut.collapsed)
             }
         }
 

@@ -539,6 +539,20 @@ Modeller.ModellerWorkArea {
         nextStepWithList(operationsList)
     }
 
+    function collapseWithList(yesno, list){
+        for(var i=0; i < list.length; ++i)    {
+            list[i].state = yesno ? "minimized" : "maximized"
+            workflow.collapsed(list[i].itemid, list[i].state === "minimized")
+            if ( item.type === "conditionitem"){
+                nextStepWithList(yesno, item.operationsList)
+            }
+        }
+    }
+
+    function collapse(yesno){
+        collapseWithList(yesno, operationsList)
+    }
+
 
 
 }
