@@ -19,8 +19,15 @@ using namespace Smce;
 REGISTER_ANALYSISPATTERN(SMCE)
 
 SMCE::SMCE() : Ilwis::AnalysisPattern()
+, _tree(0)
 {
+    Init();
+}
 
+void SMCE::Init()
+{
+    _tree = new Node();
+    _tree->setGoal("New Goal", "");
 }
 
 bool SMCE::execute(const QVariantMap &inputParameters, QVariantMap &outputParameters)
@@ -33,50 +40,40 @@ IWorkflow SMCE::workflow(const IOOptions &opt)
     return IWorkflow();
 }
 
-
-Node * SMCE::getNode (Node *node, quint16 id) {
-
-    if (node->_id == id)
-        return node;
-    else {
-        if (node->_subNodes.length() >0  ) {
-            for (Node subNode: node->_subNodes) {
-                Node *found = getNode(&subNode, id);
-
-                if (found != nullptr)
-                    return found;
-            }
-        }
-    }
-    return NULL;
+Node * SMCE::root() const
+{
+    return _tree;
 }
 
-// not tested
+Node * SMCE::loadNode(QDataStream &stream)
+{
+    quint16 nrSubNodes;
+    quint8 nodeTypeInt;
+    QString name;
+    double weight;
+    QString fileName;
+    stream >> nodeTypeInt >> name >> weight >> fileName >> nrSubNodes;
+    Node * node = new Node();
+    node->setName(name);
+    node->setWeight(weight);
+    node->setType(static_cast<Node::NodeType>(nodeTypeInt));
+    node->setFileName(fileName);
+    for (int i = 0; i < nrSubNodes; ++i) {
+        node->addNode(loadNode(stream));
+    }
+    return node;
+}
+
 void SMCE::loadData(QDataStream &stream)
 {
-    Node node;
-    quint8 nodeTypeInt;
-
-    while (!stream.atEnd())
-    {
-        stream >> node._id >> node._parentId >> node._text >> nodeTypeInt >> node._weight >> node._input;
-        node._type = static_cast<Node::NodeType>(nodeTypeInt);
-
-        if (node._type == Node::NodeType::Goal )
-            _tree = node;
-        else {
-            Node *parent = getNode(&_tree, node._parentId);
-            if (parent != NULL)
-                parent->_subNodes.append(node);
-        }
-    }
+    _tree = loadNode(stream);
 }
 
 // not tested
-void SMCE::storeNode(QDataStream &stream, Node node) {
-    stream << node._id << node._parentId <<node._text << node._type << node._weight << node._input;
-    if (node._subNodes.length() > 0) {
-        for (Node subNode: node._subNodes) {
+void SMCE::storeNode(QDataStream &stream, Node * node) const {
+    stream << (quint8)(node->type()) << node->name() << node->weight() << node->fileName() << node->subNodes().length();
+    if (node->subNodes().length() > 0) {
+        for (Node * subNode: node->subNodes()) {
             storeNode(stream, subNode);
         }
     }
@@ -86,14 +83,12 @@ void SMCE::store(QDataStream &stream)
 {
     stream << type();
     AnalysisPattern::store(stream);
-
     storeNode(stream, _tree);
 }
 
 void SMCE::loadMetadata(QDataStream &stream)
 {
     AnalysisPattern::load(stream);
-    //stream >> _tree;
 }
 
 QString SMCE::type() const
@@ -101,8 +96,10 @@ QString SMCE::type() const
     return "smce";
 }
 
-SMCE::SMCE(const QString &name, const QString &description) : AnalysisPattern(name, description){
-
+SMCE::SMCE(const QString &name, const QString &description) : AnalysisPattern(name, description)
+, _tree(0)
+{
+    Init();
 }
 
 SMCE::AnalysisPattern *SMCE::create(const QString &name, const QString &description, const IOOptions &options)

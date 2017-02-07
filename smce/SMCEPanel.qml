@@ -7,7 +7,7 @@ import SMCE 1.0
 import "../../../qml/controls" as Controls
 
 Column {
-    id : column
+    id : smcePanel
     anchors.fill: parent
     property alias toolbar : tools
     property CatalogModel smceCatalog
@@ -98,7 +98,7 @@ Column {
     }
 
     Component.onCompleted: {
-        manager = column.parent.parent.parent.parent.children[1];
+        manager = smcePanel.parent.parent.parent.parent.children[1];
         form = manager.analysisManager.item.loaderItem
     }
 }

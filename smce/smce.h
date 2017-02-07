@@ -26,6 +26,7 @@ public:
     void loadMetadata(QDataStream &stream);
     virtual void loadData(QDataStream& stream);
     QString type() const;
+    Node * root() const;
     static AnalysisPattern *create(const QString& name, const QString& description, const Ilwis::IOOptions &options);
 
 signals:
@@ -33,12 +34,10 @@ signals:
 public slots:
 
 private:
-    //int _test = 244;
-
-    Node _tree;
-
-    void storeNode(QDataStream &stream, Node node);
-    Node * getNode (Node *node, quint16 id);
+    void Init();
+    Node * loadNode(QDataStream &stream);
+    void storeNode(QDataStream &stream, Node * node) const;
+    Node * _tree;
 
     NEW_ANALYSISPATTERN
 };

@@ -24,9 +24,9 @@
 
 void SMCEPlugin::registerTypes(const char *uri)
 {
-    // @uri n52.org.ilwisobjects
     qmlRegisterType<SMCEModel>(uri, 1, 0, "SMCEModel");
     qmlRegisterType<SMCESpatialAlternatives>(uri, 1, 0, "SMCESpatialAlternatives");
+    qmlRegisterType<Node>(uri, 1, 0, "Node");
 
     Ilwis::kernel()->issues()->log("Loaded module SMCE",Ilwis::IssueObject::itMessage);
 }
