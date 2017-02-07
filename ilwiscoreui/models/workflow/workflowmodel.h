@@ -45,6 +45,10 @@ public:
     Q_PROPERTY(double scale  READ scale WRITE scale NOTIFY scaleChanged)
     Q_PROPERTY(bool isValid READ isValid NOTIFY validChanged)
     Q_PROPERTY(QVariantMap translation READ translation NOTIFY translationChanged)
+    Q_PROPERTY(bool stepMode READ stepMode WRITE stepMode NOTIFY stepModeChanged)
+    Q_PROPERTY(int lastOperationNode READ lastOperationNode NOTIFY operationNodeChanged)
+    Q_PROPERTY(QVariantList outputCurrentOperation READ outputCurrentOperation NOTIFY outputCurrentOperationChanged)
+    Q_PROPERTY(qint32 runid READ runid CONSTANT)
 
     Q_INVOKABLE quint32 addNode(const QString &id, const QVariantMap &parameters);
     Q_INVOKABLE void addFlow(int nodeIdFrom, int nodeIdTo, qint32 inParmIndex, qint32 outParmIndex, int rectFrom, int rectTo);
@@ -55,6 +59,7 @@ public:
     Q_INVOKABLE QString testValueDataType(quint32 conditionId, quint32 testIndex, quint32 parameterIndex) const;
     Q_INVOKABLE QString testValue(int conditionId, int testIndex, int parameterIndex);
     Q_INVOKABLE QVariantList getTestParameters(int nodeId, int testIndex);
+    Q_INVOKABLE void updateOperationParameters(quint32 nodeid, int paramterIndex, const QString& txt);
     Q_INVOKABLE void addJunctionFlows(int junctionIdTo, const QString& operationIdFrom, int paramterIndex, int rectFrom, int rectTo, bool truecase);
     Q_INVOKABLE void changeBox(int nodeId, int x, int y, int w, int h);
     Q_INVOKABLE bool hasValueDefined(int nodeId, int parameterIndex);
@@ -72,7 +77,6 @@ public:
     Q_INVOKABLE QString generateScript(const QString &type, const QString &parameters);
     Q_INVOKABLE void toggleStepMode();
     Q_INVOKABLE void nextStep();
-    Q_INVOKABLE quint32 runid() const;
     Q_INVOKABLE void store(const QString &container, const QString &name);
     Q_INVOKABLE void setFixedValues(qint32 nodeid, const QString& formValues);
     Q_INVOKABLE bool isValidNode(qint32 nodeId, const QString &part) const;
@@ -82,8 +86,10 @@ public:
     Q_INVOKABLE bool collapsed(int nodeid) const;
     Q_INVOKABLE void collapsed(int nodeid, bool yesno);
     Q_INVOKABLE void setNodeProperty(int nodeid, int paramindex, const QString& property, const QString &value);
+    Q_INVOKABLE void stopStepMode();
 
     QString modelType() const;
+
 
 
 
@@ -93,6 +99,10 @@ signals:
     void scaleChanged();
     void translationChanged();
     void validChanged();
+    void outputCurrentOperationChanged();
+    void operationNodeChanged();
+    void stepModeChanged();
+
 public slots:
     void acceptMessage(const QString &type, const QString &subtype, const QVariantMap &parameters);
 private:
@@ -103,6 +113,8 @@ private:
     quint32 _runid;
     qint32 _lastOperationNode = -1;
     static quint32 _baserunid;
+    QVariantMap _outputsCurrentOperation;
+    QVariantList _outputs;
 
     QVariantList outputCurrentOperation();
     int lastOperationNode() const;
@@ -116,6 +128,9 @@ private:
 
     QString nodetype2string(WorkFlowNode::NodeTypes ntype) const;
     WorkFlowNode::NodeTypes string2nodetype(const QString& ntype) const;
+    void stepMode(bool yesno);
+    bool stepMode() const;
+    qint32 runid() const;
 };
 
 

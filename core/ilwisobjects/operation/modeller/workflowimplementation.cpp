@@ -36,18 +36,53 @@ void WorkflowImplementation::clearCalculatedValues(){
     }
 }
 
+void WorkflowImplementation::initStepMode(){
+    QThread *current = QThread::currentThread();
+    QVariant var = current->property("runparameters");
+    if ( var.isValid()){
+        QVariantMap values = var.toMap();
+        _stepMode = values["stepmode"].toBool();
+        if ( _stepMode){
+            bool ok;
+            quint32 id = values["runid"].toUInt(&ok);
+            if ( ok){
+                _runid = id;
+                kernel()->addSyncLock(_runid);
+            }else
+                _stepMode = false;
+        }
+    }
+}
+
 bool WorkflowImplementation::execute(ExecutionContext *ctx, SymbolTable &symTable)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
+
+    auto removeLock = [](qint32 runid)->void {
+        if ( runid != iUNDEF){
+            kernel()->removeSyncLock(runid)        ;
+        }
+    };
+
+    connect(this, &WorkflowImplementation::sendMessage, kernel(),&Kernel::acceptMessage);
+    connect(kernel(), &Kernel::sendMessage, this, &WorkflowImplementation::acceptMessage);
+    _stopExecution = false;
+    initStepMode();
+
     ExecutionContext ctx2;
     SymbolTable symTable2;
     std::vector<SPWorkFlowNode> nodes = _workflow->outputNodes();
     clearCalculatedValues();
     for(SPWorkFlowNode node : nodes ) {
+        if ( _stopExecution){
+            removeLock(_runid);
+            return false;
+        }
         ExecutionNode& exnode = executionNode(node);
         if(!exnode.execute(&ctx2, symTable2, this, _expression, _workflow->parmid2order())){
+            removeLock(_runid);
             return false;
         }
     }
@@ -67,6 +102,7 @@ bool WorkflowImplementation::execute(ExecutionContext *ctx, SymbolTable &symTabl
             ctx->addOutput(symTable, QVariant(value), sUNDEF, itSTRING, Resource());
        }
     }
+    removeLock(_runid);
 
     return true;
 }
@@ -100,6 +136,93 @@ ExecutionNode &WorkflowImplementation::executionNode(const SPWorkFlowNode &node)
         return _nodes[node->id()];
     }
     return (*iter).second;
+}
+
+void WorkflowImplementation::wait(const SPWorkFlowNode& node)
+{
+
+    if (_stepMode){
+        bool ok;
+        QVariantMap mp;
+        mp["node"] = node->id();
+        mp["id"] = _metadata->id();
+        mp["runid"] = _runid;
+        mp["condtionid"] = node->conditionIdOfTest();
+        emit sendMessage("workflow","currentnode",mp);
+
+        if ( !_initial){
+            QWaitCondition& waitc = kernel()->waitcondition(_runid, ok);
+            if ( ok){
+                _syncMutex.lock();
+                waitc.wait(&_syncMutex);
+            }
+        }
+
+    }
+}
+
+void WorkflowImplementation::wakeup()
+{
+    if (_initial){
+        _initial = false;
+        return;
+    }
+
+    _syncMutex.unlock();
+}
+
+void WorkflowImplementation::acceptMessage(const QString &type, const QString &subtype, const QVariantMap &parameters)
+{
+    if ( type == "workflow"){
+        Locker<std::mutex> lock(_lock);
+        bool ok;
+        quint64 id = parameters["runid"].toLongLong(&ok);
+        if ( ok && id == _runid){ // check if this was meant for this workflow
+            if ( subtype == "stepmode"){
+                _stepMode = parameters.contains("id") ? parameters["stepmode"].toBool() : false;
+                if ( !_stepMode){
+                    _syncMutex.unlock();
+                }
+            }else if ( subtype == "stopstepmode"){
+                _stepMode = false;
+                _stopExecution = true;
+                clearCalculatedValues();
+            }
+        }
+    }
+}
+
+void WorkflowImplementation::sendData(NodeId nodeId,ExecutionContext *ctx, SymbolTable &symTable)
+{
+    if ( _stepMode){
+        QVariantList data;
+        QVariantMap generic;
+        generic["id"] = _workflow->id();
+        generic["runid"] = _runid;
+        for(int i=0; i<ctx->_results.size(); ++i){
+            QVariantMap opdata;
+            QVariant var = symTable.getValue(ctx->_results[i]);
+            opdata["value"] = var;
+            IlwisTypes tp = symTable.ilwisType(QVariant(),ctx->_results[i]);
+            opdata["type"] = tp;
+            opdata["resultname"] = ctx->_results[i];
+            opdata["node"] = nodeId;
+            IOperationMetaData meta = _workflow->nodeById(nodeId)->operation();
+            QString name =  meta.isValid() ? QString("%2=%1(%3)").arg(meta->name()).arg(nodeId).arg(i) : "";
+            opdata["name"] = name;
+            IIlwisObject obj = OperationHelper::variant2ilwisobject(var, tp);
+            opdata["id"] = obj.isValid() ? obj->id() : i64UNDEF;
+
+            data.append(opdata);
+        }
+        generic["results"] = data;
+        emit sendMessage("workflow","outputdata",generic);
+    }
+}
+
+bool WorkflowImplementation::stopExecution() const
+{
+    return _stopExecution;
 }
 
 
