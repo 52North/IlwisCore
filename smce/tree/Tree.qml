@@ -57,7 +57,7 @@ Rectangle {
                 Button {
                     text: "Add node"
                     onClicked: {
-                        console.log(tree)
+                        console.log(Node.Factor)
                     }
                 }
                 Component {
@@ -92,7 +92,7 @@ Rectangle {
                                     id: objMouseArea
                                     anchors.fill: parent
                                     onDoubleClicked: {
-                                        if (model.type === 0) {
+                                        if (model.type === Node.Group) {
                                             toggleNode()
                                         }
                                     }
@@ -108,16 +108,16 @@ Rectangle {
 
                                 Row {
                                     function getIcon(nodetype, level) {
-                                        if (nodetype === 0)
+                                        if (nodetype === Node.Group)
                                             if (level === 0)
                                                 return "Goal.png"
                                             else
                                                 return "Objective.png"
-                                        else if (nodetype === 2)
+                                        else if (nodetype === Node.Constraint)
                                             return "Constraint.png"
-                                        else if (nodetype === 3)
+                                        else if (nodetype === Node.Factor)
                                             return "Factorplus.png"
-                                        else if (nodetype === 1)
+                                        else if (nodetype === Node.MaskArea)
                                             return "raster.png"
                                     }
                                     Item {

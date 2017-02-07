@@ -7,6 +7,7 @@
 class Node : public QObject
 {
     Q_OBJECT
+    Q_ENUMS(NodeType)
     Q_PROPERTY( QString name READ name NOTIFY nameChanged )
     Q_PROPERTY( int type READ type NOTIFY typeChanged )
     Q_PROPERTY( double weight READ weight NOTIFY weightChanged )
@@ -53,8 +54,5 @@ protected:
     QList <Node*> _subNodes;
     QString _fileName;
 };
-
-
-
 
 #endif // NODE_H
