@@ -28,7 +28,7 @@ SMCESpatialAlternativesModel::SMCESpatialAlternativesModel() :
 
 void SMCESpatialAlternativesModel::store(QDataStream &stream)
 {
-    stream << type();
+   stream << type();
    ApplicationModel::store(stream);
 }
 
