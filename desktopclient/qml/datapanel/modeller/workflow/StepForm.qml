@@ -34,6 +34,7 @@ Column {
 
 
     height : 250
+    width : 450
     spacing: 4
     BorderImage {
         id : title
@@ -54,7 +55,7 @@ Column {
         height :parent.height
         model : modellerDataPane.workflowModel() ? modellerDataPane.workflowModel().outputCurrentOperation : null
         TableViewColumn{
-            role : "vertex"
+            role : "node"
             title : qsTr("Node")
             width : 45
             delegate: Component{

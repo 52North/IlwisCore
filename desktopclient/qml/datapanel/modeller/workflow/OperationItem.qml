@@ -16,6 +16,7 @@ Rectangle {
     property var itemid;
     property var condition
     property string type : "operationitem"
+    property alias background : box.source
     transformOrigin: Item.TopLeft
     state : "maximized"
     z : 4
@@ -47,7 +48,7 @@ Rectangle {
     Image {
         id : box
         anchors.fill: parent
-        source : getBackground(-1)
+        source : getBackground(workflow.lastOperationNode)
     }
 
     Text{
@@ -99,7 +100,7 @@ Rectangle {
             ListView{
                 id : operationInParametersList
                 anchors.fill: parent
-                model : operation ? operation.inParamNames : null
+                model : getInputNames()
                 interactive: false
                 delegate:
                     Item {
@@ -301,6 +302,20 @@ Rectangle {
             }
         }
     ]
+    function resetInputNames(){
+        operationInParametersList.model = null
+        operationInParametersList.model = getInputNames()
+    }
+
+    function getInputNames(){
+        var node = workflow.getNode(itemid);
+        var parms = node["parameters"]
+        var lst = []
+        for(var i=0; i < parms.length; ++i){
+            lst.push(parms[i].label)
+        }
+        return lst
+    }
 
     function label(){
         var node = workflow.getNode(itemid)
@@ -339,11 +354,11 @@ Rectangle {
             }
         }
         if ( isSelected){
-            if ( itemid === lastitem)
+            if ( itemid == lastitem)
                 return iconsource("operationitemSelectedStep.png")
             return iconsource("operationitemSelected.png")
         }else {
-            if ( itemid === lastitem)
+            if ( itemid == lastitem)
                 return iconsource("operationitemStep.png")
             return iconsource("operationitem.png")
         }

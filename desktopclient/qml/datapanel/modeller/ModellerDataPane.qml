@@ -209,9 +209,9 @@ Item {
         //errorview.addError(id, error)
     }
 
-    function toggleStepMode(){
-        workflowView.workflow.toggleStepMode();
-    }
+//    function toggleStepMode(){
+//        workflowView.workflow.toggleStepMode();
+//    }
 
     function workflowModel() {
         return workflowView.workflow

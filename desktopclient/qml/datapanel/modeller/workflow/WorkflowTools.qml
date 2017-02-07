@@ -73,7 +73,7 @@ ToolBar{
              opacity : enabled ? 1 : 0.2
             iconSource : iconsource("run20.png")
             onClicked: {
-                workflowManager.executeRunForm({"runid" :  workflow.id, "stepmode" :false})
+                workflowManager.executeRunForm({"id" :  workflow.id, "runid" : workflow.runid, "stepmode" :false})
             }
         }
         Controls.ToolButton {
@@ -84,9 +84,17 @@ ToolBar{
             opacity : enabled ? 1 : 0.2
             iconSource : iconsource("step20.png")
             onClicked :{
-                //  if ( stepModeCheck.checked )
-                //      modellerDataPane.workflowModel().nextStep()
-                //     modellerDataPane.nextStep()
+                var wasInStepMode = workarea.workflow.stepMode
+                workarea.workflow.stepMode = true
+                if ( !wasInStepMode){ // start the workflow; after this
+                    var ret = workflowManager.executeRunForm({"id" :  workflow.id, "runid" : workflow.runid, "stepmode" :true})
+                    console.debug("ccc", ret)
+                    if ( ret === "?"){
+                       workarea.workflow.stepMode = false
+                    }
+                }else {
+                    workarea.workflow.nextStep()
+                }
             }
         }
         Controls.ToolButton {
@@ -95,6 +103,9 @@ ToolBar{
             iconSource : iconsource("stop20.png")
             enabled : workflow ? workflow.isValid : false
             opacity : enabled ? 1 : 0.2
+            onClicked: {
+                workarea.workflow.stopExecution()
+            }
         }
 
         Controls.ToolButton {
@@ -105,23 +116,39 @@ ToolBar{
             checkable: true
             exclusiveGroup: toolgroup
             iconSource: iconsource("choice20.png")
+            tooltip : qsTr("When activated the next click on the workflow panel will create a new condition item")
             onClicked: {
                 workarea.dropCondition = checked
             }
         }
 
         Controls.ToolButton {
+            id : colbut
+            property bool collapsed: false
             height : buttonSize
             width : buttonSize
-            id : loop
-            checked: false
             checkable: true
             exclusiveGroup: toolgroup
-            iconSource: iconsource("loop.png")
+            iconSource: iconsource("collapse.png")
+            tooltip : qsTr("Collapses all operation to a minimized for or vice versa")
             onClicked: {
-                workarea.dropLoop = checked
+                colbut.collapsed = !colbut.collapsed
+                workarea.collapse(colbut.collapsed)
             }
         }
+
+//        Controls.ToolButton {
+//            height : buttonSize
+//            width : buttonSize
+//            id : loop
+//            checked: false
+//            checkable: true
+//            exclusiveGroup: toolgroup
+//            iconSource: iconsource("loop.png")
+//            onClicked: {
+//                workarea.dropLoop = checked
+//            }
+//        }
 
 
         ExclusiveGroup {

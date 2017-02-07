@@ -35,6 +35,7 @@ TabView {
     }
     Tab{
         title: qsTr("Step Form")
+        StepForm{}
     }
 
 
@@ -49,7 +50,7 @@ TabView {
     }
     function executeRunForm(runparms){
         runTab.active = true
-        runTab.item.executeRunForm(runparms)
+        return runTab.item.executeRunForm(runparms)
     }
 
     function updateMetadata() {

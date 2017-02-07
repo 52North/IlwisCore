@@ -31,7 +31,7 @@ Rectangle {
     height: standardHeight
     color: "transparent"
     border.width: 1
-    border.color: workflow.isValidNode(itemid,"") ? "grey" : Global.errorColor
+    border.color: getBorderColor()
     transformOrigin: Item.TopLeft;
     radius : 5
 
@@ -162,6 +162,13 @@ Rectangle {
         operationsList.push(operation);
         operation.condition = conditionItem
         resize()
+    }
+
+    function getBorderColor() {
+        if ( workflow.lastOperationNode == itemid){
+            return "blue"
+        }
+        return workflow.isValidNode(itemid,"") ? "grey" : Global.errorColor
     }
 
     function removeFromOperationList(operationIndex) {

@@ -521,6 +521,37 @@ Modeller.ModellerWorkArea {
                                  "type" : "flowconnection"
                              })
     }
+    function nextStepWithList(list) {
+        for(var i=0; i < list.length; ++i)    {
+            if ( list[i].itemid == workflow.lastOperationNode){
+                list[i].background = list[i].getBackground(workflow.lastOperationNode)
+            }else{
+                var item = list[i]
+                if ( item.type === "conditionitem"){
+                    nextStepWithList(item.operationsList)
+                }
+                list[i].background = list[i].getBackground(-1)
+            }
+        }
+    }
+
+    function nextStep(){
+        nextStepWithList(operationsList)
+    }
+
+    function collapseWithList(yesno, list){
+        for(var i=0; i < list.length; ++i)    {
+            list[i].state = yesno ? "minimized" : "maximized"
+            workflow.collapsed(list[i].itemid, list[i].state === "minimized")
+            if ( item.type === "conditionitem"){
+                nextStepWithList(yesno, item.operationsList)
+            }
+        }
+    }
+
+    function collapse(yesno){
+        collapseWithList(yesno, operationsList)
+    }
 
 
 

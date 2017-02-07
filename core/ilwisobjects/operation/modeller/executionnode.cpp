@@ -56,25 +56,32 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
         }
         return parameterValue(parm.order());
     };
+    //auto iter = ctx->_additionalInfo.find("testoperation");
     SymbolTable symTable2(symTable);
     int inputCount = _node->inputCount();
     for(int i=0; i < inputCount; ++i){
+        if ( workflowImpl->stopExecution())
+            return false;
         WorkFlowParameter& parameter = _node->inputRef(i);
         if ( parameterValue(i) == sUNDEF){
-            ExecutionContext ctx2;
             if (parameter.inputLink()) {
                 ExecutionNode& exNode = workflowImpl->executionNode(parameter.inputLink());
+                ExecutionContext ctx2;
                 if ( exNode.execute(&ctx2, symTable2, workflowImpl, expression, idmap)) {
                     QString outputName = ctx2._results[parameter.outputParameterIndex()];
                     QVariant val = symTable2.getValue(outputName);
                     QString sval = OperationHelper::variant2string(val, symTable2.getSymbol(outputName)._type);
                     parameter.value("", symTable2.getSymbol(outputName)._type);
                     _parameterValues[i] = sval;
-                }else
+                }else{
                     return false;
+                }
             }
         }
     }
+    if ( workflowImpl->stopExecution())
+        return false;
+
     SPOperationNode opNode = std::static_pointer_cast<OperationNode>(_node);
     IOperationMetaData metadata = opNode->operation();
     QString expr = metadata->name()  + "(";
@@ -94,9 +101,15 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
         }else
             parms += getValue(inParam,expression, idmap).toString();
     }
-  // expr = "script " + outNames +  "=" + expr + parms + ")";
     expr = expr + parms + ")";
+
+    workflowImpl->wait(_node);
+
     bool ok = commandhandler()->execute(expr,ctx,symTable2);
+
+    workflowImpl->sendData(_node->id(), ctx, symTable2);
+    workflowImpl->wakeup();
+
     symTable.copyFrom(ctx, symTable2);
 
     return ok;
@@ -111,6 +124,7 @@ bool ExecutionNode::executeCondition(ExecutionContext *ctx, SymbolTable &symTabl
        const WorkFlowCondition::Test& test = condition->test(i);
        SymbolTable symTableLocal(symTable);
        ExecutionContext ctx;
+       ctx._additionalInfo["testoperation"] = true;
        ExecutionNode& exNode = workflowImpl->executionNode(test._operation);
        if (!exNode.execute(&ctx,symTable,workflowImpl, expression, idmap))
            return false;

@@ -134,6 +134,7 @@ void WorkflowModel::addTest2Condition(int conditionId, const QString &operationI
             LogicalOperator lpost = MathHelper::string2logicalOperator(post);
 
             condition->addTest(operNode, lpre, lpost);
+            operNode->conditionIdOfTest(condition->id());
                emit validChanged();
         }
     } catch(const ErrorObject&){}
@@ -337,6 +338,7 @@ QVariantMap WorkflowModel::getParameter(const SPWorkFlowNode& node, int index)
     QVariantMap parm;
     WorkFlowParameter& p = node->inputRef(index);
     parm["name"] = p.name();
+    parm["label"] = p.label();
     parm["description"] = p.description();
     parm["index"] = index;
     parm["flowlabel"] = p.flowLabel();
@@ -425,6 +427,23 @@ WorkFlowNode::NodeTypes WorkflowModel::string2nodetype(const QString &ntype) con
     return WorkFlowNode::ntUNDEFINED;
 }
 
+void WorkflowModel::stepMode(bool yesno)
+{
+
+    _stepMode = yesno;
+    toggleStepMode();
+}
+
+bool WorkflowModel::stepMode() const
+{
+    return _stepMode;
+}
+
+qint32 WorkflowModel::runid() const
+{
+    return _runid;
+}
+
 QVariantMap WorkflowModel::getNode(int nodeId){
     QVariantMap data;
     if (_workflow.isValid()){
@@ -488,6 +507,19 @@ QVariantList WorkflowModel::getTestParameters(int nodeId, int testIndex) {
     }
     return parameters;
 }
+
+
+void WorkflowModel::updateOperationParameters(quint32 nodeid, int order, const QString &txt)
+{
+    if (_workflow.isValid()){
+        SPWorkFlowNode node = _workflow->nodeById(nodeid);
+        if ( node && node->type() == WorkFlowNode::ntOPERATION){
+            if ( order < node->inputCount())
+                node->inputRef(order).label(txt);
+        }
+    }
+}
+
 QVariantList WorkflowModel::getTests(int conditionId) const
 {
     QVariantList result;
@@ -618,6 +650,7 @@ void WorkflowModel::toggleStepMode()
     QVariantMap parms;
     parms["stepmode"] = _stepMode;
     parms["id"] = _workflow->id();
+    parms["runid"] = _runid;
     emit sendMessage("workflow","stepmode", parms);
 
 }
@@ -631,9 +664,12 @@ void WorkflowModel::nextStep()
     }
 }
 
-quint32 WorkflowModel::runid() const
-{
-    return _runid;
+void WorkflowModel::stopStepMode(){
+    QVariantMap parms;
+    parms["id"] = _workflow->id();
+    parms["runid"] = _runid;
+    _stepMode = false;
+    emit sendMessage("workflow","stopstepmode", parms);
 }
 
 void WorkflowModel::store(const QString& container, const QString& name)
@@ -699,7 +735,7 @@ bool WorkflowModel::isValidNode(qint32 nodeid,const QString& part) const
                 vc = WorkFlowNode::vcJUNCTIONS;
         }
     }
-    if ( node->owner()){
+    if ( node->owner() && node->owner()->type() == WorkFlowNode::ntCONDITION){
         vc = WorkFlowNode::vcALLDEFINED;
     }
     return node->isValid(_workflow.ptr(), vc);
@@ -783,26 +819,37 @@ bool WorkflowModel::isValid() const
 void WorkflowModel::acceptMessage(const QString &type, const QString &subtype, const QVariantMap &parameters)
 {
     if ( type == "workflow"){
-//        bool ok;
-//        quint64 id = parameters["id"].toLongLong(&ok);
-//        if ( ok && id == _workflow->id()){ // check if this was meant for this workflow
-//            if ( subtype == "outputdata"){
-//                _outputsCurrentOperation = parameters;
-//                QVariantList newlist = _outputsCurrentOperation["results"].value<QVariantList>();
-//                _lastOperationNode = newlist[0].toMap()["vertex"].toInt();
-//                _outputs.append(newlist);
-//                emit outputCurrentOperationChanged();
-//                emit operationNodeChanged();
-//            }else if ( subtype == "currentvertex"){
-//                _lastOperationNode = parameters["vertex"].toInt();
-//            }
-//        }
+        bool ok;
+        quint64 id = parameters["runid"].toLongLong(&ok);
+        if ( ok && id == _runid){ // check if this was meant for this workflow
+            if ( subtype == "outputdata"){
+                _outputsCurrentOperation = parameters;
+                QVariantList newlist = _outputsCurrentOperation["results"].value<QVariantList>();
+                _lastOperationNode = newlist[0].toMap()["node"].toInt();
+
+                _outputs.append(newlist);
+                emit outputCurrentOperationChanged();
+                emit operationNodeChanged();
+            }else if ( subtype == "currentnode"){
+                bool ok;
+                quint64 conditionid = parameters["condtionid"].toULongLong(&ok);
+                if ( ok && conditionid != i64UNDEF){
+                    _lastOperationNode = conditionid;
+                }else
+                    _lastOperationNode = parameters["node"].toInt();
+            }
+        }
     }
 }
 
 int WorkflowModel::lastOperationNode() const
 {
   return _lastOperationNode;
+}
+
+QVariantList WorkflowModel::outputCurrentOperation()
+{
+    return _outputs;
 }
 
  QString WorkflowModel::modelType() const

@@ -138,7 +138,7 @@ bool TermNode::doMethodStatement(SymbolTable &symbols, int scope, ExecutionConte
     QString expression = _id->id() + parms;
     bool ok = Ilwis::commandhandler()->execute(expression, ctx, symbols);
     if ( !ok )
-        throw ScriptExecutionError(TR("Expression execution error in script; script aborted. See log for further details"));
+        throw ScriptExecutionError(TR("Expression execution error in script"));
 
     for(int i = 0; i < ctx->_results.size(); ++i){
         _value.addValue(symbols.getValue(ctx->_results[i]), ctx->_results[i]);

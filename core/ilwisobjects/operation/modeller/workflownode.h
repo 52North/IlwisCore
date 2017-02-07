@@ -36,6 +36,8 @@ public:
     void owner(std::shared_ptr<WorkFlowNode> own);
     virtual QString label() const;
     void label(const QString& lbl);
+    NodeId conditionIdOfTest() const;
+    void conditionIdOfTest(NodeId id);
 
     virtual IOperationMetaData operation() const;
     virtual Ilwis::WorkFlowNode::NodeTypes type() const = 0;
@@ -48,6 +50,7 @@ protected:
     BoundingBox _box;
     QString _label;
     bool _collapsed = false;
+    NodeId _conditionIdOfTest = i64UNDEF;
     std::shared_ptr<WorkFlowNode> _owner;
 };
 
