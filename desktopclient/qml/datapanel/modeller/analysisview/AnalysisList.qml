@@ -11,10 +11,15 @@ Item {
     width : 320
     height: parent.height
 
-    function refreshList(){
+    function refreshList() {
        analysisNamesList.model = null
        analysisNamesList.model = modellerDataPane.model.analysisNames
+    }
 
+    function selectLastListItem() {
+        if (analysisNamesList.model) {
+            analysisNamesList.currentIndex = analysisNamesList.model.length - 1
+        }
     }
 
     Column {
@@ -62,7 +67,14 @@ Item {
                 model : modellerDataPane.model ? modellerDataPane.model.analysisNames : null
                 anchors.fill: parent
                 anchors.margins: 3
-                highlight : Rectangle{width : parent.width;height : 18;color : Global.selectedColor}
+                highlight : Rectangle{width : parent ? parent.width : 0;height : 18;color : Global.selectedColor}
+                onCurrentIndexChanged: {
+                    var analysis = modellerDataPane.model.analysisPattern(analysisNamesList.currentIndex);
+                    if ( analysis){
+                        analisysView.currentAnalysis = analysis
+                        analysisv.refreshFormArea(analysis.panel("form"))
+                    }
+                }
                 delegate: Text{
                     width : parent.width
                     height : 16
@@ -71,11 +83,6 @@ Item {
                         anchors.fill: parent
                         onClicked: {
                             analysisNamesList.currentIndex = index
-                            var analysis = modellerDataPane.model.analysisPattern(index);
-                            if ( analysis){
-                                analisysView.currentAnalysis = analysis
-                                analysisv.refreshFormArea(analysis.panel("form"))
-                            }
                         }
                     }
                 }

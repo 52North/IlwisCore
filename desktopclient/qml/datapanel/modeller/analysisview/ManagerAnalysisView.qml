@@ -30,6 +30,9 @@ Item {
             firstColumn.refreshList();
         }
 
+        function selectLastListItem() {
+            firstColumn.selectLastListItem()
+        }
 
         y : 2
         AnalysisList {
