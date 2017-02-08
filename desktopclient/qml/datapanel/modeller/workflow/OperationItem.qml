@@ -392,11 +392,10 @@ Rectangle {
                 if ( node.type === "operationnode"){
                     var lst = node["parameters"]
                     //console.debug(flow.source.itemid, flow.target.itemid,node,node.type, node.itemid) //, lst.length, item.flowPoints.toParameterIndex,lst[item.flowPoints.toParameterIndex].flowlabel)
-                    label = node["parameters"][flow.flowPoints.toParameterIndex].flowlabel
+                    label = node["parameters"][flow.flowPoints.fromParameterIndex].flowlabel
                 }else if ( node.type === "junctionnode"){
                     label = flow.flowPoints.fromParameterIndex.toString()
                 }
-
                 drawInfoBox(ctx, pt1,pt2, label)
             }
         }
