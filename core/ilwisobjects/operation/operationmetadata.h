@@ -63,7 +63,6 @@ public:
     OperationMetaData();
     OperationMetaData(const Resource& resource);
     ~OperationMetaData();
-    virtual void init();
     IlwisTypes ilwisType() const;
 
     SPOperationParameter newParameter(OperationParameter::ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString& description=sUNDEF, bool optional=false);
@@ -86,6 +85,7 @@ public:
 
 
     QStringList choiceList(quint32 paramIndex) const;
+    bool prepare(const Ilwis::IOOptions &opt=IOOptions());
 protected:
     void clearInputParameters();
     void clearOutputParameters();

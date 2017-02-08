@@ -14,14 +14,13 @@ OperationMetaData::OperationMetaData()
 
 OperationMetaData::OperationMetaData(const Resource &resource) : IlwisObject(resource)
 {
-    init();
 }
 
 OperationMetaData::~OperationMetaData()
 {
 }
 
-void OperationMetaData::init()
+bool OperationMetaData::prepare(const IOOptions&opt)
 {
     QString pcount = resource()["inparameters"].toString();
     if ( pcount != "") {
@@ -37,6 +36,7 @@ void OperationMetaData::init()
         quint16 maxCountParameters = parts.back().toInt();
         parmfromResource(maxCountParameters,"pout");
     }
+    return true;
 }
 
 void OperationMetaData::parmfromResource(int n, const QString& base)

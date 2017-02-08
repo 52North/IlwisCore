@@ -68,6 +68,7 @@ private:
     static std::vector<SPWorkFlowNode> outputNodes(const std::vector<Ilwis::SPWorkFlowNode> graph);
 
 
+    void reworkInputNames(SPWorkFlowNode &node);
 };
 typedef IlwisData<Workflow> IWorkflow;
 }

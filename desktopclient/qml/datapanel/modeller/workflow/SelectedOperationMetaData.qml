@@ -12,11 +12,14 @@ Rectangle {
     width : parent.width
     height : parent.height
     color: "white"
+    property int commonWidth : 530
     Controls.TextEditLabelPair{
         x : 5
+        y : 4
         id : label
         labelText: qsTr("Label")
         labelWidth: 80
+        width : commonWidth
         content : getLabel()
         onContentChanged: {
             if (workflowView.currentItem){
@@ -25,7 +28,7 @@ Rectangle {
                     workflowView.currentItem.setLabel(content)
                 }else{
                     var flow = workflowView.currentItem
-                    workflowView.workflow.setNodeProperty(flow.target.itemid, flow.flowPoints.toParameterIndex,"flowlabel", content)
+                    workflowView.workflow.setNodeProperty(flow.target.itemid, flow.flowPoints.fromParameterIndex,"flowlabel", content)
                     workflowView.refreshCanvas()
                 }
             }
@@ -36,7 +39,9 @@ Rectangle {
         width: parent.width
         anchors.top: label.bottom
         anchors.topMargin: 4
-        height : 100
+        height : (workflowView.currentItem && workflowView.currentItem.type) === "operationitem" ? 100 : 0
+        enabled: height > 0
+        visible: height > 0
         Text { id : plabel; text : qsTr("Input Parameter labels"); height : 22; width : 200; font.bold: true; visible : (workflowView.currentItem && workflowView.currentItem.type) === "operationitem"}
         ScrollView {
             width: parent.width
@@ -46,14 +51,14 @@ Rectangle {
                 anchors.fill: parent
                 model : (workflowView.currentItem && workflowView.currentItem.type === "operationitem")? workflowView.currentItem.getInputNames() : null
                 delegate: Item {
-                    width: 300
+                    width: commonWidth
                     height : 20
                     Controls.TextEditLabelPair{
                         x : 3
                         labelText: index
                         content: modelData
                         labelWidth: 80
-                        width : parent.width-10
+                        width : parent.width
                         height: parent.height
 
                         onContentChanged: {
@@ -76,7 +81,7 @@ Rectangle {
         ScrollView {
             anchors.fill: parent
             Controls.TextAreaLabelPair{
-                width : 530
+                width : commonWidth
                 height : (lineCount + 1) * 20
 
                 id : txt
@@ -96,9 +101,6 @@ Rectangle {
                     }
                 }
             }
-            Component.onCompleted: {
-                console.debug("a", width, height, txt.width, txt.height)
-            }
         }
     }
     function getLabel() {
@@ -108,7 +110,7 @@ Rectangle {
             } else{
                 var flow = workflowView.currentItem
                 var node = workflowView.workflow.getNode(flow.target.itemid)
-                var txt = node["parameters"][flow.flowPoints.toParameterIndex].flowlabel
+                var txt = node["parameters"][flow.flowPoints.fromParameterIndex].flowlabel
                 return txt
             }
         }

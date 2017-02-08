@@ -202,8 +202,6 @@ IlwisObject *InternalIlwisObjectFactory::createOperationMetaData(const Resource&
     }
     OperationMetaData *metadata = createFromResource<OperationMetaData>(resource, options);
 
-    metadata->init();
-
     return metadata;
 }
 
