@@ -14,12 +14,20 @@ Rectangle {
     property var selectedItem: null
     property var tree : smcePanel.manager.analisysView.currentAnalysis.tree()
 
+    function selectItem(item) {
+        if (selectedItem != null) {
+            selectedItem.state = "unselected"
+        }
+        if (item != null) {
+            item.state = "selected"
+            selectedItem = item
+        }
+    }
+
     MouseArea {
         anchors.fill: parent
         onPressed: {
-            if (smceTree.selectedItem != null) {
-                smceTree.selectedItem.state = "unselected"
-            }
+            selectItem(null)
         }
     }
     Column {
@@ -97,11 +105,7 @@ Rectangle {
                                         }
                                     }
                                     onPressed: {
-                                        if (smceTree.selectedItem != null) {
-                                            smceTree.selectedItem.state = "unselected"
-                                        }
-                                        objTextRowRect.state = "selected"
-                                        smceTree.selectedItem = objTextRowRect
+                                        selectItem(objTextRowRect)
                                         selNodeChanged(objNodeName)
                                     }
                                 }
@@ -137,11 +141,7 @@ Rectangle {
                                             width: subArrow.implicitWidth
                                             height: subArrow.implicitHeight
                                             onPressed: {
-                                                if (smceTree.selectedItem != null) {
-                                                    smceTree.selectedItem.state = "unselected"
-                                                }
-                                                objTextRowRect.state = "selected"
-                                                smceTree.selectedItem = objTextRowRect
+                                                selectItem(objTextRowRect)
                                                 selNodeChanged(objNodeName)
                                                 toggleNode()
                                             }
@@ -201,6 +201,10 @@ Rectangle {
                                 height: childrenRect.height
                                 state: "unselected"
 
+                                function markDropCandidate(selected) {
+                                    border.color = selected ? Global.edgecolor : Global.mainbackgroundcolor
+                                }
+
                                 MouseArea {
                                     id: col1MouseArea
                                     anchors.fill: parent
@@ -209,12 +213,33 @@ Rectangle {
                                             openMap(model.fileName)
                                     }
                                     onPressed: {
-                                        if (smceTree.selectedItem != null) {
-                                            smceTree.selectedItem.state = "unselected"
-                                        }
-                                        col1Rect.state = "selected"
-                                        smceTree.selectedItem = col1Rect
+                                        selectItem(col1Rect)
                                         selNodeChanged(col1NodeName)
+                                    }
+                                }
+                                DropArea {
+                                    anchors.fill: parent
+                                    function dropAllowed(event) {
+                                        return (model.type !== Node.Group) && (event.keys == "rastercoverage")
+                                    }
+
+                                    onDropped: {
+                                        if (dropAllowed(drop)) {
+                                            model.fileName = drop.source.message
+                                        }
+                                        col1MouseArea.cursorShape = Qt.ArrowCursor
+                                        col1Rect.markDropCandidate(false)
+                                    }
+                                    onEntered: {
+                                        if (dropAllowed(drag)) {
+                                            col1Rect.markDropCandidate(true)
+                                        } else {
+                                            col1MouseArea.cursorShape = Qt.ForbiddenCursor
+                                        }
+                                    }
+                                    onExited: {
+                                        col1MouseArea.cursorShape = Qt.ArrowCursor
+                                        col1Rect.markDropCandidate(false)
                                     }
                                 }
 
