@@ -75,6 +75,7 @@ Item {
                     }else {
                         analysis.longName = longnamefield.content
                         layerprops.refreshAnalysisNames()
+                        layerprops.selectLastListItem()
                         createForm.state = "invisible"
                         analisysView.currentAnalysis = analysis
                     }
