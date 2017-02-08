@@ -334,6 +334,23 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
     return result;
 }
 
+// workflows that are used as operation get rid of the history in their inputnames ( indexes in the internal structure)
+
+void Workflow::reworkInputNames(SPWorkFlowNode& node){
+    for(int i=0; i < node->inputCount(); ++i){
+        WorkFlowParameter& parm = node->inputRef(i);
+        int colonIndex = parm.name().indexOf(":");
+        if ( colonIndex != -1){
+            if ( colonIndex < 4){
+                int spaceIndex = parm.name().indexOf(" ");
+                if ( spaceIndex != -1 && spaceIndex < 8){
+                    QString newName = parm.name().mid(spaceIndex + 1);
+                    parm.name(newName);
+                }
+            }
+        }
+    }
+}
 
 NodeId Workflow::addNode(SPWorkFlowNode node, NodeId parent)
 {
@@ -341,7 +358,8 @@ NodeId Workflow::addNode(SPWorkFlowNode node, NodeId parent)
     if ( iter == _graph.end() ){
         if ( node->id() == i64UNDEF)
             node->nodeId(generateId());
-
+        if ( node->type() == WorkFlowNode::ntOPERATION && node->operation()->ilwisType() == itWORKFLOW)
+            reworkInputNames(node);
         if ( parent != i64UNDEF){
             SPWorkFlowNode parentNode = nodeById(parent);
             if ( parentNode){
