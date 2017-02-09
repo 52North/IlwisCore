@@ -126,7 +126,7 @@ bool ExecutionNode::executeCondition(ExecutionContext *ctx, SymbolTable &symTabl
        ExecutionContext ctx;
        ctx._additionalInfo["testoperation"] = true;
        ExecutionNode& exNode = workflowImpl->executionNode(test._operation);
-       if (!exNode.execute(&ctx,symTable,workflowImpl, expression, idmap))
+       if (!exNode.execute(&ctx,symTableLocal,workflowImpl, expression, idmap))
            return false;
        if ( ctx._results.size() == 1){
            Symbol sym = symTableLocal.getSymbol(ctx._results[0]);
