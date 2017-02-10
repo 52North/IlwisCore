@@ -34,6 +34,12 @@ Rectangle  {
 
     }
 
+    function parameters() {
+        if (appFrame.currentAppForm )
+            return appFrame.currentAppForm.formresult
+        return ""
+    }
+
     function fillAppFrame() {
         workflowView.workflow.createMetadata()
         var form = formbuilder.index2Form(workflowView.workflow.id, true)
