@@ -136,9 +136,9 @@ bool ExecutionNode::executeCondition(ExecutionContext *ctx, SymbolTable &symTabl
                 if ( test._pre == loNOT)
                     val = !val;
             }
-            if ( test._post != loAND){
+            if ( test._post == loAND){
                 testRestult &= val;
-            }else
+            }else if ( test._post == loOR)
                 testRestult |= val;
            }
        }
