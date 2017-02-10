@@ -222,7 +222,7 @@ ToolBar{
     }
 
     function dropLoop(yesno){
-       loop.checked = yesno
+       //loop.checked = yesno
     }
 
 
