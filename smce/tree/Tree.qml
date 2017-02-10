@@ -235,7 +235,8 @@ Rectangle {
                                         if (model.fileName !== "") {
                                             console.log("openMap("+model.fileName+")")
                                             openMap(model.fileName)
-                                        }
+                                        } else
+                                            startEdit()
                                     }
 
                                     onPressed: {
