@@ -19,20 +19,22 @@ Rectangle {
     function selectItem(item) {
         if (selectedItem != null) {
             selectedItem.state = "unselected"
+            selectedItem.focus = false
         }
         if (item != null) {
             item.state = "selected"
+            item.forceActiveFocus()
             selectedItem = item
         }
     }
 
     function saveEditAndFinish() {
+        cancelTimer()
         if ( inPlaceEdit != null) {
             inPlaceEdit.accepted()
             inPlaceEdit.destroy(0)
             inPlaceEdit = null;
         }
-        cancelTimer()
     }
 
     function cancelTimer() {
@@ -224,6 +226,10 @@ Rectangle {
 
                                 function markDropCandidate(selected) {
                                     border.color = selected ? Global.edgecolor : Global.mainbackgroundcolor
+                                }
+
+                                Keys.onDeletePressed: {
+                                    model.fileName = ""
                                 }
 
                                 MouseArea {
