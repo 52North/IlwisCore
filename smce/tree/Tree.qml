@@ -231,8 +231,8 @@ Rectangle {
                                     anchors.fill: parent
                                     property bool selectionChanged: false
                                     onDoubleClicked: {
-                                        cancelTimer()
                                         if (model.fileName !== "") {
+                                            cancelTimer()
                                             console.log("openMap("+model.fileName+")")
                                             openMap(model.fileName)
                                         } else
