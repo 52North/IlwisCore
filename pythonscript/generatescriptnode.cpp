@@ -119,7 +119,7 @@ std::vector<QString> GenerateScriptNode::executeOperation(const OperationExpress
 std::vector<QString> GenerateScriptNode::executeCondition(const OperationExpression &expression, const std::map<quint64, int> &idmap, QStringList& script)
 {
     SPCondition condition = std::static_pointer_cast<WorkFlowCondition>(_node);
-    QString expr = "if(";
+    QString expr = "if ";
     QStringList otherLines;
     for(int i=0; i < condition->testCount(); ++i){
         const WorkFlowCondition::Test& test = condition->test(i);
@@ -144,7 +144,7 @@ std::vector<QString> GenerateScriptNode::executeCondition(const OperationExpress
         expr += testLine;
 
     }
-    expr += ")";
+    expr += ":";
     script.append(otherLines);
     script.append(expr);
 
@@ -165,7 +165,7 @@ std::vector<QString> GenerateScriptNode::executeJunction(const OperationExpressi
     int index = lastLine.indexOf("=");
     lastLine = "\t"+ varName + "=" + lastLine.mid(index + 1);
     script.last() = lastLine;
-    script.append("else");
+    script.append("else:");
     GenerateScriptNode exNode2(_node->inputRef(2).inputLink());
     exNode2.execute(expression, idmap, script,"\t");
     lastLine = script.last();
