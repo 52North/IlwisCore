@@ -7,6 +7,7 @@ import "../../.." as Base
 
 TabView {
    // anchors.fill: parent
+    id : dataforms
 
     onCurrentIndexChanged: {
         if ( currentIndex == 0)
@@ -37,6 +38,10 @@ TabView {
         title: qsTr("Step Form")
         StepForm{}
     }
+    Tab{
+        title: qsTr("Script Form")
+        WorkflowPythonScript{}
+    }
 
 
 
@@ -58,6 +63,12 @@ TabView {
         if ( currentIndex != 2)
             currentIndex = 2
         metaTab.item.selectedOperation()
+    }
+
+    function parameters() {
+        if ( runTab.item)
+                return runTab.item.parameters()
+        return ""
     }
 
     function showSelectedOperation(item){
