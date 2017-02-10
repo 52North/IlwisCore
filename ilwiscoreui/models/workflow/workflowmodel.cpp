@@ -627,13 +627,19 @@ QString WorkflowModel::generateScript(const QString &type, const QString& parame
             _expression = OperationExpression::createExpression(_workflow->id(),parameters,true);
             if ( !_expression.isValid())
                 return "";
+            QString expr = _expression.toString();
+            int index = expr.indexOf("script ");
+            if ( index == 0){
+                expr = expr.mid(7);
+            }
+            OperationExpression expression = OperationExpression(expr);
             QUrl url = _workflow->resource().url(true);
             QFileInfo inf(url.toLocalFile());
            // QUrl newName = QUrl::fromLocalFile(inf.path() + "/" + inf.baseName() + ".py");
             QUrl newName = INTERNAL_CATALOG + "/" + inf.baseName() + ".ilwis";
             _workflow->connectTo(newName,"inmemoryworkflow","python",IlwisObject::cmOUTPUT);
             QVariant value;
-            value.setValue(_expression);
+            value.setValue(expression);
             IOOptions opt("expression", value);
             _workflow->store(opt);
             result = _workflow->constConnector(IlwisObject::cmOUTPUT)->getProperty("content").toString();

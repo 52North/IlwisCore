@@ -1,5 +1,7 @@
 #include <QString>
 #include "kernel.h"
+#include "ilwisdata.h"
+#include "ilwisobject.h"
 #include "ilwistypes.h"
 
 using namespace Ilwis;
@@ -466,56 +468,57 @@ IlwisTypes TypeHelper::variant2type(const QVariant &v)
         default:
         {
             QString name = v.typeName();
-            if ( name == "Ilwis::RasterCoverage")
+            if ( name == "Ilwis::RasterCoverage" || name == "Ilwis::IRasterCoverage")
                 return itRASTER;
-            if ( name == "Ilwis::FeatureCoverage")
+            if ( name == "Ilwis::FeatureCoverage" || name == "IIlwis::FeatureCoverage")
                 return itFEATURE;
-            if ( name == "Ilwis::Table")
+            if ( name == "Ilwis::Table" || name == "Ilwis::ITable")
                 return itTABLE;
-            if ( name =="Ilwis::IlwisObject")
+            if ( name =="Ilwis::IlwisObject" || name =="Ilwis::IIlwisObject"){
                 return  itILWISOBJECT;
-            if ( name == "Ilwis::Coverage")
+            }
+            if ( name == "Ilwis::Coverage" || name == "Ilwis::ICoverage")
                 return  itCOVERAGE;
             if ( name.indexOf("Ilwis::ItemDomain")==0) // contains template construct, so different comparison
                 return  itITEMDOMAIN;
-            if ( name == "Ilwis::NumericDomain")
+            if ( name == "Ilwis::NumericDomain" ||  name == "Ilwis::INumericDomain")
                 return  itNUMERICDOMAIN;
-            if ( name == "Ilwis::TextDomain")
+            if ( name == "Ilwis::TextDomain" || name == "Ilwis::ITextDomain")
                 return  itTEXTDOMAIN;
-            if ( name == "Ilwis::ColorDomain")
+            if ( name == "Ilwis::ColorDomain" || name == "IIlwis::IColorDomain")
                 return  itCOLORDOMAIN;
-            if ( name == "Ilwis::Domain")
+            if ( name == "Ilwis::Domain" || name == "Ilwis::IDomain")
                 return  itDOMAIN;
-            if ( name == "Ilwis::CoordinateSystem")
+            if ( name == "Ilwis::CoordinateSystem" || name == "Ilwis::ICoordinateSystem")
                 return  itCOORDSYSTEM;
-            if ( name == "Ilwis::ConventionalCoordinateSystem")
+            if ( name == "Ilwis::ConventionalCoordinateSystem" || name == "Ilwis::IConventionalCoordinateSystem")
                 return  itCONVENTIONALCOORDSYSTEM;
-            if ( name == "Ilwis::BoundsOnlyCoordinateSystem")
+            if ( name == "Ilwis::BoundsOnlyCoordinateSystem" || name == "Ilwis::IBoundsOnlyCoordinateSystem")
                 return  itBOUNDSONLYCSY;
-            if ( name == "Ilwis::GeoReference")
+            if ( name == "Ilwis::GeoReference" || name == "Ilwis::IGeoReference")
                 return  itGEOREF;
-            if ( name == "Ilwis::FlatTable")
+            if ( name == "Ilwis::FlatTable" || name == "Ilwis::IFlatTable")
                 return  itFLATTABLE;
-            if ( name == "Ilwis::AttributeTable")
+            if ( name == "Ilwis::AttributeTable" || name == "Ilwis::IAttributeTable")
                 return  itATTRIBUTETABLE;
-            if ( name == "Ilwis::Projection")
+            if ( name == "Ilwis::Projection" || name == "Ilwis::IProjection")
                 return  itPROJECTION;
-            if ( name == "Ilwis::Ellipsoid")
+            if ( name == "Ilwis::Ellipsoid" || name == "Ilwis::IEllipsoid")
                 return  itELLIPSOID;
-            if ( name == "Ilwis::Catalog")
+            if ( name == "Ilwis::Catalog" || name == "Ilwis::ICatalog")
                 return  itCATALOG;
-            if ( name == "Ilwis::SingleOperation")
+            if ( name == "Ilwis::SingleOperation" || name == "Ilwis::ISingleOperation")
                 return  itSINGLEOPERATION;
-            if ( name == "Ilwis::Workflow") {
+            if ( name == "Ilwis::Workflow" || name == "Ilwis::IWorkflow") {
                 return  itWORKFLOW;
             }
-            if ( name == "Ilwis::Script") {
+            if ( name == "Ilwis::Script" || name == "Ilwis::IScript") {
                 return  itSCRIPT;
             }
-            if ( name == "Ilwis::Model") {
+            if ( name == "Ilwis::Model" || name == "Ilwis::IModel") {
                 return  itMODEL;
             }
-            if ( name == "Ilwis::Representation")
+            if ( name == "Ilwis::Representation" ||  name == "Ilwis::IRepresentation")
                 return  itREPRESENTATION;
         }
 

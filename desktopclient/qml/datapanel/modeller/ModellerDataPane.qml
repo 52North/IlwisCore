@@ -117,6 +117,7 @@ Item {
 
     function setCurrentWorkflow(wf) {
          if ( wf && wf.name !== model.currentWorkflow.name){
+            // workflowView.clearCurrent()
              workflowView.workflow = wf
              model.currentWorkflow = workflowView.workflow
              if (model.currentWorkflow) {

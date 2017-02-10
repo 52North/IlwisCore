@@ -6,7 +6,7 @@ import MasterCatalogModel 1.0
 import OperationCatalogModel 1.0
 import OperationModel 1.0
 import ApplicationFormExpressionParser 1.0
-import "../../../../controls" as Controls
+import "../../../controls" as Controls
 
 Item {
     height:parent.height
@@ -18,10 +18,8 @@ Item {
 
     function getScriptText() {
         if ( modellerDataPane.model){
-            var wf = modellerDataPane.model.currentWorkflow // atm we assume one workflow per scenario
-            if ( wf !== null){
-                return wf.generateScript("python",workflow.parameters())
-            }
+            var wf =  modellerDataPane.workflowModel()
+            return wf.generateScript("python",dataforms.parameters())
         }
         return "";
     }

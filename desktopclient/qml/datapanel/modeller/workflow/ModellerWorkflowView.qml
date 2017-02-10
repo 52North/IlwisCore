@@ -13,7 +13,7 @@ Modeller.ModellerWorkArea {
     id : workarea
     property WorkflowModel workflow;
     property var workflowManager
-    property OperationCatalogModel operationCatalog;
+    //property OperationCatalogModel operationCatalog;
     property var operationsList: []
     property var conditionsList: []
 
@@ -31,7 +31,6 @@ Modeller.ModellerWorkArea {
         tools.dropCondition(false)
         tools.dropLoop(dropLoop)
     }
-
 
     state : "visible"
 
@@ -553,6 +552,27 @@ Modeller.ModellerWorkArea {
         collapseWithList(yesno, operationsList)
     }
 
+    function clearCurrent() {
+        console.debug("workflow changed", workflow.name, operationsList.length, currentItem)
+        currentItem = null
+        dropCondition = false
+        dropLoop = false
 
+        for(var i=0; i < operationsList.length; ++i){
+            console.debug("deleting operation", operationsList[i].itemid)
+            operationsList[i].destroy()
+        }
+        operationsList = []
+        for(i=0; i < conditionsList.length; ++i){
+            var item = conditionsList[i]
+            console.debug("deleting operation", item.itemid)
+            item.clear()
+        }
+        workflow = null
+        wfCanvas.canvasValid = false
+        conditionsList = []
+
+        //console.debug("workflow changed", workflow.name, operationsList.length, currentItem)
+    }
 
 }

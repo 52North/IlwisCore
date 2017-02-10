@@ -342,6 +342,16 @@ Rectangle {
     function resetInputModel(){
     }
 
+    function clear() {
+        for(var j=0; j < operationsList.length; ++j){
+            operationsList[j].destroy()
+        }
+        for( j=0; j < junctionsList.length; ++j){
+            junctionsList[j].destroy()
+        }
+        destroy()
+    }
+
     function removeContent(){
        for(var j=0; j < operationsList.length; ++j){
            workarea.removeLinkTo(operationsList[j].itemid)

@@ -58,7 +58,8 @@ HEADERS += \
     pythonscript/pythonworkflowconnector.h \
     pythonscript/pythonscriptconnector.h \
     pythonscript/pythonscriptcatalogexplorer.h \
-    pythonscript/callpythonoperation.h
+    pythonscript/callpythonoperation.h \
+    pythonscript/generatescriptnode.h
 
 SOURCES += \
     pythonscript/pythonscriptmodule.cpp \
@@ -67,7 +68,8 @@ SOURCES += \
     pythonscript/pythonworkflowconnector.cpp \
     pythonscript/pythonscriptconnector.cpp \
     pythonscript/pythonscriptcatalogexplorer.cpp \
-    pythonscript/callpythonoperation.cpp
+    pythonscript/callpythonoperation.cpp \
+    pythonscript/generatescriptnode.cpp
 
 
 

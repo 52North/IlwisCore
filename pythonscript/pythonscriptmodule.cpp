@@ -93,7 +93,7 @@ void PythonScriptModule::prepare()
         factory->addCreator(itSCRIPT,"python",PythonScript::PythonScriptConnector::create);
 
         //factory->addCreator("fileworkflow","python",PythonScript::PythonWorkflowConnector::create);
-       // factory->addCreator("inmemoryworkflow","python",PythonScript::PythonWorkflowConnector::create2);
+        factory->addCreator("inmemoryworkflow","python",PythonScript::PythonWorkflowConnector::create2);
         factory->addCreator("script","python",PythonScript::PythonScriptConnector::create);
 
         quint64 id = mastercatalog()->name2id("ilwis://operations/callpython", itSINGLEOPERATION);

@@ -69,6 +69,7 @@ bool WorkflowImplementation::execute(ExecutionContext *ctx, SymbolTable &symTabl
     connect(this, &WorkflowImplementation::sendMessage, kernel(),&Kernel::acceptMessage);
     connect(kernel(), &Kernel::sendMessage, this, &WorkflowImplementation::acceptMessage);
     _stopExecution = false;
+    _initial = true;
     initStepMode();
 
     ExecutionContext ctx2;
@@ -163,12 +164,14 @@ void WorkflowImplementation::wait(const SPWorkFlowNode& node)
 
 void WorkflowImplementation::wakeup()
 {
-    if (_initial){
-        _initial = false;
-        return;
-    }
+    if ( _stepMode){
+        if (_initial){
+            _initial = false;
+            return;
+        }
 
-    _syncMutex.unlock();
+        _syncMutex.unlock();
+    }
 }
 
 void WorkflowImplementation::acceptMessage(const QString &type, const QString &subtype, const QVariantMap &parameters)

@@ -528,6 +528,13 @@ QString OperationExpression::toString(bool rightsideonly) const
             }
         }
         expression += ")"    ;
+    }else{
+        for(const Parameter& parm : _inParameters) {
+            if ( expression != "")
+                expression += " ";
+            expression += parm.value();
+        }
+        return _name + " " + expression;
     }
     //TODO: other cases
 

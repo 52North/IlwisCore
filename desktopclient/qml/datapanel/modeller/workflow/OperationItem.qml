@@ -20,8 +20,8 @@ Rectangle {
     transformOrigin: Item.TopLeft
     state : "maximized"
     z : 4
-    border.width: workflow.isValidNode(itemid,"all") ? 0 : 1
-    border.color: workflow.isValidNode(itemid,"all") ? "transparent" : "red"
+    border.width: (workflow && workflow.isValidNode(itemid,"all")) ? 0 : 1
+    border.color: (workflow && workflow.isValidNode(itemid,"all")) ? "transparent" : "red"
 
 
 
@@ -311,8 +311,10 @@ Rectangle {
         var node = workflow.getNode(itemid);
         var parms = node["parameters"]
         var lst = []
-        for(var i=0; i < parms.length; ++i){
-            lst.push(parms[i].label)
+        if ( parms){
+            for(var i=0; i < parms.length; ++i){
+                lst.push(parms[i].label)
+            }
         }
         return lst
     }
@@ -327,6 +329,7 @@ Rectangle {
     }
 
     function textColor(nodeid, parmIndex){
+       // console.debug("at", itemid)
         var node = workflow.getNode(nodeid)
         if (node){
             var parms = node.parameters
