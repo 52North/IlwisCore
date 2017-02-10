@@ -10,9 +10,11 @@ import "../../../../qml/Global.js" as Global
 Rectangle {
     id: smceTree
     anchors.fill: parent
-    signal selNodeChanged(Text node)
+    signal selNodeChanged(Item node)
     property var selectedItem: null
     property var tree : smcePanel.manager.analisysView.currentAnalysis.tree()
+    property var inPlaceEdit: null
+    property var clickTimer: null
 
     function selectItem(item) {
         if (selectedItem != null) {
@@ -24,9 +26,26 @@ Rectangle {
         }
     }
 
+    function saveEditAndFinish() {
+        if ( inPlaceEdit != null) {
+            inPlaceEdit.accepted()
+            inPlaceEdit.destroy(0)
+            inPlaceEdit = null;
+        }
+        cancelTimer()
+    }
+
+    function cancelTimer() {
+        if (clickTimer != null) {
+            clickTimer.destroy(0)
+            clickTimer = null
+        }
+    }
+
     MouseArea {
         anchors.fill: parent
         onPressed: {
+            saveEditAndFinish()
             selectItem(null)
         }
     }
@@ -105,6 +124,7 @@ Rectangle {
                                         }
                                     }
                                     onPressed: {
+                                        saveEditAndFinish()
                                         selectItem(objTextRowRect)
                                         selNodeChanged(objNodeName)
                                     }
@@ -141,6 +161,7 @@ Rectangle {
                                             width: subArrow.implicitWidth
                                             height: subArrow.implicitHeight
                                             onPressed: {
+                                                saveEditAndFinish()
                                                 selectItem(objTextRowRect)
                                                 selNodeChanged(objNodeName)
                                                 toggleNode()
@@ -208,13 +229,37 @@ Rectangle {
                                 MouseArea {
                                     id: col1MouseArea
                                     anchors.fill: parent
+                                    property bool selectionChanged: false
                                     onDoubleClicked: {
-                                        if (model.fileName !== "")
+                                        cancelTimer()
+                                        if (model.fileName !== "") {
+                                            console.log("openMap("+model.fileName+")")
                                             openMap(model.fileName)
+                                        }
                                     }
+
                                     onPressed: {
-                                        selectItem(col1Rect)
-                                        selNodeChanged(col1NodeName)
+                                        saveEditAndFinish()
+                                        if (selectedItem != col1Rect) {
+                                            selectItem(col1Rect)
+                                            selNodeChanged(col1NodeName)
+                                            selectionChanged = true
+                                        }
+                                    }
+
+                                    onClicked: {
+                                        if (selectionChanged) {
+                                            selectionChanged = false
+                                        } else if (clickTimer != null) {
+                                            cancelTimer()
+                                            startEdit()
+                                        } else
+                                            clickTimer = Qt.createQmlObject("import QtQuick 2.0; Timer { id: clickTimer; interval: 500; running: true; onTriggered: {col1MouseArea.startEdit()}}", col1Rect, "clickTimer")
+                                    }
+
+                                    function startEdit() {
+                                        cancelTimer()
+                                        inPlaceEdit = Qt.createQmlObject("import QtQuick 2.0; import QtQuick.Controls 1.0; TextField { id: inPlaceEdit; width: parent.width; height: parent.height; text: model.fileName; verticalAlignment: TextInput.AlignVCenter; Keys.onEscapePressed: {editingFinished()} onAccepted: {model.fileName = text; editingFinished()} onEditingFinished: {focus = false; visible = false} Component.onCompleted: {forceActiveFocus(); selectAll()}}", col1Rect, "inPlaceEdit");
                                     }
                                 }
                                 DropArea {
