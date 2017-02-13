@@ -228,8 +228,17 @@ Rectangle {
                                     border.color = selected ? Global.edgecolor : Global.mainbackgroundcolor
                                 }
 
-                                Keys.onDeletePressed: {
-                                    model.fileName = ""
+                                Keys.onPressed: {
+                                    switch (event.key) {
+                                    case Qt.Key_F2:
+                                    case Qt.Key_Enter:
+                                    case Qt.Key_Return:
+                                        col1MouseArea.startEdit()
+                                        break
+                                    case Qt.Key_Delete:
+                                        model.fileName = ""
+                                        break
+                                    }
                                 }
 
                                 MouseArea {
