@@ -5,6 +5,8 @@ import "../../../qml/Global.js" as Global
 Item {
     width: parent.width
     height: parent.height
+    property string form: "SMCEDefForm.qml"
+    property var selectedNode: null
 
     Rectangle {
         width: parent.width
@@ -15,17 +17,27 @@ Item {
             id : formEditor
             width : parent.width
             height : parent.height
-            source: "SMCEDefForm.qml"
+            source: form
         }
+    }
+
+    function updateForm() {
+        formEditor.setSource(form)
     }
 
     function setForm(mode){
         if (mode === "defMode")
-            formEditor.setSource("SMCEDefForm.qml")
+            form = "SMCEDefForm.qml"
         else if (mode === "evalMode")
-            formEditor.setSource("SMCEEvalForm.qml")
+            form = "SMCEEvalForm.qml"
         else { // the future analysis mode.....
 
         }
+        updateForm()
+    }
+
+    function setSelectedNode(node) {
+        selectedNode = node
+        updateForm()
     }
 }

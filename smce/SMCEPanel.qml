@@ -92,7 +92,8 @@ Column {
             width : parent.width
             height : parent.height
             onSelNodeChanged: {
-                console.log(node.text)
+                if (manager.analysisManager.item.loaderItem != null)
+                    manager.analysisManager.item.loaderItem.setSelectedNode(node)
             }
         }
     }
