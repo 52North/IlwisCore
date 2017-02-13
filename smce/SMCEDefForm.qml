@@ -9,125 +9,42 @@ import "../../../qml/Global.js" as Global
 import "../../../qml/controls" as Controls
 
 Item {
-    Row {
-        Column {
-            id: goalColumn
-            width: parent.parent.width / 2
+    Column {
+        id: editColumn
+        anchors.fill: parent
+        anchors.margins: 5
+        spacing: 5
 
-            Rectangle {
-                id : goaldetaillabel
-                //height : 18
-                color : Global.palegreen
-                Text{
-                    text : qsTr("Goal definition")
-                    font.bold : true
-                    x : 5
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-            }
-            GroupBox {
-                id: scale
-                Layout.fillWidth: true
-                ColumnLayout {
-                    ExclusiveGroup { id: scaleGroup }
-                    RadioButton {
-                        id: problemButton
-                        text: qsTr("Problem (1 -> 0)")
-                        checked: true
-                        exclusiveGroup: scaleGroup
-                        Layout.minimumWidth: 100
-                    }
-                    RadioButton {
-                        id: opportunityButton
-                        text: qsTr("Opportunity (0 -> 1)")
-                        exclusiveGroup: scaleGroup
-                        Layout.minimumWidth: 100
-                    }
-                }
-            }
-
-            Controls.TextEditLabelPair{
-                id : unitsfield
-                labelWidth: 80
-                labelText: qsTr("Units")
-                transparentBackgrond: false
-
-            }
-
-            // Analysis area
-            Controls.TextEditLabelPair{
-                id : analysisRaster
-                labelWidth: 80
-                labelText: qsTr("Analysis area (raster)")
-                transparentBackgrond: false
-
-            }
-
-            Button {
-                id : applyGoalBut
-                height : 22
-                text : qsTr("Apply")
-
-                onClicked: {
-
-                }
-            }
+        Text {
+            text : (selectedNode.type === Node.Group) ? ((selectedNode.level === 0) ? qsTr("Goal") : qsTr("Group")) : ((selectedNode.type === Node.Constraint) ? qsTr("Constraint") : ((selectedNode.type === Node.Factor) ? qsTr("Factor") : ((selectedNode.type === Node.MaskArea) ? qsTr("Mask") : "")))
+            font.bold : true
+            anchors.margins: 5
         }
 
-        Column {
-            id: nodeColumn
-            width: parent.parent.width / 2
+        TextArea {
+            id: nameField
+            text : selectedNode.name
+            width: parent.width
+        }
 
-            Rectangle {
-                id : nodedetaillabel
-                //height : 18
-                color : Global.palegreen
-                Text{
-                    text : qsTr("Selected node definition")
-                    font.bold : true
-                    x : 5
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-            }
+        Controls.TextEditLabelPair{
+            id : unitField
+            visible: selectedNode.type !== Node.Group
+            //editWidth: 80
+            labelWidth: 40
+            labelText: qsTr("Unit")
+            content: selectedNode.unit
+            transparentBackgrond: false
+        }
 
-            Controls.ComboxLabelPair{
-                id : nodeType
-                width : parent.width
-                height : 20
-                labelWidth: 100
-                labelText: qsTr("Node type")
-                itemModel: {}
-            }
+        Button {
+            id : applyGoalBut
+            height : 22
+            text : qsTr("Apply")
 
-
-            Controls.TextAreaLabelPair{
-                id : nodeText
-                labelWidth: 80
-                height: 60
-                width: parent.width
-                labelText: qsTr("Text")
-            }
-
-            Controls.TextEditLabelPair{
-                id : inpIndicatorRaster
-                labelWidth: 80
-                labelText: qsTr("Input indicator (raster)")
-                transparentBackgrond: false
-            }
-
-
-            Controls.LabeledCheckBox {
-                id: ro
-                labelText : qsTr("Read only")
-            }
-
-            Button {
-                id : applyNodeBut
-                height : 22
-                text : qsTr("Apply")
-                onClicked: {
-
-                }
+            onClicked: {
+                selectedNode.name = nameField.text
+                selectedNode.unit = unitField.content
             }
         }
     }
