@@ -50,11 +50,13 @@ Node * SMCE::loadNode(QDataStream &stream)
     quint16 nrSubNodes;
     quint8 nodeTypeInt;
     QString name;
+    QString unit;
     double weight;
     QString fileName;
-    stream >> nodeTypeInt >> name >> weight >> fileName >> nrSubNodes;
+    stream >> nodeTypeInt >> name >> unit >> weight >> fileName >> nrSubNodes;
     Node * node = new Node();
     node->setName(name);
+    node->setUnit(unit);
     node->setWeight(weight);
     node->setType(static_cast<Node::NodeType>(nodeTypeInt));
     node->setFileName(fileName);
@@ -71,7 +73,7 @@ void SMCE::loadData(QDataStream &stream)
 
 // not tested
 void SMCE::storeNode(QDataStream &stream, Node * node) const {
-    stream << (quint8)(node->type()) << node->name() << node->weight() << node->fileName() << node->subNodes().length();
+    stream << (quint8)(node->type()) << node->name() << node->unit() << node->weight() << node->fileName() << node->subNodes().length();
     if (node->subNodes().length() > 0) {
         for (Node * subNode: node->subNodes()) {
             storeNode(stream, subNode);

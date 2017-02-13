@@ -8,7 +8,8 @@ class Node : public QObject
 {
     Q_OBJECT
     Q_ENUMS(NodeType)
-    Q_PROPERTY( QString name READ name NOTIFY nameChanged )
+    Q_PROPERTY( QString name READ name WRITE setName NOTIFY nameChanged )
+    Q_PROPERTY( QString unit READ unit WRITE setUnit NOTIFY unitChanged )
     Q_PROPERTY( int type READ type NOTIFY typeChanged )
     Q_PROPERTY( double weight READ weight NOTIFY weightChanged )
     Q_PROPERTY( QQmlListProperty<Node> subNodes READ subNodesQml NOTIFY subNodesChanged)
@@ -17,6 +18,7 @@ class Node : public QObject
 
 signals:
    void nameChanged();
+   void unitChanged();
    void typeChanged();
    void weightChanged();
    void subNodesChanged();
@@ -31,6 +33,8 @@ public:
     void setType(NodeType nt);
     const QString name() const;
     void setName(QString name);
+    const QString unit() const;
+    void setUnit(QString unit);
     double weight() const;
     void setWeight(double weight);
     const Node * parent() const;
@@ -49,6 +53,7 @@ public:
 protected:
     NodeType _type;
     QString _name;
+    QString _unit;
     Node * _parent;
     double _weight;
     QList <Node*> _subNodes;

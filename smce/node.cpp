@@ -40,6 +40,17 @@ void Node::setName(QString name)
     emit nameChanged();
 }
 
+const QString Node::unit() const
+{
+    return _unit;
+}
+
+void Node::setUnit(QString unit)
+{
+    _unit = unit;
+    emit unitChanged();
+}
+
 double Node::weight() const
 {
     return _weight;
