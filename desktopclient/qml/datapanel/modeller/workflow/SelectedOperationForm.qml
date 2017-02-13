@@ -33,7 +33,7 @@ Rectangle  {
         anchors.bottomMargin: 4
         width : 120
         height : 22
-        text : qsTr("Set Fixed vValues")
+        text : qsTr("Set Fixed Parameters")
         onClicked: {
             var currentOperation = workflowView.currentOperation()
             if ( currentOperation){
