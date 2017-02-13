@@ -12,7 +12,7 @@ class Node : public QObject
     Q_PROPERTY( int type READ type NOTIFY typeChanged )
     Q_PROPERTY( double weight READ weight NOTIFY weightChanged )
     Q_PROPERTY( QQmlListProperty<Node> subNodes READ subNodesQml NOTIFY subNodesChanged)
-    Q_PROPERTY( QString fileName READ fileName NOTIFY fileNameChanged )
+    Q_PROPERTY( QString fileName READ fileName WRITE setFileName NOTIFY fileNameChanged )
     Q_PROPERTY( int level READ level NOTIFY levelChanged )
 
 signals:

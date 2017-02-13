@@ -1,5 +1,6 @@
 #include "node.h"
 #include <QDebug>
+#include <QUrl>
 
 Node::Node(QObject *qparent)
 : QObject(qparent)
@@ -79,7 +80,13 @@ const QString Node::fileName() const
 
 void Node::setFileName(QString fileName)
 {
-    _fileName = fileName;
+    if (fileName.indexOf("://") < 0)
+        _fileName = fileName;
+    else {
+        QUrl url (fileName);
+        _fileName = url.fileName();
+    }
+
     emit fileNameChanged();
 }
 

@@ -10,16 +10,45 @@ import "../../../../qml/Global.js" as Global
 Rectangle {
     id: smceTree
     anchors.fill: parent
-    signal selNodeChanged(Text node)
+    signal selNodeChanged(Item node)
     property var selectedItem: null
     property var tree : smcePanel.manager.analisysView.currentAnalysis.tree()
+    property var inPlaceEdit: null
+    property var clickTimer: null
+
+    function selectItem(item) {
+        if (selectedItem != null) {
+            selectedItem.state = "unselected"
+            selectedItem.focus = false
+        }
+        if (item != null) {
+            item.state = "selected"
+            item.forceActiveFocus()
+            selectedItem = item
+        }
+    }
+
+    function saveEditAndFinish() {
+        cancelTimer()
+        if ( inPlaceEdit != null) {
+            inPlaceEdit.accepted()
+            inPlaceEdit.destroy(0)
+            inPlaceEdit = null;
+        }
+    }
+
+    function cancelTimer() {
+        if (clickTimer != null) {
+            clickTimer.destroy(0)
+            clickTimer = null
+        }
+    }
 
     MouseArea {
         anchors.fill: parent
         onPressed: {
-            if (smceTree.selectedItem != null) {
-                smceTree.selectedItem.state = "unselected"
-            }
+            saveEditAndFinish()
+            selectItem(null)
         }
     }
     Column {
@@ -97,11 +126,8 @@ Rectangle {
                                         }
                                     }
                                     onPressed: {
-                                        if (smceTree.selectedItem != null) {
-                                            smceTree.selectedItem.state = "unselected"
-                                        }
-                                        objTextRowRect.state = "selected"
-                                        smceTree.selectedItem = objTextRowRect
+                                        saveEditAndFinish()
+                                        selectItem(objTextRowRect)
                                         selNodeChanged(objNodeName)
                                     }
                                 }
@@ -137,11 +163,8 @@ Rectangle {
                                             width: subArrow.implicitWidth
                                             height: subArrow.implicitHeight
                                             onPressed: {
-                                                if (smceTree.selectedItem != null) {
-                                                    smceTree.selectedItem.state = "unselected"
-                                                }
-                                                objTextRowRect.state = "selected"
-                                                smceTree.selectedItem = objTextRowRect
+                                                saveEditAndFinish()
+                                                selectItem(objTextRowRect)
                                                 selNodeChanged(objNodeName)
                                                 toggleNode()
                                             }
@@ -201,20 +224,74 @@ Rectangle {
                                 height: childrenRect.height
                                 state: "unselected"
 
+                                function markDropCandidate(selected) {
+                                    border.color = selected ? Global.edgecolor : Global.mainbackgroundcolor
+                                }
+
+                                Keys.onDeletePressed: {
+                                    model.fileName = ""
+                                }
+
                                 MouseArea {
                                     id: col1MouseArea
                                     anchors.fill: parent
+                                    property bool selectionChanged: false
                                     onDoubleClicked: {
-                                        if (model.fileName !== "")
+                                        if (model.fileName !== "") {
+                                            cancelTimer()
+                                            console.log("openMap("+model.fileName+")")
                                             openMap(model.fileName)
+                                        } else
+                                            startEdit()
                                     }
+
                                     onPressed: {
-                                        if (smceTree.selectedItem != null) {
-                                            smceTree.selectedItem.state = "unselected"
+                                        saveEditAndFinish()
+                                        if (selectedItem != col1Rect) {
+                                            selectItem(col1Rect)
+                                            selNodeChanged(col1NodeName)
+                                            selectionChanged = true
                                         }
-                                        col1Rect.state = "selected"
-                                        smceTree.selectedItem = col1Rect
-                                        selNodeChanged(col1NodeName)
+                                    }
+
+                                    onClicked: {
+                                        if (selectionChanged) {
+                                            selectionChanged = false
+                                        } else if (clickTimer != null) {
+                                            cancelTimer()
+                                            startEdit()
+                                        } else
+                                            clickTimer = Qt.createQmlObject("import QtQuick 2.0; Timer { id: clickTimer; interval: 500; running: true; onTriggered: {col1MouseArea.startEdit()}}", col1Rect, "clickTimer")
+                                    }
+
+                                    function startEdit() {
+                                        cancelTimer()
+                                        inPlaceEdit = Qt.createQmlObject("import QtQuick 2.0; import QtQuick.Controls 1.0; TextField { id: inPlaceEdit; width: parent.width; height: parent.height; text: model.fileName; verticalAlignment: TextInput.AlignVCenter; Keys.onEscapePressed: {while(canUndo) undo(); editingFinished()} onAccepted: {model.fileName = text; editingFinished()} onEditingFinished: {focus = false; visible = false; col1Rect.forceActiveFocus()} Component.onCompleted: {forceActiveFocus(); selectAll()}}", col1Rect, "inPlaceEdit");
+                                    }
+                                }
+                                DropArea {
+                                    anchors.fill: parent
+                                    function dropAllowed(event) {
+                                        return (model.type !== Node.Group) && (event.keys == "rastercoverage")
+                                    }
+
+                                    onDropped: {
+                                        if (dropAllowed(drop)) {
+                                            model.fileName = drop.source.message
+                                        }
+                                        col1MouseArea.cursorShape = Qt.ArrowCursor
+                                        col1Rect.markDropCandidate(false)
+                                    }
+                                    onEntered: {
+                                        if (dropAllowed(drag)) {
+                                            col1Rect.markDropCandidate(true)
+                                        } else {
+                                            col1MouseArea.cursorShape = Qt.ForbiddenCursor
+                                        }
+                                    }
+                                    onExited: {
+                                        col1MouseArea.cursorShape = Qt.ArrowCursor
+                                        col1Rect.markDropCandidate(false)
                                     }
                                 }
 
