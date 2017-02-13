@@ -10,7 +10,7 @@ import "../../../../qml/Global.js" as Global
 Rectangle {
     id: smceTree
     anchors.fill: parent
-    signal selNodeChanged(Item node)
+    signal selNodeChanged(var node)
     property var selectedItem: null
     property var tree : smcePanel.manager.analisysView.currentAnalysis.tree()
     property var inPlaceEdit: null
@@ -128,7 +128,7 @@ Rectangle {
                                     onPressed: {
                                         saveEditAndFinish()
                                         selectItem(objTextRowRect)
-                                        selNodeChanged(objNodeName)
+                                        selNodeChanged(model)
                                     }
                                 }
 
@@ -165,7 +165,7 @@ Rectangle {
                                             onPressed: {
                                                 saveEditAndFinish()
                                                 selectItem(objTextRowRect)
-                                                selNodeChanged(objNodeName)
+                                                selNodeChanged(model)
                                                 toggleNode()
                                             }
                                         }
@@ -258,7 +258,7 @@ Rectangle {
                                         saveEditAndFinish()
                                         if (selectedItem != col1Rect) {
                                             selectItem(col1Rect)
-                                            selNodeChanged(col1NodeName)
+                                            selNodeChanged(null)
                                             selectionChanged = true
                                         }
                                     }
