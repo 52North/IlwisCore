@@ -47,30 +47,36 @@ Item {
 
         Button {
             text : qsTr("Add Group")
-            visible: selectedNode.type === Node.Group
+            visible: selectedNode != null && selectedNode.type === Node.Group
             onClicked: {
-                selectedNode.modelData.addGroup("New Group...")
+                selectedNode.modelData.addGroup("New Group ...")
             }
         }
         Button {
             text : qsTr("Add Factor")
-            visible: selectedNode.type === Node.Group
+            visible: selectedNode != null && selectedNode.type === Node.Group
             onClicked: {
-                selectedNode.modelData.addFactor("New Factor...")
+                selectedNode.modelData.addFactor("New Factor ...")
             }
         }
         Button {
             text : qsTr("Add Constraint")
-            visible: selectedNode.type === Node.Group
+            visible: selectedNode != null && selectedNode.type === Node.Group
             onClicked: {
-                selectedNode.modelData.addConstraint("New Constraint...")
+                selectedNode.modelData.addConstraint("New Constraint ...")
             }
         }
         Button {
             text : qsTr("Add Mask Area")
-            visible: selectedNode.type === Node.Group && selectedNode.level === 0
+            visible: selectedNode != null && selectedNode.type === Node.Group && selectedNode.level === 0
             onClicked: {
-                selectedNode.modelData.addMask("New Mask Area...")
+                selectedNode.modelData.addMask("New Mask Area ...")
+            }
+        }
+        Button {
+            text : qsTr("Delete")
+            onClicked: {
+                selectedNode.modelData.deleteNode()
             }
         }
     }
