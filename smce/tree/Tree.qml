@@ -276,6 +276,8 @@ Rectangle {
                                         cancelTimer()
                                         if (model.type === Node.Group)
                                             inPlaceEdit = Qt.createQmlObject("import QtQuick 2.0; import QtQuick.Controls 1.0; TextField { id: inPlaceEdit; width: parent.width; height: parent.height; text: model.fileName; verticalAlignment: TextInput.AlignVCenter; Keys.onEscapePressed: {while(canUndo) undo(); editingFinished()} onAccepted: {model.fileName = text; editingFinished()} onEditingFinished: {focus = false; visible = false; col1Rect.forceActiveFocus()} Component.onCompleted: {forceActiveFocus(); selectAll()}}", col1Rect, "inPlaceEdit");
+                                        else
+                                            flash.running = true
                                     }
                                 }
                                 DropArea {
@@ -319,6 +321,80 @@ Rectangle {
                                         verticalAlignment: Text.AlignVCenter
                                         width: col1.width - col1IconRaster.width
                                         elide: Text.ElideRight
+                                    }
+                                }
+
+                                SequentialAnimation {
+                                    id: flash
+                                    PropertyAnimation {
+                                        target: col1Rect
+                                        property: "color"
+                                        to: "white"
+                                        duration: 0
+                                    }
+                                    PropertyAnimation {
+                                        target: col1Rect
+                                        property: "color"
+                                        to: "white"
+                                        duration: 75
+                                    }
+                                    PropertyAnimation {
+                                        target: col1Rect
+                                        property: "color"
+                                        to: Global.selectedColor
+                                        duration: 0
+                                    }
+                                    PropertyAnimation {
+                                        target: col1Rect
+                                        property: "color"
+                                        to: Global.selectedColor
+                                        duration: 75
+                                    }
+                                    PropertyAnimation {
+                                        target: col1Rect
+                                        property: "color"
+                                        to: "white"
+                                        duration: 0
+                                    }
+                                    PropertyAnimation {
+                                        target: col1Rect
+                                        property: "color"
+                                        to: "white"
+                                        duration: 75
+                                    }
+                                    PropertyAnimation {
+                                        target: col1Rect
+                                        property: "color"
+                                        to: Global.selectedColor
+                                        duration: 0
+                                    }
+                                    PropertyAnimation {
+                                        target: col1Rect
+                                        property: "color"
+                                        to: Global.selectedColor
+                                        duration: 75
+                                    }
+                                    PropertyAnimation {
+                                        target: col1Rect
+                                        property: "color"
+                                        to: "white"
+                                        duration: 0
+                                    }
+                                    PropertyAnimation {
+                                        target: col1Rect
+                                        property: "color"
+                                        to: "white"
+                                        duration: 75
+                                    }
+                                    PropertyAnimation {
+                                        target: col1Rect
+                                        property: "color"
+                                        to: Global.selectedColor
+                                        duration: 0
+                                    }
+                                    onStopped: {
+                                        if (col1Rect.state == "unselected")
+                                            col1Rect.color = "white"
                                     }
                                 }
 
