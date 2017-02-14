@@ -26,8 +26,8 @@ SMCE::SMCE() : Ilwis::AnalysisPattern()
 
 void SMCE::Init()
 {
-    _tree = new Node();
-    _tree->setGoal("New Goal", "");
+    _tree = new Node(this);
+    _tree->setGoal("New Goal ...");
 }
 
 bool SMCE::execute(const QVariantMap &inputParameters, QVariantMap &outputParameters)
@@ -45,7 +45,7 @@ Node * SMCE::root() const
     return _tree;
 }
 
-Node * SMCE::loadNode(QDataStream &stream)
+Node * SMCE::loadNode(QDataStream &stream, QObject *qparent)
 {
     quint16 nrSubNodes;
     quint8 nodeTypeInt;
@@ -54,21 +54,21 @@ Node * SMCE::loadNode(QDataStream &stream)
     double weight;
     QString fileName;
     stream >> nodeTypeInt >> name >> unit >> weight >> fileName >> nrSubNodes;
-    Node * node = new Node();
+    Node * node = new Node(qparent);
     node->setName(name);
     node->setUnit(unit);
     node->setWeight(weight);
     node->setType(static_cast<Node::NodeType>(nodeTypeInt));
     node->setFileName(fileName);
     for (int i = 0; i < nrSubNodes; ++i) {
-        node->addNode(loadNode(stream));
+        node->addNode(loadNode(stream, node));
     }
     return node;
 }
 
 void SMCE::loadData(QDataStream &stream)
 {
-    _tree = loadNode(stream);
+    _tree = loadNode(stream, this);
 }
 
 // not tested

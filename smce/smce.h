@@ -35,7 +35,7 @@ public slots:
 
 private:
     void Init();
-    Node * loadNode(QDataStream &stream);
+    Node * loadNode(QDataStream &stream, QObject *qparent);
     void storeNode(QDataStream &stream, Node * node) const;
     Node * _tree;
 
