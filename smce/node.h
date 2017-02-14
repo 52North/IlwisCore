@@ -27,8 +27,9 @@ signals:
 
 public:
     enum NodeType { Group=0, MaskArea=1, Constraint=2, Factor=3 };
-    Node(QObject *qparent=0);
-    Node(Node * parent, QObject *qparent=0);
+    Node();
+    Node(QObject *qparent);
+    Node(Node * parent, QObject *qparent);
     int type() const;
     void setType(NodeType nt);
     const QString name() const;
@@ -44,11 +45,14 @@ public:
     const QString fileName() const;
     void setFileName(QString fileName);
     int level() const;
-    Q_INVOKABLE void setGoal(QString name, QString fileName = "");
-    Q_INVOKABLE void addMask(QString name, QString fileName = "");
-    Q_INVOKABLE Node * addGroup(QString name, double weight = -1, QString fileName = "");
-    Q_INVOKABLE void addFactor(QString name, double weight = -1, QString fileName = "");
-    Q_INVOKABLE void addConstraint(QString name, QString fileName = "");
+    void deleteChild(Node * node);
+    void recalcWeights();
+    Q_INVOKABLE void setGoal(QString name);
+    Q_INVOKABLE void addMask(QString name);
+    Q_INVOKABLE Node * addGroup(QString name);
+    Q_INVOKABLE void addFactor(QString name);
+    Q_INVOKABLE void addConstraint(QString name);
+    Q_INVOKABLE void deleteNode();
 
 protected:
     NodeType _type;

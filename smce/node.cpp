@@ -2,6 +2,11 @@
 #include <QDebug>
 #include <QUrl>
 
+Node::Node()
+{
+
+}
+
 Node::Node(QObject *qparent)
 : QObject(qparent)
 , _parent(0)
@@ -109,59 +114,75 @@ int Node::level() const
         return 0;
 }
 
-void Node::setGoal(QString name, QString fileName)
+void Node::setGoal(QString name)
 {
     if (_parent != 0)
-        _parent->setGoal(name, fileName);
+        _parent->setGoal(name);
     else {
         setType(Group);
         setName(name);
         setWeight(-1);
-        setFileName(fileName);
     }
 }
 
-void Node::addMask(QString name, QString fileName)
+void Node::addMask(QString name)
 {
     Node * node = new Node(this);
     node->setType(MaskArea);
     node->setName(name);
     node->setWeight(-1);
-    node->setFileName(fileName);
     addNode(node);
 }
 
-Node * Node::addGroup(QString name, double weight, QString fileName)
+Node * Node::addGroup(QString name)
 {
     Node * node = new Node(this);
     node->setType(Group);
     node->setName(name);
-    if (weight < 0)
-        weight = (_subNodes.size() > 0) ? 0 : 1;
-    node->setWeight(weight);
-    node->setFileName(fileName);
     addNode(node);
+    recalcWeights();
     return node;
 }
 
-void Node::addFactor(QString name, double weight, QString fileName)
+void Node::addFactor(QString name)
 {
     Node * node = new Node(this);
     node->setType(Factor);
     node->setName(name);
-    if (weight < 0)
-        weight = (_subNodes.size() > 0) ? 0 : 1;
-    node->setWeight(weight);
-    node->setFileName(fileName);
     addNode(node);
+    recalcWeights();
 }
 
-void Node::addConstraint(QString name, QString fileName)
+void Node::addConstraint(QString name)
 {
     Node * node = new Node(this);
     node->setType(Constraint);
     node->setName(name);
     node->setWeight(-1);
-    node->setFileName(fileName);
     addNode(node);
+}
+
+void Node::recalcWeights()
+{
+    if (_subNodes.size() > 1) {
+        for (Node* node : _subNodes) {
+            node->setWeight(0);
+        }
+    } else if (_subNodes.size() == 1) {
+        _subNodes[0]->setWeight(1);
+    }
+}
+
+void Node::deleteNode()
+{
+    if (_parent) // otherwise we're the root that can't be deleted
+        _parent->deleteChild(this);
+}
+
+void Node::deleteChild(Node *node)
+{
+    _subNodes.removeAll(node);
+    emit subNodesChanged();
+    node->deleteLater();
+    recalcWeights();
 }
