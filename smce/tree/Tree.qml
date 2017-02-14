@@ -176,6 +176,11 @@ Rectangle {
                                         width: childrenRect.width
                                         height: parent.height
                                         state: "unselected"
+
+                                        Keys.onDeletePressed: {
+                                            model.modelData.deleteNode()
+                                        }
+
                                         Row {
                                             Text {
                                                 id: objNodeWeight
