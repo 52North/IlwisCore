@@ -17,27 +17,37 @@ Item {
             id : formEditor
             width : parent.width
             height : parent.height
-            source: form
         }
     }
 
-    function updateForm() {
-        formEditor.setSource(form)
-    }
-
-    function setForm(mode){
+    function setForm(mode) {
+        var newForm
         if (mode === "defMode")
-            form = "SMCEDefForm.qml"
+            newForm = "SMCEDefForm.qml"
         else if (mode === "evalMode")
-            form = "SMCEEvalForm.qml"
+            newForm = "SMCEEvalForm.qml"
         else { // the future analysis mode.....
 
         }
-        updateForm()
+        if (form != newForm) {
+            form = newForm
+            if (selectedNode != null) {
+                formEditor.setSource(form)
+            }
+        }
     }
 
     function setSelectedNode(node) {
-        selectedNode = node
-        updateForm()
+        var change = ((node != null) && (selectedNode == null)) || ((node == null) && (selectedNode != null))
+        if (change) {
+            if (node == null) {
+                formEditor.setSource("")
+                selectedNode = node
+            } else {
+                selectedNode = node
+                formEditor.setSource(form)
+            }
+        } else
+            selectedNode = node
     }
 }
