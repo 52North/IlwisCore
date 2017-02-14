@@ -44,11 +44,11 @@ public:
     const QString fileName() const;
     void setFileName(QString fileName);
     int level() const;
-    Q_INVOKABLE void setGoal(QString name, QString fileName);
-    Q_INVOKABLE void addMask(QString name, QString fileName);
-    Q_INVOKABLE Node * addGroup(QString name, double weight, QString fileName);
-    Q_INVOKABLE void addFactor(QString name, double weight, QString fileName);
-    Q_INVOKABLE void addConstraint(QString name, QString fileName);
+    Q_INVOKABLE void setGoal(QString name, QString fileName = "");
+    Q_INVOKABLE void addMask(QString name, QString fileName = "");
+    Q_INVOKABLE Node * addGroup(QString name, double weight = -1, QString fileName = "");
+    Q_INVOKABLE void addFactor(QString name, double weight = -1, QString fileName = "");
+    Q_INVOKABLE void addConstraint(QString name, QString fileName = "");
 
 protected:
     NodeType _type;

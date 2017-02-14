@@ -136,6 +136,8 @@ Node * Node::addGroup(QString name, double weight, QString fileName)
     Node * node = new Node(this);
     node->setType(Group);
     node->setName(name);
+    if (weight < 0)
+        weight = (_subNodes.size() > 0) ? 0 : 1;
     node->setWeight(weight);
     node->setFileName(fileName);
     addNode(node);
@@ -147,6 +149,8 @@ void Node::addFactor(QString name, double weight, QString fileName)
     Node * node = new Node(this);
     node->setType(Factor);
     node->setName(name);
+    if (weight < 0)
+        weight = (_subNodes.size() > 0) ? 0 : 1;
     node->setWeight(weight);
     node->setFileName(fileName);
     addNode(node);
