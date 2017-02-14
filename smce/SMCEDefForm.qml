@@ -16,24 +16,24 @@ Item {
         spacing: 5
 
         Text {
-            text : (selectedNode.type === Node.Group) ? ((selectedNode.level === 0) ? qsTr("Goal") : qsTr("Group")) : ((selectedNode.type === Node.Constraint) ? qsTr("Constraint") : ((selectedNode.type === Node.Factor) ? qsTr("Factor") : ((selectedNode.type === Node.MaskArea) ? qsTr("Mask") : "")))
+            text : (selectedNode != null) ? ((selectedNode.type === Node.Group) ? ((selectedNode.level === 0) ? qsTr("Goal") : qsTr("Group")) : ((selectedNode.type === Node.Constraint) ? qsTr("Constraint") : ((selectedNode.type === Node.Factor) ? qsTr("Factor") : ((selectedNode.type === Node.MaskArea) ? qsTr("Mask") : "")))) : ""
             font.bold : true
             anchors.margins: 5
         }
 
         TextArea {
             id: nameField
-            text : selectedNode.name
+            text : selectedNode != null ? selectedNode.name : ""
             width: parent.width
         }
 
         Controls.TextEditLabelPair{
             id : unitField
-            visible: selectedNode.type !== Node.Group
+            visible: selectedNode != null && selectedNode.type !== Node.Group
             //editWidth: 80
             labelWidth: 40
             labelText: qsTr("Unit")
-            content: selectedNode.unit
+            content: selectedNode ? selectedNode.unit : ""
             transparentBackgrond: false
         }
 
