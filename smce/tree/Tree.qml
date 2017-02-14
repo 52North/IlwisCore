@@ -83,12 +83,6 @@ Rectangle {
                     height: childrenRect.height
                     delegate: objRecursiveDelegate
                 }
-                Button {
-                    text: "Add node"
-                    onClicked: {
-                        console.log(Node.Factor)
-                    }
-                }
                 Component {
                     id: objRecursiveDelegate
 
