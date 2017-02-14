@@ -268,7 +268,7 @@ Rectangle {
                                             selectionChanged = false
                                         } else if (clickTimer != null) {
                                             startEdit()
-                                        } else if (model.type === Node.Group)
+                                        } else
                                             clickTimer = Qt.createQmlObject("import QtQuick 2.0; Timer { id: clickTimer; interval: 500; running: true; onTriggered: {col1MouseArea.startEdit()}}", col1Rect, "clickTimer")
                                     }
 
