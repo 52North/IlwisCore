@@ -235,7 +235,7 @@ Rectangle {
                                 state: "unselected"
 
                                 function markDropCandidate(selected) {
-                                    border.color = selected ? Global.edgecolor : Global.mainbackgroundcolor
+                                    border.color = selected ? "gray" : Global.mainbackgroundcolor
                                 }
 
                                 Keys.onPressed: {
@@ -285,7 +285,7 @@ Rectangle {
                                     function startEdit() {
                                         cancelTimer()
                                         if (model.type === Node.Group)
-                                            inPlaceEdit = Qt.createQmlObject("import QtQuick 2.0; import QtQuick.Controls 1.0; TextField { id: inPlaceEdit; width: parent.width; height: parent.height; text: model.fileName; verticalAlignment: TextInput.AlignVCenter; Keys.onEscapePressed: {while(canUndo) undo(); editingFinished()} onAccepted: {model.fileName = text; editingFinished()} onEditingFinished: {focus = false; visible = false; col1Rect.forceActiveFocus()} Component.onCompleted: {forceActiveFocus(); selectAll()}}", col1Rect, "inPlaceEdit");
+                                            inPlaceEdit = Qt.createQmlObject("import QtQuick 2.0; import QtQuick.Controls 1.0; TextField { id: inPlaceEdit; width: parent.width; height: parent.height; text: model.fileName; verticalAlignment: TextInput.AlignVCenter; Keys.onReturnPressed: {} Keys.onEnterPressed: {} Keys.onEscapePressed: {while(canUndo) undo(); editingFinished()} onAccepted: {model.fileName = text; editingFinished()} onEditingFinished: {focus = false; visible = false; col1Rect.forceActiveFocus()} Component.onCompleted: {forceActiveFocus(); selectAll()}}", col1Rect, "inPlaceEdit");
                                         else
                                             flash.running = true
                                     }
@@ -329,8 +329,16 @@ Rectangle {
                                         text: "  " + model.fileName
                                         color: "black"
                                         verticalAlignment: Text.AlignVCenter
-                                        width: col1.width - col1IconRaster.width
+                                        width: col1.width - col1IconRaster.width - col1NodeUnit.width
                                         elide: Text.ElideRight
+                                    }
+
+                                    Text {
+                                        id: col1NodeUnit
+                                        visible: model.unit !== ""
+                                        text: (model.unit !== "") ? ("[" + model.unit + "]") : ""
+                                        color: "black"
+                                        verticalAlignment: Text.AlignVCenter
                                     }
                                 }
 
