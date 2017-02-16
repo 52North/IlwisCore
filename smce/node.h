@@ -24,6 +24,7 @@ signals:
    void subNodesChanged();
    void fileNameChanged();
    void levelChanged();
+   void nodeDeleted();
 
 public:
     enum NodeType { Group=0, MaskArea=1, Constraint=2, Factor=3 };

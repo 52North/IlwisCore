@@ -175,8 +175,10 @@ void Node::recalcWeights()
 
 void Node::deleteNode()
 {
-    if (_parent) // otherwise we're the root that can't be deleted
+    if (_parent) {// otherwise we're the root that can't be deleted
+        emit nodeDeleted();
         _parent->deleteChild(this);
+    }
 }
 
 void Node::deleteChild(Node *node)

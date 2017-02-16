@@ -28,6 +28,14 @@ Rectangle {
         }
     }
 
+    function selectItemOnDelete() {
+        if (selectedItem != null) {
+            var par = selectedItem.parent.parent.parent.parent.parent
+            var parcol1Rect = par.children[0].children[0].children[1].children[3]
+            selectItem(parcol1Rect)
+        }
+    }
+
     function saveEditAndFinish() {
         cancelTimer()
         if ( inPlaceEdit != null) {
@@ -91,6 +99,13 @@ Rectangle {
                         property bool treeChild: true
                         spacing: 1
                         state: "expanded"
+
+                        Connections {
+                            target: model.modelData
+                            onNodeDeleted: {
+                                smceTree.selectItemOnDelete()
+                            }
+                        }
 
                         function toggleNode() {
                             var enabled
