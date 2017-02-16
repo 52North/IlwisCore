@@ -28,14 +28,6 @@ Rectangle {
         }
     }
 
-    function selectItemOnDelete() {
-        if (selectedItem != null) {
-            var par = selectedItem.parent.parent.parent.parent.parent
-            var parcol1Rect = par.children[0].children[0].children[1].children[3]
-            selectItem(parcol1Rect)
-        }
-    }
-
     function saveEditAndFinish() {
         cancelTimer()
         if ( inPlaceEdit != null) {
@@ -103,7 +95,11 @@ Rectangle {
                         Connections {
                             target: model.modelData
                             onNodeDeleted: {
-                                smceTree.selectItemOnDelete()
+                                if (selectedItem != null) {
+                                    var par = selectedItem.parent.parent.parent.parent.parent
+                                    var parMouseArea = par.children[0].children[0].children[0]
+                                    parMouseArea.onPressed(null)
+                                }
                             }
                         }
 
