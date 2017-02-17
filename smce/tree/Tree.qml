@@ -118,6 +118,97 @@ Rectangle {
                                 }
                             }
                         }
+
+                        function getTreeChildren() {
+                            var list = []
+                            for(var i = 0; i < children.length; ++i) {
+                                if(children[i].treeChild) {
+                                    list.push(children[i])
+                                }
+                            }
+                            return list
+                        }
+
+                        function hasChild() {
+                            if (state == "expanded")
+                                return getTreeChildren().length > 0
+                            else
+                                return false
+                        }
+
+                        function firstChild() {
+                            return getTreeChildren()[0]
+                        }
+
+                        function lastChild() {
+                            var list = getTreeChildren()
+                            return list[list.length - 1]
+                        }
+
+                        function prevSibling() {
+                            if (parent.treeChild) {
+                                var list = parent.getTreeChildren()
+                                var ind = list.indexOf(objRecursiveColumn)
+                                if (ind > 0)
+                                    return list[ind-1]
+                                else
+                                    return null
+                            } else
+                                return null
+                        }
+
+                        function nextSibling() {
+                            if (parent.treeChild) {
+                                var list = parent.getTreeChildren()
+                                var ind = list.indexOf(objRecursiveColumn)
+                                if (ind < list.length - 1)
+                                    return list[ind+1]
+                                else
+                                    return null
+                            } else
+                                return null
+                        }
+
+                        function selectUp(i) {
+                            var item = prevSibling()
+                            if (item) {
+                                while (item.hasChild())
+                                    item = item.lastChild()
+                            } else if (parent.treeChild)
+                                item = parent
+                            if (item)
+                                item.col(i)
+                        }
+
+                        function selectDown(i) {
+                            var item = null
+                            if (hasChild())
+                                item = firstChild()
+                            else {
+                                var self = objRecursiveColumn
+                                item = self.nextSibling()
+                                while (!item && self && self.parent.treeChild) {
+                                    self = self.parent
+                                    item = self.nextSibling()
+                                }
+                            }
+                            if (item)
+                                item.col(i)
+                        }
+
+                        function col(i) {
+                            switch(i) {
+                            case 0:
+                                selectItem(objTextRowRect)
+                                selNodeChanged(model)
+                                break;
+                            case 1:
+                                selectItem(col1Rect)
+                                selNodeChanged(null)
+                                break;
+                            }
+                        }
+
                         Row {
                             Rectangle {
                                 width: criteriaTree.width
@@ -132,8 +223,7 @@ Rectangle {
                                     }
                                     onPressed: {
                                         saveEditAndFinish()
-                                        selectItem(objTextRowRect)
-                                        selNodeChanged(model)
+                                        col(0)
                                     }
                                 }
 
@@ -169,8 +259,7 @@ Rectangle {
                                             height: subArrow.implicitHeight
                                             onPressed: {
                                                 saveEditAndFinish()
-                                                selectItem(objTextRowRect)
-                                                selNodeChanged(model)
+                                                col(0)
                                                 toggleNode()
                                             }
                                         }
@@ -188,8 +277,30 @@ Rectangle {
                                         height: parent.height
                                         state: "unselected"
 
-                                        Keys.onDeletePressed: {
-                                            model.modelData.deleteNode()
+                                        Keys.onPressed: {
+                                            switch (event.key) {
+                                            case Qt.Key_Delete:
+                                                model.modelData.deleteNode()
+                                                break
+                                            case Qt.Key_Left:
+                                                if(model.type === Node.Group && objRecursiveColumn.state == "expanded")
+                                                    objRecursiveColumn.toggleNode()
+                                                else if (objRecursiveColumn.parent.treeChild)
+                                                    objRecursiveColumn.parent.col(0)
+                                                break
+                                            case Qt.Key_Right:
+                                                if(model.type === Node.Group && objRecursiveColumn.state == "collapsed")
+                                                    objRecursiveColumn.toggleNode()
+                                                else
+                                                    col(1)
+                                                break
+                                            case Qt.Key_Up:
+                                                selectUp(0)
+                                                break
+                                            case Qt.Key_Down:
+                                                selectDown(0)
+                                                break
+                                            }
                                         }
 
                                         Row {
@@ -248,6 +359,15 @@ Rectangle {
                                     case Qt.Key_Delete:
                                         model.fileName = ""
                                         break
+                                    case Qt.Key_Left:
+                                        col(0)
+                                        break
+                                    case Qt.Key_Up:
+                                        selectUp(1)
+                                        break
+                                    case Qt.Key_Down:
+                                        selectDown(1)
+                                        break
                                     }
                                 }
 
@@ -267,8 +387,7 @@ Rectangle {
                                     onPressed: {
                                         saveEditAndFinish()
                                         if (selectedItem != col1Rect) {
-                                            selectItem(col1Rect)
-                                            selNodeChanged(null)
+                                            col(1)
                                             selectionChanged = true
                                         }
                                     }
@@ -285,7 +404,7 @@ Rectangle {
                                     function startEdit() {
                                         cancelTimer()
                                         if (model.type === Node.Group)
-                                            inPlaceEdit = Qt.createQmlObject("import QtQuick 2.0; import QtQuick.Controls 1.0; TextField { id: inPlaceEdit; width: parent.width; height: parent.height; text: model.fileName; verticalAlignment: TextInput.AlignVCenter; Keys.onReturnPressed: {} Keys.onEnterPressed: {} Keys.onEscapePressed: {while(canUndo) undo(); editingFinished()} onAccepted: {model.fileName = text; editingFinished()} onEditingFinished: {focus = false; visible = false; col1Rect.forceActiveFocus()} Component.onCompleted: {forceActiveFocus(); selectAll()}}", col1Rect, "inPlaceEdit");
+                                            inPlaceEdit = Qt.createQmlObject("import QtQuick 2.0; import QtQuick.Controls 1.0; TextField { id: inPlaceEdit; width: parent.width; height: parent.height; text: model.fileName; verticalAlignment: TextInput.AlignVCenter; Keys.onPressed: {event.accepted=true} Keys.onEscapePressed: {while(canUndo) undo(); editingFinished()} onAccepted: {model.fileName = text; editingFinished()} onEditingFinished: {focus = false; visible = false; col1Rect.forceActiveFocus()} Component.onCompleted: {forceActiveFocus(); selectAll()}}", col1Rect, "inPlaceEdit");
                                         else
                                             flash.running = true
                                     }
