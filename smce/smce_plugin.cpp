@@ -27,6 +27,9 @@ void SMCEPlugin::registerTypes(const char *uri)
     qmlRegisterType<SMCEModel>(uri, 1, 0, "SMCEModel");
     qmlRegisterType<SMCESpatialAlternatives>(uri, 1, 0, "SMCESpatialAlternatives");
     qmlRegisterType<Node>(uri, 1, 0, "Node");
+    qmlRegisterType<Weights>(uri, 1, 0, "Weights");
+    qmlRegisterType<DirectWeightItem>(uri, 1, 0, "DirectWeightItem");
+    qmlRegisterType<DirectWeights>(uri, 1, 0, "DirectWeights");
 
     Ilwis::kernel()->issues()->log("Loaded module SMCE",Ilwis::IssueObject::itMessage);
 }
