@@ -7,11 +7,10 @@ import "../../../qml/controls" as Controls
 import "../../../qml/Global.js" as Global
 
 
-Item {
+Column {
     id : createForm
-    //width : parent.width
-    //height : parent.height
-    anchors.fill: parent
+    width : parent.width
+    spacing: 1
 
     signal executeStandardization()
 
@@ -20,25 +19,11 @@ Item {
     property int minY: 0
     property int maxY: 1
 
-    /*ListModel {
-        id: graphModel
-
-        ListElement {
-            minX: 0
-            maxX: 148607
-            minY: 0
-            maxY: 1
-        }
-    }*/
-
-
     Canvas {
         id: graphCanvas
-        //anchors.fill: parent
-        width: 400 + parent.width
-        height: 200 + parent.height
+        width: parent.width
+        height: 200
         property int axisOffset : 10
-
 
         // Repeaters and ListViews are too slow for drag functionality,
         // so we create the dragable points statically
@@ -52,56 +37,56 @@ Item {
 
         DragPoint {
             id: point1
-            x: graphCanvas.axisOffset + (graphCanvas.width - graphCanvas.axisOffset) / 8.0
-            y: graphCanvas.height - graphCanvas.axisOffset - (graphCanvas.height - graphCanvas.axisOffset) / 8.0
+            x: Math.round(graphCanvas.axisOffset + (graphCanvas.width - graphCanvas.axisOffset) / 8.0)
+            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
             active: true
             fixedXX: false
         }
 
         DragPoint {
             id: point2
-            x: graphCanvas.axisOffset + 2.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0
-            y: graphCanvas.height - graphCanvas.axisOffset - 2.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0
+            x: Math.round(graphCanvas.axisOffset + 2.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0)
+            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - 2.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
             active: true
             fixedXX: false
         }
 
         DragPoint {
             id: point3
-            x: graphCanvas.axisOffset + 3.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0
-            y: graphCanvas.height - graphCanvas.axisOffset - 3.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0
+            x: Math.round(graphCanvas.axisOffset + 3.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0)
+            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - 3.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
             active: true
             fixedXX: false
         }
 
         DragPoint {
             id: point4
-            x: graphCanvas.axisOffset + (graphCanvas.width - graphCanvas.axisOffset) / 2.0
-            y: graphCanvas.height - graphCanvas.axisOffset - 4.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0
+            x: Math.round(graphCanvas.axisOffset + (graphCanvas.width - graphCanvas.axisOffset) / 2.0)
+            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - 4.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
             active: true
             fixedXX: false
         }
 
         DragPoint {
             id: point5
-            x: graphCanvas.axisOffset + 5.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0
-            y: graphCanvas.height - graphCanvas.axisOffset - 5.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0
+            x: Math.round(graphCanvas.axisOffset + 5.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0)
+            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - 5.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
             active: true
             fixedXX: false
         }
 
         DragPoint {
             id: point6
-            x: graphCanvas.axisOffset + 6.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0
-            y: graphCanvas.height - graphCanvas.axisOffset - 6.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0
+            x: Math.round(graphCanvas.axisOffset + 6.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0)
+            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - 6.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
             active: true
             fixedXX: false
         }
 
         DragPoint {
             id: point7
-            x: graphCanvas.axisOffset + 7.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0
-            y: graphCanvas.height - graphCanvas.axisOffset - 7.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0
+            x: Math.round(graphCanvas.axisOffset + 7.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0)
+            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - 7.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
             active: true
             fixedXX: false
         }
@@ -117,30 +102,25 @@ Item {
         function initializeCurve(ctx) {
             ctx.strokeStyle = "blue"
             ctx.beginPath()
-            ctx.moveTo(point0.x, point0.y)
-            ctx.lineTo(point1.x, point1.y)
-            ctx.lineTo(point2.x, point2.y)
-            ctx.lineTo(point3.x, point3.y)
-            ctx.lineTo(point4.x, point4.y)
-            ctx.lineTo(point5.x, point5.y)
-            ctx.lineTo(point6.x, point6.y)
-            ctx.lineTo(point7.x, point7.y)
-            ctx.lineTo(point8.x, point8.y)
+            ctx.moveTo(0.5 + point0.x, 0.5 + point0.y) // +0.5 everywhere otherwise Canvas blurs the horizontal and vertical lines
+            ctx.lineTo(0.5 + point1.x, 0.5 + point1.y)
+            ctx.lineTo(0.5 + point2.x, 0.5 + point2.y)
+            ctx.lineTo(0.5 + point3.x, 0.5 + point3.y)
+            ctx.lineTo(0.5 + point4.x, 0.5 + point4.y)
+            ctx.lineTo(0.5 + point5.x, 0.5 + point5.y)
+            ctx.lineTo(0.5 + point6.x, 0.5 + point6.y)
+            ctx.lineTo(0.5 + point7.x, 0.5 + point7.y)
+            ctx.lineTo(0.5 + point8.x, 0.5 + point8.y)
             ctx.stroke()
         }
 
         function drawAxis(ctx) {
-            ctx.lineWidth = 2
+            ctx.lineWidth = 1.0
             ctx.strokeStyle = "black"
-            //ctx.fillStyle = "steelblue"
-            // begin a new path to draw
             ctx.beginPath()
-            // top-left start point
-            ctx.moveTo(graphCanvas.axisOffset, 0) // YY
-            // upper line
-            ctx.lineTo(graphCanvas.axisOffset, graphCanvas.height - graphCanvas.axisOffset) // O
-            // right line
-            ctx.lineTo(graphCanvas.width, graphCanvas.height - graphCanvas.axisOffset) // XX
+            ctx.moveTo(0.5 + graphCanvas.axisOffset, 0.5) // top-left
+            ctx.lineTo(0.5 + graphCanvas.axisOffset, 0.5 + graphCanvas.height - graphCanvas.axisOffset) // origin
+            ctx.lineTo(0.5 + graphCanvas.width, 0.5 + graphCanvas.height - graphCanvas.axisOffset) // bottom-right
             ctx.stroke()
         }
 
@@ -151,6 +131,8 @@ Item {
             /*ctx.translate(0, canvas.height)
             ctx.scale(1, -1)
             */
+            ctx.fillStyle = "white"
+            ctx.fillRect(0, 0, graphCanvas.width, graphCanvas.height)
             drawAxis(ctx)
             initializeCurve(ctx)
         }
@@ -168,7 +150,24 @@ Item {
         }
 
         function repaint() {
-            // test...
+            point0.x = Math.max(graphCanvas.axisOffset, Math.min(point0.x, graphCanvas.width))
+            point1.x = Math.max(graphCanvas.axisOffset, Math.min(point1.x, graphCanvas.width))
+            point2.x = Math.max(graphCanvas.axisOffset, Math.min(point2.x, graphCanvas.width))
+            point3.x = Math.max(graphCanvas.axisOffset, Math.min(point3.x, graphCanvas.width))
+            point4.x = Math.max(graphCanvas.axisOffset, Math.min(point4.x, graphCanvas.width))
+            point5.x = Math.max(graphCanvas.axisOffset, Math.min(point5.x, graphCanvas.width))
+            point6.x = Math.max(graphCanvas.axisOffset, Math.min(point6.x, graphCanvas.width))
+            point7.x = Math.max(graphCanvas.axisOffset, Math.min(point7.x, graphCanvas.width))
+            point8.x = Math.max(graphCanvas.axisOffset, Math.min(point8.x, graphCanvas.width))
+            point0.y = Math.max(0, Math.min(point0.y, graphCanvas.height - graphCanvas.axisOffset))
+            point1.y = Math.max(0, Math.min(point1.y, graphCanvas.height - graphCanvas.axisOffset))
+            point2.y = Math.max(0, Math.min(point2.y, graphCanvas.height - graphCanvas.axisOffset))
+            point3.y = Math.max(0, Math.min(point3.y, graphCanvas.height - graphCanvas.axisOffset))
+            point4.y = Math.max(0, Math.min(point4.y, graphCanvas.height - graphCanvas.axisOffset))
+            point5.y = Math.max(0, Math.min(point5.y, graphCanvas.height - graphCanvas.axisOffset))
+            point6.y = Math.max(0, Math.min(point6.y, graphCanvas.height - graphCanvas.axisOffset))
+            point7.y = Math.max(0, Math.min(point7.y, graphCanvas.height - graphCanvas.axisOffset))
+            point8.y = Math.max(0, Math.min(point8.y, graphCanvas.height - graphCanvas.axisOffset))
             if (point0.x > point1.x)
                 point1.x = Math.min(point0.x, point8.x)
             if (point1.x > point2.x)
@@ -185,15 +184,6 @@ Item {
                 point7.x = Math.min(point6.x, point8.x)
             if (point7.x > point8.x)
                 point7.x = point8.x
-            point0.y = Math.min(point0.y, graphCanvas.height - graphCanvas.axisOffset)
-            point1.y = Math.min(point1.y, graphCanvas.height - graphCanvas.axisOffset)
-            point2.y = Math.min(point2.y, graphCanvas.height - graphCanvas.axisOffset)
-            point3.y = Math.min(point3.y, graphCanvas.height - graphCanvas.axisOffset)
-            point4.y = Math.min(point4.y, graphCanvas.height - graphCanvas.axisOffset)
-            point5.y = Math.min(point5.y, graphCanvas.height - graphCanvas.axisOffset)
-            point6.y = Math.min(point6.y, graphCanvas.height - graphCanvas.axisOffset)
-            point7.y = Math.min(point7.y, graphCanvas.height - graphCanvas.axisOffset)
-            point8.y = Math.min(point8.y, graphCanvas.height - graphCanvas.axisOffset)
             var ctx = getContext("2d")
             ctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height)
             requestPaint()
@@ -215,41 +205,32 @@ Item {
     function toViewportXX(x) {
         var scalerange = maxX - minX
         var graphXXrange = graphCanvas.width
-        return graphCanvas.axisOffset + ((graphXXrange/scalerange) * x) // axisOffset = XX origin
+        return Math.round(graphCanvas.axisOffset + ((graphXXrange/scalerange) * x)) // axisOffset = XX origin
     }
 
     function toViewportYY(y) {
         var scalerange = maxY - minY
         var graphYYrange = graphCanvas.height - graphCanvas.axisOffset
-        return graphCanvas.height - (graphYYrange/scalerange) * y
+        return Math.round(graphCanvas.height - (graphYYrange/scalerange) * y)
     }
 
-    Rectangle {
-        id: coords
-        anchors.top: graphCanvas.bottom
-        anchors.left: graphCanvas.left
-        width: 800
-        height: 40
+    Row {
         Controls.TextEditLabelPair {
             id: objCoordX0text
             width: 100
             height: 20
             labelWidth: 20
-            anchors.top: parent.top
-            anchors.left: parent.left
-            content: parent.parent.toRealXX(point0.x).toFixed(3).toString()
+            content: minX.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x0")
+            readOnly: true
         }
         Controls.TextEditLabelPair {
             id: objCoordY0text
             width: 80
             height: 20
             labelWidth: 20
-            anchors.top: parent.top
-            anchors.left: objCoordX0text.right
-            anchors.leftMargin: 10
-            content: parent.parent.toRealYY(point0.y).toFixed(3).toString()
+            content: toRealYY(point0.y).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y0")
             onContentEdited: {
@@ -258,17 +239,17 @@ Item {
                 graphCanvas.repaint()
             }
         }
+    }
 
-        ////
+    ////
 
+    Row {
         Controls.TextEditLabelPair {
             id: objCoordX1text
             width: 100
             height: 20
             labelWidth: 20
-            anchors.top: objCoordX0text.bottom
-            anchors.left: parent.left
-            content: parent.parent.toRealXX(point1.x).toFixed(3).toString()
+            content: toRealXX(point1.x).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x1")
             onContentEdited: {
@@ -282,10 +263,7 @@ Item {
             width: 80
             height: 20
             labelWidth: 20
-            anchors.top: objCoordY0text.bottom
-            anchors.left: objCoordX1text.right
-            anchors.leftMargin: 10
-            content: parent.parent.toRealYY(point1.y).toFixed(3).toString()
+            content: toRealYY(point1.y).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y1")
             onContentEdited: {
@@ -294,17 +272,17 @@ Item {
                 graphCanvas.repaint()
             }
         }
+    }
 
-        ////
+    ////
 
+    Row {
         Controls.TextEditLabelPair {
             id: objCoordX2text
             width: 100
             height: 20
             labelWidth: 20
-            anchors.top: objCoordX1text.bottom
-            anchors.left: parent.left
-            content: parent.parent.toRealXX(point2.x).toFixed(3).toString()
+            content: toRealXX(point2.x).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x2")
             onContentEdited: {
@@ -318,10 +296,7 @@ Item {
             width: 80
             height: 20
             labelWidth: 20
-            anchors.top: objCoordY1text.bottom
-            anchors.left: objCoordX2text.right
-            anchors.leftMargin: 10
-            content: parent.parent.toRealYY(point2.y).toFixed(3).toString()
+            content: toRealYY(point2.y).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y2")
             onContentEdited: {
@@ -330,17 +305,17 @@ Item {
                 graphCanvas.repaint()
             }
         }
+    }
 
-        ////
+    ////
 
+    Row {
         Controls.TextEditLabelPair {
             id: objCoordX3text
             width: 100
             height: 20
             labelWidth: 20
-            anchors.top: objCoordX2text.bottom
-            anchors.left: parent.left
-            content: parent.parent.toRealXX(point3.x).toFixed(3).toString()
+            content: toRealXX(point3.x).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x3")
             onContentEdited: {
@@ -354,10 +329,7 @@ Item {
             width: 80
             height: 20
             labelWidth: 20
-            anchors.top: objCoordY2text.bottom
-            anchors.left: objCoordX3text.right
-            anchors.leftMargin: 10
-            content: parent.parent.toRealYY(point3.y).toFixed(3).toString()
+            content: toRealYY(point3.y).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y3")
             onContentEdited: {
@@ -366,17 +338,17 @@ Item {
                 graphCanvas.repaint()
             }
         }
+    }
 
-        ////
+    ////
 
+    Row {
         Controls.TextEditLabelPair {
             id: objCoordX4text
             width: 100
             height: 20
             labelWidth: 20
-            anchors.top: objCoordX3text.bottom
-            anchors.left: parent.left
-            content: parent.parent.toRealXX(point4.x).toFixed(3).toString()
+            content: toRealXX(point4.x).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x4")
             onContentEdited: {
@@ -390,10 +362,7 @@ Item {
             width: 80
             height: 20
             labelWidth: 20
-            anchors.top: objCoordY3text.bottom
-            anchors.left: objCoordX4text.right
-            anchors.leftMargin: 10
-            content: parent.parent.toRealYY(point4.y).toFixed(3).toString()
+            content: toRealYY(point4.y).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y4")
             onContentEdited: {
@@ -402,17 +371,17 @@ Item {
                 graphCanvas.repaint()
             }
         }
+    }
 
-        ////
+    ////
 
+    Row {
         Controls.TextEditLabelPair {
             id: objCoordX5text
             width: 100
             height: 20
             labelWidth: 20
-            anchors.top: objCoordX4text.bottom
-            anchors.left: parent.left
-            content: parent.parent.toRealXX(point5.x).toFixed(3).toString()
+            content: toRealXX(point5.x).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x5")
             onContentEdited: {
@@ -426,10 +395,7 @@ Item {
             width: 80
             height: 20
             labelWidth: 20
-            anchors.top: objCoordY4text.bottom
-            anchors.left: objCoordX5text.right
-            anchors.leftMargin: 10
-            content: parent.parent.toRealYY(point5.y).toFixed(3).toString()
+            content: toRealYY(point5.y).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y5")
             onContentEdited: {
@@ -438,17 +404,17 @@ Item {
                 graphCanvas.repaint()
             }
         }
+    }
 
-        ////
+    ////
 
+    Row {
         Controls.TextEditLabelPair {
             id: objCoordX6text
             width: 100
             height: 20
             labelWidth: 20
-            anchors.top: objCoordX5text.bottom
-            anchors.left: parent.left
-            content: parent.parent.toRealXX(point6.x).toFixed(3).toString()
+            content: toRealXX(point6.x).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x6")
             onContentEdited: {
@@ -462,10 +428,7 @@ Item {
             width: 80
             height: 20
             labelWidth: 20
-            anchors.top: objCoordY5text.bottom
-            anchors.left: objCoordX6text.right
-            anchors.leftMargin: 10
-            content: parent.parent.toRealYY(point6.y).toFixed(3).toString()
+            content: toRealYY(point6.y).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y6")
             onContentEdited: {
@@ -474,17 +437,17 @@ Item {
                 graphCanvas.repaint()
             }
         }
+    }
 
-        ////
+    ////
 
+    Row {
         Controls.TextEditLabelPair {
             id: objCoordX7text
             width: 100
             height: 20
             labelWidth: 20
-            anchors.top: objCoordX6text.bottom
-            anchors.left: parent.left
-            content: parent.parent.toRealXX(point7.x).toFixed(3).toString()
+            content: toRealXX(point7.x).toFixed(3).toString()
             //color:"black"
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x7")
@@ -499,10 +462,7 @@ Item {
             width: 80
             height: 20
             labelWidth: 20
-            anchors.top: objCoordY6text.bottom
-            anchors.left: objCoordX7text.right
-            anchors.leftMargin: 10
-            content: parent.parent.toRealYY(point7.y).toFixed(3).toString()
+            content: toRealYY(point7.y).toFixed(3).toString()
             //color:"black"
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y7")
@@ -512,30 +472,27 @@ Item {
                 graphCanvas.repaint()
             }
         }
+    }
 
-        ////
+    ////
 
+    Row {
         Controls.TextEditLabelPair {
             id: objCoordX8text
             width: 100
             height: 20
             labelWidth: 20
-            anchors.top: objCoordX7text.bottom
-            anchors.left: parent.left
-            content: parent.parent.toRealXX(point8.x).toFixed(3).toString()
-
+            content: maxX.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x8")
+            readOnly: true
         }
         Controls.TextEditLabelPair {
             id: objCoordY8text
             width: 80
             height: 20
             labelWidth: 20
-            anchors.top: objCoordY7text.bottom
-            anchors.left: objCoordX8text.right
-            anchors.leftMargin: 10
-            content: parent.parent.toRealYY(point8.y).toFixed(3).toString()
+            content: toRealYY(point8.y).toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y8")
             onContentEdited: {
@@ -544,81 +501,80 @@ Item {
                 graphCanvas.repaint()
             }
         }
+    }
 
-        property var a1
-        property var a2
-        property var a3
-        property var a4
-        property var a5
-        property var a6
-        property var a7
-        property var a8
-        property var b1
-        property var b2
-        property var b3
-        property var b4
-        property var b5
-        property var b6
-        property var b7
-        property var b8
+    property var a1
+    property var a2
+    property var a3
+    property var a4
+    property var a5
+    property var a6
+    property var a7
+    property var a8
+    property var b1
+    property var b2
+    property var b3
+    property var b4
+    property var b5
+    property var b6
+    property var b7
+    property var b8
 
 
-        Button {
-            text: "Apply"
-            anchors.top: objCoordY8text.top
-            anchors.left: objCoordY8text.right
-            onClicked: {
-                parent.a1 = (parent.parent.toRealYY(point1.y) - parent.parent.toRealYY(point0.y)) / (parent.parent.toRealXX(point1.x) - parent.parent.toRealXX(point0.x))
-                parent.b1 = parent.parent.toRealYY(point0.y) - parent.a1 * parent.parent.toRealXX(point0.x)
+    Button {
+        id: applyButton
+        text: "Apply"
+        onClicked: {
+            parent.a1 = (toRealYY(point1.y) - toRealYY(point0.y)) / (toRealXX(point1.x) - toRealXX(point0.x))
+            parent.b1 = toRealYY(point0.y) - parent.a1 * toRealXX(point0.x)
 
-                parent.a2 = (parent.parent.toRealYY(point2.y) - parent.parent.toRealYY(point1.y)) / (parent.parent.toRealXX(point2.x) - parent.parent.toRealXX(point1.x))
-                parent.b2 = parent.parent.toRealYY(point1.y) - parent.a2 * parent.parent.toRealXX(point1.x)
+            parent.a2 = (toRealYY(point2.y) - toRealYY(point1.y)) / (toRealXX(point2.x) - toRealXX(point1.x))
+            parent.b2 = toRealYY(point1.y) - parent.a2 * toRealXX(point1.x)
 
-                parent.a3 = (parent.parent.toRealYY(point3.y) - parent.parent.toRealYY(point2.y)) / (parent.parent.toRealXX(point3.x) - parent.parent.toRealXX(point2.x))
-                parent.b3 = parent.parent.toRealYY(point2.y) - parent.a3 * parent.parent.toRealXX(point2.x)
+            parent.a3 = (toRealYY(point3.y) - toRealYY(point2.y)) / (toRealXX(point3.x) - toRealXX(point2.x))
+            parent.b3 = toRealYY(point2.y) - parent.a3 * toRealXX(point2.x)
 
-                parent.a4 = (parent.parent.toRealYY(point4.y) - parent.parent.toRealYY(point3.y)) / (parent.parent.toRealXX(point4.x) - parent.parent.toRealXX(point3.x))
-                parent.b4 = parent.parent.toRealYY(point3.y) - parent.a4 * parent.parent.toRealXX(point3.x)
+            parent.a4 = (toRealYY(point4.y) - toRealYY(point3.y)) / (toRealXX(point4.x) - toRealXX(point3.x))
+            parent.b4 = toRealYY(point3.y) - parent.a4 * toRealXX(point3.x)
 
-                parent.a5 = (parent.parent.toRealYY(point5.y) - parent.parent.toRealYY(point5.y)) / (parent.parent.toRealXX(point5.x) - parent.parent.toRealXX(point4.x))
-                parent.b5 = parent.parent.toRealYY(point4.y) - parent.a5 * parent.parent.toRealXX(point4.x)
+            parent.a5 = (toRealYY(point5.y) - toRealYY(point5.y)) / (toRealXX(point5.x) - toRealXX(point4.x))
+            parent.b5 = toRealYY(point4.y) - parent.a5 * toRealXX(point4.x)
 
-                parent.a6 = (parent.parent.toRealYY(point6.y) - parent.parent.toRealYY(point6.y)) / (parent.parent.toRealXX(point6.x) - parent.parent.toRealXX(point5.x))
-                parent.b6 = parent.parent.toRealYY(point5.y) - parent.a6 * parent.parent.toRealXX(point5.x)
+            parent.a6 = (toRealYY(point6.y) - toRealYY(point6.y)) / (toRealXX(point6.x) - toRealXX(point5.x))
+            parent.b6 = toRealYY(point5.y) - parent.a6 * toRealXX(point5.x)
 
-                parent.a7 =(parent.parent.toRealYY(point7.y) - parent.parent.toRealYY(point7.y)) / (parent.parent.toRealXX(point7.x) - parent.parent.toRealXX(point6.x))
-                parent.b7 = parent.parent.toRealYY(point6.y) - parent.a7 * parent.parent.toRealXX(point6.x)
+            parent.a7 =(toRealYY(point7.y) - toRealYY(point7.y)) / (toRealXX(point7.x) - toRealXX(point6.x))
+            parent.b7 = toRealYY(point6.y) - parent.a7 * toRealXX(point6.x)
 
-                parent.a8 =(parent.parent.toRealYY(point8.y) - parent.parent.toRealYY(point8.y)) / (parent.parent.toRealXX(point8.x) - parent.parent.toRealXX(point7.x))
-                parent.b8 = parent.parent.toRealYY(point7.y) - parent.a8 * parent.parent.toRealXX(point7.x)
+            parent.a8 =(toRealYY(point8.y) - toRealYY(point8.y)) / (toRealXX(point8.x) - toRealXX(point7.x))
+            parent.b8 = toRealYY(point7.y) - parent.a8 * toRealXX(point7.x)
 
-                console.log( "a1=" + parent.a1 +
-                            "\nb1=" +parent.b1 +
-                            "\na2=" +parent.a2 +
-                            "\nb2=" +parent.b2 +
-                            "\na3=" + parent.a3 +
-                            "\nb3=" + parent.b3 +
-                            "\na4=" + parent.a4 +
-                            "\nb4=" + parent.b4 +
-                            "\na5=" +  parent.a5 +
-                            "\nb5=" + parent.b5 +
-                            "\na6=" + parent.a6 +
-                            "\nb6=" + parent.b6 +
-                            "\na7=" + parent.a7 +
-                            "\nb7=" + parent.b7 +
-                            "\na8=" +  parent.a8 +
-                            "\nb8=" + parent.b8)
+            console.log( "a1=" + parent.a1 +
+                        "\nb1=" +parent.b1 +
+                        "\na2=" +parent.a2 +
+                        "\nb2=" +parent.b2 +
+                        "\na3=" + parent.a3 +
+                        "\nb3=" + parent.b3 +
+                        "\na4=" + parent.a4 +
+                        "\nb4=" + parent.b4 +
+                        "\na5=" +  parent.a5 +
+                        "\nb5=" + parent.b5 +
+                        "\na6=" + parent.a6 +
+                        "\nb6=" + parent.b6 +
+                        "\na7=" + parent.a7 +
+                        "\nb7=" + parent.b7 +
+                        "\na8=" +  parent.a8 +
+                        "\nb8=" + parent.b8)
 
-                console.log("x0=" + objCoordX0text.content +
-                            "\nx1=" + objCoordX1text.content +
-                            "\nx2=" + objCoordX2text.content +
-                            "\nx3=" + objCoordX3text.content+
-                            "\nx4=" + objCoordX4text.content+
-                            "\nx5=" + objCoordX5text.content+
-                            "\nx6=" + objCoordX6text.content+
-                            "\nx7=" + objCoordX7text.content+
-                            "\nx8=" + objCoordX8text.content)
-            }
+            console.log("x0=" + objCoordX0text.content +
+                        "\nx1=" + objCoordX1text.content +
+                        "\nx2=" + objCoordX2text.content +
+                        "\nx3=" + objCoordX3text.content+
+                        "\nx4=" + objCoordX4text.content+
+                        "\nx5=" + objCoordX5text.content+
+                        "\nx6=" + objCoordX6text.content+
+                        "\nx7=" + objCoordX7text.content+
+                        "\nx8=" + objCoordX8text.content)
         }
     }
 }
