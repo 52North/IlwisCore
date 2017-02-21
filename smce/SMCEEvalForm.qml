@@ -16,10 +16,11 @@ import "../../../qml/controls" as Controls
 Column {
     id: evalform
     anchors.fill: parent
+    anchors.margins: 5
+
     Column {
         id: nodecolumn
         spacing: 5
-        anchors.margins: 5
         visible: selectedNode != null && selectedNode.type === Node.Group
         Text {
             text : qsTr("Weights")
@@ -98,6 +99,8 @@ Column {
     Column {
         id: standardizationcolumn
         visible: selectedNode != null && selectedNode.type !== Node.Group
+        width: parent.width
+        spacing: 5
 
         Text{
             text : qsTr("Standardization")
@@ -106,6 +109,7 @@ Column {
 
         Loader {
             id : stdEditor
+            width: parent.width
         }
 
         Component.onCompleted: {
