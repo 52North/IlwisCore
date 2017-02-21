@@ -22,7 +22,6 @@ Column {
         anchors.margins: 5
         visible: selectedNode != null && selectedNode.type === Node.Group
         Text {
-            id: title
             text : qsTr("Weights")
             font.bold : true
         }
@@ -100,44 +99,13 @@ Column {
         id: standardizationcolumn
         visible: selectedNode != null && selectedNode.type !== Node.Group
 
-        Rectangle {
-            id : standardizationlabel
-            height : 18
-            width: parent.width
-            color : Global.palegreen
-            Text{
-                text : qsTr("Standardization")
-                font.bold : true
-                //x : 5
-                //anchors.verticalCenter: parent.verticalCenter
-            }
+        Text{
+            text : qsTr("Standardization")
+            font.bold : true
         }
 
-        Rectangle {
-            id : standardizationpanel
-            color : Global.palegreen
-            border.color: Global.darkgreen
-            //anchors.fill: parent
-            height : parent.height - 18
-            width: parent.width
-
-
-            //SMCEClassStandardizationTable {
-            //    id: classstandardizationtable
-            //    height: parent.height
-            //}
-
-            /*SMCEClassStandardization {
-                    id: classstandardization
-                    height: parent.height
-                }*/
-
-            Loader {
-                id : stdEditor
-                width : parent.width
-                height : parent.height
-            }
-
+        Loader {
+            id : stdEditor
         }
 
         Component.onCompleted: {
@@ -147,32 +115,4 @@ Column {
             stdEditor.setSource("SMCEGraphStandardization.qml")
         }
     }
-
-    /*
-       Column {
-            id: previewcolumn
-            width : parent.parent.width / 3
-            anchors.left: standardizationcolumn.right
-
-            Rectangle {
-                id : previewlabel
-                width : parent.width
-                height : 18
-                color : Global.palegreen
-                Text{
-                    text : qsTr("Preview")
-                    font.bold : true
-                    x : 5
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-            }
-
-            Rectangle {
-                id : preview
-                width : parent.width
-                height : parent.height - 18
-                color : Global.palegreen
-            }
-        }
-       */
 }
