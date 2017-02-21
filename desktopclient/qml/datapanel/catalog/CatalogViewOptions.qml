@@ -244,7 +244,7 @@ Rectangle {
 
         Controls.WideButton{
             image : "../images/mapview.png"
-            label : qsTr("Generate previews\nof selected coverages")
+            label : qsTr("Generate thumbs\nof selected coverages")
             width : parent.width - 3
             height : 40* Global.uiScale
             x : 8* Global.uiScale
