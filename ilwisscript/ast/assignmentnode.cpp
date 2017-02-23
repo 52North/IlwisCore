@@ -13,6 +13,8 @@
 #include "formatters.h"
 #include "scriptnode.h"
 #include "table.h"
+#include "basetable.h"
+#include "flattable.h"
 #include "featurecoverage.h"
 #include "feature.h"
 #include "numericrange.h"
@@ -209,7 +211,10 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                     } else if ( hasType(tp, itGEOREF)){
                         ok &= copyObject<GeoReference>(sym, result,symbols);
                     } else if (hasType(tp, itTABLE | itCOLUMN)){
-                        ok &= copyObject<Table>(sym, result,symbols,true);
+                        if ( tp == itTABLE)
+                            ok &= copyObject<Table>(sym, result,symbols,true);
+                        else if ( tp == itFLATTABLE)
+                            ok &= copyObject<FlatTable>(sym, result,symbols,true);
                         QSharedPointer<Selector> selector = _outParms->selector(result);
                         if (!selector.isNull()){
                             QString varName = selector->variable();
