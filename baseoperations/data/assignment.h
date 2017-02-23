@@ -36,8 +36,10 @@ private:
 
     bool assignRasterCoverage(ExecutionContext *ctx);
     bool assignFeatureCoverage(ExecutionContext *ctx);
+    bool assignTable(ExecutionContext *ctx);
 
     NEW_OPERATION(Assignment);
+
 };
 }
 }

@@ -37,6 +37,15 @@ bool Assignment::assignFeatureCoverage(ExecutionContext *ctx) {
     return true;
 }
 
+bool Assignment::assignTable(ExecutionContext *ctx) {
+
+    ITable outputFC = _outputObj.as<Table>();
+    ITable inputFC = _inputObj.as<Table>();
+    outputFC = inputFC->copyTable(ANONYMOUS_PREFIX);
+
+    return true;
+}
+
 bool Assignment::assignRasterCoverage(ExecutionContext *ctx) {
     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     std::function<bool(const BoundingBox)> Assign = [&](const BoundingBox box ) -> bool {
@@ -80,6 +89,10 @@ bool Assignment::execute(ExecutionContext *ctx, SymbolTable& symTable)
             if ( (_inputObj->ilwisType() & itFEATURE)!= 0) {
                 if((resource = assignFeatureCoverage(ctx)) == true)
                     setOutput<FeatureCoverage>(ctx, symTable);
+            }
+            if ( (_inputObj->ilwisType() & itTABLE)!= 0) {
+                if((resource = assignTable(ctx)) == true)
+                    setOutput<Table>(ctx, symTable);
             }
         }
     }
