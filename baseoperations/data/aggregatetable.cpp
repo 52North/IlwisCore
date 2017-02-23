@@ -32,8 +32,8 @@ AggregateTable::AggregateTable(quint64 metaid, const Ilwis::OperationExpression 
 QVariant AggregateTable::stringCase(IlwisTypes tp, const std::vector<int>& records, int c){
     if ( _aggregationMehtod == "sum" ||
          _aggregationMehtod == "average" ||
-         _aggregationMehtod == "min" ||
-         _aggregationMehtod == "max")
+         _aggregationMehtod == "minimum" ||
+         _aggregationMehtod == "maximum")
         return hasType(tp, itTEXTDOMAIN) ? QVariant(sUNDEF) : QVariant(rUNDEF);
 
     std::vector<QVariant> values = _inputTable->column(c);
@@ -67,7 +67,7 @@ QVariant AggregateTable::stringCase(IlwisTypes tp, const std::vector<int>& recor
 
 QVariant AggregateTable::numericCase(const std::vector<int>& records, int c)
 {
-    double num = _aggregationMehtod == "min" ? 1e308 : rUNDEF;
+    double num = _aggregationMehtod == "minimum" ? 1e308 : rUNDEF;
     std::map<double, int> ordered;
 
     std::vector<QVariant> values = _inputTable->column(c);
@@ -87,10 +87,10 @@ QVariant AggregateTable::numericCase(const std::vector<int>& records, int c)
                 num = v;
         } else if ( _aggregationMehtod == "last"){
             num = v;
-        } else if ( _aggregationMehtod == "min"){
+        } else if ( _aggregationMehtod == "minimum"){
             if ( num == rUNDEF)
                 num = std::min(v, num);
-        } else if ( _aggregationMehtod == "max"){
+        } else if ( _aggregationMehtod == "maximum"){
             if ( num == rUNDEF)
                 num = std::max(v, num);
         }
@@ -99,8 +99,8 @@ QVariant AggregateTable::numericCase(const std::vector<int>& records, int c)
     if ( _aggregationMehtod == "sum" ||
          _aggregationMehtod == "first" ||
          _aggregationMehtod == "last" ||
-         _aggregationMehtod == "max" ||
-         _aggregationMehtod == "min"){
+         _aggregationMehtod == "maximum" ||
+         _aggregationMehtod == "minimum"){
         return num;
     }
     else if ( _aggregationMehtod == "average"){
