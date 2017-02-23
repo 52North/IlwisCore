@@ -345,6 +345,11 @@ ITable FlatTable::copyTable(const QString &nm) const
     return tbl;
 }
 
+bool FlatTable::merge(const IlwisObject *obj)
+{
+    return BaseTable::merge(obj);
+}
+
 bool FlatTable::canUse(const IlwisObject *obj, bool strict) const
 {
     return true;
