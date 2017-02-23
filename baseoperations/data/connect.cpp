@@ -4,7 +4,13 @@
 #include "commandhandler.h"
 #include "operationExpression.h"
 #include "operationmetadata.h"
+#include  "raster.h"
+#include "table.h"
+#include "basetable.h"
+#include "flattable.h"
+#include "featurecoverage.h"
 #include "operation.h"
+#include "operationhelper.h"
 #include "connect.h"
 
 using namespace Ilwis;
@@ -21,14 +27,35 @@ Connect::Connect(quint64 metaid, const Ilwis::OperationExpression &expr) :
 {
 }
 
+template<class T> void setVariant(IIlwisObject& obj, QVariant& v){
+    IlwisData<T> obj2 = obj.as<T>();
+    v.setValue(obj2);
+}
+
 bool Connect::execute(ExecutionContext *ctx, SymbolTable& symTable)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
     QVariant v;
-    v.setValue(_object);
-    ctx->setOutput(symTable, v, _object->name(), itILWISOBJECT, _object->resource());
+    IlwisTypes tp = _object->ilwisType();
+    if ( tp == itRASTER)
+        setVariant<RasterCoverage>(_object,v);
+    else if ( tp == itTABLE)
+        setVariant<Table>(_object,v);
+    else if ( tp == itFLATTABLE)
+        setVariant<FlatTable>(_object,v);
+    else if ( tp == itFEATURE)
+        setVariant<FeatureCoverage>(_object,v);
+    else if ( tp == itDOMAIN)
+        setVariant<Domain>(_object,v);
+    else if ( tp == itITEMDOMAIN){
+        setVariant<Domain>(_object,v);
+    }
+
+    ctx->setOutput(symTable, v, _object->name(),tp, _object->resource());
+    auto bb = OperationHelper::variant2ilwisobject(v, tp);
+    auto bb2= OperationHelper::variant2ilwisobject(v, itFLATTABLE);
     return true;
 }
 
