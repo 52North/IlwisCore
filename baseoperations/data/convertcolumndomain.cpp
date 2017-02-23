@@ -39,7 +39,7 @@ ConvertColumnDomain::ConvertColumnDomain(quint64 metaid, const Ilwis::OperationE
 {
 }
 
-template<class DomainType, class RangeType> bool translate2ItemColumn(ITable& inputTable, const QString& colName, std::vector<QVariant>& values){
+template<class DomainType, class RangeType> bool translate2ItemColumn(ITable& inputTable, const QString& colName, std::vector<QVariant>& values, const QString& domName){
 
     //std::vector<QVariant> values = oldvalues;
     RangeType range;
@@ -48,6 +48,11 @@ template<class DomainType, class RangeType> bool translate2ItemColumn(ITable& in
         std::set<QString> items;
         IItemDomain itemdom = inputTable->columndefinitionRef(colName).datadef().domain().as<ItemDomain<DomainItem>>();
         for(auto& v : values){
+            if ( v == rUNDEF){
+                v = QVariant();
+                continue;
+            }
+
             auto item = itemdom->item(v.toUInt());
             if (item){
                 items.insert(item->name());
@@ -65,20 +70,25 @@ template<class DomainType, class RangeType> bool translate2ItemColumn(ITable& in
         }
     }
     DomainType domain;
-
-    domain.prepare();
-    domain->range(new RangeType(range));
+    if ( domName.indexOf("://") != 0 ){
+        quint64 outid = mastercatalog()->name2id(domName,itDOMAIN);
+        if ( outid != i64UNDEF)
+            domain.prepare(outid);
+    }
+    if ( !domain.isValid()){
+        domain.prepare();
+        domain->range(new RangeType(range));
+    }
     inputTable->columndefinitionRef(colName) = ColumnDefinition(colName, domain);
     for(auto& v : values){
         auto item = domain->item(v.toString());
         if ( item)
             v = item->raw();
         else{
-            kernel()->issues()->log(TR("Non convertible or invalid values in domain. No conversion possible"));
-            return false;
+            v = rUNDEF;
         }
     }
-    //inputTable->column(colName, values);
+    inputTable->column(colName, values);
     return true;
 }
 
@@ -131,10 +141,10 @@ bool ConvertColumnDomain::execute(ExecutionContext *ctx, SymbolTable &symTable)
     bool ok = false;
     std::vector<QVariant> values = _inputTable->column(_columnName);
     if ( _targetDomainType == "identifier" ){
-        ok = translate2ItemColumn<INamedIdDomain, NamedIdentifierRange>(_inputTable, _columnName, values);
+        ok = translate2ItemColumn<INamedIdDomain, NamedIdentifierRange>(_inputTable, _columnName, values, _domainName);
     }
     if ( _targetDomainType == "thematic" ){
-        ok = translate2ItemColumn<IThematicDomain, ThematicRange>(_inputTable, _columnName, values);
+        ok = translate2ItemColumn<IThematicDomain, ThematicRange>(_inputTable, _columnName, values, _domainName);
     }
     if ( _targetDomainType == "time" ){
         ok = translate2TimeColumn(_inputTable, _columnName, values);
