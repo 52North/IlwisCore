@@ -89,7 +89,7 @@ public:
      * @param options options for the merging, see TableMerger
      * @return true if the merging succeeded
      */
-    bool merge(const IlwisObject *obj, int options);
+    virtual bool merge(const IlwisObject *obj, int options=0);
     void dataLoaded(bool yesno);
     bool isDataLoaded() const;
     void initValuesColumn(const QString& colname);
