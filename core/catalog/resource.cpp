@@ -262,11 +262,16 @@ void Resource::name(const QString &nm, bool adaptNormalizedUrl,bool updateDataba
 
     QString dummy = name();
     changed(true);
-    Identity::name(nm);
+    QString n = nm;
+    if ( nm.indexOf("://") > 0){
+        int index = nm.lastIndexOf("/");
+        n = nm.mid(index + 1);
 
+    }
+    Identity::name(n);
     if ( id() != iUNDEF && _modifiedTime != rUNDEF){ // if createtime is undefined we are creating a new resource so it will not be in the mastercatalog(yet), no update needed
         if ( updateDatabase)
-            mastercatalog()->changeResource(id(), "name",nm);
+            mastercatalog()->changeResource(id(), "name",n);
     }
     if ( !adaptNormalizedUrl || nm == sUNDEF)
         return;
@@ -274,7 +279,7 @@ void Resource::name(const QString &nm, bool adaptNormalizedUrl,bool updateDataba
     QString url = _normalizedUrl.toString();
     int index = url.lastIndexOf("/");
     if ( index != -1 ) {
-        url = url.left(index+1) + nm;
+        url = url.left(index+1) + n;
     }
     _normalizedUrl = QUrl(url);
 }
