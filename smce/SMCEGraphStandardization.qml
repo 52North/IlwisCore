@@ -14,8 +14,8 @@ Column {
 
     signal executeStandardization()
 
-    property int minX: 0
-    property int maxX: 148607
+    property int minX: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.min : 0
+    property int maxX: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.max : 0
     property int minY: 0
     property int maxY: 1
 
@@ -25,78 +25,70 @@ Column {
         height: 200
         property int axisOffset : 10
 
+        MouseArea {
+            anchors.fill: parent
+            onPositionChanged: {
+                var x = toRealXX(mouse.x)
+                var y = toRealYY(mouse.y)
+                selectedNode.standardization.standardizationValue.SetAnchor(x, y)
+                graphCanvas.repaint()
+            }
+        }
+
         // Repeaters and ListViews are too slow for drag functionality,
         // so we create the dragable points statically
         DragPoint {
             id: point0
-            x: graphCanvas.axisOffset
-            y: graphCanvas.height - graphCanvas.axisOffset
-            active: true
-            fixedXX: true
+            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[0].x)
+            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[0].y)
         }
 
         DragPoint {
             id: point1
-            x: Math.round(graphCanvas.axisOffset + (graphCanvas.width - graphCanvas.axisOffset) / 8.0)
-            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
-            active: true
-            fixedXX: false
+            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[1].x)
+            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[1].y)
         }
 
         DragPoint {
             id: point2
-            x: Math.round(graphCanvas.axisOffset + 2.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0)
-            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - 2.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
-            active: true
-            fixedXX: false
+            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[2].x)
+            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[2].y)
         }
 
         DragPoint {
             id: point3
-            x: Math.round(graphCanvas.axisOffset + 3.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0)
-            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - 3.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
-            active: true
-            fixedXX: false
+            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[3].x)
+            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[3].y)
         }
 
         DragPoint {
             id: point4
-            x: Math.round(graphCanvas.axisOffset + (graphCanvas.width - graphCanvas.axisOffset) / 2.0)
-            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - 4.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
-            active: true
-            fixedXX: false
+            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[4].x)
+            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[4].y)
         }
 
         DragPoint {
             id: point5
-            x: Math.round(graphCanvas.axisOffset + 5.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0)
-            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - 5.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
-            active: true
-            fixedXX: false
+            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[5].x)
+            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[5].y)
         }
 
         DragPoint {
             id: point6
-            x: Math.round(graphCanvas.axisOffset + 6.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0)
-            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - 6.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
-            active: true
-            fixedXX: false
+            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[6].x)
+            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[6].y)
         }
 
         DragPoint {
             id: point7
-            x: Math.round(graphCanvas.axisOffset + 7.0 * (graphCanvas.width - graphCanvas.axisOffset) / 8.0)
-            y: Math.round(graphCanvas.height - graphCanvas.axisOffset - 7.0 * (graphCanvas.height - graphCanvas.axisOffset) / 8.0)
-            active: true
-            fixedXX: false
+            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[7].x)
+            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[7].y)
         }
 
         DragPoint {
             id: point8
-            x: graphCanvas.width
-            y: 0
-            active: true
-            fixedXX: true
+            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[8].x)
+            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[8].y)
         }
 
         function initializeCurve(ctx) {
@@ -125,65 +117,14 @@ Column {
         }
 
         onPaint : {
-            //console.log("onPaint called.....")
             var ctx = getContext("2d")
-
-            /*ctx.translate(0, canvas.height)
-            ctx.scale(1, -1)
-            */
             ctx.fillStyle = "white"
             ctx.fillRect(0, 0, graphCanvas.width, graphCanvas.height)
             drawAxis(ctx)
             initializeCurve(ctx)
         }
 
-        Component.onCompleted: {
-            point0.dragged.connect(repaint)
-            point1.dragged.connect(repaint)
-            point2.dragged.connect(repaint)
-            point3.dragged.connect(repaint)
-            point4.dragged.connect(repaint)
-            point5.dragged.connect(repaint)
-            point6.dragged.connect(repaint)
-            point7.dragged.connect(repaint)
-            point8.dragged.connect(repaint)
-        }
-
         function repaint() {
-            point0.x = Math.max(graphCanvas.axisOffset, Math.min(point0.x, graphCanvas.width))
-            point1.x = Math.max(graphCanvas.axisOffset, Math.min(point1.x, graphCanvas.width))
-            point2.x = Math.max(graphCanvas.axisOffset, Math.min(point2.x, graphCanvas.width))
-            point3.x = Math.max(graphCanvas.axisOffset, Math.min(point3.x, graphCanvas.width))
-            point4.x = Math.max(graphCanvas.axisOffset, Math.min(point4.x, graphCanvas.width))
-            point5.x = Math.max(graphCanvas.axisOffset, Math.min(point5.x, graphCanvas.width))
-            point6.x = Math.max(graphCanvas.axisOffset, Math.min(point6.x, graphCanvas.width))
-            point7.x = Math.max(graphCanvas.axisOffset, Math.min(point7.x, graphCanvas.width))
-            point8.x = Math.max(graphCanvas.axisOffset, Math.min(point8.x, graphCanvas.width))
-            point0.y = Math.max(0, Math.min(point0.y, graphCanvas.height - graphCanvas.axisOffset))
-            point1.y = Math.max(0, Math.min(point1.y, graphCanvas.height - graphCanvas.axisOffset))
-            point2.y = Math.max(0, Math.min(point2.y, graphCanvas.height - graphCanvas.axisOffset))
-            point3.y = Math.max(0, Math.min(point3.y, graphCanvas.height - graphCanvas.axisOffset))
-            point4.y = Math.max(0, Math.min(point4.y, graphCanvas.height - graphCanvas.axisOffset))
-            point5.y = Math.max(0, Math.min(point5.y, graphCanvas.height - graphCanvas.axisOffset))
-            point6.y = Math.max(0, Math.min(point6.y, graphCanvas.height - graphCanvas.axisOffset))
-            point7.y = Math.max(0, Math.min(point7.y, graphCanvas.height - graphCanvas.axisOffset))
-            point8.y = Math.max(0, Math.min(point8.y, graphCanvas.height - graphCanvas.axisOffset))
-            if (point0.x > point1.x)
-                point1.x = Math.min(point0.x, point8.x)
-            if (point1.x > point2.x)
-                point2.x = Math.min(point1.x, point8.x)
-            if (point2.x > point3.x)
-                point3.x = Math.min(point2.x, point8.x)
-            if (point3.x > point4.x)
-                point4.x = Math.min(point3.x, point8.x)
-            if (point4.x > point5.x)
-                point5.x = Math.min(point4.x, point8.x)
-            if (point5.x > point6.x)
-                point6.x = Math.min(point5.x, point8.x)
-            if (point6.x > point7.x)
-                point7.x = Math.min(point6.x, point8.x)
-            if (point7.x > point8.x)
-                point7.x = point8.x
             var ctx = getContext("2d")
             ctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height)
             requestPaint()
@@ -192,26 +133,26 @@ Column {
 
     function toRealXX(x) {
         var scalerange = maxX - minX
-        var graphXXrange = graphCanvas.width
+        var graphXXrange = graphCanvas.width - graphCanvas.axisOffset
         return (scalerange/graphXXrange) * (x - graphCanvas.axisOffset) // axisOffset = XX origin
     }
 
     function toRealYY(y) {
         var scalerange = maxY - minY
         var graphYYrange = graphCanvas.height - graphCanvas.axisOffset
-        return 1.0 - ((scalerange/graphYYrange) * y)
+        return maxY - y * (scalerange/graphYYrange)
     }
 
     function toViewportXX(x) {
         var scalerange = maxX - minX
-        var graphXXrange = graphCanvas.width
-        return Math.round(graphCanvas.axisOffset + ((graphXXrange/scalerange) * x)) // axisOffset = XX origin
+        var graphXXrange = graphCanvas.width - graphCanvas.axisOffset
+        return Math.round(graphCanvas.axisOffset + x * (graphXXrange/scalerange)) // axisOffset = XX origin
     }
 
     function toViewportYY(y) {
         var scalerange = maxY - minY
         var graphYYrange = graphCanvas.height - graphCanvas.axisOffset
-        return Math.round(graphCanvas.height - (graphYYrange/scalerange) * y)
+        return Math.round(graphCanvas.height - graphCanvas.axisOffset - y * (graphYYrange/scalerange))
     }
 
     Row {
@@ -220,7 +161,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: minX.toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[0].x.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x0")
             readOnly: true
@@ -230,12 +171,12 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: toRealYY(point0.y).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[0].y.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y0")
             onContentEdited: {
-                console.log("y0 changed to:"+ content)
-                point0.y = toViewportYY(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[0].y = parseFloat(content)
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -249,12 +190,12 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: toRealXX(point1.x).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[1].x.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x1")
             onContentEdited: {
-                console.log("x1 changed to:"+ content)
-                point1.x = toViewportXX(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[1].x = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -263,12 +204,12 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: toRealYY(point1.y).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[1].y.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y1")
             onContentEdited: {
-                console.log("y1 changed to:"+ content)
-                point1.y = toViewportYY(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[1].y = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -282,12 +223,12 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: toRealXX(point2.x).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[2].x.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x2")
             onContentEdited: {
-                console.log("x2 changed to:"+ content)
-                point2.x = toViewportXX(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[2].x = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -296,12 +237,12 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: toRealYY(point2.y).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[2].y.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y2")
             onContentEdited: {
-                console.log("y2 changed to:"+ content)
-                point2.y = toViewportYY(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[2].y = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -315,12 +256,12 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: toRealXX(point3.x).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[3].x.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x3")
             onContentEdited: {
-                console.log("x3 changed to:"+ content)
-                point3.x = toViewportXX(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[3].x = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -329,12 +270,12 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: toRealYY(point3.y).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[3].y.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y3")
             onContentEdited: {
-                console.log("y3 changed to:"+ content)
-                point3.y = toViewportYY(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[3].y = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -348,12 +289,12 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: toRealXX(point4.x).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[4].x.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x4")
             onContentEdited: {
-                console.log("x4 changed to:"+ content)
-                point4.x = toViewportXX(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[4].x = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -362,12 +303,12 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: toRealYY(point4.y).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[4].y.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y4")
             onContentEdited: {
-                console.log("y4 changed to:"+ content)
-                point4.y = toViewportYY(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[4].y = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -381,12 +322,12 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: toRealXX(point5.x).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[5].x.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x5")
             onContentEdited: {
-                console.log("x5 changed to:"+ content)
-                point5.x = toViewportXX(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[5].x = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -395,12 +336,12 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: toRealYY(point5.y).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[5].y.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y5")
             onContentEdited: {
-                console.log("y5 changed to:"+ content)
-                point5.y = toViewportYY(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[5].y = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -414,12 +355,12 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: toRealXX(point6.x).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[6].x.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x6")
             onContentEdited: {
-                console.log("x6 changed to:"+ content)
-                point6.x = toViewportXX(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[6].x = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -428,12 +369,12 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: toRealYY(point6.y).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[6].y.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y6")
             onContentEdited: {
-                console.log("y6 changed to:"+ content)
-                point6.y = toViewportYY(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[6].y = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -447,13 +388,13 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: toRealXX(point7.x).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[7].x.toFixed(3).toString()
             //color:"black"
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x7")
             onContentEdited: {
-                console.log("x7 changed to:"+ content)
-                point7.x = toViewportXX(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[7].x = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -462,13 +403,13 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: toRealYY(point7.y).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[7].y.toFixed(3).toString()
             //color:"black"
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y7")
             onContentEdited: {
-                console.log("y7 changed to:"+ content)
-                point7.y = toViewportYY(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[7].y = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
@@ -482,7 +423,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: maxX.toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[8].x.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x8")
             readOnly: true
@@ -492,12 +433,12 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: toRealYY(point8.y).toFixed(3).toString()
+            content: selectedNode.standardization.standardizationValue.anchors[8].y.toFixed(3).toString()
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y8")
             onContentEdited: {
-                console.log("y8 changed to:"+ content)
-                point8.y = toViewportYY(parseFloat(content))
+                selectedNode.standardization.standardizationValue.anchors[8].y = parseFloat(content);
+                selectedNode.standardization.standardizationValue.SolveParams()
                 graphCanvas.repaint()
             }
         }
