@@ -24,6 +24,7 @@ private:
     bool executeLoop(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation *workflowImpl, const OperationExpression &expression, const std::map<quint64, int> &idmap);
     bool next();
     QString parameterValue(int parmIndex) const;
+    void unloadInputs(Ilwis::ExecutionContext *ctx, Ilwis::SymbolTable &symTable);
 };
 }
 

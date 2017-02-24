@@ -46,6 +46,21 @@ bool ExecutionNode::execute(ExecutionContext *ctx, SymbolTable &symTable, Workfl
     return false;
 }
 
+void ExecutionNode::unloadInputs(ExecutionContext *ctx, SymbolTable &symTable){
+    for(int i=0; i < ctx->_results.size(); ++i)    {
+       QString result = ctx->_results[i]    ;
+       Symbol sym = symTable.getSymbol(result);
+       if ( sym.isValid()){
+           if ( hasType(sym._type, itILWISOBJECT)){
+               IIlwisObject obj = OperationHelper::variant2ilwisobject(sym._var, sym._type);
+               if ( obj.isValid()){
+                   obj->unload();
+               }
+           }
+       }
+    }
+}
+
 bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, const OperationExpression &expression, const std::map<quint64, int> &idmap)
 {
     auto getValue = [&](const WorkFlowParameter& parm, const OperationExpression& expression, const std::map<quint64, int>& idmap)-> QVariant{
@@ -68,6 +83,7 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
                 ExecutionNode& exNode = workflowImpl->executionNode(parameter.inputLink());
                 ExecutionContext ctx2;
                 if ( exNode.execute(&ctx2, symTable2, workflowImpl, expression, idmap)) {
+                    unloadInputs(ctx, symTable);
                     QString outputName = ctx2._results[parameter.outputParameterIndex()];
                     QVariant val = symTable2.getValue(outputName);
                     QString sval = OperationHelper::variant2string(val, symTable2.getSymbol(outputName)._type);
