@@ -62,7 +62,15 @@ ToolBar{
                source : iconsource("arrowright.png")
             }
             onClicked: {
-                console.log("Generate button clicked...")
+                var analysis = modellerDataPane.model.analysisPattern(0)
+                var input = {
+                    inputFilename1 : "dummy"
+                }
+                var output = {
+                    outputFilename1 : "dummy"
+                }
+
+                analysis.execute(input, output)
                 openMap("Greenbelt_development_priority_sub.mpr")
             }
         }
