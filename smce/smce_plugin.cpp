@@ -30,6 +30,13 @@ void SMCEPlugin::registerTypes(const char *uri)
     qmlRegisterType<Weights>(uri, 1, 0, "Weights");
     qmlRegisterType<DirectWeightItem>(uri, 1, 0, "DirectWeightItem");
     qmlRegisterType<DirectWeights>(uri, 1, 0, "DirectWeights");
+    qmlRegisterType<Standardization>(uri, 1, 0, "Standardization");
+    qmlRegisterType<Anchor>(uri, 1, 0, "Anchor");
+    qmlRegisterType<StandardizationValue>(uri, 1, 0, "StandardizationValue");
+    qmlRegisterType<StandardizationValueConstraint>(uri, 1, 0, "StandardizationValueConstraint");
+    qmlRegisterType<StandardizationClass>(uri, 1, 0, "StandardizationClass");
+    qmlRegisterType<StandardizationBool>(uri, 1, 0, "StandardizationBool");
+    qmlRegisterType<StandardizationBoolConstraint>(uri, 1, 0, "StandardizationBoolConstraint");
 
     Ilwis::kernel()->issues()->log("Loaded module SMCE",Ilwis::IssueObject::itMessage);
 }

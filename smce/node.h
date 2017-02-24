@@ -5,6 +5,7 @@
 #include <QQmlListProperty>
 
 class Weights;
+class Standardization;
 
 class Node : public QObject
 {
@@ -18,6 +19,7 @@ class Node : public QObject
     Q_PROPERTY( QString fileName READ fileName WRITE setFileName NOTIFY fileNameChanged )
     Q_PROPERTY( int level READ level NOTIFY levelChanged )
     Q_PROPERTY( Weights * weights READ weights NOTIFY weightsChanged )
+    Q_PROPERTY( Standardization * standardization READ standardization NOTIFY standardizationChanged )
 
 signals:
    void nameChanged();
@@ -29,6 +31,7 @@ signals:
    void levelChanged();
    void nodeDeleted();
    void weightsChanged();
+   void standardizationChanged();
 
 public:
     enum NodeType { Group=0, MaskArea=1, Constraint=2, Factor=3 };
@@ -44,8 +47,10 @@ public:
     double weight() const;
     void setWeight(double weight);
     Weights * weights();
+    Standardization * standardization();
     const Node * parent() const;
     QList <Node*> subNodes();
+    QList <Node*> subFactors();
     QQmlListProperty<Node> subNodesQml();
     void addNode(Node *node);
     const QString fileName() const;
@@ -69,6 +74,7 @@ protected:
     QList <Node*> _subNodes;
     QString _fileName;
     Weights * _weights;
+    Standardization * _standardization;
 };
 
 class DirectWeights;
@@ -148,6 +154,210 @@ private:
     DirectWeightItem * getItem(Node * node);
     QList <DirectWeightItem*> _directWeights; // these are the internal (not normalized) values
     WeightType _weightType;
+};
+
+class StandardizationValue;
+
+class Anchor : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY( double x READ x WRITE setX NOTIFY xChanged)
+    Q_PROPERTY( double y READ y WRITE setY NOTIFY yChanged)
+signals:
+    void xChanged();
+    void yChanged();
+public:
+    Anchor();
+    Anchor(Node * node, double x, double y);
+    double x() const;
+    double y() const;
+    void setX(double x);
+    void setY(double y);
+private:
+    double _x;
+    double _y;
+};
+
+class SmceFunction
+{
+public:
+    SmceFunction(Node *node, QList<Anchor*> & anchors, int nrAnchors, double minX, double maxX, double minY, double maxY, bool benefit);
+    virtual ~SmceFunction();
+    void SetAnchor(double x, double y);
+    virtual QString sGetFx(QString sData) = 0;
+    virtual void SetDefaultAnchors() = 0;
+    virtual void SolveParams() = 0;
+protected:
+    QList<Anchor*> & _anchors;
+    const double _minX;
+    const double _maxX;
+    const double _minY;
+    const double _maxY;
+    const bool _benefit;
+private:
+    void SeparateAnchorPoints();
+    double rUnitDist2(double x, double y, Anchor * anchor);
+};
+
+class PiecewiseLinear8Function : public SmceFunction
+{
+public:
+    PiecewiseLinear8Function(Node *node, QList<Anchor *> & anchors, double minX, double maxX, double minY, double maxY, bool benefit);
+    virtual void SolveParams();
+    virtual void SetDefaultAnchors();
+    virtual QString sGetFx(QString sData);
+private:
+    double a1;
+    double b1; // y = a1x + b1 in first interval
+    double a2;
+    double b2; // y = a2x + b2 in second interval
+    double a3;
+    double b3; // y = a3x + b3 in third interval
+    double a4;
+    double b4; // y = a4x + b4 in fourth interval
+    double a5;
+    double b5; // y = a5x + b5 in fifth interval
+    double a6;
+    double b6; // y = a6x + b6 in sixth interval
+    double a7;
+    double b7; // y = a7x + b7 in seventh interval
+    double a8;
+    double b8; // y = a8x + b8 in eighth interval
+};
+
+class StdValueMethod;
+
+class Standardization : public QObject
+{
+    Q_OBJECT
+    Q_ENUMS(StandardizationType)
+    Q_PROPERTY( int type READ type NOTIFY typeChanged )
+    Q_PROPERTY( StandardizationValue * standardizationValue READ pStandardizationValue NOTIFY standardizationValueChanged )
+
+signals:
+   void typeChanged();
+   void standardizationValueChanged();
+
+public:
+    enum StandardizationType{ None=0, Value=1, ValueConstraint=2, Class=3, ClassConstraint=4, Bool=5, BoolConstraint=6 };
+    Standardization();
+    Standardization(Node *node);
+    virtual int type() const;
+    virtual StandardizationValue * pStandardizationValue();
+    static Standardization * create(Node *node);
+
+protected:
+    Node * _node;
+};
+
+class StandardizationValue : public Standardization
+{
+    Q_OBJECT
+    Q_ENUMS(StandardizationValueMethodType)
+    Q_PROPERTY( double min READ min NOTIFY minChanged )
+    Q_PROPERTY( double max READ max NOTIFY maxChanged )
+    Q_PROPERTY( int methodType READ methodType NOTIFY methodTypeChanged )
+    Q_PROPERTY( QQmlListProperty<Anchor> anchors READ anchors /*WRITE setAnchors */ NOTIFY anchorsChanged )
+
+signals:
+    void minChanged();
+    void maxChanged();
+    void methodTypeChanged();
+    void anchorsChanged();
+
+public:
+    enum StandardizationValueMethodType{ Maximum=0, Interval=1, Goal=2, Convex=3, Concave=4, Ushape=5, Gaussian=6, PiecewiseLinear8=7 };
+    StandardizationValue();
+    StandardizationValue(Node *node, double min, double max);
+    double min() const;
+    double max() const;
+    int methodType() const;
+    QQmlListProperty<Anchor> anchors();
+    //void setAnchors(QQmlListProperty<Anchor> anchors);
+    Q_INVOKABLE void SolveParams();
+    Q_INVOKABLE void SetAnchor(double x, double y);
+    virtual int type() const;
+    virtual StandardizationValue * pStandardizationValue();
+    virtual ~StandardizationValue();
+
+private:
+    StdValueMethod * _stdValueMethod;
+    const double _min;
+    const double _max;
+    const StandardizationValueMethodType _methodType;
+    QList <Anchor*> _anchors;
+};
+
+class StdValueMethod
+{
+public:
+    StdValueMethod();
+    StdValueMethod(Node *node, double min, double max);
+    virtual ~StdValueMethod();
+    virtual void SolveParams() = 0;
+    virtual void SetAnchor(double x, double y) = 0;
+    static StdValueMethod * create(Node *node, QList<Anchor *> &anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method);
+
+protected:
+    Node * _node;
+    const double _min;
+    const double _max;
+};
+
+class StdValueGeneral : public StdValueMethod
+{
+public:
+    StdValueGeneral(Node *node, QList<Anchor *> &anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method);
+    virtual void SolveParams();
+    virtual void SetAnchor(double x, double y);
+    virtual ~StdValueGeneral();
+
+private:
+    StandardizationValue::StandardizationValueMethodType _method;
+    SmceFunction * _function;
+};
+
+class StandardizationValueConstraint : public Standardization
+{
+    Q_OBJECT
+
+public:
+    StandardizationValueConstraint();
+    StandardizationValueConstraint(Node *node, double min, double max);
+    virtual int type() const;
+};
+
+class StandardizationClass : public Standardization
+{
+    Q_OBJECT
+
+public:
+    StandardizationClass();
+    StandardizationClass(Node *node, bool constraint);
+    virtual int type() const;
+
+private:
+    const bool _constraint;
+};
+
+class StandardizationBool : public Standardization
+{
+    Q_OBJECT
+
+public:
+    StandardizationBool();
+    StandardizationBool(Node *node);
+    virtual int type() const;
+};
+
+class StandardizationBoolConstraint : public Standardization
+{
+    Q_OBJECT
+
+public:
+    StandardizationBoolConstraint();
+    StandardizationBoolConstraint(Node *node);
+    virtual int type() const;
 };
 
 #endif // NODE_H
