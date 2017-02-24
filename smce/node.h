@@ -50,7 +50,7 @@ public:
     Standardization * standardization();
     const Node * parent() const;
     QList <Node*> subNodes();
-    QList <Node*> subFactors();
+    QList <Node*> subFactors() const;
     QQmlListProperty<Node> subNodesQml();
     void addNode(Node *node);
     const QString fileName() const;
@@ -58,6 +58,7 @@ public:
     int level() const;
     void deleteChild(Node * node);
     void recalcWeights();
+    QString getMapcalc() const;
     Q_INVOKABLE void setGoal(QString name);
     Q_INVOKABLE void addMask(QString name);
     Q_INVOKABLE Node * addGroup(QString name);
@@ -184,7 +185,7 @@ public:
     SmceFunction(Node *node, QList<Anchor*> & anchors, int nrAnchors, double minX, double maxX, double minY, double maxY, bool benefit);
     virtual ~SmceFunction();
     void SetAnchor(double x, double y);
-    virtual QString sGetFx(QString sData) = 0;
+    virtual QString getMapcalc(QString rasterCoverage) = 0;
     virtual void SetDefaultAnchors() = 0;
     virtual void SolveParams() = 0;
 protected:
@@ -203,10 +204,11 @@ class PiecewiseLinear8Function : public SmceFunction
 {
 public:
     PiecewiseLinear8Function(Node *node, QList<Anchor *> & anchors, double minX, double maxX, double minY, double maxY, bool benefit);
+    virtual QString getMapcalc(QString rasterCoverage);
     virtual void SolveParams();
     virtual void SetDefaultAnchors();
-    virtual QString sGetFx(QString sData);
 private:
+    QString getLine(double a, QString x, double b);
     double a1;
     double b1; // y = a1x + b1 in first interval
     double a2;
@@ -242,6 +244,7 @@ public:
     enum StandardizationType{ None=0, Value=1, ValueConstraint=2, Class=3, ClassConstraint=4, Bool=5, BoolConstraint=6 };
     Standardization();
     Standardization(Node *node);
+    virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
     virtual StandardizationValue * pStandardizationValue();
     static Standardization * create(Node *node);
@@ -272,6 +275,7 @@ public:
     double min() const;
     double max() const;
     int methodType() const;
+    virtual QString getMapcalc(QString rasterCoverage) const;
     QQmlListProperty<Anchor> anchors();
     //void setAnchors(QQmlListProperty<Anchor> anchors);
     Q_INVOKABLE void SolveParams();
@@ -296,6 +300,7 @@ public:
     virtual ~StdValueMethod();
     virtual void SolveParams() = 0;
     virtual void SetAnchor(double x, double y) = 0;
+    virtual QString getMapcalc(QString rasterCoverage) const = 0;
     static StdValueMethod * create(Node *node, QList<Anchor *> &anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method);
 
 protected:
@@ -310,6 +315,7 @@ public:
     StdValueGeneral(Node *node, QList<Anchor *> &anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method);
     virtual void SolveParams();
     virtual void SetAnchor(double x, double y);
+    virtual QString getMapcalc(QString rasterCoverage) const;
     virtual ~StdValueGeneral();
 
 private:
@@ -324,6 +330,7 @@ class StandardizationValueConstraint : public Standardization
 public:
     StandardizationValueConstraint();
     StandardizationValueConstraint(Node *node, double min, double max);
+    virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
 };
 
@@ -334,6 +341,7 @@ class StandardizationClass : public Standardization
 public:
     StandardizationClass();
     StandardizationClass(Node *node, bool constraint);
+    virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
 
 private:
@@ -347,6 +355,7 @@ class StandardizationBool : public Standardization
 public:
     StandardizationBool();
     StandardizationBool(Node *node);
+    virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
 };
 
@@ -357,6 +366,7 @@ class StandardizationBoolConstraint : public Standardization
 public:
     StandardizationBoolConstraint();
     StandardizationBoolConstraint(Node *node);
+    virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
 };
 
