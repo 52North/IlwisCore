@@ -143,17 +143,17 @@ Column {
                 if (selectedNode.standardization) {
                     switch(selectedNode.standardization.type) {
                     case Standardization.Value:
-                        return qsTr("Standardization Value")
+                        return qsTr("Standardization of Value Indicator")
                     case Standardization.ValueConstraint:
-                        return qsTr("Standardization Value Constraint")
+                        return qsTr("Standardization of Value Constraint")
                     case Standardization.Class:
-                        return qsTr("Standardization Class")
+                        return qsTr("Standardization of Class Indicator")
                     case Standardization.ClassConstraint:
-                        return qsTr("Standardization Class Constraint")
+                        return qsTr("Standardization of Class Constraint")
                     case Standardization.Bool:
-                        return qsTr("Standardization Bool")
+                        return qsTr("Standardization of Boolean Indicator")
                     case Standardization.BoolConstraint:
-                        return qsTr("Standardization Bool Constraint")
+                        return qsTr("Standardization of Boolean Constraint")
                     default:
                         return qsTr("Standardization: unknown")
                     }
