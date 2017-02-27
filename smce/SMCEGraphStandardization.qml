@@ -113,6 +113,19 @@ Column {
             ctx.moveTo(0.5 + graphCanvas.axisOffset, 0.5) // top-left
             ctx.lineTo(0.5 + graphCanvas.axisOffset, 0.5 + graphCanvas.height - graphCanvas.axisOffset) // origin
             ctx.lineTo(0.5 + graphCanvas.width, 0.5 + graphCanvas.height - graphCanvas.axisOffset) // bottom-right
+
+            // draw ticks on the axes
+            var nrTicks = 5
+            var tickThickness = 3 // nr of pixels for drawing a tick
+            var tickXSize = (graphCanvas.width - graphCanvas.axisOffset) / (nrTicks - 1)
+            var tickYSize = (graphCanvas.height - graphCanvas.axisOffset) / (nrTicks - 1)
+            for (var i = 0; i < nrTicks; ++i) {
+                ctx.moveTo(0.5 + graphCanvas.axisOffset, 0.5 + Math.round(tickYSize * i))
+                ctx.lineTo(0.5 + graphCanvas.axisOffset - tickThickness, 0.5 + Math.round(tickYSize * i))
+                ctx.moveTo(0.5 + graphCanvas.axisOffset + Math.round(tickXSize * i), 0.5 + graphCanvas.height - graphCanvas.axisOffset)
+                ctx.lineTo(0.5 + graphCanvas.axisOffset + Math.round(tickXSize * i), 0.5 + graphCanvas.height - graphCanvas.axisOffset + tickThickness)
+            }
+
             ctx.stroke()
         }
 
