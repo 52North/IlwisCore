@@ -19,7 +19,7 @@ Column {
     anchors.margins: 5
 
     Column {
-        id: nodecolumn
+        id: weights
         spacing: 5
         visible: selectedNode != null && selectedNode.type === Node.Group
         Text {
@@ -97,26 +97,70 @@ Column {
     }
 
     Column {
-        id: standardizationcolumn
+        id: standardization
         visible: selectedNode != null && selectedNode.type !== Node.Group
         width: parent.width
         spacing: 5
 
         Text{
-            text : qsTr("Standardization")
+            text : standardization.guiText(selectedNode)
             font.bold : true
         }
 
         Loader {
             id : stdEditor
             width: parent.width
+            source: standardization.qmlFile(selectedNode)
         }
 
-        Component.onCompleted: {
-            // if ( input indicator is class raster)
-            //stdEditor.setSource("SMCEClassStandardization.qml")
-            // else
-            stdEditor.setSource("SMCEGraphStandardization.qml")
+        function qmlFile(selectedNode) {
+            if (selectedNode !== null) {
+                if (selectedNode.standardization) {
+                    switch(selectedNode.standardization.type) {
+                    case Standardization.Value:
+                        return "SMCEGraphStandardization.qml"
+                    case Standardization.ValueConstraint:
+                        return "SMCEValueConstraintStandardization.qml"
+                    case Standardization.Class:
+                        return "SMCEClassStandardization.qml"
+                    case Standardization.ClassConstraint:
+                        return "SMCEClassConstraintStandardization.qml"
+                    case Standardization.Bool:
+                        return "SMCEBoolStandardization.qml"
+                    case Standardization.BoolConstraint:
+                        return "SMCEBoolConstraintStandardization.qml"
+                    default:
+                        return ""
+                    }
+                } else
+                    return ""
+            } else
+                return ""
+        }
+
+        function guiText(selectedNode) {
+            if (selectedNode !== null) {
+                if (selectedNode.standardization) {
+                    switch(selectedNode.standardization.type) {
+                    case Standardization.Value:
+                        return qsTr("Standardization of Value Indicator")
+                    case Standardization.ValueConstraint:
+                        return qsTr("Standardization of Value Constraint")
+                    case Standardization.Class:
+                        return qsTr("Standardization of Class Indicator")
+                    case Standardization.ClassConstraint:
+                        return qsTr("Standardization of Class Constraint")
+                    case Standardization.Bool:
+                        return qsTr("Standardization of Boolean Indicator")
+                    case Standardization.BoolConstraint:
+                        return qsTr("Standardization of Boolean Constraint")
+                    default:
+                        return qsTr("Standardization: unknown")
+                    }
+                } else
+                    return qsTr("Standardization: no input map selected")
+            } else
+                return qsTr("Standardization")
         }
     }
 }

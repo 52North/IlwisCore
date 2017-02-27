@@ -33,7 +33,7 @@ AnalysisModel *SMCEModel::create(Ilwis::AnalysisPattern *pattern)
     return new SMCEModel(pattern);
 }
 
-bool SMCEModel::execute(const QVariantMap &inputParameters, QVariantMap &outputParameters)
+bool SMCEModel::execute(const QVariantMap inputParameters, QVariantMap outputParameters)
 {
 
     // execute the tree calculation here:
