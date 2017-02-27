@@ -122,8 +122,8 @@ Column {
             for (var i = 0; i < nrTicks; ++i) {
                 ctx.moveTo(0.5 + graphCanvas.axisOffset, 0.5 + Math.round(tickYSize * i))
                 ctx.lineTo(0.5 + graphCanvas.axisOffset - tickThickness, 0.5 + Math.round(tickYSize * i))
-                ctx.moveTo(0.5 + graphCanvas.axisOffset + Math.round(tickXSize * i), 0.5 + graphCanvas.height - graphCanvas.axisOffset)
-                ctx.lineTo(0.5 + graphCanvas.axisOffset + Math.round(tickXSize * i), 0.5 + graphCanvas.height - graphCanvas.axisOffset + tickThickness)
+                ctx.moveTo(0.5 + Math.min(graphCanvas.width - 1, graphCanvas.axisOffset + Math.round(tickXSize * i)), 0.5 + graphCanvas.height - graphCanvas.axisOffset)
+                ctx.lineTo(0.5 + Math.min(graphCanvas.width - 1, graphCanvas.axisOffset + Math.round(tickXSize * i)), 0.5 + graphCanvas.height - graphCanvas.axisOffset + tickThickness)
             }
 
             ctx.stroke()
