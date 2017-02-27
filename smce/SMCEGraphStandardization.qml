@@ -23,7 +23,7 @@ Column {
         id: graphCanvas
         width: parent.width
         height: 200
-        property int axisOffset : 10
+        property int axisOffset : 20
 
         MouseArea {
             anchors.fill: parent
@@ -103,30 +103,42 @@ Column {
             ctx.lineTo(0.5 + point6.x, 0.5 + point6.y)
             ctx.lineTo(0.5 + point7.x, 0.5 + point7.y)
             ctx.lineTo(0.5 + point8.x, 0.5 + point8.y)
-            ctx.stroke()
+            ctx.stroke() // actually draw the path that was just defined
         }
 
         function drawAxis(ctx) {
             ctx.lineWidth = 1.0
             ctx.strokeStyle = "black"
             ctx.beginPath()
-            ctx.moveTo(0.5 + graphCanvas.axisOffset, 0.5) // top-left
+            ctx.moveTo(0.5 + graphCanvas.axisOffset, 0.5 + graphCanvas.axisOffset) // top-left
             ctx.lineTo(0.5 + graphCanvas.axisOffset, 0.5 + graphCanvas.height - graphCanvas.axisOffset) // origin
-            ctx.lineTo(0.5 + graphCanvas.width, 0.5 + graphCanvas.height - graphCanvas.axisOffset) // bottom-right
+            ctx.lineTo(0.5 + graphCanvas.width - graphCanvas.axisOffset, 0.5 + graphCanvas.height - graphCanvas.axisOffset) // bottom-right
 
             // draw ticks on the axes
             var nrTicks = 5
             var tickThickness = 3 // nr of pixels for drawing a tick
-            var tickXSize = (graphCanvas.width - graphCanvas.axisOffset) / (nrTicks - 1)
-            var tickYSize = (graphCanvas.height - graphCanvas.axisOffset) / (nrTicks - 1)
+            var tickXSize = (graphCanvas.width - 2 * graphCanvas.axisOffset) / (nrTicks - 1)
+            var tickYSize = (graphCanvas.height - 2 * graphCanvas.axisOffset) / (nrTicks - 1)
             for (var i = 0; i < nrTicks; ++i) {
-                ctx.moveTo(0.5 + graphCanvas.axisOffset, 0.5 + Math.round(tickYSize * i))
-                ctx.lineTo(0.5 + graphCanvas.axisOffset - tickThickness, 0.5 + Math.round(tickYSize * i))
-                ctx.moveTo(0.5 + Math.min(graphCanvas.width - 1, graphCanvas.axisOffset + Math.round(tickXSize * i)), 0.5 + graphCanvas.height - graphCanvas.axisOffset)
-                ctx.lineTo(0.5 + Math.min(graphCanvas.width - 1, graphCanvas.axisOffset + Math.round(tickXSize * i)), 0.5 + graphCanvas.height - graphCanvas.axisOffset + tickThickness)
+                ctx.moveTo(0.5 + graphCanvas.axisOffset, 0.5 + graphCanvas.axisOffset + Math.round(tickYSize * i))
+                ctx.lineTo(0.5 + graphCanvas.axisOffset - tickThickness, 0.5 + graphCanvas.axisOffset + Math.round(tickYSize * i))
+                ctx.moveTo(0.5 + graphCanvas.axisOffset + Math.round(tickXSize * i), 0.5 + graphCanvas.height - graphCanvas.axisOffset)
+                ctx.lineTo(0.5 + graphCanvas.axisOffset + Math.round(tickXSize * i), 0.5 + graphCanvas.height - graphCanvas.axisOffset + tickThickness)
             }
+            ctx.stroke() // actually draw the path that was just defined
 
-            ctx.stroke()
+            // x-axis values
+            //ctx.font="20px Arial"
+            ctx.fillStyle = "#000";
+            ctx.textAlign = "center"
+            ctx.textBaseline="top"
+            ctx.fillText(minX.toString(), graphCanvas.axisOffset, graphCanvas.height - graphCanvas.axisOffset + tickThickness)
+            ctx.fillText(maxX.toString(), graphCanvas.width - graphCanvas.axisOffset, graphCanvas.height - graphCanvas.axisOffset + tickThickness)
+            // y-axis values
+            ctx.textAlign = "right"
+            ctx.textBaseline="middle"
+            ctx.fillText(maxY.toString(), graphCanvas.axisOffset - tickThickness, graphCanvas.axisOffset)
+            ctx.fillText(minY.toString(), graphCanvas.axisOffset - tickThickness, graphCanvas.height - graphCanvas.axisOffset)
         }
 
         onPaint : {
@@ -146,25 +158,25 @@ Column {
 
     function toRealXX(x) {
         var scalerange = maxX - minX
-        var graphXXrange = graphCanvas.width - graphCanvas.axisOffset
+        var graphXXrange = graphCanvas.width - 2 * graphCanvas.axisOffset
         return (scalerange/graphXXrange) * (x - graphCanvas.axisOffset) // axisOffset = XX origin
     }
 
     function toRealYY(y) {
         var scalerange = maxY - minY
-        var graphYYrange = graphCanvas.height - graphCanvas.axisOffset
-        return maxY - y * (scalerange/graphYYrange)
+        var graphYYrange = graphCanvas.height - 2 * graphCanvas.axisOffset
+        return maxY - (scalerange/graphYYrange) * (y - graphCanvas.axisOffset)
     }
 
     function toViewportXX(x) {
         var scalerange = maxX - minX
-        var graphXXrange = graphCanvas.width - graphCanvas.axisOffset
+        var graphXXrange = graphCanvas.width - 2 * graphCanvas.axisOffset
         return Math.round(graphCanvas.axisOffset + x * (graphXXrange/scalerange)) // axisOffset = XX origin
     }
 
     function toViewportYY(y) {
         var scalerange = maxY - minY
-        var graphYYrange = graphCanvas.height - graphCanvas.axisOffset
+        var graphYYrange = graphCanvas.height - 2 * graphCanvas.axisOffset
         return Math.round(graphCanvas.height - graphCanvas.axisOffset - y * (graphYYrange/scalerange))
     }
 
