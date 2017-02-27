@@ -471,6 +471,17 @@ void RasterCoverage::setAttributes(const ITable& tbl, const QString& joinColumn)
     _attributeTable = tbl;
 }
 
+QString RasterCoverage::primaryKey() const
+{
+        return _primaryKey;
+
+}
+
+void RasterCoverage::primaryKey(const QString &key)
+{
+        _primaryKey = key;
+}
+
 RasterStackDefinition &RasterCoverage::stackDefinitionRef()
 {
     return _bandDefinition;

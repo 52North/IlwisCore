@@ -54,8 +54,6 @@ bool Connect::execute(ExecutionContext *ctx, SymbolTable& symTable)
     }
 
     ctx->setOutput(symTable, v, _object->name(),tp, _object->resource());
-    auto bb = OperationHelper::variant2ilwisobject(v, tp);
-    auto bb2= OperationHelper::variant2ilwisobject(v, itFLATTABLE);
     return true;
 }
 

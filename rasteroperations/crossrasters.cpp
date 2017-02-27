@@ -270,7 +270,7 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
     newTable->addColumn("Area", IlwisObject::create<IDomain>("value"));
     _outputTable = newTable;
     if ( _outputRaster.isValid()){
-        _outputTable->addColumn(COVERAGEKEYCOLUMN, _crossDomain);
+        _outputTable->addColumn(_outputRaster->primaryKey(), _crossDomain);
         _outputRaster->setAttributes(_outputTable);
     }
 

@@ -37,7 +37,7 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
 
 
-    int keyColumn = _inputAttributeTable.isValid() ? _inputAttributeTable->columnIndex(COVERAGEKEYCOLUMN) : iUNDEF;
+    int keyColumn = _inputAttributeTable.isValid() ? _inputAttributeTable->columnIndex(inputRaster->primaryKey()) : iUNDEF;
 
     std::vector<int> extraAtrrib = organizeAttributes();
 
