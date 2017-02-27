@@ -59,7 +59,7 @@ ToolBar{
                anchors.verticalCenter: parent.verticalCenter
                anchors.horizontalCenter: parent.horizontalCenter
 
-               source : iconsource("arrowright.png")
+               source : iconsource("run20.png")
             }
             onClicked: {
                 var analysis = modellerDataPane.model.analysisPattern(0)
