@@ -128,12 +128,13 @@ Column {
             ctx.stroke() // actually draw the path that was just defined
 
             // x-axis values
-            //ctx.font="20px Arial"
             ctx.fillStyle = "#000";
             ctx.textAlign = "center"
             ctx.textBaseline="top"
             ctx.fillText(minX.toString(), graphCanvas.axisOffset, graphCanvas.height - graphCanvas.axisOffset + tickThickness)
             ctx.fillText(maxX.toString(), graphCanvas.width - graphCanvas.axisOffset, graphCanvas.height - graphCanvas.axisOffset + tickThickness)
+            // unit
+            ctx.fillText((selectedNode != null && selectedNode.unit != "") ? ("[" + selectedNode.unit + "]") : "", graphCanvas.width / 2, graphCanvas.height - graphCanvas.axisOffset + tickThickness)
             // y-axis values
             ctx.textAlign = "right"
             ctx.textBaseline="middle"
