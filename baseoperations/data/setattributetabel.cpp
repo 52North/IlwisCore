@@ -32,11 +32,13 @@ bool SetAttributeTable::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     if ( _inputCoverage->ilwisType() == itRASTER){
         IRasterCoverage raster = _inputCoverage.as<RasterCoverage>();
-//        ColumnDefinition coldef = _inputTable->columndefinition(_primaryKey);
-//        coldef.name(COVERAGEKEYCOLUMN);
-//        _inputTable->addColumn(coldef);
+        raster->primaryKey(_primaryKey);
         raster->setAttributes(_inputTable);
+        QVariant v;
+        v.setValue(raster);
+        ctx->setOutput(symTable, v, raster->name(),itRASTER, raster->resource());
     }
+
     return true;
 }
 
@@ -61,6 +63,20 @@ Ilwis::OperationImplementation::State SetAttributeTable::prepare(ExecutionContex
         kernel()->issues()->log(TR("Table doesnt contain column ") + _primaryKey);
         return sPREPAREFAILED;
     }
+    std::vector<QVariant> values = _inputTable->column(_primaryKey);
+    std::set<QVariant> uniques;
+    int undefs = 0;
+    for(QVariant v : values){
+        if ( isNumericalUndef(v.toDouble()))
+            ++undefs;
+        else
+            uniques.insert(v);
+    }
+    if ( (uniques.size() + undefs ) != values.size()){
+        kernel()->issues()->log(TR("Key column must not contain duplicate values"));
+        return sPREPAREFAILED;
+    }
+
     if ( _inputCoverage->ilwisType() == itRASTER){
         ColumnDefinition coldef = _inputTable->columndefinition(index);
         IRasterCoverage raster = _inputCoverage.as<RasterCoverage>();
@@ -76,13 +92,13 @@ Ilwis::OperationImplementation::State SetAttributeTable::prepare(ExecutionContex
 
 quint64 SetAttributeTable::createMetadata()
 {
-    OperationResource operation({"ilwis://operations/setsttributetable"});
+    OperationResource operation({"ilwis://operations/setattributetable"});
     operation.setSyntax("setattributetable(inputtable, coverage, primarykey)");
     operation.setDescription(TR("assigns the input table as attribute data to coverage, note that for features is is a (kind of) copy as they dont have real attribute tables"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itTABLE , TR("input table"),TR("Table with at least one column suitable as primary key, For features this column must hold the indexes for the features to be coupled"));
-    operation.addInParameter(0,itCOVERAGE , TR("coverage"),TR("For rasters the domain must be the same as the primary key, features are coupled either by index or by index number in the key column"));
-    operation.addInParameter(0,itSTRING , TR("key column"),TR("Column that serves as primary key for connecting the table to the coverage"));
+    operation.addInParameter(1,itCOVERAGE , TR("coverage"),TR("For rasters the domain must be the same as the primary key, features are coupled either by index or by index number in the key column"));
+    operation.addInParameter(2,itSTRING , TR("key column"),TR("Column that serves as primary key for connecting the table to the coverage"));
     operation.setOutParameterCount({0});
     operation.setKeywords("coverage, selection");
 
