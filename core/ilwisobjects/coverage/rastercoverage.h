@@ -79,6 +79,8 @@ public:
     ITable attributeTable(quint32 level=0) ;
     bool hasAttributes() const;
     virtual void setAttributes(const ITable &otherTable, const QString& joinColumn=sUNDEF);
+    QString primaryKey() const;
+    void primaryKey(const QString& key);
 
 
     /*!
@@ -219,6 +221,7 @@ private:
     IGeoReference _georef;
     Size<> _size;
     ITable _attributeTable;
+    QString _primaryKey = "coverage_key";
 
     bool bandPrivate(quint32 bandIndex,  PixelIterator inputIter) ;
     PixelIterator bandPrivate(quint32 index, const Ilwis::BoundingBox &box=BoundingBox());
