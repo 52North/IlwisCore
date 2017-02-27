@@ -39,7 +39,7 @@ bool RasterSlicing::execute(ExecutionContext *ctx, SymbolTable &symTable)
         qint32 lastIndex = -1;
         double lastMin, lastMax;
         ITable attTable = _outputRaster->attributeTable();
-        int colIndex = attTable->columnIndex(COVERAGEKEYCOLUMN);
+        int colIndex = attTable->columnIndex(_outputRaster->primaryKey());
         Raw lastRaw;
         while(iterOut != iterEnd){
             double v = *iterIn;
@@ -126,7 +126,7 @@ OperationImplementation::State RasterSlicing::prepare(ExecutionContext *ctx, con
     ITable attributes;
 
     attributes.prepare();
-    attributes->addColumn(COVERAGEKEYCOLUMN,_numericItems);
+    attributes->addColumn(_outputRaster->primaryKey(),_numericItems);
 
     _outputRaster->setAttributes(attributes);
 
