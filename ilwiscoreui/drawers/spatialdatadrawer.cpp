@@ -101,7 +101,7 @@ VisualAttribute SpatialDataDrawer::vPropertyRasterCoverage(const QString &attrNa
     }else {
         int columnIndex = raster->attributeTable()->columnIndex(attrName);
         if ( columnIndex == iUNDEF){ // test a fallbacks to be able to show at least something
-            columnIndex = raster->attributeTable()->columnIndex(COVERAGEKEYCOLUMN);
+            columnIndex = raster->attributeTable()->columnIndex(raster->primaryKey());
         }
         attr.setColumnIndex(columnIndex);
     }
