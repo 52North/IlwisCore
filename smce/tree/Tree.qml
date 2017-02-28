@@ -440,7 +440,7 @@ Rectangle {
                                         id: col1IconRaster
                                         source: "raster.png"
                                         fillMode: Image.Pad
-                                        visible: model.fileName !== ""
+                                        opacity: model.fileName !== "" ? 1.0 : 0.0
                                     }
 
                                     Text {
