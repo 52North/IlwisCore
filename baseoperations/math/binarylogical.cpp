@@ -128,8 +128,13 @@ bool BinaryLogical::prepareCoverageCoverage() {
     _box = helper.initialize(_inputGC1, _outputGC, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
     IDomain dom;
-    dom.prepare("bool");
+    dom.prepare("boolean");
     _outputGC->datadefRef().domain(dom);
+
+    for(quint32 i = 0; i < _outputGC->size().zsize(); ++i){
+        QString index = _outputGC->stackDefinition().index(i);
+        _outputGC->setBandDefinition(index,DataDefinition(dom));
+    }
     _coveragecoverage = true;
     return true;
 }
@@ -155,6 +160,11 @@ bool BinaryLogical::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) 
     IDomain dom;
     dom.prepare("boolean");
     _outputGC->datadefRef().domain(dom);
+
+    for(quint32 i = 0; i < _outputGC->size().zsize(); ++i){
+        QString index = _outputGC->stackDefinition().index(i);
+        _outputGC->setBandDefinition(index,DataDefinition(dom));
+    }
 
     return true;
 }
