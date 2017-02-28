@@ -13,6 +13,7 @@ Column {
     property CatalogModel smceCatalog
     property var manager
     property var form
+    property var tree : smcePanel.manager.analisysView.currentAnalysis.tree()
 
     function loadSmceCatalog() {
         scanCatalog(uicontext.ilwisFolder + "/smcedata")
@@ -53,28 +54,36 @@ Column {
                 exclusiveGroup: modeGroup
                 Layout.minimumWidth: 100
                 onClicked: {
-                    if (manager.analysisManager.item.loaderItem != null)
+                    if (manager.analysisManager.item.loaderItem != null) {
                         manager.analysisManager.item.loaderItem.setForm("defMode")
+                        tree.setSmceMode(Node.EditTree)
+                    }
                 }
             }
             RadioButton {
                 id: evalModeButton
                 text: qsTr("Multicriteria evaluation")
                 exclusiveGroup: modeGroup
+                enabled: tree.treeEditDone
                 Layout.minimumWidth: 100
                 onClicked: {
-                    if (manager.analysisManager.item.loaderItem != null)
+                    if (manager.analysisManager.item.loaderItem != null) {
                         manager.analysisManager.item.loaderItem.setForm("evalMode")
+                        tree.setSmceMode(Node.StdWeigh)
+                    }
                 }
             }
             RadioButton {
                 id: resultModeButton
                 text: qsTr("Results analysis")
                 exclusiveGroup: modeGroup
+                enabled: tree.treeEditDone
                 Layout.minimumWidth: 100
                 onClicked: {
-                    if (manager.analysisManager.item.loaderItem != null)
+                    if (manager.analysisManager.item.loaderItem != null) {
                         manager.analysisManager.item.loaderItem.setForm("resultMode")
+                        tree.setSmceMode(Node.StdWeigh)
+                    }
                 }
             }
         }
