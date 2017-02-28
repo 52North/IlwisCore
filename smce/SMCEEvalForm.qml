@@ -18,10 +18,15 @@ Column {
     anchors.fill: parent
     anchors.margins: 5
 
+    Text {
+        text: (selectedNode != null) ? selectedNode.name : ""
+    }
+
     Column {
         id: weights
         spacing: 5
         visible: selectedNode != null && selectedNode.type === Node.Group
+
         Text {
             text : qsTr("Weights")
             font.bold : true

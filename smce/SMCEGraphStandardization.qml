@@ -9,7 +9,7 @@ import "../../../qml/Global.js" as Global
 
 Column {
     id : createForm
-    width : parent.width
+    width : stdEditor.width
     spacing: 1
 
     signal executeStandardization()
@@ -23,7 +23,7 @@ Column {
         id: graphCanvas
         width: parent.width
         height: 200
-        property int axisOffset : 10
+        property int axisOffset : 20
 
         MouseArea {
             anchors.fill: parent
@@ -39,56 +39,56 @@ Column {
         // so we create the dragable points statically
         DragPoint {
             id: point0
-            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[0].x)
-            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[0].y)
+            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[0].x) : 0
+            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[0].y) : 0
         }
 
         DragPoint {
             id: point1
-            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[1].x)
-            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[1].y)
+            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[1].x) : 0
+            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[1].y) : 0
         }
 
         DragPoint {
             id: point2
-            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[2].x)
-            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[2].y)
+            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[2].x) : 0
+            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[2].y) : 0
         }
 
         DragPoint {
             id: point3
-            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[3].x)
-            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[3].y)
+            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[3].x) : 0
+            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[3].y) : 0
         }
 
         DragPoint {
             id: point4
-            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[4].x)
-            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[4].y)
+            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[4].x) : 0
+            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[4].y) : 0
         }
 
         DragPoint {
             id: point5
-            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[5].x)
-            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[5].y)
+            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[5].x) : 0
+            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[5].y) : 0
         }
 
         DragPoint {
             id: point6
-            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[6].x)
-            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[6].y)
+            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[6].x) : 0
+            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[6].y) : 0
         }
 
         DragPoint {
             id: point7
-            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[7].x)
-            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[7].y)
+            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[7].x) : 0
+            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[7].y) : 0
         }
 
         DragPoint {
             id: point8
-            x: toViewportXX(selectedNode.standardization.standardizationValue.anchors[8].x)
-            y: toViewportYY(selectedNode.standardization.standardizationValue.anchors[8].y)
+            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[8].x) : 0
+            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[8].y) : 0
         }
 
         function initializeCurve(ctx) {
@@ -103,17 +103,43 @@ Column {
             ctx.lineTo(0.5 + point6.x, 0.5 + point6.y)
             ctx.lineTo(0.5 + point7.x, 0.5 + point7.y)
             ctx.lineTo(0.5 + point8.x, 0.5 + point8.y)
-            ctx.stroke()
+            ctx.stroke() // actually draw the path that was just defined
         }
 
         function drawAxis(ctx) {
             ctx.lineWidth = 1.0
             ctx.strokeStyle = "black"
             ctx.beginPath()
-            ctx.moveTo(0.5 + graphCanvas.axisOffset, 0.5) // top-left
+            ctx.moveTo(0.5 + graphCanvas.axisOffset, 0.5 + graphCanvas.axisOffset) // top-left
             ctx.lineTo(0.5 + graphCanvas.axisOffset, 0.5 + graphCanvas.height - graphCanvas.axisOffset) // origin
-            ctx.lineTo(0.5 + graphCanvas.width, 0.5 + graphCanvas.height - graphCanvas.axisOffset) // bottom-right
-            ctx.stroke()
+            ctx.lineTo(0.5 + graphCanvas.width - graphCanvas.axisOffset, 0.5 + graphCanvas.height - graphCanvas.axisOffset) // bottom-right
+
+            // draw ticks on the axes
+            var nrTicks = 5
+            var tickThickness = 3 // nr of pixels for drawing a tick
+            var tickXSize = (graphCanvas.width - 2 * graphCanvas.axisOffset) / (nrTicks - 1)
+            var tickYSize = (graphCanvas.height - 2 * graphCanvas.axisOffset) / (nrTicks - 1)
+            for (var i = 0; i < nrTicks; ++i) {
+                ctx.moveTo(0.5 + graphCanvas.axisOffset, 0.5 + graphCanvas.axisOffset + Math.round(tickYSize * i))
+                ctx.lineTo(0.5 + graphCanvas.axisOffset - tickThickness, 0.5 + graphCanvas.axisOffset + Math.round(tickYSize * i))
+                ctx.moveTo(0.5 + graphCanvas.axisOffset + Math.round(tickXSize * i), 0.5 + graphCanvas.height - graphCanvas.axisOffset)
+                ctx.lineTo(0.5 + graphCanvas.axisOffset + Math.round(tickXSize * i), 0.5 + graphCanvas.height - graphCanvas.axisOffset + tickThickness)
+            }
+            ctx.stroke() // actually draw the path that was just defined
+
+            // x-axis values
+            ctx.fillStyle = "#000";
+            ctx.textAlign = "center"
+            ctx.textBaseline="top"
+            ctx.fillText(minX.toString(), graphCanvas.axisOffset, graphCanvas.height - graphCanvas.axisOffset + tickThickness)
+            ctx.fillText(maxX.toString(), graphCanvas.width - graphCanvas.axisOffset, graphCanvas.height - graphCanvas.axisOffset + tickThickness)
+            // unit
+            ctx.fillText((selectedNode != null && selectedNode.unit != "") ? ("[" + selectedNode.unit + "]") : "", graphCanvas.width / 2, graphCanvas.height - graphCanvas.axisOffset + tickThickness)
+            // y-axis values
+            ctx.textAlign = "right"
+            ctx.textBaseline="middle"
+            ctx.fillText(maxY.toString(), graphCanvas.axisOffset - tickThickness, graphCanvas.axisOffset)
+            ctx.fillText(minY.toString(), graphCanvas.axisOffset - tickThickness, graphCanvas.height - graphCanvas.axisOffset)
         }
 
         onPaint : {
@@ -133,25 +159,25 @@ Column {
 
     function toRealXX(x) {
         var scalerange = maxX - minX
-        var graphXXrange = graphCanvas.width - graphCanvas.axisOffset
+        var graphXXrange = graphCanvas.width - 2 * graphCanvas.axisOffset
         return (scalerange/graphXXrange) * (x - graphCanvas.axisOffset) // axisOffset = XX origin
     }
 
     function toRealYY(y) {
         var scalerange = maxY - minY
-        var graphYYrange = graphCanvas.height - graphCanvas.axisOffset
-        return maxY - y * (scalerange/graphYYrange)
+        var graphYYrange = graphCanvas.height - 2 * graphCanvas.axisOffset
+        return maxY - (scalerange/graphYYrange) * (y - graphCanvas.axisOffset)
     }
 
     function toViewportXX(x) {
         var scalerange = maxX - minX
-        var graphXXrange = graphCanvas.width - graphCanvas.axisOffset
+        var graphXXrange = graphCanvas.width - 2 * graphCanvas.axisOffset
         return Math.round(graphCanvas.axisOffset + x * (graphXXrange/scalerange)) // axisOffset = XX origin
     }
 
     function toViewportYY(y) {
         var scalerange = maxY - minY
-        var graphYYrange = graphCanvas.height - graphCanvas.axisOffset
+        var graphYYrange = graphCanvas.height - 2 * graphCanvas.axisOffset
         return Math.round(graphCanvas.height - graphCanvas.axisOffset - y * (graphYYrange/scalerange))
     }
 
@@ -161,7 +187,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[0].x.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[0].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x0")
             readOnly: true
@@ -171,7 +197,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[0].y.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[0].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y0")
             onContentEdited: {
@@ -190,7 +216,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[1].x.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[1].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x1")
             onContentEdited: {
@@ -204,7 +230,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[1].y.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[1].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y1")
             onContentEdited: {
@@ -223,7 +249,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[2].x.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[2].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x2")
             onContentEdited: {
@@ -237,7 +263,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[2].y.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[2].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y2")
             onContentEdited: {
@@ -256,7 +282,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[3].x.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[3].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x3")
             onContentEdited: {
@@ -270,7 +296,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[3].y.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[3].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y3")
             onContentEdited: {
@@ -289,7 +315,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[4].x.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[4].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x4")
             onContentEdited: {
@@ -303,7 +329,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[4].y.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[4].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y4")
             onContentEdited: {
@@ -322,7 +348,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[5].x.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[5].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x5")
             onContentEdited: {
@@ -336,7 +362,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[5].y.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[5].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y5")
             onContentEdited: {
@@ -355,7 +381,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[6].x.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[6].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x6")
             onContentEdited: {
@@ -369,7 +395,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[6].y.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[6].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y6")
             onContentEdited: {
@@ -388,7 +414,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[7].x.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[7].x.toFixed(3).toString() : ""
             //color:"black"
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x7")
@@ -403,7 +429,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[7].y.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[7].y.toFixed(3).toString() : ""
             //color:"black"
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y7")
@@ -423,7 +449,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[8].x.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[8].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x8")
             readOnly: true
@@ -433,7 +459,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: selectedNode.standardization.standardizationValue.anchors[8].y.toFixed(3).toString()
+            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[8].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y8")
             onContentEdited: {
