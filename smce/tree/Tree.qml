@@ -325,7 +325,7 @@ Rectangle {
                                                 name: "unselected"
                                                 PropertyChanges {
                                                     target: objTextRowRect
-                                                    color: model.nodeDone ? "white" : "pink"
+                                                    color: model.nodeDone ? "white" : "#FFD3D3"
                                                 }
                                             },
                                             State {
@@ -531,7 +531,7 @@ Rectangle {
                                     }
                                     onStopped: {
                                         if (col1Rect.state == "unselected")
-                                            col1Rect.color = model.col1Done ? "white" : "pink"
+                                            col1Rect.color = model.col1Done ? ((model.type === Node.Group && model.level > 0) ? "#E1FFE1" : "white") : "#FFD3D3"
                                     }
                                 }
 
@@ -540,7 +540,7 @@ Rectangle {
                                         name: "unselected"
                                         PropertyChanges {
                                             target: col1Rect
-                                            color: model.col1Done ? "white" : "pink"
+                                            color: model.col1Done ? ((model.type === Node.Group && model.level > 0) ? "#E1FFE1" : "white") : "#FFD3D3"
                                         }
                                     },
                                     State {
