@@ -343,7 +343,7 @@ bool Node::done(int mode, int col, bool recursive) const
                 }
             }
             else // mode == Mode::StdWeigh
-                ok = (_standardization);// && _standardization->fStandardized());
+                ok = (_type == NodeType::MaskArea || _standardization);// && _standardization->fStandardized());
         }
         return ok;
     }
