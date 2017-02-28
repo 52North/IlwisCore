@@ -346,7 +346,7 @@ Rectangle {
                                 state: "unselected"
 
                                 function markDropCandidate(selected) {
-                                    border.color = selected ? "gray" : Global.mainbackgroundcolor
+                                    border.color = selected ? "gray" : "transparent"
                                 }
 
                                 Keys.onPressed: {
