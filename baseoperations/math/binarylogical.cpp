@@ -41,7 +41,10 @@ bool BinaryLogical::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& sy
 
         std::for_each(iterOut, iterOut.end(), [&](double& v){
             double v_in1 = *iterIn;
-            if ( v_in1 != rUNDEF && _number != rUNDEF) {
+            if ( _number == rUNDEF){
+                 v = compare2(_operator, v_in1, _number);
+            }
+            else if ( v_in1 != rUNDEF) {
                 v = compare2(_operator, v_in1, _number);
             } else
                 v = rUNDEF;
@@ -52,7 +55,7 @@ bool BinaryLogical::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& sy
 
     ctx->_threaded = false;
     if (!OperationHelperRaster::execute(ctx, BinaryLogical, _outputGC))
-            return false;
+        return false;
 
     return setOutput(ctx, symTable);
 }
@@ -76,16 +79,16 @@ bool BinaryLogical::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& 
             ++iterIn2;
         });
         return true;
-   };
+    };
 
-   if ( !_inputGC1->georeference()->isCompatible(_inputGC2->georeference())) {
+    if ( !_inputGC1->georeference()->isCompatible(_inputGC2->georeference())) {
         if (!OperationHelperRaster::resample(_inputGC1, _inputGC2, ctx)) {
             return ERROR2(ERR_COULD_NOT_CONVERT_2, TR("georeferences"), TR("common base"));
         }
-   }
+    }
 
-   ctx->_threaded = false;
-   bool resource = OperationHelperRaster::execute(ctx, binaryLogical, _outputGC);
+    ctx->_threaded = false;
+    bool resource = OperationHelperRaster::execute(ctx, binaryLogical, _outputGC);
 
     if (resource && ctx)
         return setOutput(ctx, symTable);
@@ -152,7 +155,11 @@ bool BinaryLogical::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) 
     if(_inputGC1->datadef().domain<>()->ilwisType() != itNUMERICDOMAIN)
         return false;
 
-    _number = _expression.parm(nindex).value().toDouble();
+    QString v = _expression.parm(nindex).value();
+    if ( v == "?" || v == "undefined")
+        _number = rUNDEF;
+    else
+        _number = _expression.parm(nindex).value().toDouble();
 
     OperationHelperRaster helper;
     _box = helper.initialize(_inputGC1, _outputGC, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
