@@ -16,7 +16,7 @@ options {
 #include "astnode.h"
 #include "idnode.h"
 #include "scriptnode.h"
-#include "operationnode.h"
+#include "operationnodescript.h"
 #include "expressionnode.h"
 #include "outparametersnode.h"
 #include "assignmentnode.h"
@@ -194,9 +194,9 @@ mult  returns [ MultiplicationNode *node]
 }
 	:	un1=unary 				{ node->setLeftTerm(un1); }
 		(
-		('*' 					{ op = OperationNode::oTIMES; }
-		| '/'					{ op = OperationNode::oDIVIDED; }
-		| 'mod'					{ op = OperationNode::oMOD; }
+		('*' 					{ op = OperationNodeScript::oTIMES; }
+		| '/'					{ op = OperationNodeScript::oDIVIDED; }
+		| 'mod'					{ op = OperationNodeScript::oMOD; }
 		) 
 		un2=unary				{ node->addRightTerm(op, un2); }
 		)*
@@ -209,9 +209,9 @@ add  returns [ AddNode *node]
 }
 	:	mul1 = mult 				{ node->setLeftTerm(mul1); }
 		(
-		('+'					{ op = OperationNode::oADD; } 
+		('+'					{ op = OperationNodeScript::oADD; } 
 		| 
-		'-'					{ op = OperationNode::oSUBSTRACT; }
+		'-'					{ op = OperationNodeScript::oSUBSTRACT; }
 		) 	
 		mul2 = mult				{ node->addRightTerm(op, mul2); }
 		)*
@@ -225,12 +225,12 @@ relation  returns [ RelationNode *node]
 	:	add1=add				{ node->setLeftTerm(add1); } 
 		(
 		(
-		'==' 					{ op = OperationNode::oEQ; } 
-		| '!=' 					{ op = OperationNode::oNEQ; } 
-		| '<' 					{ op = OperationNode::oLESS; } 
-		| '<=' 					{ op = OperationNode::oLESSEQ; } 
-		| '>=' 					{ op = OperationNode::oGREATEREQ; } 
-		| '>'					{ op = OperationNode::oGREATER; } 
+		'==' 					{ op = OperationNodeScript::oEQ; } 
+		| '!=' 					{ op = OperationNodeScript::oNEQ; } 
+		| '<' 					{ op = OperationNodeScript::oLESS; } 
+		| '<=' 					{ op = OperationNodeScript::oLESSEQ; } 
+		| '>=' 					{ op = OperationNodeScript::oGREATEREQ; } 
+		| '>'					{ op = OperationNodeScript::oGREATER; } 
 		) 
 		add2=add				{ node->addRightTerm(op, add2); }
 		)*
@@ -243,9 +243,9 @@ expression returns [ ExpressionNode *node]
 }
 	:	rel1 = relation				{ node->setLeftTerm(rel1); } 
 		(				
-		( 'and'  				{ op = OperationNode::oAND; } 
-		| 'or'  				{ op = OperationNode::oOR; } 
-		| 'xor' 				{ op = OperationNode::oXOR; } 
+		( 'and'  				{ op = OperationNodeScript::oAND; } 
+		| 'or'  				{ op = OperationNodeScript::oOR; } 
+		| 'xor' 				{ op = OperationNodeScript::oXOR; } 
 		) rel2 = relation			{ node->addRightTerm(op, rel2); }
 		) *
 	;		
@@ -408,6 +408,7 @@ WS  :   ( ' '
 
 STRING
     :  '"' ( ~('"') )* '"'
+    |  '\''( ~('\'') )* '\'' 
     ;
 
 fragment
