@@ -325,7 +325,7 @@ Rectangle {
                                                 name: "unselected"
                                                 PropertyChanges {
                                                     target: objTextRowRect
-                                                    color: "white"
+                                                    color: model.nodeDone ? "white" : "#FFD3D3"
                                                 }
                                             },
                                             State {
@@ -346,7 +346,7 @@ Rectangle {
                                 state: "unselected"
 
                                 function markDropCandidate(selected) {
-                                    border.color = selected ? "gray" : Global.mainbackgroundcolor
+                                    border.color = selected ? "gray" : "transparent"
                                 }
 
                                 Keys.onPressed: {
@@ -440,7 +440,7 @@ Rectangle {
                                         id: col1IconRaster
                                         source: "raster.png"
                                         fillMode: Image.Pad
-                                        visible: model.fileName !== ""
+                                        opacity: model.fileName !== "" ? 1.0 : 0.0
                                     }
 
                                     Text {
@@ -531,7 +531,7 @@ Rectangle {
                                     }
                                     onStopped: {
                                         if (col1Rect.state == "unselected")
-                                            col1Rect.color = "white"
+                                            col1Rect.color = model.col1Done ? ((model.type === Node.Group && model.level > 0) ? "#E1FFE1" : "white") : "#FFD3D3"
                                     }
                                 }
 
@@ -540,7 +540,7 @@ Rectangle {
                                         name: "unselected"
                                         PropertyChanges {
                                             target: col1Rect
-                                            color: "white"
+                                            color: model.col1Done ? ((model.type === Node.Group && model.level > 0) ? "#E1FFE1" : "white") : "#FFD3D3"
                                         }
                                     },
                                     State {

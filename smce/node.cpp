@@ -14,6 +14,7 @@ Node::Node(QObject *qparent)
 , _weight(0)
 , _weights(0)
 , _standardization(0)
+, _smceMode(Mode::EditTree)
 {
 
 }
@@ -24,6 +25,7 @@ Node::Node(Node * parent, QObject *qparent)
 , _weight(0)
 , _weights(0)
 , _standardization(0)
+, _smceMode(Mode::EditTree)
 {
 
 }
@@ -37,6 +39,9 @@ void Node::setType(NodeType nt)
 {
     _type = nt;
     emit typeChanged();
+    emit doneChanged();
+    if (parent())
+        root()->emitDoneChanged();
 }
 
 const QString Node::name() const
@@ -70,6 +75,9 @@ void Node::setWeight(double weight)
 {
     _weight = weight;
     emit weightChanged();
+    emit doneChanged();
+    if (parent())
+        root()->emitDoneChanged();
 }
 
 Weights * Node::weights()
@@ -85,8 +93,12 @@ Weights * Node::weights()
 Standardization * Node::standardization()
 {
     if (_type == NodeType::Factor || _type == NodeType::Constraint) {
-        if (!_standardization)
+        if (!_standardization) {
             _standardization = Standardization::create(this);
+            emit doneChanged();
+            if (parent())
+                root()->emitDoneChanged();
+        }
         return _standardization;
     } else
         return 0;
@@ -121,6 +133,9 @@ void Node::addNode(Node * node)
     node->_parent = this;
     _subNodes.append(node);
     emit subNodesChanged();
+    emit doneChanged();
+    if (parent())
+        root()->emitDoneChanged();
 }
 
 const QString Node::fileName() const
@@ -138,6 +153,9 @@ void Node::setFileName(QString fileName)
     }
 
     emit fileNameChanged();
+    emit doneChanged();
+    if (parent())
+        root()->emitDoneChanged();
 }
 
 int Node::level() const
@@ -219,6 +237,9 @@ void Node::deleteChild(Node *node)
 {
     _subNodes.removeAll(node);
     emit subNodesChanged();
+    emit doneChanged();
+    if (parent())
+        root()->emitDoneChanged();
     node->deleteLater();
     recalcWeights();
 }
@@ -260,6 +281,114 @@ QString Node::getMapcalc() const
         return "";
     }
     return result;
+}
+
+bool Node::done(int mode, int col, bool recursive) const
+{
+    if (_type == NodeType::Group) {
+        // two cases: 1) we're editing the tree, 2) we're std/weighing
+        // when we're editing, check the following:
+        // check if the group has children
+        // for col>0 check if the output map is !="" for the root
+        // when we're std/weighing, check the following:
+        // for col == 0 check if there are any children and all factors are weighed
+        bool ok;
+        if (mode == Mode::EditTree) {
+            if (col > 0)
+                ok = (parent() != 0) || (_fileName != "");
+            else
+                ok = (_subNodes.size()>0);
+
+            if (recursive) { // means we're doing a final check to see if we can change the mode
+                if (parent() == 0) {// we're the root
+                    ok = ok && (_fileName != "");
+                }
+            }
+        }
+        else
+        {
+            if (col > 0) {
+                ok = true;
+                if (parent() == 0) // we're the root and the output is maps
+                    ok = _fileName != "";
+            } else {
+                ok = (_subNodes.size() > 0);
+                int factors = subFactors().size();
+                if (factors > 0)
+                    ok = ok && ((_weights != 0) || (factors == 1));
+            }
+        }
+
+        if (recursive)
+            for (Node * node : _subNodes)
+                ok = ok && node->done(mode, col, true);
+
+        return ok;
+    } else {
+        // for col>0 check if the selected input map exists, independent on the mode
+        // if mode is std/weigh, check  for col==0 if the thing is standardized
+
+        // NOTE: Decide on the fRecursive flag if we should check on the availability of all input data
+        bool ok = true;
+        if (col > 0) {
+            ok = _fileName != ""; // now check
+        } else { // col == 0
+            if (mode == Mode::EditTree) {
+                if (recursive) { // means we're doing a final check to see if we can change the mode
+                    unsigned int i=1;
+                    while (ok && (i<=1)) {
+                        ok = ok && done(mode, i, false); // not recursive!!
+                        ++i;
+                    }
+                }
+            }
+            else // mode == Mode::StdWeigh
+                ok = (_type == NodeType::MaskArea || _standardization);// && _standardization->fStandardized());
+        }
+        return ok;
+    }
+}
+
+Node * Node::root()
+{
+    Node * treeRoot = this;
+    while (treeRoot->_parent != 0)
+        treeRoot = treeRoot->_parent;
+    return treeRoot;
+}
+
+void Node::setSmceMode(int mode)
+{
+    Node * treeRoot = root();
+    treeRoot->_smceMode = (Mode)mode;
+    treeRoot->recursivelyEmitDoneChanged();
+}
+
+void Node::recursivelyEmitDoneChanged() const
+{
+    emit doneChanged();
+    for (const Node * child : _subNodes)
+        child->recursivelyEmitDoneChanged();
+}
+
+bool Node::nodeDone()
+{
+    return done(root()->_smceMode, 0, false);
+}
+
+bool Node::col1Done()
+{
+    return done(root()->_smceMode, 1, false);
+}
+
+bool Node::treeEditDone()
+{
+    return root()->done(Mode::EditTree, 0, true);
+}
+
+void Node::emitDoneChanged() const
+{
+    emit doneChanged();
 }
 
 /* ******************************************************* */

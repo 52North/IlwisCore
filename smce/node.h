@@ -11,6 +11,7 @@ class Node : public QObject
 {
     Q_OBJECT
     Q_ENUMS(NodeType)
+    Q_ENUMS(Mode)
     Q_PROPERTY( QString name READ name WRITE setName NOTIFY nameChanged )
     Q_PROPERTY( QString unit READ unit WRITE setUnit NOTIFY unitChanged )
     Q_PROPERTY( int type READ type NOTIFY typeChanged )
@@ -20,21 +21,26 @@ class Node : public QObject
     Q_PROPERTY( int level READ level NOTIFY levelChanged )
     Q_PROPERTY( Weights * weights READ weights NOTIFY weightsChanged )
     Q_PROPERTY( Standardization * standardization READ standardization NOTIFY standardizationChanged )
+    Q_PROPERTY( bool nodeDone READ nodeDone NOTIFY doneChanged )
+    Q_PROPERTY( bool col1Done READ col1Done NOTIFY doneChanged )
+    Q_PROPERTY( bool treeEditDone READ treeEditDone NOTIFY doneChanged )
 
 signals:
-   void nameChanged();
-   void unitChanged();
-   void typeChanged();
-   void weightChanged();
-   void subNodesChanged();
-   void fileNameChanged();
-   void levelChanged();
-   void nodeDeleted();
-   void weightsChanged();
-   void standardizationChanged();
+   void nameChanged() const;
+   void unitChanged() const;
+   void typeChanged() const;
+   void weightChanged() const;
+   void subNodesChanged() const;
+   void fileNameChanged() const;
+   void levelChanged() const;
+   void nodeDeleted() const;
+   void weightsChanged() const;
+   void standardizationChanged() const;
+   void doneChanged() const;
 
 public:
     enum NodeType { Group=0, MaskArea=1, Constraint=2, Factor=3 };
+    enum Mode { EditTree=0, StdWeigh=1};
     Node();
     Node(QObject *qparent);
     Node(Node * parent, QObject *qparent);
@@ -59,14 +65,22 @@ public:
     void deleteChild(Node * node);
     void recalcWeights();
     QString getMapcalc() const;
+    bool nodeDone();
+    bool col1Done();
+    void recursivelyEmitDoneChanged() const;
+    bool treeEditDone();
     Q_INVOKABLE void setGoal(QString name);
     Q_INVOKABLE void addMask(QString name);
     Q_INVOKABLE Node * addGroup(QString name);
     Q_INVOKABLE void addFactor(QString name);
     Q_INVOKABLE void addConstraint(QString name);
     Q_INVOKABLE void deleteNode();
+    Q_INVOKABLE bool done(int mode, int col, bool recursive) const;
+    Q_INVOKABLE void setSmceMode(int mode);
 
 protected:
+    void emitDoneChanged() const;
+    Node * root();
     NodeType _type;
     QString _name;
     QString _unit;
@@ -76,6 +90,7 @@ protected:
     QString _fileName;
     Weights * _weights;
     Standardization * _standardization;
+    Mode _smceMode;
 };
 
 class DirectWeights;
