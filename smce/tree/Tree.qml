@@ -231,13 +231,13 @@ Rectangle {
                                     function getIcon(nodetype, level) {
                                         if (nodetype === Node.Group)
                                             if (level === 0)
-                                                return "Goal.png"
+                                                return "SMCETree.BMP"
                                             else
-                                                return "Objective.png"
+                                                return "SMCEGroup.BMP"
                                         else if (nodetype === Node.Constraint)
-                                            return "Constraint.png"
+                                            return "SMCEMapConstraint.bmp"
                                         else if (nodetype === Node.Factor)
-                                            return "Factorplus.png"
+                                            return "SMCEMapEffect.bmp"
                                         else if (nodetype === Node.MaskArea)
                                             return "raster.png"
                                     }
