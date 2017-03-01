@@ -21,8 +21,45 @@ LinearGridFilter::LinearGridFilter(const QString &name)
     definition(name);
 }
 
+bool LinearGridFilter::makeCustomFilter(const QString& definition){
+    QString def = definition.mid(8, definition.size() - 9);
+    QStringList parts = def.split(",");
+    if ( parts.size() == 1)    {
+        QStringList numbers = parts[0].split(" ");
+        if ( numbers.size() % 2 == 0){
+            kernel()->issues()->log(TR("Custom linear filters must have odd sizes"));
+            return false;
+        }
+        double root = std::sqrt(numbers.size() );
+        if (std::abs(root - (int)root )> EPS5){
+            kernel()->issues()->log(TR("Custom linear filters must be square if no dimensions are given"));
+            return false;
+        }
+        int xysize  = root;
+        _rows = xysize;
+        _columns = xysize;
+        int index = 0;
+        double sum = 0;
+        _filterdef.resize(xysize);
+        for(std::vector<double>& row : _filterdef){
+            row.resize(xysize);
+            for(double& v : row)    {
+                v = numbers[index++] .toDouble() ;
+                sum += v;
+            }
+        }
+        _gain = sum != 0 ? 1.0 / sum : 1.0;
+
+    }
+    return true;
+}
+
 bool LinearGridFilter::definition(const QString &name)
 {
+    if ( name.indexOf("custom(") != -1){
+        _valid =  makeCustomFilter(name);
+        return _valid;
+    }
     QString query = QString("select * from filters where code='%1'").arg(name.toLower());
     InternalDatabaseConnection stmt;
     if (stmt.exec(query)) {
