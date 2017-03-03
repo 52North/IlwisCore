@@ -47,7 +47,9 @@ bool RunPython::execute(ExecutionContext *ctx, SymbolTable &symTable)
     PyRun_SimpleString(cmd2.toStdString().c_str());
     PyRun_SimpleString("sys.stdout = f");
     PyRun_SimpleString("sys.stderr = f2");
-    PyRun_SimpleString(_statements.toStdString().c_str());
+    QStringList statList = _statements.split('\n');
+    for (QString stat : statList)
+        PyRun_SimpleString(stat.toStdString().c_str());
     PyRun_SimpleString("\n");
     PyRun_SimpleString("sys.stdout.flush()");
     PyRun_SimpleString("sys.stderr.flush()");
