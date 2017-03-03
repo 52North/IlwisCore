@@ -160,7 +160,7 @@ Column {
     function toRealXX(x) {
         var scalerange = maxX - minX
         var graphXXrange = graphCanvas.width - 2 * graphCanvas.axisOffset
-        return (scalerange/graphXXrange) * (x - graphCanvas.axisOffset) // axisOffset = XX origin
+        return minX + (scalerange/graphXXrange) * (x - graphCanvas.axisOffset) // axisOffset = XX origin
     }
 
     function toRealYY(y) {
@@ -172,13 +172,13 @@ Column {
     function toViewportXX(x) {
         var scalerange = maxX - minX
         var graphXXrange = graphCanvas.width - 2 * graphCanvas.axisOffset
-        return Math.round(graphCanvas.axisOffset + x * (graphXXrange/scalerange)) // axisOffset = XX origin
+        return Math.round(graphCanvas.axisOffset + (x - minX) * (graphXXrange/scalerange)) // axisOffset = XX origin
     }
 
     function toViewportYY(y) {
         var scalerange = maxY - minY
         var graphYYrange = graphCanvas.height - 2 * graphCanvas.axisOffset
-        return Math.round(graphCanvas.height - graphCanvas.axisOffset - y * (graphYYrange/scalerange))
+        return Math.round(graphCanvas.height - graphCanvas.axisOffset - (y - minY) * (graphYYrange/scalerange))
     }
 
     Row {
