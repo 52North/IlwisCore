@@ -24,13 +24,14 @@ Column {
     }
 
     function openMap(mapname) {
-        var resources = smceCatalog.resources
+        mastercatalog.currentCatalog.scanContainer(false,true)
+        var resources = mastercatalog.currentCatalog.resources
         var sz = resources.length
         var newTab = null
-        if (mapname != "") {
+        if (mapname !== "") {
             for(var i = 0; i < sz; ++i) {
                 var resource = resources[i]
-                if (resource.name == mapname && resource.typeName == "rastercoverage") {
+                if (resource.name === mapname && resource.typeName === "rastercoverage") {
                     newTab = datapanesplit.newPanel("itemid=" + resource.id, resource.typeName, resource.url, "left") // "left" to open to the left, "other", to open in the other tab, regardless of our tab
                 }
             }
