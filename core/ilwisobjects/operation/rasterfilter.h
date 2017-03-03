@@ -32,8 +32,7 @@ private:
     std::vector<std::vector<double>> _filterdef;
 
     bool definition(const QString& name);
-
-
+    bool makeCustomFilter(const QString &definition);
 };
 
 class KERNELSHARED_EXPORT RankOrderGridFilter : public RasterFilter{
