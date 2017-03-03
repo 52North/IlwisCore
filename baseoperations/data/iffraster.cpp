@@ -97,6 +97,10 @@ OperationImplementation::State IffRaster::prepare(ExecutionContext *, const Symb
     helper.initialize(_inputGC, _outputGC, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
     _outputGC->datadefRef() = outputDataDef;
+    for(quint32 i = 0; i < _outputGC->size().zsize(); ++i){
+        QString index = _outputGC->stackDefinition().index(i);
+        _outputGC->setBandDefinition(index,DataDefinition(outputDataDef.domain()));
+    }
 
     return sPREPARED;
 }
