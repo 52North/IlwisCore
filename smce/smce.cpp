@@ -33,15 +33,13 @@ void SMCE::Init()
 bool SMCE::execute(const QVariantMap &inputParameters, QVariantMap &outputParameters)
 {
     QString script("import ilwis\n");
-    script += "pythonresult = " + _tree->getMapcalc() + "\n";
-    script += QString("pythonresult.store('" + _tree->fileName() + "', 'map', 'ilwis3')\n");
-    QString expr = QString("pythonresult=runpython(\"%1\")").arg(script);
+    script += _tree->getMapcalc() + "\n";
+    script += QString("term.store('" + _tree->fileName() + "', 'map', 'ilwis3')\n");
+    QString expr = QString("runpython(\"%1\")").arg(script);
     qDebug() << expr;
     Ilwis::ExecutionContext ctx;
     Ilwis::SymbolTable syms;
-    Ilwis::commandhandler()->execute(expr, &ctx, syms);
-    //IRasterCoverage raster = syms.getValue<IRasterCoverage>(ctx._results[0]);
-    return false;
+    return Ilwis::commandhandler()->execute(expr, &ctx, syms);
 }
 
 IWorkflow SMCE::workflow(const IOOptions &opt)
