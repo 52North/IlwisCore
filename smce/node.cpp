@@ -723,21 +723,29 @@ QString PiecewiseLinear8Function::getLine(double a, QString x, double b)
 QString PiecewiseLinear8Function::getMapcalc(QString rasterCoverage)
 {
     SolveParams();
-    QString cond1 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[1]->x());
-    QString cond2 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[2]->x());
-    QString cond3 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[3]->x());
-    QString cond4 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[4]->x());
-    QString cond5 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[5]->x());
-    QString cond6 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[6]->x());
-    QString cond7 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[7]->x());
-    QString iff7 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond7).arg(getLine(a7,rasterCoverage,b7)).arg(getLine(a8,rasterCoverage,b8));
-    QString iff6 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond6).arg(getLine(a6,rasterCoverage,b6)).arg(iff7);
-    QString iff5 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond5).arg(getLine(a5,rasterCoverage,b5)).arg(iff6);
-    QString iff4 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond4).arg(getLine(a4,rasterCoverage,b4)).arg(iff5);
-    QString iff3 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond3).arg(getLine(a3,rasterCoverage,b3)).arg(iff4);
-    QString iff2 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond2).arg(getLine(a2,rasterCoverage,b2)).arg(iff3);
-    QString iff1 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond1).arg(getLine(a1,rasterCoverage,b1)).arg(iff2);
-    return iff1;
+    QString result = QString("cond=ilwis.Engine.do('binarylogicalraster',%1,%2,'less')\n").arg(rasterCoverage).arg(_anchors[7]->x());
+    result += QString("term=%1\n").arg(getLine(a8,rasterCoverage,b8));
+    result += QString("term2=%1\n").arg(getLine(a7,rasterCoverage,b7));
+    result += QString("term=ilwis.Engine.do('iffraster',cond,term2,term)\n");
+    result += QString("cond=ilwis.Engine.do('binarylogicalraster',%1,%2,'less')\n").arg(rasterCoverage).arg(_anchors[6]->x());
+    result += QString("term2=%1\n").arg(getLine(a6,rasterCoverage,b6));
+    result += QString("term=ilwis.Engine.do('iffraster',cond,term2,term)\n");
+    result += QString("cond=ilwis.Engine.do('binarylogicalraster',%1,%2,'less')\n").arg(rasterCoverage).arg(_anchors[5]->x());
+    result += QString("term2=%1\n").arg(getLine(a5,rasterCoverage,b5));
+    result += QString("term=ilwis.Engine.do('iffraster',cond,term2,term)\n");
+    result += QString("cond=ilwis.Engine.do('binarylogicalraster',%1,%2,'less')\n").arg(rasterCoverage).arg(_anchors[4]->x());
+    result += QString("term2=%1\n").arg(getLine(a4,rasterCoverage,b4));
+    result += QString("term=ilwis.Engine.do('iffraster',cond,term2,term)\n");
+    result += QString("cond=ilwis.Engine.do('binarylogicalraster',%1,%2,'less')\n").arg(rasterCoverage).arg(_anchors[3]->x());
+    result += QString("term2=%1\n").arg(getLine(a3,rasterCoverage,b3));
+    result += QString("term=ilwis.Engine.do('iffraster',cond,term2,term)\n");
+    result += QString("cond=ilwis.Engine.do('binarylogicalraster',%1,%2,'less')\n").arg(rasterCoverage).arg(_anchors[2]->x());
+    result += QString("term2=%1\n").arg(getLine(a2,rasterCoverage,b2));
+    result += QString("term=ilwis.Engine.do('iffraster',cond,term2,term)\n");
+    result += QString("cond=ilwis.Engine.do('binarylogicalraster',%1,%2,'less')\n").arg(rasterCoverage).arg(_anchors[1]->x());
+    result += QString("term2=%1\n").arg(getLine(a1,rasterCoverage,b1));
+    result += QString("term=ilwis.Engine.do('iffraster',cond,term2,term)\n");
+    return result;
 }
 
 /* ******************************************************* */
