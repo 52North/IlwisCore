@@ -244,6 +244,45 @@ void Node::deleteChild(Node *node)
     recalcWeights();
 }
 
+QString Node::getPython() const
+{
+    QString result;
+    if (_weight == 0)
+        return "";
+    switch(_type) {
+    case NodeType::Group:
+        {
+            QList<Node*> children = subFactors();
+            if (children.length() == 0)
+                return "";
+            else {
+                for (Node * node : children) {
+                    QString term = node->getPython();
+                    if (term.length() > 0)
+                        result += ((result.length() > 0) ? "+" : "") + term;
+                }
+                if (_weight > 0 && _weight < 1) {
+                    if (children.length() > 1)
+                        result = "(" + result + ")";
+                    result = QString("%1*%2").arg(_weight).arg(result);
+                }
+            }
+        }
+        break;
+    case NodeType::Factor:
+        {
+            QString rasterCoverage = "ilwis.RasterCoverage('" + _fileName + "')";
+            result = _standardization->getPython(rasterCoverage);
+            if (_weight > 0 && _weight < 1)
+                result = QString("%1*%2").arg(_weight).arg(result);
+            break;
+        }
+    default:
+        return "";
+    }
+    return result;
+}
+
 QString Node::getMapcalc() const
 {
     QString result;
@@ -720,7 +759,7 @@ QString PiecewiseLinear8Function::getLine(double a, QString x, double b)
     return result;
 }
 
-QString PiecewiseLinear8Function::getMapcalc(QString rasterCoverage)
+QString PiecewiseLinear8Function::getPython(QString rasterCoverage)
 {
     SolveParams();
     QString result = QString("cond=ilwis.Engine.do('binarylogicalraster',%1,%2,'less')\n").arg(rasterCoverage).arg(_anchors[7]->x());
@@ -746,6 +785,26 @@ QString PiecewiseLinear8Function::getMapcalc(QString rasterCoverage)
     result += QString("term2=%1\n").arg(getLine(a1,rasterCoverage,b1));
     result += QString("term=ilwis.Engine.do('iffraster',cond,term2,term)\n");
     return result;
+}
+
+QString PiecewiseLinear8Function::getMapcalc(QString rasterCoverage)
+{
+    SolveParams();
+    QString cond1 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[1]->x());
+    QString cond2 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[2]->x());
+    QString cond3 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[3]->x());
+    QString cond4 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[4]->x());
+    QString cond5 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[5]->x());
+    QString cond6 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[6]->x());
+    QString cond7 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[7]->x());
+    QString iff7 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond7).arg(getLine(a7,rasterCoverage,b7)).arg(getLine(a8,rasterCoverage,b8));
+    QString iff6 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond6).arg(getLine(a6,rasterCoverage,b6)).arg(iff7);
+    QString iff5 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond5).arg(getLine(a5,rasterCoverage,b5)).arg(iff6);
+    QString iff4 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond4).arg(getLine(a4,rasterCoverage,b4)).arg(iff5);
+    QString iff3 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond3).arg(getLine(a3,rasterCoverage,b3)).arg(iff4);
+    QString iff2 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond2).arg(getLine(a2,rasterCoverage,b2)).arg(iff3);
+    QString iff1 = QString("ilwis.Engine.do('iffraster',%1,%2,%3)").arg(cond1).arg(getLine(a1,rasterCoverage,b1)).arg(iff2);
+    return iff1;
 }
 
 /* ******************************************************* */
@@ -798,6 +857,11 @@ Standardization * Standardization::create(Node * node)
         }
     }
     return 0;
+}
+
+QString Standardization::getPython(QString rasterCoverage) const
+{
+    return rasterCoverage;
 }
 
 QString Standardization::getMapcalc(QString rasterCoverage) const
@@ -906,6 +970,11 @@ void StandardizationValue::SetAnchor(double x, double y)
     _stdValueMethod->SetAnchor(x, y);
 }
 
+QString StandardizationValue::getPython(QString rasterCoverage) const
+{
+    return _stdValueMethod->getPython(rasterCoverage);
+}
+
 QString StandardizationValue::getMapcalc(QString rasterCoverage) const
 {
     return _stdValueMethod->getMapcalc(rasterCoverage);
@@ -992,6 +1061,11 @@ void StdValueGeneral::SetAnchor(double x, double y)
     _function->SetAnchor(x, y);
 }
 
+QString StdValueGeneral::getPython(QString rasterCoverage) const
+{
+    return _function->getPython(rasterCoverage);
+}
+
 QString StdValueGeneral::getMapcalc(QString rasterCoverage) const
 {
     return _function->getMapcalc(rasterCoverage);
@@ -1007,6 +1081,11 @@ StandardizationValueConstraint::StandardizationValueConstraint()
 StandardizationValueConstraint::StandardizationValueConstraint(Node *node, double min, double max)
 : Standardization(node)
 {
+}
+
+QString StandardizationValueConstraint::getPython(QString rasterCoverage) const
+{
+    return rasterCoverage;
 }
 
 QString StandardizationValueConstraint::getMapcalc(QString rasterCoverage) const
@@ -1033,6 +1112,11 @@ StandardizationClass::StandardizationClass(Node *node, bool constraint)
 {
 }
 
+QString StandardizationClass::getPython(QString rasterCoverage) const
+{
+    return rasterCoverage;
+}
+
 QString StandardizationClass::getMapcalc(QString rasterCoverage) const
 {
     return rasterCoverage;
@@ -1055,6 +1139,11 @@ StandardizationBool::StandardizationBool(Node *node)
 {
 }
 
+QString StandardizationBool::getPython(QString rasterCoverage) const
+{
+    return rasterCoverage;
+}
+
 QString StandardizationBool::getMapcalc(QString rasterCoverage) const
 {
     return rasterCoverage;
@@ -1075,6 +1164,11 @@ StandardizationBoolConstraint::StandardizationBoolConstraint()
 StandardizationBoolConstraint::StandardizationBoolConstraint(Node *node)
 : Standardization(node)
 {
+}
+
+QString StandardizationBoolConstraint::getPython(QString rasterCoverage) const
+{
+    return rasterCoverage;
 }
 
 QString StandardizationBoolConstraint::getMapcalc(QString rasterCoverage) const

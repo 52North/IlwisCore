@@ -64,6 +64,7 @@ public:
     int level() const;
     void deleteChild(Node * node);
     void recalcWeights();
+    QString getPython() const;
     QString getMapcalc() const;
     bool nodeDone();
     bool col1Done();
@@ -200,6 +201,7 @@ public:
     SmceFunction(Node *node, QList<Anchor*> & anchors, int nrAnchors, double minX, double maxX, double minY, double maxY, bool benefit);
     virtual ~SmceFunction();
     void SetAnchor(double x, double y);
+    virtual QString getPython(QString rasterCoverage) = 0;
     virtual QString getMapcalc(QString rasterCoverage) = 0;
     virtual void SetDefaultAnchors() = 0;
     virtual void SolveParams() = 0;
@@ -219,6 +221,7 @@ class PiecewiseLinear8Function : public SmceFunction
 {
 public:
     PiecewiseLinear8Function(Node *node, QList<Anchor *> & anchors, double minX, double maxX, double minY, double maxY, bool benefit);
+    virtual QString getPython(QString rasterCoverage);
     virtual QString getMapcalc(QString rasterCoverage);
     virtual void SolveParams();
     virtual void SetDefaultAnchors();
@@ -259,6 +262,7 @@ public:
     enum StandardizationType{ None=0, Value=1, ValueConstraint=2, Class=3, ClassConstraint=4, Bool=5, BoolConstraint=6 };
     Standardization();
     Standardization(Node *node);
+    virtual QString getPython(QString rasterCoverage) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
     virtual StandardizationValue * pStandardizationValue();
@@ -290,6 +294,7 @@ public:
     double min() const;
     double max() const;
     int methodType() const;
+    virtual QString getPython(QString rasterCoverage) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     QQmlListProperty<Anchor> anchors();
     //void setAnchors(QQmlListProperty<Anchor> anchors);
@@ -315,6 +320,7 @@ public:
     virtual ~StdValueMethod();
     virtual void SolveParams() = 0;
     virtual void SetAnchor(double x, double y) = 0;
+    virtual QString getPython(QString rasterCoverage) const = 0;
     virtual QString getMapcalc(QString rasterCoverage) const = 0;
     static StdValueMethod * create(Node *node, QList<Anchor *> &anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method);
 
@@ -330,6 +336,7 @@ public:
     StdValueGeneral(Node *node, QList<Anchor *> &anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method);
     virtual void SolveParams();
     virtual void SetAnchor(double x, double y);
+    virtual QString getPython(QString rasterCoverage) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual ~StdValueGeneral();
 
@@ -345,6 +352,7 @@ class StandardizationValueConstraint : public Standardization
 public:
     StandardizationValueConstraint();
     StandardizationValueConstraint(Node *node, double min, double max);
+    virtual QString getPython(QString rasterCoverage) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
 };
@@ -356,6 +364,7 @@ class StandardizationClass : public Standardization
 public:
     StandardizationClass();
     StandardizationClass(Node *node, bool constraint);
+    virtual QString getPython(QString rasterCoverage) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
 
@@ -370,6 +379,7 @@ class StandardizationBool : public Standardization
 public:
     StandardizationBool();
     StandardizationBool(Node *node);
+    virtual QString getPython(QString rasterCoverage) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
 };
@@ -381,6 +391,7 @@ class StandardizationBoolConstraint : public Standardization
 public:
     StandardizationBoolConstraint();
     StandardizationBoolConstraint(Node *node);
+    virtual QString getPython(QString rasterCoverage) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
 };
