@@ -33,8 +33,8 @@ void SMCE::Init()
 bool SMCE::execute(const QVariantMap &inputParameters, QVariantMap &outputParameters)
 {
     QString script("import ilwis\n");
-    script += _tree->getPython() + "\n";
-    script += QString("term.store('" + _tree->fileName() + "', 'map', 'ilwis3')\n");
+    script += _tree->getPython("standardized");
+    script += QString("standardized.store('" + _tree->fileName() + "', 'map', 'ilwis3')\n");
     QString expr = QString("runpython(\"%1\")").arg(script);
     qDebug() << expr;
     Ilwis::ExecutionContext ctx;
