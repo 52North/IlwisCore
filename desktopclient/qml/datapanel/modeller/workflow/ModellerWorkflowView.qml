@@ -226,6 +226,8 @@ Modeller.ModellerWorkArea {
     }
 
     function recreateWorkflow() {
+        if (!workflow)
+            return
         var nodes = workflow.getNodes()
         var kvp = []
         var unlinkedJunctions = []
