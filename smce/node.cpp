@@ -106,6 +106,12 @@ void Node::setWeights(Weights * weights)
         root()->emitDoneChanged();
 }
 
+void Node::resetWeightEdits()
+{
+    _weightsEdit = 0;
+    emit weightsChanged();
+}
+
 Standardization * Node::standardization()
 {
     if (_type == NodeType::Factor || _type == NodeType::Constraint) {
@@ -126,6 +132,12 @@ void Node::setStandardization(Standardization * standardization)
     emit doneChanged();
     if (parent())
         root()->emitDoneChanged();
+}
+
+void Node::resetStandardizationEdits()
+{
+    _standardizationEdit = 0;
+    emit standardizationChanged();
 }
 
 const Node * Node::parent() const

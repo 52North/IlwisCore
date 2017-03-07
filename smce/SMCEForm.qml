@@ -41,13 +41,18 @@ Item {
         var change = ((node != null) && (selectedNode == null)) || ((node == null) && (selectedNode != null))
         if (change) {
             if (node == null) {
+                formEditor.item.selNodeAboutToChange()
                 formEditor.setSource("")
                 selectedNode = node
             } else {
                 selectedNode = node
                 formEditor.setSource(form)
+                formEditor.item.selNodeChanged()
             }
-        } else
+        } else {
+            formEditor.item.selNodeAboutToChange()
             selectedNode = node
+            formEditor.item.selNodeChanged()
+        }
     }
 }

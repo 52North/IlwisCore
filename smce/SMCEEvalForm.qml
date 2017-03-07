@@ -92,11 +92,21 @@ Column {
             }
         }
 
-        Button {
-            text : qsTr("Apply")
-            onClicked: {
-                if (selectedNode != null)
-                    selectedNode.weights.apply()
+        Row {
+            Button {
+                text : qsTr("Apply")
+                onClicked: {
+                    if (selectedNode != null)
+                        selectedNode.weights.apply()
+                }
+            }
+
+            Button {
+                text : qsTr("Reset")
+                onClicked: {
+                    if (selectedNode != null)
+                        selectedNode.modelData.resetWeightEdits()
+                }
             }
         }
     }
@@ -118,11 +128,23 @@ Column {
             source: standardization.qmlFile(selectedNode)
         }
 
-        Button {
-            text : qsTr("Apply")
-            onClicked: {
-                if (selectedNode != null)
-                    selectedNode.standardization.apply()
+        Row {
+            Button {
+                text : qsTr("Apply")
+                onClicked: {
+                    if (selectedNode != null)
+                        selectedNode.standardization.apply()
+                }
+            }
+
+            Button {
+                text : qsTr("Reset")
+                onClicked: {
+                    if (selectedNode != null) {
+                        selectedNode.modelData.resetStandardizationEdits()
+                        stdEditor.item.children[0].repaint()
+                    }
+                }
             }
         }
 
@@ -175,5 +197,19 @@ Column {
             } else
                 return qsTr("Standardization")
         }
+    }
+
+    function selNodeAboutToChange() {
+        if (selectedNode != null) {
+            if (selectedNode.type !== Node.Group)
+                selectedNode.modelData.resetStandardizationEdits()
+            else
+                selectedNode.modelData.resetWeightEdits()
+        }
+    }
+
+    function selNodeChanged() {
+        if (selectedNode != null && selectedNode.type !== Node.Group)
+            stdEditor.item.children[0].repaint()
     }
 }

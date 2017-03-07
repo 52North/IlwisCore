@@ -54,8 +54,10 @@ public:
     void setWeight(double weight);
     Weights * weights();
     void setWeights(Weights * weights);
+    Q_INVOKABLE void resetWeightEdits();
     Standardization * standardization();
     void setStandardization(Standardization * standardization);
+    Q_INVOKABLE void resetStandardizationEdits();
     const Node * parent() const;
     QList <Node*> subNodes();
     QList <Node*> subFactors() const;
