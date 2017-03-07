@@ -92,11 +92,21 @@ Column {
             }
         }
 
-        Button {
-            text : qsTr("Apply")
-            onClicked: {
-                if (selectedNode != null)
-                    selectedNode.weights.apply()
+        Row {
+            Button {
+                text : qsTr("Apply")
+                onClicked: {
+                    if (selectedNode != null)
+                        selectedNode.weights.apply()
+                }
+            }
+
+            Button {
+                text : qsTr("Reset")
+                onClicked: {
+                    if (selectedNode != null)
+                        selectedNode.modelData.resetWeightEdits()
+                }
             }
         }
     }
@@ -118,11 +128,21 @@ Column {
             source: standardization.qmlFile(selectedNode)
         }
 
-        Button {
-            text : qsTr("Apply")
-            onClicked: {
-                if (selectedNode != null)
-                    selectedNode.standardization.apply()
+        Row {
+            Button {
+                text : qsTr("Apply")
+                onClicked: {
+                    if (selectedNode != null)
+                        selectedNode.standardization.apply()
+                }
+            }
+
+            Button {
+                text : qsTr("Reset")
+                onClicked: {
+                    if (selectedNode != null)
+                        selectedNode.modelData.resetStandardizationEdits()
+                }
             }
         }
 

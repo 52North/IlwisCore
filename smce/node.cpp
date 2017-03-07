@@ -109,6 +109,7 @@ void Node::setWeights(Weights * weights)
 void Node::resetWeightEdits()
 {
     _weightsEdit = 0;
+    emit weightsChanged();
 }
 
 Standardization * Node::standardization()
@@ -136,6 +137,7 @@ void Node::setStandardization(Standardization * standardization)
 void Node::resetStandardizationEdits()
 {
     _standardizationEdit = 0;
+    emit standardizationChanged();
 }
 
 const Node * Node::parent() const
