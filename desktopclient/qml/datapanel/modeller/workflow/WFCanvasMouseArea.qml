@@ -105,10 +105,8 @@ MouseArea {
                         var v1 = Math.abs((dy) * mx - (dx)*my + x2*y1 - y2*x1)
                         var v2 = Math.sqrt(Math.pow(dy,2) + Math.pow(dx,2))
                         var d = v1/v2
-
                         if(d < smallestDistance && d < 8)
                         {
-                            console.debug(mx,my, x1,y1,x2,y2,d)
                             smallestDistance = d;
                             selectedFlow = flow;
                         }

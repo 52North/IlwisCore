@@ -49,6 +49,15 @@ Item {
                 workflowView.workflow.setSelectedOperationId(metaid)
             }
 
+            CopyAsBox {
+                id : savestuff2
+                y : 31
+                state : "invisible"
+                clip:true
+                z : 1000
+                ilwisobject : model
+            }
+
             WorkFlow.ModellerWorkflowView { id: workflowView }
             Analysis.ModellerAnalysisView{ id : analysisView} // panel
             Apps.ModellerApplicationView{ id : applicationView}

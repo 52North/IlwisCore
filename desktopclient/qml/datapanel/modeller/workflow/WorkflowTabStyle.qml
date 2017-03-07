@@ -36,7 +36,7 @@ TabViewStyle {
                 width : 16
                 height : 16
                 source : "../../../images/error_sign.png"
-                visible: styleData.index === 0 && !workflowView.workflow.isValid
+                visible: workflowView.workflow ? (styleData.index === 0 && !workflowView.workflow.isValid) : false
                 anchors.right: name.right
                 anchors.rightMargin: 4
             }

@@ -16,6 +16,7 @@
 #include "ilwistypes.h"
 #include "applicationmodel.h"
 #include "analysispattern.h"
+#include "oshelper.h"
 #include "modellerfactory.h"
 #include "modelbuilder.h"
 #include "modeldesigner.h"
@@ -273,19 +274,32 @@ void ModelDesigner::removeApplication(qint32 index)
 
 }
 
-bool ModelDesigner::store(const QString& location)
+bool ModelDesigner::store(const QString &container, const QString &name)
 {
-    try{
-        QString outputUrl = location + "/" + _model->name();
-        if ( outputUrl.indexOf(".ilwis") == -1)
-            outputUrl += ".ilwis";
-        _model->connectTo(outputUrl,"model","stream",IlwisObject::cmOUTPUT);
-        return _model->store();
-    } catch (ErrorObject& err){}
-
-    return false;
-
-
+    if ( container == "" && name == ""){
+        _model->store();
+    } else if ( container == "" && name != "") {
+        _model->name(name);
+        _model->store();
+    }else if ( OSHelper::neutralizeFileName(container) == OSHelper::neutralizeFileName(_model->resource().container().toString())){
+        if ( name == "")    {
+            _model->store();
+        }else {
+            _model->name(name);
+            _model->store();
+        }
+    }else {
+        QString cont = container;
+        if ( container.indexOf(".ilwis") != 0){ // oops somebody put a file, not a container
+            int index = container.lastIndexOf("/");
+            cont = container.left(index);
+        }
+        QString newName = name == "" ? _model->name() : name;
+        QUrl newUrl = cont + "/" + newName;
+        _model->connectTo(newUrl,"model","stream",IlwisObject::cmOUTPUT);
+        _model->store();
+    }
+    return true;
 }
 
 qint32 ModelDesigner::conceptCount() const
