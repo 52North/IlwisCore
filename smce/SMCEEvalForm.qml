@@ -140,8 +140,10 @@ Column {
             Button {
                 text : qsTr("Reset")
                 onClicked: {
-                    if (selectedNode != null)
+                    if (selectedNode != null) {
                         selectedNode.modelData.resetStandardizationEdits()
+                        stdEditor.item.children[0].repaint()
+                    }
                 }
             }
         }
@@ -204,5 +206,10 @@ Column {
             else
                 selectedNode.modelData.resetWeightEdits()
         }
+    }
+
+    function selNodeChanged() {
+        if (selectedNode != null && selectedNode.type !== Node.Group)
+            stdEditor.item.children[0].repaint()
     }
 }

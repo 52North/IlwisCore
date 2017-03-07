@@ -47,10 +47,12 @@ Item {
             } else {
                 selectedNode = node
                 formEditor.setSource(form)
+                formEditor.item.selNodeChanged()
             }
         } else {
             formEditor.item.selNodeAboutToChange()
             selectedNode = node
+            formEditor.item.selNodeChanged()
         }
     }
 }

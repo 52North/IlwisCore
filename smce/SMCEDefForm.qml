@@ -78,7 +78,12 @@ Column {
             selectedNode.modelData.deleteNode()
         }
     }
+
     function selNodeAboutToChange() {
+
+    }
+
+    function selNodeChanged() {
 
     }
 }
