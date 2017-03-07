@@ -176,4 +176,13 @@ Column {
                 return qsTr("Standardization")
         }
     }
+
+    function selNodeAboutToChange() {
+        if (selectedNode != null) {
+            if (selectedNode.type !== Node.Group)
+                selectedNode.modelData.resetStandardizationEdits()
+            else
+                selectedNode.modelData.resetWeightEdits()
+        }
+    }
 }
