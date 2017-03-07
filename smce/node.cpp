@@ -13,7 +13,9 @@ Node::Node(QObject *qparent)
 , _parent(0)
 , _weight(0)
 , _weights(0)
+, _weightsEdit(0)
 , _standardization(0)
+, _standardizationEdit(0)
 , _smceMode(Mode::EditTree)
 {
 
@@ -24,7 +26,9 @@ Node::Node(Node * parent, QObject *qparent)
 , _parent(parent)
 , _weight(0)
 , _weights(0)
+, _weightsEdit(0)
 , _standardization(0)
+, _standardizationEdit(0)
 , _smceMode(Mode::EditTree)
 {
 
@@ -83,25 +87,45 @@ void Node::setWeight(double weight)
 Weights * Node::weights()
 {
     if (_type == NodeType::Group && subFactors().size() > 1) {
-        if (!_weights)
-            _weights = Weights::create(this);
-        return _weights;
+        if (!_weightsEdit) {
+            if (!_weights)
+                _weightsEdit = Weights::create(this);
+            else
+                _weightsEdit = _weights->clone();
+        }
+        return _weightsEdit;
     } else
         return 0;
+}
+
+void Node::setWeights(Weights * weights)
+{
+    _weights = weights;
+    emit doneChanged();
+    if (parent())
+        root()->emitDoneChanged();
 }
 
 Standardization * Node::standardization()
 {
     if (_type == NodeType::Factor || _type == NodeType::Constraint) {
-        if (!_standardization) {
-            _standardization = Standardization::create(this);
-            emit doneChanged();
-            if (parent())
-                root()->emitDoneChanged();
+        if (!_standardizationEdit) {
+            if (!_standardization)
+                _standardizationEdit = Standardization::create(this);
+            else
+                _standardizationEdit = _standardization->clone();
         }
-        return _standardization;
+        return _standardizationEdit;
     } else
         return 0;
+}
+
+void Node::setStandardization(Standardization * standardization)
+{
+    _standardization = standardization;
+    emit doneChanged();
+    if (parent())
+        root()->emitDoneChanged();
 }
 
 const Node * Node::parent() const
@@ -472,7 +496,12 @@ void Weights::Recalculate()
 
 void Weights::apply()
 {
+    _node->setWeights(this);
+}
 
+Weights * Weights::clone() const
+{
+    return new Weights(_node);
 }
 
 /* ******************************************************* */
@@ -616,9 +645,21 @@ QQmlListProperty<DirectWeightItem> DirectWeights::directWeights()
 
 void DirectWeights::apply()
 {
+    Weights::apply();
     for (Node * child : _node->subFactors())
         if (getItem(child))
             child->setWeight(getItem(child)->normalizedWeight());
+}
+
+Weights * DirectWeights::clone() const
+{
+    DirectWeights * dwClone = new DirectWeights(_node);
+    for (int i = 0; i < _directWeights.length(); ++i) {
+        dwClone->_directWeights.at(i)->setDirectWeight(_directWeights.at(i)->directWeight());
+        dwClone->_directWeights.at(i)->setNormalizedWeight(_directWeights.at(i)->normalizedWeight());
+    }
+    dwClone->_weightType = _weightType;
+    return dwClone;
 }
 
 /* ******************************************************* */
@@ -887,6 +928,16 @@ StandardizationValue * Standardization::pStandardizationValue()
     return 0;
 }
 
+void Standardization::apply()
+{
+    _node->setStandardization(this);
+}
+
+Standardization * Standardization::clone() const
+{
+    return new Standardization(_node);
+}
+
 /* ******************************************************* */
 
 Anchor::Anchor()
@@ -998,6 +1049,17 @@ StandardizationValue * StandardizationValue::pStandardizationValue()
     return this;
 }
 
+Standardization * StandardizationValue::clone() const
+{
+    StandardizationValue * stdClone = new StandardizationValue(_node, _min, _max);
+    for (int i = 0; i < _anchors.length(); ++i) {
+        stdClone->_anchors.at(i)->setX(_anchors.at(i)->x());
+        stdClone->_anchors.at(i)->setY(_anchors.at(i)->y());
+    }
+    stdClone->SolveParams();
+    return stdClone;
+}
+
 /* ******************************************************* */
 
 StdValueMethod::StdValueMethod()
@@ -1083,11 +1145,15 @@ QString StdValueGeneral::getMapcalc(QString rasterCoverage) const
 
 StandardizationValueConstraint::StandardizationValueConstraint()
 : Standardization()
+, _min(0)
+, _max(-1)
 {
 }
 
 StandardizationValueConstraint::StandardizationValueConstraint(Node *node, double min, double max)
 : Standardization(node)
+, _min(min)
+, _max(max)
 {
 }
 
@@ -1104,6 +1170,11 @@ QString StandardizationValueConstraint::getMapcalc(QString rasterCoverage) const
 int StandardizationValueConstraint::type() const
 {
     return Standardization::StandardizationType::ValueConstraint;
+}
+
+Standardization * StandardizationValueConstraint::clone() const
+{
+    return new StandardizationValueConstraint(_node, _min, _max);
 }
 
 /* ******************************************************* */
@@ -1135,6 +1206,11 @@ int StandardizationClass::type() const
     return _constraint ? Standardization::StandardizationType::ClassConstraint : Standardization::StandardizationType::Class;
 }
 
+Standardization * StandardizationClass::clone() const
+{
+    return new StandardizationClass(_node, _constraint);
+}
+
 /* ******************************************************* */
 
 StandardizationBool::StandardizationBool()
@@ -1162,6 +1238,11 @@ int StandardizationBool::type() const
     return Standardization::StandardizationType::Bool;
 }
 
+Standardization * StandardizationBool::clone() const
+{
+    return new StandardizationBool(_node);
+}
+
 /* ******************************************************* */
 
 StandardizationBoolConstraint::StandardizationBoolConstraint()
@@ -1187,4 +1268,9 @@ QString StandardizationBoolConstraint::getMapcalc(QString rasterCoverage) const
 int StandardizationBoolConstraint::type() const
 {
     return Standardization::StandardizationType::BoolConstraint;
+}
+
+Standardization * StandardizationBoolConstraint::clone() const
+{
+    return new StandardizationBoolConstraint(_node);
 }
