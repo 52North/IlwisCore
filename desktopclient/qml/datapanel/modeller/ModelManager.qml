@@ -51,21 +51,21 @@ Rectangle {
         Tab{
             id : applicationManager
             active: true
-            title: qsTr("Application View")
+            title: qsTr("App Director")
             Apps.ManagerApplicationView{}
         }
 
         Tab{
             id : analysisManager
             active: true
-            title: qsTr("Analysis View")
+            title: qsTr("Discipline editor")
             Analysis.ManagerAnalysisView{}
         }
 
         Tab {
             id : wfManager
             active: true
-            title: qsTr("Workflow View")
+            title: qsTr("Workflow Builder")
             WorkFlow.ManagerWorkflowView{}
         }
 

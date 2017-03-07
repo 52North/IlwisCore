@@ -93,17 +93,25 @@ MouseArea {
                     var y1 = startPoint.y;
                     var x2 = endPoint.x;
                     var y2 = endPoint.y;
-
+                    var mx = mouseX
+                    var my = mouseY
+                    var dx1 = Math.abs(x1 - mx)
+                    var dx2 = Math.abs(x2 - mx)
+                    var dy1 = Math.abs(y1 - my)
+                    var dy2 = Math.abs(y2 - my)
                     var dy = y2 - y1
                     var dx = x2 - x1
-                    var v1 = Math.abs((dy) * mouseX - (dx)*mouseY + x2*y1 - y2*x1)
-                    var v2 = Math.sqrt(Math.pow(dy,2) + Math.pow(dx,2))
-                    var d = v1/v2
+                    if ( dx2 < Math.abs(dx) && dx1 < Math.abs(dx) && dy2 < Math.abs(dy) && dy1 < Math.abs(dy)){
+                        var v1 = Math.abs((dy) * mx - (dx)*my + x2*y1 - y2*x1)
+                        var v2 = Math.sqrt(Math.pow(dy,2) + Math.pow(dx,2))
+                        var d = v1/v2
 
-                    if(d < smallestDistance && d < 8)
-                    {
-                        smallestDistance = d;
-                        selectedFlow = flow;
+                        if(d < smallestDistance && d < 8)
+                        {
+                            console.debug(mx,my, x1,y1,x2,y2,d)
+                            smallestDistance = d;
+                            selectedFlow = flow;
+                        }
                     }
                     flow.isSelected = false;
                 }
