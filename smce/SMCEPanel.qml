@@ -15,6 +15,10 @@ Column {
     property var form
     property var tree : smcePanel.manager.analisysView.currentAnalysis.tree()
 
+    onVisibleChanged: {
+        console.debug("vis", visible)
+    }
+
     function loadSmceCatalog() {
         scanCatalog(uicontext.ilwisFolder + "/smcedata")
     }
@@ -40,8 +44,10 @@ Column {
     }
 
     SMCEToolBar{
-        id : tools        
+        id : tools
+
     }
+
 
     GroupBox {
         id: mode

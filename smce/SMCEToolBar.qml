@@ -11,6 +11,7 @@ ToolBar{
     height : 31
 
     property var smceCatalog
+    property int buttonSize : 30
 
     function iconsource(name) {
         if ( name.indexOf("/") !== -1)
@@ -24,7 +25,7 @@ ToolBar{
     Row {
         width : parent.width
         height: 25
-        /*Loader {
+        Loader {
             source : "../../../qml/datapanel/modeller/GenericTools.qml"
             height : 25
             onLoaded: {
@@ -33,33 +34,14 @@ ToolBar{
         }
 
         Button {
-            height : 25
-            width : 25
+            height : 30
+            width : 30
+            //text: "Generate"
             Image {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
 
-                source : iconsource("data_folder.png")
-            }
-
-        }*/
-        /*Button {
-            height : 25
-            width : 25
-           text: "Expand all"
-           onClicked: {
-           }
-        }*/
-
-        Button {
-            height : 25
-            width : 25
-            //text: "Generate"
-            Image {
-               anchors.verticalCenter: parent.verticalCenter
-               anchors.horizontalCenter: parent.horizontalCenter
-
-               source : iconsource("run20.png")
+                source : iconsource("run20.png")
             }
             onClicked: {
                 var analysis = modellerDataPane.model.analysisPattern(0)
@@ -78,4 +60,5 @@ ToolBar{
             }
         }
     }
+
 }
