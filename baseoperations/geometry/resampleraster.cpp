@@ -32,19 +32,17 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
-    IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
-    IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
 
     BoxedAsyncFunc resampleFun = [&](const BoundingBox& box) -> bool {
-        PixelIterator iterOut(outputRaster,box);
-        RasterInterpolator interpolator(inputRaster, _method);
+        PixelIterator iterOut(_outputRaster,box);
+        RasterInterpolator interpolator(_inputRaster, _method);
         PixelIterator iterEnd = iterOut.end();
-        bool equalCsy = inputRaster->coordinateSystem()->isEqual(outputRaster->coordinateSystem().ptr());
+        bool equalCsy = _inputRaster->coordinateSystem()->isEqual(_outputRaster->coordinateSystem().ptr());
         while(iterOut != iterEnd) {
             Pixel position = iterOut.position();
-            Coordinate coord = outputRaster->georeference()->pixel2Coord(Pixeld(position.x,(position.y)));
+            Coordinate coord = _outputRaster->georeference()->pixel2Coord(Pixeld(position.x,(position.y)));
             if ( !equalCsy)
-                coord = inputRaster->coordinateSystem()->coord2coord(outputRaster->coordinateSystem(),coord);
+                coord = _inputRaster->coordinateSystem()->coord2coord(_outputRaster->coordinateSystem(),coord);
             *iterOut = interpolator.coord2value(coord, iterOut.position().z);
             ++iterOut;
             updateTranquilizer(iterOut.linearPosition(), 1000);
@@ -52,12 +50,13 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         return true;
     };
 
-    bool resource = OperationHelperRaster::execute(ctx, resampleFun, outputRaster);
+    bool resource = OperationHelperRaster::execute(ctx, resampleFun, _outputRaster);
+
 
     if ( resource && ctx != 0) {
         QVariant value;
-        value.setValue<IRasterCoverage>(outputRaster);
-        ctx->setOutput(symTable,value,outputRaster->name(), itRASTER, outputRaster->resource() );
+        value.setValue<IRasterCoverage>(_outputRaster);
+        ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->resource() );
     }
     return resource;
 }
@@ -67,12 +66,12 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
     QString raster = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 
-    if (!_inputObj.prepare(raster, itRASTER)) {
+    if (!_inputRaster.prepare(raster, itRASTER)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
         return sPREPAREFAILED;
     }
-    _outputObj = OperationHelperRaster::initialize(_inputObj,itRASTER, itDOMAIN);
-    if ( !_outputObj.isValid()) {
+    OperationHelperRaster::initialize(_inputRaster,_outputRaster, itDOMAIN|itTABLE);
+    if ( !_outputRaster.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
         return sPREPAREFAILED;
     }
@@ -81,21 +80,20 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
     if ( !grf.isValid()) {
         return sPREPAREFAILED;
     }
-    IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
-    outputRaster->georeference(grf);
+    _outputRaster->georeference(grf);
     Size<> sz = grf->size();
     if ( sz.isNull()){
         ERROR1(ERR_NO_INITIALIZED_1, "output georeference");
         return sPREPAREFAILED;
     }
-    sz.zsize(_inputObj.as<RasterCoverage>()->size().zsize());
-    outputRaster->size(sz);
+    sz.zsize(_inputRaster->size().zsize());
+    _outputRaster->size(sz);
     Envelope env = grf->pixel2Coord(grf->size());
-    outputRaster->envelope(env);
+    _outputRaster->envelope(env);
     if ( outputName != sUNDEF)
-        outputRaster->name(outputName);
+        _outputRaster->name(outputName);
 
-    if ( outputRaster->coordinateSystem()->code() == "unknown" || _inputObj.as<RasterCoverage>()->coordinateSystem()->code() == "unknown"){
+    if ( _outputRaster->coordinateSystem()->code() == "unknown" || _inputRaster->coordinateSystem()->code() == "unknown"){
         ERROR2(ERR_OPERATION_NOTSUPPORTED2,"resample","coordinatesystem unknown");
         return sPREPAREFAILED;
     }
@@ -111,8 +109,12 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
         ERROR3(ERR_ILLEGAL_PARM_3,"method",method,"resample");
         return sPREPAREFAILED;
     }
+    for(quint32 i = 0; i < _outputRaster->size().zsize(); ++i){
+        QString index = _outputRaster->stackDefinition().index(i);
+        _outputRaster->setBandDefinition(index,DataDefinition(_outputRaster->datadef().domain()));
+    }
 
-    initialize(outputRaster->size().linearSize());
+    initialize(_outputRaster->size().linearSize());
 
     return sPREPARED;
 }

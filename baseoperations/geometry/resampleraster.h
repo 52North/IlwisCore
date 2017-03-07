@@ -17,8 +17,8 @@ public:
 
 
 private:
-    IIlwisObject _inputObj;
-    IIlwisObject _outputObj;
+    IRasterCoverage _inputRaster;
+    IRasterCoverage _outputRaster;
     IGeoReference _targetGrf;
     Ilwis::RasterInterpolator::InterpolationMethod _method;
 
