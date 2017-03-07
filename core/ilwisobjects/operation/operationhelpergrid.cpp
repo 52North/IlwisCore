@@ -58,6 +58,13 @@ BoundingBox OperationHelperRaster::initialize(const IRasterCoverage &inputRaster
             }
         }
     }
+    if ( what & itDOMAIN){
+        for(quint32 i = 0; i < outputRaster->size().zsize(); ++i){
+            QString index = outputRaster->stackDefinition().index(i);
+            outputRaster->setBandDefinition(index,DataDefinition(outputRaster->datadef().domain()));
+        }
+    }
+
 
     return box;
 }
