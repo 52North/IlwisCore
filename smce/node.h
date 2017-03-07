@@ -24,6 +24,7 @@ class Node : public QObject
     Q_PROPERTY( bool nodeDone READ nodeDone NOTIFY doneChanged )
     Q_PROPERTY( bool col1Done READ col1Done NOTIFY doneChanged )
     Q_PROPERTY( bool treeEditDone READ treeEditDone NOTIFY doneChanged )
+    Q_PROPERTY( bool stdWeighDone READ stdWeighDone NOTIFY doneChanged )
 
 signals:
    void nameChanged() const;
@@ -74,6 +75,7 @@ public:
     bool col1Done();
     void recursivelyEmitDoneChanged() const;
     bool treeEditDone();
+    bool stdWeighDone();
     Q_INVOKABLE void setGoal(QString name);
     Q_INVOKABLE void addMask(QString name);
     Q_INVOKABLE Node * addGroup(QString name);
