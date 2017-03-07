@@ -97,7 +97,7 @@ VisualAttribute SpatialDataDrawer::vPropertyRasterCoverage(const QString &attrNa
     VisualAttribute attr;
     IRasterCoverage raster = coverage().as<RasterCoverage>();
     if ( !raster.isValid()){
-        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"FeatureCoverage", TR("Visualization"));
+        ERROR2(ERR_COULDNT_CREATE_OBJECT_FOR_2,"RasterCoverage", TR("Visualization"));
     }else {
         int columnIndex = raster->attributeTable()->columnIndex(attrName);
         if ( columnIndex == iUNDEF){ // test a fallbacks to be able to show at least something
