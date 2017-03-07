@@ -63,7 +63,7 @@ public:
     Q_INVOKABLE  void removeApplication(const QString& name);
     Q_INVOKABLE void removeApplication(qint32 index);
 
-    Q_INVOKABLE bool store(const QString &location);
+    Q_INVOKABLE bool store(const QString &location, const QString& name);
 
    qint32 conceptCount() const;
 
