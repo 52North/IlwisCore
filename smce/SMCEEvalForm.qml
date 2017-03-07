@@ -118,6 +118,14 @@ Column {
             source: standardization.qmlFile(selectedNode)
         }
 
+        Button {
+            text : qsTr("Apply")
+            onClicked: {
+                if (selectedNode != null)
+                    selectedNode.standardization.apply()
+            }
+        }
+
         function qmlFile(selectedNode) {
             if (selectedNode !== null) {
                 if (selectedNode.standardization) {

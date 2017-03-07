@@ -53,7 +53,9 @@ public:
     double weight() const;
     void setWeight(double weight);
     Weights * weights();
+    void setWeights(Weights * weights);
     Standardization * standardization();
+    void setStandardization(Standardization * standardization);
     const Node * parent() const;
     QList <Node*> subNodes();
     QList <Node*> subFactors() const;
@@ -90,7 +92,9 @@ protected:
     QList <Node*> _subNodes;
     QString _fileName;
     Weights * _weights;
+    Weights * _weightsEdit;
     Standardization * _standardization;
+    Standardization * _standardizationEdit;
     Mode _smceMode;
 };
 
@@ -115,6 +119,7 @@ public:
     virtual DirectWeights * pDirectWeights();
     virtual void Recalculate();
     Q_INVOKABLE virtual void apply();
+    virtual Weights * clone() const;
 
 protected:
     Node * _node;
@@ -165,6 +170,7 @@ public:
     QQmlListProperty<DirectWeightItem> directWeights();
     virtual void Recalculate();
     Q_INVOKABLE virtual void apply();
+    virtual Weights * clone() const;
 
 private:
     void Refresh(); // to refresh the internal map in case of resizing
@@ -267,6 +273,8 @@ public:
     virtual int type() const;
     virtual StandardizationValue * pStandardizationValue();
     static Standardization * create(Node *node);
+    Q_INVOKABLE virtual void apply();
+    virtual Standardization * clone() const;
 
 protected:
     Node * _node;
@@ -303,6 +311,7 @@ public:
     virtual int type() const;
     virtual StandardizationValue * pStandardizationValue();
     virtual ~StandardizationValue();
+    virtual Standardization * clone() const;
 
 private:
     StdValueMethod * _stdValueMethod;
@@ -355,6 +364,10 @@ public:
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
+    virtual Standardization * clone() const;
+protected:
+    const double _min;
+    const double _max;
 };
 
 class StandardizationClass : public Standardization
@@ -367,6 +380,7 @@ public:
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
+    virtual Standardization * clone() const;
 
 private:
     const bool _constraint;
@@ -382,6 +396,7 @@ public:
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
+    virtual Standardization * clone() const;
 };
 
 class StandardizationBoolConstraint : public Standardization
@@ -394,6 +409,7 @@ public:
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
+    virtual Standardization * clone() const;
 };
 
 #endif // NODE_H
