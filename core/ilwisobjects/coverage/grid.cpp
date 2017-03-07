@@ -5,6 +5,9 @@
 #include "grid.h"
 
 using namespace Ilwis;
+
+std::vector<GridBlockNrPair> Grid::_cache;
+
 GridBlockInternal::GridBlockInternal(quint32 blocknr, quint64 rasterid,quint32 lines , quint32 width) :  _undef(undef<double>()), _size(Size<>(width, lines,1)), _id(blocknr), _rasterid(rasterid), _inMemory(false)
 {
     _blockSize = _size.xsize()* _size.ysize();
@@ -22,11 +25,8 @@ Size<> GridBlockInternal::size() const
 
 GridBlockInternal *GridBlockInternal::clone(quint64 newRasterId)
 {
-    if (!_inMemory) {
-        init();
-        loadDiskDataToMemory();
-    }
-    GridBlockInternal *block = new GridBlockInternal(_id, newRasterId, _size.xsize(), _size.ysize());
+
+    GridBlockInternal *block = new GridBlockInternal(blockNr(), newRasterId, _size.xsize(), _size.ysize());
     block->init();
     std::copy(_data.begin(), _data.end(), block->_data.begin());
     block->_inMemory = true;
@@ -97,6 +97,11 @@ void GridBlockInternal::loadDiskDataToMemory()
         fetchFromSource();
 }
 
+quint64 GridBlockInternal::blockNr()
+{
+    return _id;
+}
+
 /**
  * @brief GridBlockInternal::init
  * Allocates the data array
@@ -111,6 +116,7 @@ void GridBlockInternal::init() {
         _data.resize(blockSize());
         _inMemory = true;
         } catch(const std::bad_alloc& err) {
+            qDebug() << "err mem ";
             throw OutOfMemoryError( TR("Couldnt allocate memory for raster"), false);
         }
     }
@@ -198,6 +204,7 @@ int Grid::maxLines() const
 
 Grid *Grid::clone(quint64 newRasterId, quint32 index1, quint32 index2)
 {
+    Locker<> lock(_mutex);
     if ( index2 < index1){
         ERROR2(ERR_INVALID_INIT_FOR_2,TR("grid limits"),TR("clone grid"));
         return 0;
@@ -211,7 +218,12 @@ Grid *Grid::clone(quint64 newRasterId, quint32 index1, quint32 index2)
     quint32 startBlock = start * _blocksPerBand;
     quint32 endBlock = std::min(end * _blocksPerBand, (quint32)_blocks.size());
     for(int i=startBlock, j=0; i < endBlock; ++i, ++j) {
-        grid->_blocks[j] = _blocks[i]->clone(newRasterId); // this returns a block that is on disk
+
+        if (!_blocks[i]->inMemory()) {
+            update(i, true);
+        }
+        auto b = _blocks[i]->clone(newRasterId);
+        grid->setBlock(j, b);
     }
     return grid;
 }
@@ -219,14 +231,23 @@ Grid *Grid::clone(quint64 newRasterId, quint32 index1, quint32 index2)
 void Grid::clear() {
     _size = Size<>();
     _blockSizes = std::vector<quint32>();
+    int next = true;
+    while(next ){
+        next = false; // next will become true again af a next iteration is needed
+        for(int i=0; i < _cache.size(); ++i){
+            if (_cache[i]._grid == this){
+                _cache.erase(_cache.begin() + i);
+                next = true;
+                break;
+            }
+        }
+    }
     for(quint32 i = 0; i < _blocks.size(); ++i)
         delete _blocks[i];
     _blocks = std::vector< GridBlockInternal *>();
-    _cache = QList<quint32>();
     _blockSizes =  std::vector<quint32>();
     _offsets = std::vector<std::vector<quint32>>();
     _blockOffsets = std::vector<quint32>();
-    _maxCacheBlocks = 1;
     _size = Size<>();
 }
 
@@ -339,7 +360,7 @@ bool Grid::prepare(RasterCoverage *raster, const Size<> &sz) {
     _memUsed = std::min(bytesNeeded, mleft/2);
     context()->changeMemoryLeft(-_memUsed);
     int n = numberOfBlocks();
-    _maxCacheBlocks = std::max(1ULL, n * _memUsed / bytesNeeded);
+    _maxCacheBlocks = 10; //std::max(1ULL, n * _memUsed / bytesNeeded);
     _blocksPerBand = n / sz.zsize();
 
     int nblocks = numberOfBlocks();
@@ -381,63 +402,44 @@ int Grid::numberOfBlocks() {
 bool Grid::update(quint32 block, bool loadDiskData) {
     if ( block >= _blocks.size() ) // illegal, blocknumber is outside the allowed range
         return false;
-
     // update the _cache array to reflect the Most-Recently-Used blocks; the first position in the array is the MRU-block, the last position is the first candidate to be eliminated
-
-    int index = _cache.indexOf(block); //  find the block and move it to the front of the list; blocks that are in use are at the front to prevent them being unloaded
-    if (index >= 0) { // block is found in memory, just bring it to the front of the list
-        _cache.removeOne(index);
-        _cache.push_front(block); // block has now the highest priority in the list
+    auto iter = std::find(_cache.begin(), _cache.end(), GridBlockNrPair(this, block));
+    if ( iter != _cache.end()){
+        auto gbnp = (*iter);
+        _cache.erase(iter);
+        _cache.insert(_cache.begin(), gbnp);
     } else { // block is not in memory, bring it in
         if (_cache.size() >= _maxCacheBlocks) { // keep list same size
-            _blocks[_cache.back()]->save2Cache(); // least used element is saved to disk
-            _cache.removeLast(); // least used element is eliminated from the cache list
+            _cache.back()._grid->_blocks[_cache.back()._blocknr]->save2Cache(); // least used element is saved to disk
+            _cache.pop_back(); // least used element is eliminated from the cache list
         }
-
-        // bring block into memory
-
-        try {
-            _blocks[block]->init(); // the data will be overwritten entirely by either loadFromCache or setBlockData
-            if (loadDiskData)
-                _blocks[block]->loadDiskDataToMemory();
-        } catch (const OutOfMemoryError& err){ // exceeded memory cappacity, unload the blocks and try again.
-            _maxCacheBlocks = max(1L, _cache.size() - 1); // this is the new maximum cache size
-            _blocks[block]->dispose(); // the block we were currently working on got corrupted; skip from save2Cache
-            unload(false); // store the _cache blocks to disk; start afresh building it up
-            try {
-                _blocks[block]->init(); // the data will be overwritten entirely by either loadFromCache or setBlockData
-                if (loadDiskData)
-                    _blocks[block]->loadDiskDataToMemory();
-            } catch (const OutOfMemoryError& err){
-                throw OutOfMemoryError( TR("Couldnt allocate memory for raster"), true); // extreme memory-stress condition; this should never happen; the purpose of this catch-inside-catch and re-throw is to log the error in the issuelogger, so that we notice if it ever occurs and re-program this section
-            } catch(const std::bad_alloc& err) {
-                throw OutOfMemoryError( TR("Couldnt allocate memory for raster"), true); // same as above
-            }
-        } catch(const std::bad_alloc& err) {
-            _maxCacheBlocks = max(1L, _cache.size() - 1); // this is the new maximum cache size
-            _blocks[block]->dispose(); // the block we were currently working on got corrupted; skip from save2Cache
-            unload(false); // store the _cache blocks to disk; start afresh building it up
-            try {
-                _blocks[block]->init(); // the data will be overwritten entirely by either loadFromCache or setBlockData
-                if (loadDiskData)
-                    _blocks[block]->loadDiskDataToMemory();
-            } catch (const OutOfMemoryError& err){
-                throw OutOfMemoryError( TR("Couldnt allocate memory for raster"), true); // extreme memory-stress condition; this should never happen; the purpose of this catch-inside-catch and re-throw is to log the error in the issuelogger, so that we notice if it ever occurs and re-program this section
-            } catch(const std::bad_alloc& err) {
-                throw OutOfMemoryError( TR("Couldnt allocate memory for raster"), true); // same as above
-            }
-        }
-
-        _cache.push_front(block);
+        _blocks[block]->init(); // the data will be overwritten entirely by either loadFromCache or setBlockData
+        if (loadDiskData)
+            _blocks[block]->loadDiskDataToMemory();
+        _cache.insert(_cache.begin(), GridBlockNrPair(this, block));
     }
-
     return true;
+
 }
 
 void Grid::unloadInternal() {
-    for (quint32 block : _cache)
-        _blocks[block]->save2Cache();
-    _cache.clear();
+    for (auto block : _cache){
+        if ( block._grid == this)
+        _blocks[block._blocknr]->save2Cache();
+    }
+}
+
+void Grid::setBlock(int index, GridBlockInternal *block)
+{
+    Locker<> lock(_mutex);
+    if (_cache.size() >= _maxCacheBlocks) { // keep list same size
+        _cache.back()._grid->_blocks[_cache.back()._blocknr]->save2Cache(); // least used element is saved to disk
+        _cache.pop_back(); // least used element is eliminated from the cache list
+    }
+    _cache.insert(_cache.begin(), GridBlockNrPair(this, block->blockNr()));
+    if ( index >= _blocks.size())
+        _blocks.resize(index + 1);
+    _blocks[index] = block;
 }
 
 void Grid::unload(bool uselock) {
@@ -479,6 +481,21 @@ bool Grid::isValid() const
 qint64 Grid::memUsed() const
 {
     return _memUsed;
+}
+
+double Grid::findBigger(double v)
+{
+    for(int i=0; i < _blocks.size(); ++i){
+        if ( !_blocks[i]->inMemory() )
+            update(i,true);
+        for(int j=0; j < _blocks[i]->blockSize(); ++j){
+            double v2 = _blocks[i]->at(j);
+            if ( v2 >= v){
+                return v2;
+            }
+        }
+    }
+    return rUNDEF;
 }
 
 

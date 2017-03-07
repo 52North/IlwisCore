@@ -16,6 +16,17 @@ namespace Ilwis {
 class RasterCoverage;
 struct IOOptions;
 
+struct GridBlockNrPair {
+    GridBlockNrPair(Grid *grid, quint32 bnr) : _blocknr(bnr), _grid(grid){}
+
+    quint32 _blocknr = 0;
+    Grid *_grid = 0;
+};
+
+inline bool operator==(const GridBlockNrPair& gbp1, const GridBlockNrPair& gbp2){
+    return gbp1._blocknr == gbp2._blocknr && gbp1._grid == gbp2._grid;
+}
+
 class GridBlockInternal {
 public:
     GridBlockInternal(quint32 blocknr, quint64 rasterid, quint32 lines , quint32 width);
@@ -44,6 +55,7 @@ public:
     void dispose();
     void init();
     void loadDiskDataToMemory();
+    quint64 blockNr();
 
 private:
     bool loadFromCache();
@@ -90,16 +102,20 @@ public:
     std::map<quint32, std::vector<quint32> > calcBlockLimits(const IOOptions &options);
     bool isValid() const;
     qint64 memUsed() const;
+
+    //debug
+    double findBigger(double v);
 protected:
 
 private:
     int numberOfBlocks();
     inline bool update(quint32 block, bool loadDiskData);
     void unloadInternal();
+    void setBlock(int index,GridBlockInternal *block);
 
     std::recursive_mutex _mutex;
     std::vector< GridBlockInternal *> _blocks;
-    QList<quint32> _cache;
+    static std::vector<GridBlockNrPair> _cache;
     quint32 _maxCacheBlocks;
     qint64 _memUsed;
     quint32 _blocksPerBand;
