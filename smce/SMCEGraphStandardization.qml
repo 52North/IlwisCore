@@ -14,8 +14,8 @@ Column {
 
     signal executeStandardization()
 
-    property int minX: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.min : 0
-    property int maxX: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.max : 0
+    property int minX: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.min : 0
+    property int maxX: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.max : 0
     property int minY: 0
     property int maxY: 1
 
@@ -39,56 +39,56 @@ Column {
         // so we create the dragable points statically
         DragPoint {
             id: point0
-            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[0].x) : 0
-            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[0].y) : 0
+            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[0].x) : 0
+            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[0].y) : 0
         }
 
         DragPoint {
             id: point1
-            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[1].x) : 0
-            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[1].y) : 0
+            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[1].x) : 0
+            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[1].y) : 0
         }
 
         DragPoint {
             id: point2
-            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[2].x) : 0
-            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[2].y) : 0
+            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[2].x) : 0
+            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[2].y) : 0
         }
 
         DragPoint {
             id: point3
-            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[3].x) : 0
-            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[3].y) : 0
+            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[3].x) : 0
+            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[3].y) : 0
         }
 
         DragPoint {
             id: point4
-            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[4].x) : 0
-            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[4].y) : 0
+            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[4].x) : 0
+            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[4].y) : 0
         }
 
         DragPoint {
             id: point5
-            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[5].x) : 0
-            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[5].y) : 0
+            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[5].x) : 0
+            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[5].y) : 0
         }
 
         DragPoint {
             id: point6
-            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[6].x) : 0
-            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[6].y) : 0
+            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[6].x) : 0
+            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[6].y) : 0
         }
 
         DragPoint {
             id: point7
-            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[7].x) : 0
-            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[7].y) : 0
+            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[7].x) : 0
+            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[7].y) : 0
         }
 
         DragPoint {
             id: point8
-            x: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[8].x) : 0
-            y: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[8].y) : 0
+            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[8].x) : 0
+            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[8].y) : 0
         }
 
         function initializeCurve(ctx) {
@@ -187,7 +187,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[0].x.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[0].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x0")
             readOnly: true
@@ -197,7 +197,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[0].y.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[0].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y0")
             onContentEdited: {
@@ -216,7 +216,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[1].x.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[1].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x1")
             onContentEdited: {
@@ -230,7 +230,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[1].y.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[1].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y1")
             onContentEdited: {
@@ -249,7 +249,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[2].x.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[2].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x2")
             onContentEdited: {
@@ -263,7 +263,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[2].y.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[2].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y2")
             onContentEdited: {
@@ -282,7 +282,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[3].x.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[3].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x3")
             onContentEdited: {
@@ -296,7 +296,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[3].y.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[3].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y3")
             onContentEdited: {
@@ -315,7 +315,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[4].x.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[4].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x4")
             onContentEdited: {
@@ -329,7 +329,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[4].y.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[4].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y4")
             onContentEdited: {
@@ -348,7 +348,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[5].x.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[5].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x5")
             onContentEdited: {
@@ -362,7 +362,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[5].y.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[5].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y5")
             onContentEdited: {
@@ -381,7 +381,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[6].x.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[6].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x6")
             onContentEdited: {
@@ -395,7 +395,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[6].y.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[6].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y6")
             onContentEdited: {
@@ -414,7 +414,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[7].x.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[7].x.toFixed(3).toString() : ""
             //color:"black"
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x7")
@@ -429,7 +429,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[7].y.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[7].y.toFixed(3).toString() : ""
             //color:"black"
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y7")
@@ -449,7 +449,7 @@ Column {
             width: 100
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[8].x.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[8].x.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("x8")
             readOnly: true
@@ -459,7 +459,7 @@ Column {
             width: 80
             height: 20
             labelWidth: 20
-            content: (selectedNode !== null && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[8].y.toFixed(3).toString() : ""
+            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[8].y.toFixed(3).toString() : ""
             regexvalidator: /^-?\d*(\.\d*)?$/
             labelText: qsTr("y8")
             onContentEdited: {

@@ -19,13 +19,13 @@ Column {
     anchors.margins: 5
 
     Text {
-        text: (selectedNode != null) ? selectedNode.name : ""
+        text: selectedNode ? selectedNode.name : ""
     }
 
     Column {
         id: weights
         spacing: 5
-        visible: selectedNode != null && selectedNode.type === Node.Group
+        visible: selectedNode ? (selectedNode.type === Node.Group) : false
 
         Text {
             text : qsTr("Weights")
@@ -35,7 +35,7 @@ Column {
         ListView {
             spacing: 5
             anchors.margins: 5
-            model: (selectedNode != null && selectedNode.weights !== null) ? selectedNode.weights.directWeights : null
+            model: (selectedNode && selectedNode.weights !== null) ? selectedNode.weights.directWeights : null
             width: parent.width
             height: childrenRect.height
             delegate: Row {
@@ -96,7 +96,7 @@ Column {
             Button {
                 text : qsTr("Apply")
                 onClicked: {
-                    if (selectedNode != null)
+                    if (selectedNode && selectedNode.weights)
                         selectedNode.weights.apply()
                 }
             }
@@ -104,7 +104,7 @@ Column {
             Button {
                 text : qsTr("Reset")
                 onClicked: {
-                    if (selectedNode != null)
+                    if (selectedNode)
                         selectedNode.modelData.resetWeightEdits()
                 }
             }
@@ -113,7 +113,7 @@ Column {
 
     Column {
         id: standardization
-        visible: selectedNode != null && selectedNode.type !== Node.Group
+        visible: selectedNode ? (selectedNode.type !== Node.Group) : false
         width: parent.width
         spacing: 5
 
@@ -132,7 +132,7 @@ Column {
             Button {
                 text : qsTr("Apply")
                 onClicked: {
-                    if (selectedNode != null)
+                    if (selectedNode)
                         selectedNode.standardization.apply()
                 }
             }
@@ -140,16 +140,17 @@ Column {
             Button {
                 text : qsTr("Reset")
                 onClicked: {
-                    if (selectedNode != null) {
+                    if (selectedNode) {
                         selectedNode.modelData.resetStandardizationEdits()
-                        stdEditor.item.children[0].repaint()
+                        if (stdEditor && stdEditor.item && stdEditor.item.children)
+                            stdEditor.item.children[0].repaint() // a hack for now to repaint the canvas
                     }
                 }
             }
         }
 
         function qmlFile(selectedNode) {
-            if (selectedNode !== null) {
+            if (selectedNode) {
                 if (selectedNode.standardization) {
                     switch(selectedNode.standardization.type) {
                     case Standardization.Value:
@@ -174,7 +175,7 @@ Column {
         }
 
         function guiText(selectedNode) {
-            if (selectedNode !== null) {
+            if (selectedNode) {
                 if (selectedNode.standardization) {
                     switch(selectedNode.standardization.type) {
                     case Standardization.Value:
@@ -200,7 +201,7 @@ Column {
     }
 
     function selNodeAboutToChange() {
-        if (selectedNode != null) {
+        if (selectedNode) {
             if (selectedNode.type !== Node.Group)
                 selectedNode.modelData.resetStandardizationEdits()
             else
@@ -209,7 +210,8 @@ Column {
     }
 
     function selNodeChanged() {
-        if (selectedNode != null && selectedNode.type !== Node.Group)
-            stdEditor.item.children[0].repaint()
+        if (selectedNode && selectedNode.type !== Node.Group)
+            if (stdEditor && stdEditor.item && stdEditor.item.children)
+                stdEditor.item.children[0].repaint() // a hack for now to repaint the canvas
     }
 }
