@@ -259,6 +259,10 @@ PixelIterator RasterCoverage::bandPrivate(quint32 bandIndex, const Ilwis::Boundi
         }
         IRasterCoverage raster(this);
         return PixelIterator(raster,bbox);
+    }else {
+         bbox = BoundingBox(Pixel(0,0,bandIndex), Pixel(size().xsize()-1,size().ysize()-1, bandIndex));
+         IRasterCoverage raster(this);
+         return PixelIterator(raster,bbox);
     }
     return PixelIterator();
 }
