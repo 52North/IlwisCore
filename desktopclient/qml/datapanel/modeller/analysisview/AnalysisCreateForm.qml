@@ -71,7 +71,8 @@ Item {
                     var parms = {modelId : modellerDataPane.model.id, subtype : analysisType, type : "analysispattern",pattername : namefield.content, description : descField.content}
                     var analysis = objectcreator.createModellerObject(parms,0)
                     if (!modellerDataPane.model.addAnalysisPattern(analysis)){
-                        analysis.suicide()
+                        if ( analysis)
+                            analysis.suicide()
                     }else {
                         analysis.longName = longnamefield.content
                         layerprops.refreshAnalysisNames()
