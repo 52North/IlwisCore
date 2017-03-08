@@ -329,7 +329,6 @@ Rectangle {
     }
 
     function textColor(nodeid, parmIndex){
-       // console.debug("at", itemid)
         var node = workflow.getNode(nodeid)
         if (node){
             var parms = node.parameters
@@ -394,7 +393,6 @@ Rectangle {
                 var node = workflow.getNode(flow.target.itemid)
                 if ( node.type === "operationnode"){
                     var lst = node["parameters"]
-                    //console.debug(flow.source.itemid, flow.target.itemid,node,node.type, node.itemid) //, lst.length, item.flowPoints.toParameterIndex,lst[item.flowPoints.toParameterIndex].flowlabel)
                     label = node["parameters"][flow.flowPoints.fromParameterIndex].flowlabel
                 }else if ( node.type === "junctionnode"){
                     label = flow.flowPoints.fromParameterIndex.toString()
