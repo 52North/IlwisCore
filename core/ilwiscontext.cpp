@@ -143,6 +143,8 @@ void IlwisContext::init(const QString &ilwisDir)
     }
 
     mastercatalog()->addContainer(INTERNAL_CATALOG_URL);
+    Resource res = mastercatalog()->name2Resource(INTERNAL_CATALOG_URL.toString(),itCATALOG);
+    res.name("temporary catalog",false,true);
     mastercatalog()->addContainer(persistentInternalCatalog());
     mastercatalog()->addContainer(QUrl("ilwis://operations"));
 
