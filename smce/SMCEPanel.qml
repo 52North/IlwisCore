@@ -10,18 +10,9 @@ Column {
     id : smcePanel
     anchors.fill: parent
     property alias toolbar : tools
-    property CatalogModel smceCatalog
     property var manager
     property var form
     property var tree : smcePanel.manager.analisysView.currentAnalysis.tree()
-
-    function loadSmceCatalog() {
-        scanCatalog(uicontext.ilwisFolder + "/smcedata")
-    }
-
-    function scanCatalog(folder) {
-        smceCatalog = mastercatalog.newCatalog(folder, "container='" + folder + "'")
-    }
 
     function openMap(mapname) {
         mastercatalog.currentCatalog.scanContainer(false,true)
@@ -41,9 +32,7 @@ Column {
 
     SMCEToolBar{
         id : tools
-
     }
-
 
     GroupBox {
         id: mode

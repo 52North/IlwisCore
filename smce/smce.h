@@ -22,9 +22,8 @@ public:
     SMCE(const QString& name, const QString& description);
     bool execute(const QVariantMap& inputParameters, QVariantMap& outputParameters);
     Ilwis::IWorkflow workflow(const Ilwis::IOOptions& opt);
-    void store(QDataStream& stream);
-    void loadMetadata(QDataStream &stream);
-    virtual void loadData(QDataStream& stream);
+    virtual void store(QDataStream& stream);
+    virtual void loadMetadata(QDataStream &stream);
     QString type() const;
     Node * root() const;
     static AnalysisPattern *create(const QString& name, const QString& description, const Ilwis::IOOptions &options);
@@ -35,8 +34,6 @@ public slots:
 
 private:
     void Init();
-    Node * loadNode(QDataStream &stream, QObject *qparent);
-    void storeNode(QDataStream &stream, Node * node) const;
     Node * _tree;
 
     NEW_ANALYSISPATTERN

@@ -34,6 +34,41 @@ Node::Node(Node * parent, QObject *qparent)
 
 }
 
+Node * Node::load(QDataStream &stream, QObject *qparent)
+{
+    quint8 nodeTypeInt;
+    QString name;
+    QString unit;
+    double weight;
+    QString fileName;
+    quint16 nrSubNodes;
+    stream >> nodeTypeInt >> name >> unit >> weight >> fileName >> nrSubNodes;
+    Node * node = new Node(qparent);
+    node->setName(name);
+    node->setUnit(unit);
+    node->setWeight(weight);
+    node->setType(static_cast<Node::NodeType>(nodeTypeInt));
+    node->setFileName(fileName);
+    for (int i = 0; i < nrSubNodes; ++i) {
+        node->addNode(load(stream, node));
+    }
+    Weights::load(stream, node);
+    Standardization::load(stream, node);
+    return node;
+}
+
+void Node::store(QDataStream &stream)
+{
+    stream << (quint8)(_type) << _name << _unit << _weight << _fileName << (quint16)_subNodes.length();
+    if (_subNodes.length() > 0) {
+        for (Node * subNode: _subNodes) {
+            subNode->store(stream);
+        }
+    }
+    Weights::store(stream, _weights);
+    Standardization::store(stream, _standardization);
+}
+
 int Node::type() const
 {
     return _type;
@@ -89,7 +124,7 @@ Weights * Node::weights()
     if (_type == NodeType::Group && subFactors().size() > 1) {
         if (!_weightsEdit) {
             if (!_weights)
-                _weightsEdit = Weights::create(this);
+                _weightsEdit = Weights::create(this, Weights::Direct);
             else
                 _weightsEdit = _weights->clone();
         }
@@ -496,9 +531,45 @@ int Weights::method()
     return WeightMethod::None;
 }
 
-Weights * Weights::create(Node * node)
+Weights * Weights::create(Node * node, WeightMethod method)
 {
-    return new DirectWeights(node);
+    switch (method) {
+    case Weights::Direct:
+        return new DirectWeights(node);
+        break;
+    default:
+        return 0;
+    }
+}
+
+void Weights::store(QDataStream &stream, Weights * weights)
+{
+    if (weights != 0) {
+        stream << (quint8)weights->method();
+        weights->store(stream);
+    } else
+        stream << (quint8)WeightMethod::None;
+}
+
+void Weights::load(QDataStream &stream, Node * node)
+{
+    quint8 method;
+    stream >> method;
+    if (method != 0) {
+        Weights * weights = create(node, static_cast<Weights::WeightMethod>(method));
+        weights->load(stream);
+        weights->apply();
+    }
+}
+
+void Weights::store(QDataStream &stream)
+{
+
+}
+
+void Weights::load(QDataStream &stream)
+{
+
 }
 
 DirectWeights * Weights::pDirectWeights()
@@ -677,6 +748,30 @@ Weights * DirectWeights::clone() const
     }
     dwClone->_weightType = _weightType;
     return dwClone;
+}
+
+void DirectWeights::store(QDataStream &stream)
+{
+    Weights::store(stream);
+    stream << (quint8)_weightType;
+    for (DirectWeightItem * dwi : _directWeights) {
+        stream << dwi->directWeight() << dwi->normalizedWeight();
+    }
+}
+
+void DirectWeights::load(QDataStream &stream)
+{
+    Weights::load(stream);
+    quint8 weightType;
+    stream >> weightType;
+    _weightType = static_cast<DirectWeights::WeightType>(weightType);
+    for (DirectWeightItem * dwi : _directWeights) {
+        double directWeight;
+        double normalizedWeight;
+        stream >> directWeight >> normalizedWeight;
+        dwi->setDirectWeight(directWeight);
+        dwi->setNormalizedWeight(normalizedWeight);
+    }
 }
 
 /* ******************************************************* */
@@ -955,6 +1050,36 @@ Standardization * Standardization::clone() const
     return new Standardization(_node);
 }
 
+void Standardization::store(QDataStream &stream, Standardization * standardization)
+{
+    if (standardization != 0) {
+        stream << (quint8)standardization->type();
+        standardization->store(stream);
+    } else
+        stream << (quint8)StandardizationType::None;
+}
+
+void Standardization::load(QDataStream &stream, Node * node)
+{
+    quint8 type;
+    stream >> type;
+    if (type != 0) {
+        Standardization * standardization = create(node);
+        standardization->load(stream);
+        standardization->apply();
+    }
+}
+
+void Standardization::store(QDataStream &stream)
+{
+
+}
+
+void Standardization::load(QDataStream &stream)
+{
+
+}
+
 /* ******************************************************* */
 
 Anchor::Anchor()
@@ -998,17 +1123,17 @@ StandardizationValue::StandardizationValue()
 , _stdValueMethod(0)
 , _min(0)
 , _max(-1)
-, _methodType(StandardizationValueMethodType::Maximum)
+, _method(StandardizationValueMethodType::None)
 {
 }
 
 StandardizationValue::StandardizationValue(Node *node, double min, double max)
 : Standardization(node)
+, _stdValueMethod(0)
 , _min(min)
 , _max(max)
-, _methodType(StandardizationValueMethodType::PiecewiseLinear8)
+, _method(StandardizationValueMethodType::None)
 {
-    _stdValueMethod = StdValueMethod::create(node, _anchors, min, max, _methodType);
 }
 
 StandardizationValue::~StandardizationValue()
@@ -1026,9 +1151,17 @@ double StandardizationValue::max() const
     return _max;
 }
 
-int StandardizationValue::methodType() const
+int StandardizationValue::method() const
 {
-    return _methodType;
+    return _method;
+}
+
+void StandardizationValue::setMethod(StandardizationValueMethodType method)
+{
+    if (_stdValueMethod)
+        delete _stdValueMethod;
+    _method = method;
+    _stdValueMethod = StdValueMethod::create(_node, _anchors, _min, _max, _method);
 }
 
 QQmlListProperty<Anchor> StandardizationValue::anchors()
@@ -1077,6 +1210,31 @@ Standardization * StandardizationValue::clone() const
     return stdClone;
 }
 
+void StandardizationValue::store(QDataStream &stream)
+{
+    stream << (quint8)_method;
+    for (Anchor * anchor : _anchors) {
+        stream << anchor->x();
+        stream << anchor->y();
+    }
+}
+
+void StandardizationValue::load(QDataStream &stream)
+{
+    quint8 method;
+    stream >> method;
+    setMethod(static_cast<StandardizationValue::StandardizationValueMethodType>(method));
+    for (Anchor * anchor : _anchors) {
+        double x;
+        double y;
+        stream >> x;
+        stream >> y;
+        anchor->setX(x);
+        anchor->setY(y);
+    }
+    SolveParams();
+}
+
 /* ******************************************************* */
 
 StdValueMethod::StdValueMethod()
@@ -1116,6 +1274,7 @@ StdValueGeneral::StdValueGeneral(Node *node, QList<Anchor*> & anchors, double mi
 : StdValueMethod(node, min, max)
 {
     switch (method) {
+    case StandardizationValue::None:
     case StandardizationValue::Maximum:
     case StandardizationValue::Interval:
     case StandardizationValue::Goal:
@@ -1194,6 +1353,16 @@ Standardization * StandardizationValueConstraint::clone() const
     return new StandardizationValueConstraint(_node, _min, _max);
 }
 
+void StandardizationValueConstraint::store(QDataStream &stream)
+{
+
+}
+
+void StandardizationValueConstraint::load(QDataStream &stream)
+{
+
+}
+
 /* ******************************************************* */
 
 StandardizationClass::StandardizationClass()
@@ -1228,6 +1397,16 @@ Standardization * StandardizationClass::clone() const
     return new StandardizationClass(_node, _constraint);
 }
 
+void StandardizationClass::store(QDataStream &stream)
+{
+
+}
+
+void StandardizationClass::load(QDataStream &stream)
+{
+
+}
+
 /* ******************************************************* */
 
 StandardizationBool::StandardizationBool()
@@ -1260,6 +1439,16 @@ Standardization * StandardizationBool::clone() const
     return new StandardizationBool(_node);
 }
 
+void StandardizationBool::store(QDataStream &stream)
+{
+
+}
+
+void StandardizationBool::load(QDataStream &stream)
+{
+
+}
+
 /* ******************************************************* */
 
 StandardizationBoolConstraint::StandardizationBoolConstraint()
@@ -1290,4 +1479,14 @@ int StandardizationBoolConstraint::type() const
 Standardization * StandardizationBoolConstraint::clone() const
 {
     return new StandardizationBoolConstraint(_node);
+}
+
+void StandardizationBoolConstraint::store(QDataStream &stream)
+{
+
+}
+
+void StandardizationBoolConstraint::load(QDataStream &stream)
+{
+
 }

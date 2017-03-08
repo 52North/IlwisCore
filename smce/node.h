@@ -45,6 +45,8 @@ public:
     Node();
     Node(QObject *qparent);
     Node(Node * parent, QObject *qparent);
+    void store(QDataStream &stream);
+    static Node * load(QDataStream &stream, QObject *qparent);
     int type() const;
     void setType(NodeType nt);
     const QString name() const;
@@ -118,14 +120,18 @@ public:
     enum WeightMethod{ None=0, Direct=1, Pairwise=2, Rankorder=3 };
     Weights();
     Weights(Node *node);
-    static Weights * create(Node *node);
+    static Weights * create(Node *node, WeightMethod method);
     virtual int method();
     virtual DirectWeights * pDirectWeights();
     virtual void Recalculate();
     Q_INVOKABLE virtual void apply();
     virtual Weights * clone() const;
+    static void store(QDataStream &stream, Weights * weights);
+    static void load(QDataStream &stream, Node *node);
 
 protected:
+    virtual void store(QDataStream &stream);
+    virtual void load(QDataStream &stream);
     Node * _node;
 };
 
@@ -175,6 +181,10 @@ public:
     virtual void Recalculate();
     Q_INVOKABLE virtual void apply();
     virtual Weights * clone() const;
+
+protected:
+    virtual void store(QDataStream &stream);
+    virtual void load(QDataStream &stream);
 
 private:
     void Refresh(); // to refresh the internal map in case of resizing
@@ -279,6 +289,12 @@ public:
     static Standardization * create(Node *node);
     Q_INVOKABLE virtual void apply();
     virtual Standardization * clone() const;
+    static void store(QDataStream &stream, Standardization * standardization);
+    static void load(QDataStream &stream, Node *node);
+
+protected:
+    virtual void store(QDataStream &stream);
+    virtual void load(QDataStream &stream);
 
 protected:
     Node * _node;
@@ -290,22 +306,23 @@ class StandardizationValue : public Standardization
     Q_ENUMS(StandardizationValueMethodType)
     Q_PROPERTY( double min READ min NOTIFY minChanged )
     Q_PROPERTY( double max READ max NOTIFY maxChanged )
-    Q_PROPERTY( int methodType READ methodType NOTIFY methodTypeChanged )
+    Q_PROPERTY( int method READ method NOTIFY methodChanged )
     Q_PROPERTY( QQmlListProperty<Anchor> anchors READ anchors /*WRITE setAnchors */ NOTIFY anchorsChanged )
 
 signals:
     void minChanged();
     void maxChanged();
-    void methodTypeChanged();
+    void methodChanged();
     void anchorsChanged();
 
 public:
-    enum StandardizationValueMethodType{ Maximum=0, Interval=1, Goal=2, Convex=3, Concave=4, Ushape=5, Gaussian=6, PiecewiseLinear8=7 };
+    enum StandardizationValueMethodType{ None=0, Maximum=1, Interval=2, Goal=3, Convex=4, Concave=5, Ushape=6, Gaussian=7, PiecewiseLinear8=8 };
     StandardizationValue();
     StandardizationValue(Node *node, double min, double max);
     double min() const;
     double max() const;
-    int methodType() const;
+    int method() const;
+    void setMethod(StandardizationValueMethodType method);
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     QQmlListProperty<Anchor> anchors();
@@ -317,11 +334,15 @@ public:
     virtual ~StandardizationValue();
     virtual Standardization * clone() const;
 
+protected:
+    virtual void store(QDataStream &stream);
+    virtual void load(QDataStream &stream);
+
 private:
     StdValueMethod * _stdValueMethod;
     const double _min;
     const double _max;
-    const StandardizationValueMethodType _methodType;
+    StandardizationValueMethodType _method;
     QList <Anchor*> _anchors;
 };
 
@@ -369,6 +390,11 @@ public:
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
     virtual Standardization * clone() const;
+
+protected:
+    virtual void store(QDataStream &stream);
+    virtual void load(QDataStream &stream);
+
 protected:
     const double _min;
     const double _max;
@@ -386,6 +412,10 @@ public:
     virtual int type() const;
     virtual Standardization * clone() const;
 
+protected:
+    virtual void store(QDataStream &stream);
+    virtual void load(QDataStream &stream);
+
 private:
     const bool _constraint;
 };
@@ -401,6 +431,10 @@ public:
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
     virtual Standardization * clone() const;
+
+protected:
+    virtual void store(QDataStream &stream);
+    virtual void load(QDataStream &stream);
 };
 
 class StandardizationBoolConstraint : public Standardization
@@ -414,6 +448,10 @@ public:
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
     virtual Standardization * clone() const;
+
+protected:
+    virtual void store(QDataStream &stream);
+    virtual void load(QDataStream &stream);
 };
 
 #endif // NODE_H
