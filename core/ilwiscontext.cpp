@@ -127,6 +127,24 @@ void IlwisContext::init(const QString &ilwisDir)
     for(QString file : files)
         localDir.remove(file);
 
+
+
+    mastercatalog()->addContainer(INTERNAL_CATALOG_URL);
+    Resource res = mastercatalog()->name2Resource(INTERNAL_CATALOG_URL.toString(),itCATALOG);
+    res.name("temporary catalog",false,true);
+    mastercatalog()->addContainer(persistentInternalCatalog());
+    mastercatalog()->addContainer(QUrl("ilwis://operations"));
+
+    _systemCatalog.prepare("ilwis://system");
+    mastercatalog()->addContainer(QUrl("ilwis://system/domains"));
+    mastercatalog()->addContainer(QUrl("ilwis://system/coordinatesystems"));
+    mastercatalog()->addContainer(QUrl("ilwis://system/representations"));
+    mastercatalog()->addContainer(QUrl("ilwis://system/ellipsoids"));
+    mastercatalog()->addContainer(QUrl("ilwis://system/projections"));
+    mastercatalog()->addContainer(QUrl("ilwis://system/datums"));
+    mastercatalog()->addContainer(QUrl("ilwis://system/coverages"));
+    mastercatalog()->addContainer(QUrl("ilwis://system/scripts"));
+
     loc = _configuration("users/" + currentUser() + "/workingcatalog",QString(""));
     if ( loc == ""){
         loc = OSHelper::neutralizeFileName(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +  + "/ilwisdata");
@@ -141,21 +159,6 @@ void IlwisContext::init(const QString &ilwisDir)
             mastercatalog()->addContainer(loc);
         }
     }
-
-    mastercatalog()->addContainer(INTERNAL_CATALOG_URL);
-    mastercatalog()->addContainer(persistentInternalCatalog());
-    mastercatalog()->addContainer(QUrl("ilwis://operations"));
-
-    _systemCatalog.prepare("ilwis://system");
-    mastercatalog()->addContainer(QUrl("ilwis://system/domains"));
-    mastercatalog()->addContainer(QUrl("ilwis://system/coordinatesystems"));
-    mastercatalog()->addContainer(QUrl("ilwis://system/representations"));
-    mastercatalog()->addContainer(QUrl("ilwis://system/ellipsoids"));
-    mastercatalog()->addContainer(QUrl("ilwis://system/projections"));
-    mastercatalog()->addContainer(QUrl("ilwis://system/datums"));
-    mastercatalog()->addContainer(QUrl("ilwis://system/coverages"));
-    mastercatalog()->addContainer(QUrl("ilwis://system/scripts"));
-
 
     if (!hasType(_runMode, rmDESKTOP)){
         initializationFinished(true);

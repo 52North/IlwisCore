@@ -15,7 +15,7 @@ class ILWISCOREUISHARED_EXPORT TabModel : public QObject{
     Q_PROPERTY(quint32 id READ id() CONSTANT)
 public:
     TabModel(QObject* parent=0);
-    TabModel(const QString& url, const QString& componentUrl, QObject* parent);
+    TabModel(const QString& url, const QString& componentUrl, const QString &type, QObject* parent);
     QString componentUrl() const;
     QString displayName() const;
     void setDisplayName(const QString& nm);

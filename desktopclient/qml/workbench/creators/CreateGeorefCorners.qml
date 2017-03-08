@@ -98,7 +98,8 @@ Controls.DropableItem{
                 return false;
             }
         }
-        var createinfo = { name : objectcommon.itemname, type : "georef", subtype : "corners", minx : csyBounds.minx, miny : csyBounds.miny,
+        var url = applyBut.currentCatalogCorrectUrl() + "/"+ objectcommon.itemname
+        var createinfo = { name : url, type : "georef", subtype : "corners", minx : csyBounds.minx, miny : csyBounds.miny,
             maxx : csyBounds.maxx, maxy : csyBounds.maxy, csy : csypart.content,
             centered : cbcorners.checked, pixelsize : pixsz.content,
             description :objectcommon.description}
@@ -114,7 +115,7 @@ Controls.DropableItem{
         height : 60
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
-
+        id : applyBut
         createObject: dropItem.apply
 
     }

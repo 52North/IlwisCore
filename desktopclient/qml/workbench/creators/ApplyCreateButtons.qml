@@ -11,6 +11,21 @@ import "../.." as Base
 Item {
     property var createObject
 
+    function currentCatalogCorrectUrl(){ // must be a file location
+        var panel = datapanel.activeItem
+        if ( !panel)
+            return ""
+        if ( panel.panelType === "catalog"){
+            var url = panel.currentCatalog.url
+            if ( url.indexOf("file://") !== 0) {
+                overwrite.visible = false
+                return ""
+            }
+            return url
+        }
+        overwrite.visible = false
+        return ""
+    }
 
     Button {
         id : applybutton
@@ -18,6 +33,7 @@ Item {
         width : 70
         text : qsTr("Apply")
         y : 10
+        enabled: currentCatalogCorrectUrl() !== ""
         onClicked: {
             editorList.pop()
             if (!createObject(false)){
@@ -37,6 +53,17 @@ Item {
         onClicked: {
             dropItem.state = "invisible"
         }
+    }
+    Text {
+        id : wronglocation
+        width :150
+        height : parent.height
+        text : qsTr("Location can't be used for writing")
+        anchors.right: closebutton.left
+        anchors.rightMargin: 5
+        visible : currentCatalogCorrectUrl() === "" ? true : false
+        color : "red"
+
     }
     Rectangle {
         id : overwrite

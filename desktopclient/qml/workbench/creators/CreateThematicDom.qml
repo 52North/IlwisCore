@@ -77,7 +77,8 @@ Controls.DropableItem{
                         return false;
                     }
                 }
-                var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "thematic", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
+                var url = applyButton.currentCatalogCorrectUrl() + "/"+commonpart.name
+                var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "thematic", name :  url, items : itemstring, description : commonpart.description,strict : commonpart.strict}
                 var ilwisid = objectcreator.createObject(createInfo)
 
                 return true;
@@ -89,6 +90,7 @@ Controls.DropableItem{
             height : 60
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 8
+            id : applyButton
             createObject: container.apply
         }
 

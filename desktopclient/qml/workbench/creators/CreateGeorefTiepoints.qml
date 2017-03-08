@@ -88,7 +88,8 @@ Controls.DropableItem{
             onClicked: {
                 dropItem.state = "invisible"
                 var points
-                var createinfo = { name : objectcommon.itemname, type : "georef", subtype : "tiepoints", tiepoints : points, csy : csypart.content,
+                var url = applybutton.currentCatalogCorrectUrl() + "/"+ objectcommon.itemname
+                var createinfo = { name : url, type : "georef", subtype : "tiepoints", tiepoints : points, csy : csypart.content,
                     subpixel : cbsubpixel, description :objectcommon.description}
                 objectcreator.createObject(createinfo)
             }

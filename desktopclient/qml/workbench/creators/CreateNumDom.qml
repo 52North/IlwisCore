@@ -116,6 +116,7 @@ Controls.DropableItem{
             anchors.bottom : parent.bottom
             anchors.bottomMargin: 8
             anchors.rightMargin: 3
+            id : apply
 
             createObject: inner.apply
         }
@@ -126,7 +127,8 @@ Controls.DropableItem{
                     return false;
                 }
             }
-            var createInfo = {parentdomain : parentdomtxt.content, type : "numericdomain", name :  namevalue.content, minvalue : minvalue.content, maxvalue : maxvalue.content, resolutionvalue : resvalue.content, description : descvalue.content,strict : cbstrict.checked}
+           var url = apply.currentCatalogCorrectUrl() + "/"+ namevalue.content
+            var createInfo = {parentdomain : parentdomtxt.content, type : "numericdomain", name :  url, minvalue : minvalue.content, maxvalue : maxvalue.content, resolutionvalue : resvalue.content, description : descvalue.content,strict : cbstrict.checked}
             var ilwisid = objectcreator.createObject(createInfo)
             if ( ilwisid !== "?" && editorList.depth > 1)
                 editorList.currentItem.setValue("domain", ilwisid)

@@ -464,7 +464,10 @@ void ResourceModel::realizeThumbPath(){
 void ResourceModel::resource(const Ilwis::Resource& res)
 {
     Resource item = res;
-    if ( item.name() == sUNDEF) {
+    if ( !_item.isValid() && !res.isValid())
+        return;
+
+    if ( item.name() == sUNDEF ) {
         QString name  = res.url().toString(QUrl::RemoveScheme | QUrl::RemoveQuery | QUrl::RemovePassword | QUrl::StripTrailingSlash);
         name = name.mid(3);
         item.name(name, false);

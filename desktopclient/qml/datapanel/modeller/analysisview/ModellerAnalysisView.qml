@@ -17,12 +17,21 @@ Model.ModellerWorkArea {
 
     onStateChanged: {
         if ( state == "visible"){
-            updateView()
+            if ( !meme.item)
+                updateView()
+            else
+               meme.item.visible = true
+        }else if ( state == "invisible"){
+            meme.item.visible = false
         }
     }
 
     Loader {
         anchors.fill: parent
+        onLoaded :{
+            item.visible = true
+        }
+
         id: meme
     }
 

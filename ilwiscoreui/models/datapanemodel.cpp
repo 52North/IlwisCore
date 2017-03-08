@@ -215,22 +215,22 @@ TabModel *SidePanelModel::createPanel(quint32 index, const QString &filter, cons
     if ( outputtype == "catalog"){
         context()->configurationRef().addValue("users/" + Ilwis::context()->currentUser() +"/workingcatalog",url);
         if ( filter == "container='ilwis://operations'")
-            tab = new TabModel(url,"catalog/OperationPanel.qml", this);
+            tab = new TabModel(url,"catalog/OperationPanel.qml", outputtype,this);
         else
-            tab = new TabModel(url,"catalog/CatalogPanel.qml", this);
+            tab = new TabModel(url,"catalog/CatalogPanel.qml", outputtype, this);
 
     }else {
         std::vector<Ilwis::Resource> resources = Ilwis::mastercatalog()->select(Ilwis::OSHelper::neutralizeFileName(filter));
         if ( resources.size() > 0 ){
             if (hasType(resources[0].ilwisType(), itCOVERAGE)) {
-                tab = new TabModel(url,"visualization/MapPanel.qml", this);
+                tab = new TabModel(url,"visualization/MapPanel.qml", outputtype, this);
             }
             else if (hasType(resources[0].ilwisType(), itTABLE)) {
-                tab = new TabModel(url,"table/TablePane.qml", this);
+                tab = new TabModel(url,"table/TablePane.qml", outputtype, this);
             } else if (hasType(resources[0].ilwisType(), itWORKFLOW|itMODEL)){
-                tab = new TabModel(url,"modeller/ModellerDataPane.qml", this);
+                tab = new TabModel(url,"modeller/ModellerDataPane.qml", outputtype, this);
             } else if (hasType(resources[0].ilwisType(), itSCRIPT)){
-                tab = new TabModel(url,"script/ScriptPane.qml", this);
+                tab = new TabModel(url,"script/ScriptPane.qml", outputtype, this);
             }
         }
     }

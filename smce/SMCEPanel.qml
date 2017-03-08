@@ -14,10 +14,6 @@ Column {
     property var form
     property var tree : smcePanel.manager.analisysView.currentAnalysis.tree()
 
-    onVisibleChanged: {
-        console.debug("vis", visible)
-    }
-
     function openMap(mapname) {
         mastercatalog.currentCatalog.scanContainer(false,true)
         var resources = mastercatalog.currentCatalog.resources
@@ -36,9 +32,7 @@ Column {
 
     SMCEToolBar{
         id : tools
-
     }
-
 
     GroupBox {
         id: mode

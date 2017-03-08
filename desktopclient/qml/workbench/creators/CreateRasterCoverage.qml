@@ -218,11 +218,12 @@ Controls.DropableItem{
                     return false;
                 }
             }
+             var url = applyButton.currentCatalogCorrectUrl() + "/"+ namevalue.name
             var createInfo = {georeference : grfvalue.content,
                 domain : domvalue.content,
                 stackdefinition : bandsvalue.content,
                 type : "rastercoverage",
-                name :  namevalue.content,
+                name :  url,
                 stackdomain : stackdomvalue.content,
                 bands : bywildcard.checked ? bywildcardtext.content : rasterlist.bands(),
                 autoresample : resampleCB.checked}
@@ -238,6 +239,7 @@ Controls.DropableItem{
             anchors.bottom : parent.bottom
             anchors.bottomMargin: 8
             anchors.rightMargin: 3
+            id : applyButton
             createObject: inner.apply
         }
     }

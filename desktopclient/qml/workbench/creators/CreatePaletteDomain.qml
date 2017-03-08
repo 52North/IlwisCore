@@ -60,7 +60,8 @@ Controls.DropableItem{
                         itemstring += "|"
                     itemstring += commonpart.domitems.item.model.get(i).paletteColor;
                 }
-                var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "palette", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
+                 var url = applyBut.currentCatalogCorrectUrl() + "/"+ commonpart.name
+                var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "palette", name : url, items : itemstring, description : commonpart.description,strict : commonpart.strict}
                 var ilwisid = objectcreator.createObject(createInfo)
 
                 return true
@@ -72,7 +73,7 @@ Controls.DropableItem{
             height : 60
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 8
-
+            id : applyBut
             createObject: container.apply
 
         }

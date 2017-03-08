@@ -854,4 +854,6 @@ bool Resource::hasChanged() const
 void Resource::changed(bool yesno)
 {
     _changed = yesno;
+    if ( yesno)
+        _modifiedTime = Ilwis::Time::now();
 }

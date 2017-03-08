@@ -88,7 +88,6 @@ ToolBar{
                 workarea.workflow.stepMode = true
                 if ( !wasInStepMode){ // start the workflow; after this
                     var ret = workflowManager.executeRunForm({"id" :  workflow.id, "runid" : workflow.runid, "stepmode" :true})
-                    console.debug("ccc", ret)
                     if ( ret === "?"){
                        workarea.workflow.stepMode = false
                     }
