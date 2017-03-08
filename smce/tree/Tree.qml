@@ -587,28 +587,6 @@ Rectangle {
                     }
                 }
             }
-
-            Component.onCompleted: {
-                /*
-                tree.setGoal("(We want to) ... Establish biophysical priority within a potential Green Belt buffer of a maximum 1000m width along all coast lines of Bangladesh, with exception of the Sundarbans, in which the proposed Green Belt can be established to provide protection from cyclones storm surges and other natural hazards")
-                tree.addMask("Analysis area")
-                var group = tree.addGroup("(We want to) ... Reduce the vulnerability of population, economy and environment")
-                group.addFactor("The higher the vulnerability is in the Green Belt buffer, as measured by the coastal vulnerability index, the higher the priority for development of the Green Belt")
-                group = tree.addGroup("(We want to) ... Protect areas that are exposed to storm surges.")
-                group.addFactor("The higher the surge hight the higher the priority to develop the Greenbelt")
-                group = tree.addGroup("(We want to)...  Protect infrastructure and reduce the cost of upgrading and maintenance of infrastucture to")
-                group.addConstraint("Inside an embankment a Greenbelt is not necessary.")
-                group.addConstraint("If the distance of an embankment to the shore inside a Greenbelt is less than 1000m there is no need for a Greenbelt, otherwise there is full priority to develop the Greenbelt")
-                group.addFactor("The closer critical infrastructure is within 20 km of the Green Belt, the higher the priority an area receives.")
-                group = tree.addGroup("(We want to)... Stabilize the coastal zone and reclaim land")
-                group.addFactor("Within 50 meters of an erosion area inside the Greenbelt development receives full priority whereas beyond that disatnce from erosion areas priority is none")
-                group.addFactor("Accretion areas inside the Greenbelt have higher priority than other areas")
-                group = tree.addGroup("(We want to).. Make use of existing forest inside the Green Belt and connect to these")
-                group.addFactor("The closer to forest land inside the Green Belt, the higher the priority of the area for Green Belt development")
-                group = tree.addGroup("(We want to)... Minimize the costs of land acquisition")
-                group.addFactor("Public land is better than public leased land, which in turn is better than private land")
-                */
-            }
         }
     }
 }

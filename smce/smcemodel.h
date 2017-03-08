@@ -9,9 +9,6 @@ class SMCEModel : public AnalysisModel
 {
     Q_OBJECT
 
-    //Q_PROPERTY(Node tree READ tree)
-    //Q_PROPERTY(QQmlListProperty<AnalysisModel> tree READ tree NOTIFY treeChanged)
-
 public:
     SMCEModel();
     SMCEModel(Ilwis::AnalysisPattern *p);
