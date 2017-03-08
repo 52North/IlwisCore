@@ -127,6 +127,10 @@ Controls.DropableItem{
                         labelWidth: 60
                         width : parent.width - 90
                         itemModel: operations.keywords
+                        onCurrentIndexChanged: {
+                            if ( currentIndex == 0)
+                                currentIndex = -1
+                        }
                     }
                     Button{
                         text : qsTr("+")

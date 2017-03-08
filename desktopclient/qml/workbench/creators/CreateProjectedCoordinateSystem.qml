@@ -108,15 +108,16 @@ Controls.DropableItem{
             }
         }
         var createInfo
+        var url = applyButton.currentCatalogCorrectUrl() + "/"+ objectcommon.itemname
         if ( fromBase.state == "visible")
             createInfo = fromBase.getCreateInfo()
         else if ( epsgnumber.visible){
-            createInfo = { name : objectcommon.itemname,
+            createInfo = { name : url,
                 type : "coordinatesystem",
                 subtype : "conventional",
                 epsg : epsgnumber.code() }
         }else if ( proj4def.visible){
-            createInfo = { name : objectcommon.itemname,
+            createInfo = { name : url,
                 type : "coordinatesystem",
                 subtype : "conventional",
                 proj4 : proj4def.content }
@@ -136,5 +137,6 @@ Controls.DropableItem{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
         createObject: dropItem.apply
+        id : applyButton
     }
 }

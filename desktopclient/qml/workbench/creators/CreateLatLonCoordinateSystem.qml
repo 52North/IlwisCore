@@ -91,7 +91,8 @@ Controls.DropableItem{
                 return false;
             }
         }
-        var createinfo = { name : objectcommon.itemname,
+        var url = applyButton.currentCatalogCorrectUrl() + "/"+ objectcommon.name
+        var createinfo = { name : url,
             type : "coordinatesystem",
             subtype : "conventional",
             projection : "WGS 84",
@@ -110,7 +111,7 @@ Controls.DropableItem{
         height : 60
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 8
-
+        id : applyButton
         createObject: dropItem.apply
 
     }

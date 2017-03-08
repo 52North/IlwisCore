@@ -69,8 +69,8 @@ Controls.DropableItem{
                         itemstring += "|"
                     itemstring += commonpart.domitems.item.model[i].name;
                 }
-
-                var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "identifier", name :  commonpart.name, items : itemstring, description : commonpart.description,strict : commonpart.strict}
+               var url = applyButton.currentCatalogCorrectUrl() + "/"+ commonpart.name
+                var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "identifier", name :  url, items : itemstring, description : commonpart.description,strict : commonpart.strict}
                 objectcreator.createObject(createInfo)
 
                 return true
@@ -81,7 +81,7 @@ Controls.DropableItem{
             height : 60
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 8
-
+            id : applyButton
             createObject: container.apply
          }
 

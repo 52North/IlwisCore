@@ -69,8 +69,9 @@ Controls.DropableItem{
 
                     }
                 }
+                var url = applyButton.currentCatalogCorrectUrl() + "/"+ commonpart.name
                 var res = commonpart.additionalFields.item.content
-                var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "interval", name :  commonpart.name, resolution : res,  items : itemstring, description : commonpart.description,strict : commonpart.strict}
+                var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "interval", name : url, resolution : res,  items : itemstring, description : commonpart.description,strict : commonpart.strict}
                 var ilwisid = objectcreator.createObject(createInfo)
             }
             return true
@@ -81,7 +82,7 @@ Controls.DropableItem{
             height : 60
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 8
-
+            id : applyButton
             createObject: container.apply
 
         }

@@ -16,7 +16,8 @@ Controls.DropableItem{
     clip:true
 
     function getCreateInfo() {
-        var createinfo = { name : objectcommon.itemname,
+         var url = apply.currentCatalogCorrectUrl() + "/"+ objectcommon.name
+        var createinfo = { name : url,
             type : "coordinatesystem",
             subtype : "conventional",
             projection : projectionParams.name,
