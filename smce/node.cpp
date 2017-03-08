@@ -765,7 +765,8 @@ void DirectWeights::load(QDataStream &stream)
     quint8 weightType;
     stream >> weightType;
     _weightType = static_cast<DirectWeights::WeightType>(weightType);
-    for (DirectWeightItem * dwi : _directWeights) {
+    for (int i = 0; i < _directWeights.length(); ++i) {
+        DirectWeightItem * dwi = _directWeights.at(i);
         double directWeight;
         double normalizedWeight;
         stream >> directWeight >> normalizedWeight;
