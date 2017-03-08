@@ -467,6 +467,11 @@ bool Node::treeEditDone()
     return root()->done(Mode::EditTree, 0, true);
 }
 
+bool Node::stdWeighDone()
+{
+    return root()->done(Mode::StdWeigh, 0, true);
+}
+
 void Node::emitDoneChanged() const
 {
     emit doneChanged();

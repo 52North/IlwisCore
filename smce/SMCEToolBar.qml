@@ -37,11 +37,13 @@ ToolBar{
             height : 30
             width : 30
             //text: "Generate"
+            enabled: tree.stdWeighDone
             Image {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 source : iconsource("run20.png")
+                opacity: tree.stdWeighDone ? 1.0 : 0.2
             }
             onClicked: {
                 var analysis = modellerDataPane.model.analysisPattern(0)
@@ -60,5 +62,4 @@ ToolBar{
             }
         }
     }
-
 }
