@@ -127,20 +127,7 @@ void IlwisContext::init(const QString &ilwisDir)
     for(QString file : files)
         localDir.remove(file);
 
-    loc = _configuration("users/" + currentUser() + "/workingcatalog",QString(""));
-    if ( loc == ""){
-        loc = OSHelper::neutralizeFileName(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +  + "/ilwisdata");
-        QDir datadir(loc);
-        datadir.mkpath(loc);
-        loc = QUrl::fromLocalFile(loc).toString();
 
-    }
-    if ( loc != ""){
-        setWorkingCatalog(ICatalog(loc));
-        if ( hasType(_runMode, rmCOMMANDLINE)){
-            mastercatalog()->addContainer(loc);
-        }
-    }
 
     mastercatalog()->addContainer(INTERNAL_CATALOG_URL);
     Resource res = mastercatalog()->name2Resource(INTERNAL_CATALOG_URL.toString(),itCATALOG);
@@ -158,6 +145,20 @@ void IlwisContext::init(const QString &ilwisDir)
     mastercatalog()->addContainer(QUrl("ilwis://system/coverages"));
     mastercatalog()->addContainer(QUrl("ilwis://system/scripts"));
 
+    loc = _configuration("users/" + currentUser() + "/workingcatalog",QString(""));
+    if ( loc == ""){
+        loc = OSHelper::neutralizeFileName(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) +  + "/ilwisdata");
+        QDir datadir(loc);
+        datadir.mkpath(loc);
+        loc = QUrl::fromLocalFile(loc).toString();
+
+    }
+    if ( loc != ""){
+        setWorkingCatalog(ICatalog(loc));
+        if ( hasType(_runMode, rmCOMMANDLINE)){
+            mastercatalog()->addContainer(loc);
+        }
+    }
 
     if (!hasType(_runMode, rmDESKTOP)){
         initializationFinished(true);
