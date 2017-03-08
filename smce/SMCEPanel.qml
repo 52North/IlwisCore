@@ -15,10 +15,6 @@ Column {
     property var form
     property var tree : smcePanel.manager.analisysView.currentAnalysis.tree()
 
-    onVisibleChanged: {
-        console.debug("vis", visible)
-    }
-
     function loadSmceCatalog() {
         scanCatalog(uicontext.ilwisFolder + "/smcedata")
     }
