@@ -91,19 +91,25 @@ Column {
             y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[8].y) : 0
         }
 
-        function initializeCurve(ctx) {
-            ctx.strokeStyle = "blue"
-            ctx.beginPath()
-            ctx.moveTo(0.5 + point0.x, 0.5 + point0.y) // +0.5 everywhere otherwise Canvas blurs the horizontal and vertical lines
-            ctx.lineTo(0.5 + point1.x, 0.5 + point1.y)
-            ctx.lineTo(0.5 + point2.x, 0.5 + point2.y)
-            ctx.lineTo(0.5 + point3.x, 0.5 + point3.y)
-            ctx.lineTo(0.5 + point4.x, 0.5 + point4.y)
-            ctx.lineTo(0.5 + point5.x, 0.5 + point5.y)
-            ctx.lineTo(0.5 + point6.x, 0.5 + point6.y)
-            ctx.lineTo(0.5 + point7.x, 0.5 + point7.y)
-            ctx.lineTo(0.5 + point8.x, 0.5 + point8.y)
-            ctx.stroke() // actually draw the path that was just defined
+        function drawFunction(ctx) {
+            if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) {
+                ctx.strokeStyle = "blue"
+                ctx.beginPath()
+                var iX = graphCanvas.axisOffset
+                var rX = toRealXX(iX)
+                var rY = selectedNode.standardization.standardizationValue.getFx(rX)
+                var iY = toViewportYY(rY)
+                ctx.moveTo(0.5 + iX, 0.5 + iY)
+                for (iX = graphCanvas.axisOffset + 1; iX <= graphCanvas.width - graphCanvas.axisOffset; ++iX)
+                {
+                    rX = toRealXX(iX)
+                    rY = selectedNode.standardization.standardizationValue.getFx(rX)
+                    iY = toViewportYY(rY)
+                    ctx.lineTo(0.5 + iX, 0.5 + iY)
+                }
+                ctx.lineTo(0.5 + iX, 0.5 + iY) // include the last point in the plot (it is not included in the loop's lineTo)
+                ctx.stroke() // actually draw the path that was just defined
+            }
         }
 
         function drawAxis(ctx) {
@@ -147,7 +153,7 @@ Column {
             ctx.fillStyle = "white"
             ctx.fillRect(0, 0, graphCanvas.width, graphCanvas.height)
             drawAxis(ctx)
-            initializeCurve(ctx)
+            drawFunction(ctx)
         }
 
         function repaint() {

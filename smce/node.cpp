@@ -908,6 +908,26 @@ void PiecewiseLinear8Function::SetDefaultAnchors()
     SolveParams();
 }
 
+double PiecewiseLinear8Function::getFx(double x) const
+{
+    if (x < _anchors[1]->x())
+        return a1 * x + b1;
+    else if (x < _anchors[2]->x())
+        return a2 * x + b2;
+    else if (x < _anchors[3]->x())
+        return a3 * x + b3;
+    else if (x < _anchors[4]->x())
+        return a4 * x + b4;
+    else if (x < _anchors[5]->x())
+        return a5 * x + b5;
+    else if (x < _anchors[6]->x())
+        return a6 * x + b6;
+    else if (x < _anchors[7]->x())
+        return a7 * x + b7;
+    else
+        return a8 * x + b8;
+}
+
 QString PiecewiseLinear8Function::getLine(double a, QString x, double b)
 {
     //return a * x + b;
@@ -1183,6 +1203,14 @@ void StandardizationValue::SetAnchor(double x, double y)
     _stdValueMethod->SetAnchor(x, y);
 }
 
+double StandardizationValue::getFx(double x) const
+{
+    if (_stdValueMethod)
+        return _stdValueMethod->getFx(x);
+    else
+        return 0;
+}
+
 QString StandardizationValue::getPython(QString rasterCoverage, QString outputName) const
 {
     return _stdValueMethod->getPython(rasterCoverage, outputName);
@@ -1310,6 +1338,11 @@ void StdValueGeneral::SolveParams()
 void StdValueGeneral::SetAnchor(double x, double y)
 {
     _function->SetAnchor(x, y);
+}
+
+double StdValueGeneral::getFx(double x) const
+{
+    return _function->getFx(x);
 }
 
 QString StdValueGeneral::getPython(QString rasterCoverage, QString outputName) const

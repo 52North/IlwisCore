@@ -225,6 +225,7 @@ public:
     virtual QString getMapcalc(QString rasterCoverage) = 0;
     virtual void SetDefaultAnchors() = 0;
     virtual void SolveParams() = 0;
+    virtual double getFx(double x) const = 0;
 protected:
     QList<Anchor*> & _anchors;
     const double _minX;
@@ -245,6 +246,7 @@ public:
     virtual QString getMapcalc(QString rasterCoverage);
     virtual void SolveParams();
     virtual void SetDefaultAnchors();
+    virtual double getFx(double x) const;
 private:
     QString getLine(double a, QString x, double b);
     double a1;
@@ -329,6 +331,7 @@ public:
     //void setAnchors(QQmlListProperty<Anchor> anchors);
     Q_INVOKABLE void SolveParams();
     Q_INVOKABLE void SetAnchor(double x, double y);
+    Q_INVOKABLE double getFx(double x) const;
     virtual int type() const;
     virtual StandardizationValue * pStandardizationValue();
     virtual ~StandardizationValue();
@@ -354,6 +357,7 @@ public:
     virtual ~StdValueMethod();
     virtual void SolveParams() = 0;
     virtual void SetAnchor(double x, double y) = 0;
+    virtual double getFx(double x) const = 0;
     virtual QString getPython(QString rasterCoverage, QString outputName) const = 0;
     virtual QString getMapcalc(QString rasterCoverage) const = 0;
     static StdValueMethod * create(Node *node, QList<Anchor *> &anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method);
@@ -370,6 +374,7 @@ public:
     StdValueGeneral(Node *node, QList<Anchor *> &anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method);
     virtual void SolveParams();
     virtual void SetAnchor(double x, double y);
+    virtual double getFx(double x) const;
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual ~StdValueGeneral();
