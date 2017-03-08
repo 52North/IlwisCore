@@ -813,7 +813,7 @@ void SmceFunction::SeparateAnchorPoints()
     }
 }
 
-void SmceFunction::SetAnchor(double x, double y)
+void SmceFunction::setAnchor(double x, double y)
 {
     if (_anchors.size() > 0) {
         int iPoint = 0;
@@ -825,7 +825,7 @@ void SmceFunction::SetAnchor(double x, double y)
         _anchors[iPoint]->setY(y);
         SeparateAnchorPoints();
     }
-    SolveParams();
+    solveParams();
 }
 
 /* ******************************************************* */
@@ -836,7 +836,7 @@ PiecewiseLinear8Function::PiecewiseLinear8Function(Node *node, QList<Anchor*> & 
 
 }
 
-void PiecewiseLinear8Function::SolveParams()
+void PiecewiseLinear8Function::solveParams()
 {
     _anchors[0]->setX(_minX);
     _anchors[8]->setX(_maxX);
@@ -872,7 +872,7 @@ void PiecewiseLinear8Function::SolveParams()
     b8 = _anchors[7]->y() - a8 * _anchors[7]->x();
 }
 
-void PiecewiseLinear8Function::SetDefaultAnchors()
+void PiecewiseLinear8Function::setDefaultAnchors()
 {
     _anchors[1]->setX(_minX + (_maxX - _minX) / 8.0);
     _anchors[2]->setX(_minX + (_maxX - _minX) * 2.0 / 8.0);
@@ -905,7 +905,7 @@ void PiecewiseLinear8Function::SetDefaultAnchors()
         _anchors[7]->setY(_minY + (_maxY - _minY) / 8.0);
         _anchors[8]->setY(_minY);
     }
-    SolveParams();
+    solveParams();
 }
 
 double PiecewiseLinear8Function::getFx(double x) const
@@ -941,7 +941,7 @@ QString PiecewiseLinear8Function::getLine(double a, QString x, double b)
 
 QString PiecewiseLinear8Function::getPython(QString rasterCoverage, QString outputName)
 {
-    SolveParams();
+    solveParams();
     QString result = QString("%1_cond=ilwis.Engine.do('binarylogicalraster',%2,%3,'less')\n").arg(outputName).arg(rasterCoverage).arg(_anchors[7]->x());
     result += QString("%1=%2\n").arg(outputName).arg(getLine(a8,rasterCoverage,b8));
     result += QString("%1_term2=%2\n").arg(outputName).arg(getLine(a7,rasterCoverage,b7));
@@ -971,7 +971,7 @@ QString PiecewiseLinear8Function::getPython(QString rasterCoverage, QString outp
 
 QString PiecewiseLinear8Function::getMapcalc(QString rasterCoverage)
 {
-    SolveParams();
+    solveParams();
     QString cond1 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[1]->x());
     QString cond2 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[2]->x());
     QString cond3 = QString("ilwis.Engine.do('binarylogicalraster',%1,%2,'less')").arg(rasterCoverage).arg(_anchors[3]->x());
@@ -1193,14 +1193,14 @@ QQmlListProperty<Anchor> StandardizationValue::anchors()
     return QQmlListProperty<Anchor>(this, _anchors);
 }
 
-void StandardizationValue::SolveParams()
+void StandardizationValue::solveParams()
 {
-    _stdValueMethod->SolveParams();
+    _stdValueMethod->solveParams();
 }
 
-void StandardizationValue::SetAnchor(double x, double y)
+void StandardizationValue::setAnchor(double x, double y)
 {
-    _stdValueMethod->SetAnchor(x, y);
+    _stdValueMethod->setAnchor(x, y);
 }
 
 double StandardizationValue::getFx(double x) const
@@ -1239,7 +1239,7 @@ Standardization * StandardizationValue::clone() const
         stdClone->_anchors.at(i)->setX(_anchors.at(i)->x());
         stdClone->_anchors.at(i)->setY(_anchors.at(i)->y());
     }
-    stdClone->SolveParams();
+    stdClone->solveParams();
     return stdClone;
 }
 
@@ -1265,7 +1265,7 @@ void StandardizationValue::load(QDataStream &stream)
         anchor->setX(x);
         anchor->setY(y);
     }
-    SolveParams();
+    solveParams();
 }
 
 /* ******************************************************* */
@@ -1322,7 +1322,7 @@ StdValueGeneral::StdValueGeneral(Node *node, QList<Anchor*> & anchors, double mi
         break;
     }
     if (_function != 0)
-        _function->SetDefaultAnchors();
+        _function->setDefaultAnchors();
 }
 
 StdValueGeneral::~StdValueGeneral()
@@ -1330,14 +1330,14 @@ StdValueGeneral::~StdValueGeneral()
     delete _function;
 }
 
-void StdValueGeneral::SolveParams()
+void StdValueGeneral::solveParams()
 {
-    _function->SolveParams();
+    _function->solveParams();
 }
 
-void StdValueGeneral::SetAnchor(double x, double y)
+void StdValueGeneral::setAnchor(double x, double y)
 {
-    _function->SetAnchor(x, y);
+    _function->setAnchor(x, y);
 }
 
 double StdValueGeneral::getFx(double x) const

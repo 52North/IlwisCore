@@ -30,7 +30,7 @@ Column {
             onPositionChanged: {
                 var x = toRealXX(mouse.x)
                 var y = toRealYY(mouse.y)
-                selectedNode.standardization.standardizationValue.SetAnchor(x, y)
+                selectedNode.standardization.standardizationValue.setAnchor(x, y)
                 graphCanvas.repaint()
             }
         }
@@ -208,7 +208,7 @@ Column {
             labelText: qsTr("y0")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[0].y = parseFloat(content)
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -227,7 +227,7 @@ Column {
             labelText: qsTr("x1")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[1].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -241,7 +241,7 @@ Column {
             labelText: qsTr("y1")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[1].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -260,7 +260,7 @@ Column {
             labelText: qsTr("x2")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[2].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -274,7 +274,7 @@ Column {
             labelText: qsTr("y2")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[2].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -293,7 +293,7 @@ Column {
             labelText: qsTr("x3")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[3].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -307,7 +307,7 @@ Column {
             labelText: qsTr("y3")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[3].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -326,7 +326,7 @@ Column {
             labelText: qsTr("x4")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[4].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -340,7 +340,7 @@ Column {
             labelText: qsTr("y4")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[4].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -359,7 +359,7 @@ Column {
             labelText: qsTr("x5")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[5].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -373,7 +373,7 @@ Column {
             labelText: qsTr("y5")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[5].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -392,7 +392,7 @@ Column {
             labelText: qsTr("x6")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[6].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -406,7 +406,7 @@ Column {
             labelText: qsTr("y6")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[6].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -426,7 +426,7 @@ Column {
             labelText: qsTr("x7")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[7].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -441,7 +441,7 @@ Column {
             labelText: qsTr("y7")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[7].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
@@ -470,7 +470,7 @@ Column {
             labelText: qsTr("y8")
             onContentEdited: {
                 selectedNode.standardization.standardizationValue.anchors[8].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.SolveParams()
+                selectedNode.standardization.standardizationValue.solveParams()
                 graphCanvas.repaint()
             }
         }
