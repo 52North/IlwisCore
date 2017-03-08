@@ -15,7 +15,6 @@ Column {
     property var tree : smcePanel.manager.analisysView.currentAnalysis.tree()
 
     function openMap(mapname) {
-        mastercatalog.currentCatalog.scanContainer(false,true)
         var resources = mastercatalog.currentCatalog.resources
         var sz = resources.length
         var newTab = null
