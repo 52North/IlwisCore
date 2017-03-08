@@ -79,6 +79,9 @@ Column {
                 }
             }
         }
+        Component.onCompleted: {
+            tree.setSmceMode(Node.EditTree)
+        }
     }
 
     Rectangle {

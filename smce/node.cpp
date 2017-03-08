@@ -993,8 +993,11 @@ Standardization * Standardization::create(Node * node)
                 Ilwis::NumericRange * range = rc->datadefRef().range()->as<Ilwis::NumericRange>();
                 double min = range->min();
                 double max = range->max();
-                if (node->type() == Node::NodeType::Factor)
-                    return new StandardizationValue(node, min, max);
+                if (node->type() == Node::NodeType::Factor) {
+                    StandardizationValue * stdValue = new StandardizationValue(node, min, max);
+                    stdValue->setMethod(StandardizationValue::PiecewiseLinear8);
+                    return stdValue;
+                }
                 else if (node->type() == Node::NodeType::Constraint)
                     return new StandardizationValueConstraint(node, min, max);
                 else
@@ -1202,6 +1205,7 @@ StandardizationValue * StandardizationValue::pStandardizationValue()
 Standardization * StandardizationValue::clone() const
 {
     StandardizationValue * stdClone = new StandardizationValue(_node, _min, _max);
+    stdClone->setMethod(_method);
     for (int i = 0; i < _anchors.length(); ++i) {
         stdClone->_anchors.at(i)->setX(_anchors.at(i)->x());
         stdClone->_anchors.at(i)->setY(_anchors.at(i)->y());
