@@ -52,52 +52,17 @@ Node * SMCE::root() const
     return _tree;
 }
 
-Node * SMCE::loadNode(QDataStream &stream, QObject *qparent)
-{
-    quint16 nrSubNodes;
-    quint8 nodeTypeInt;
-    QString name;
-    QString unit;
-    double weight;
-    QString fileName;
-    stream >> nodeTypeInt >> name >> unit >> weight >> fileName >> nrSubNodes;
-    Node * node = new Node(qparent);
-    node->setName(name);
-    node->setUnit(unit);
-    node->setWeight(weight);
-    node->setType(static_cast<Node::NodeType>(nodeTypeInt));
-    node->setFileName(fileName);
-    for (int i = 0; i < nrSubNodes; ++i) {
-        node->addNode(loadNode(stream, node));
-    }
-    return node;
-}
-
-void SMCE::loadData(QDataStream &stream)
-{
-    _tree = loadNode(stream, this);
-}
-
-// not tested
-void SMCE::storeNode(QDataStream &stream, Node * node) const {
-    stream << (quint8)(node->type()) << node->name() << node->unit() << node->weight() << node->fileName() << node->subNodes().length();
-    if (node->subNodes().length() > 0) {
-        for (Node * subNode: node->subNodes()) {
-            storeNode(stream, subNode);
-        }
-    }
-}
-
 void SMCE::store(QDataStream &stream)
 {
     stream << type();
     AnalysisPattern::store(stream);
-    storeNode(stream, _tree);
+    _tree->store(stream);
 }
 
 void SMCE::loadMetadata(QDataStream &stream)
 {
-    AnalysisPattern::load(stream);
+    AnalysisPattern::loadMetadata(stream);
+    _tree = Node::load(stream, this);
 }
 
 QString SMCE::type() const
