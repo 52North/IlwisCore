@@ -42,6 +42,8 @@ Controls.DropableItem{
             anchors.fill: parent
             spacing : 4
 
+            EditorHeader{}
+
             Controls.TextEditLabelPair{
                 id : nameedit
                 labelText: qsTr("Name")

@@ -41,6 +41,7 @@ Controls.DropableItem{
             id : workflowItems
             anchors.fill: parent
             spacing : 4
+            EditorHeader{}
 
             Controls.TextEditLabelPair{
                 id : nameedit
@@ -121,9 +122,9 @@ Controls.DropableItem{
 
                     Controls.ComboxLabelPair{
                         id : keys
-                        content : "test"
-                        labelText: ""
-                        labelWidth: 10
+                        content : ""
+                        labelText: "Keywords"
+                        labelWidth: 60
                         width : parent.width - 90
                         itemModel: operations.keywords
                     }
