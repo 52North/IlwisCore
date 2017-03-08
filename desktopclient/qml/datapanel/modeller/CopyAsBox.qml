@@ -58,8 +58,8 @@ Controls.DropableItem {
                             var index = url.lastIndexOf("/")
                             url = url.slice(0,index)
                         }
-                        var obj = mastercatalog.id2object(workflow.id,0)
-                        obj.copy(url + "/" + newname.content,ilwisobject.typeName, "stream")
+                        var obj = mastercatalog.id2object(ilwisobject.id,0)
+                        obj.copy(url + "/" + newname.content, ilwisobject.typeName, "stream")
                         obj.suicide()
                         dropContainer.state = "invisible"
                     }
