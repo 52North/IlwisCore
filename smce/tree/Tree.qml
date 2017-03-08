@@ -589,7 +589,7 @@ Rectangle {
             }
 
             Component.onCompleted: {
-                loadSmceCatalog()
+                /*
                 tree.setGoal("(We want to) ... Establish biophysical priority within a potential Green Belt buffer of a maximum 1000m width along all coast lines of Bangladesh, with exception of the Sundarbans, in which the proposed Green Belt can be established to provide protection from cyclones storm surges and other natural hazards")
                 tree.addMask("Analysis area")
                 var group = tree.addGroup("(We want to) ... Reduce the vulnerability of population, economy and environment")
@@ -607,6 +607,7 @@ Rectangle {
                 group.addFactor("The closer to forest land inside the Green Belt, the higher the priority of the area for Green Belt development")
                 group = tree.addGroup("(We want to)... Minimize the costs of land acquisition")
                 group.addFactor("Public land is better than public leased land, which in turn is better than private land")
+                */
             }
         }
     }

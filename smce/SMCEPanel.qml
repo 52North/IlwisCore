@@ -10,21 +10,12 @@ Column {
     id : smcePanel
     anchors.fill: parent
     property alias toolbar : tools
-    property CatalogModel smceCatalog
     property var manager
     property var form
     property var tree : smcePanel.manager.analisysView.currentAnalysis.tree()
 
     onVisibleChanged: {
         console.debug("vis", visible)
-    }
-
-    function loadSmceCatalog() {
-        scanCatalog(uicontext.ilwisFolder + "/smcedata")
-    }
-
-    function scanCatalog(folder) {
-        smceCatalog = mastercatalog.newCatalog(folder, "container='" + folder + "'")
     }
 
     function openMap(mapname) {
