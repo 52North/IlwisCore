@@ -54,6 +54,7 @@ void Catalog::scan()
     if (! connector().isNull()){
         if( connector()->loadData(this)){
             setValid(true);
+            changed(true);
         }
     }
 }
