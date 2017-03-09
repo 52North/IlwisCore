@@ -16,13 +16,16 @@ Column {
         if ( requestedType === "rastercoverage"){
             return rasters.selectedFormatString()
         }
-        if ( requestedType === "featurecoverage"){
+        if ( requestedType === "featurecoverage" ||
+                requestedType === "polygoncoverage" ||
+                requestedType === "linecoverage" ||
+                requestedType === "pointcoverage"){
             return features.selectedFormatString()
         }
-        if ( requestedType === "table"){
+        if ( requestedType === "table" || requestedType === "flattable" || requestedType === "attributetable"){
             return table.selectedFormatString()
         }
-        if ( requestedType === "coordinatesystem"){
+        if ( requestedType === "coordinatesystem" || requestedType === "conventionalcoordinatesystem"){
             return csy.selectedFormatString()
         }
         if ( requestedType === "domain"){
