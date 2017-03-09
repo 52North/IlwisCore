@@ -70,6 +70,7 @@ public:
     bool load(QDataStream &stream);
 
     static QString newAnonymousName() ;
+    static quint64 newAnonymousId() ;
     static void setBaseId(quint64 base);
 
 

@@ -74,6 +74,11 @@ QString Identity::newAnonymousName()
     return QString("%1%2").arg(ANONYMOUS_PREFIX).arg(_baseId++);
 }
 
+quint64 Identity::newAnonymousId()
+{
+    return ++_baseId;
+}
+
 void Identity::setBaseId(quint64 base)
 {
     _baseId = base;
