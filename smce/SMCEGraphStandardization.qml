@@ -151,7 +151,6 @@ Column {
                     content: model.x.toFixed(3).toString()
                     regexvalidator: /^-?\d*(\.\d*)?$/
                     labelText: ("x" + index)
-                    readOnly: (index == 0) || (index == editor.count - 1) // make first and last X read-only (piecewise linear)
                     onContentEdited: {
                         model.x = parseFloat(content);
                         selectedNode.standardization.standardizationValue.solveParams()
