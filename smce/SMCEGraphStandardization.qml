@@ -35,60 +35,12 @@ Column {
             }
         }
 
-        // Repeaters and ListViews are too slow for drag functionality,
-        // so we create the dragable points statically
-        DragPoint {
-            id: point0
-            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[0].x) : 0
-            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[0].y) : 0
-        }
-
-        DragPoint {
-            id: point1
-            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[1].x) : 0
-            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[1].y) : 0
-        }
-
-        DragPoint {
-            id: point2
-            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[2].x) : 0
-            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[2].y) : 0
-        }
-
-        DragPoint {
-            id: point3
-            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[3].x) : 0
-            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[3].y) : 0
-        }
-
-        DragPoint {
-            id: point4
-            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[4].x) : 0
-            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[4].y) : 0
-        }
-
-        DragPoint {
-            id: point5
-            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[5].x) : 0
-            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[5].y) : 0
-        }
-
-        DragPoint {
-            id: point6
-            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[6].x) : 0
-            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[6].y) : 0
-        }
-
-        DragPoint {
-            id: point7
-            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[7].x) : 0
-            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[7].y) : 0
-        }
-
-        DragPoint {
-            id: point8
-            x: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportXX(selectedNode.standardization.standardizationValue.anchors[8].x) : 0
-            y: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? toViewportYY(selectedNode.standardization.standardizationValue.anchors[8].y) : 0
+        Repeater {
+            model: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors : null
+            delegate: DragPoint {
+                x: toViewportXX(model.x)
+                y: toViewportYY(model.y)
+            }
         }
 
         function drawFunction(ctx) {
@@ -187,291 +139,38 @@ Column {
         return Math.round(graphCanvas.height - graphCanvas.axisOffset - (y - minY) * (graphYYrange/scalerange))
     }
 
-    Row {
-        Controls.TextEditLabelPair {
-            id: objCoordX0text
-            width: 100
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[0].x.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("x0")
-            readOnly: true
-        }
-        Controls.TextEditLabelPair {
-            id: objCoordY0text
-            width: 80
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[0].y.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("y0")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[0].y = parseFloat(content)
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-    }
-
-    ////
-
-    Row {
-        Controls.TextEditLabelPair {
-            id: objCoordX1text
-            width: 100
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[1].x.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("x1")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[1].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-        Controls.TextEditLabelPair {
-            id: objCoordY1text
-            width: 80
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[1].y.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("y1")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[1].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-    }
-
-    ////
-
-    Row {
-        Controls.TextEditLabelPair {
-            id: objCoordX2text
-            width: 100
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[2].x.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("x2")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[2].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-        Controls.TextEditLabelPair {
-            id: objCoordY2text
-            width: 80
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[2].y.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("y2")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[2].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-    }
-
-    ////
-
-    Row {
-        Controls.TextEditLabelPair {
-            id: objCoordX3text
-            width: 100
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[3].x.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("x3")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[3].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-        Controls.TextEditLabelPair {
-            id: objCoordY3text
-            width: 80
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[3].y.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("y3")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[3].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-    }
-
-    ////
-
-    Row {
-        Controls.TextEditLabelPair {
-            id: objCoordX4text
-            width: 100
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[4].x.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("x4")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[4].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-        Controls.TextEditLabelPair {
-            id: objCoordY4text
-            width: 80
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[4].y.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("y4")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[4].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-    }
-
-    ////
-
-    Row {
-        Controls.TextEditLabelPair {
-            id: objCoordX5text
-            width: 100
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[5].x.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("x5")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[5].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-        Controls.TextEditLabelPair {
-            id: objCoordY5text
-            width: 80
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[5].y.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("y5")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[5].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-    }
-
-    ////
-
-    Row {
-        Controls.TextEditLabelPair {
-            id: objCoordX6text
-            width: 100
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[6].x.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("x6")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[6].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-        Controls.TextEditLabelPair {
-            id: objCoordY6text
-            width: 80
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[6].y.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("y6")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[6].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-    }
-
-    ////
-
-    Row {
-        Controls.TextEditLabelPair {
-            id: objCoordX7text
-            width: 100
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[7].x.toFixed(3).toString() : ""
-            //color:"black"
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("x7")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[7].x = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-        Controls.TextEditLabelPair {
-            id: objCoordY7text
-            width: 80
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[7].y.toFixed(3).toString() : ""
-            //color:"black"
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("y7")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[7].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
-            }
-        }
-    }
-
-    ////
-
-    Row {
-        Controls.TextEditLabelPair {
-            id: objCoordX8text
-            width: 100
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[8].x.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("x8")
-            readOnly: true
-        }
-        Controls.TextEditLabelPair {
-            id: objCoordY8text
-            width: 80
-            height: 20
-            labelWidth: 20
-            content: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors[8].y.toFixed(3).toString() : ""
-            regexvalidator: /^-?\d*(\.\d*)?$/
-            labelText: qsTr("y8")
-            onContentEdited: {
-                selectedNode.standardization.standardizationValue.anchors[8].y = parseFloat(content);
-                selectedNode.standardization.standardizationValue.solveParams()
-                graphCanvas.repaint()
+    Repeater {
+        id: editor
+        model: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.anchors : null
+        delegate {
+            Row {
+                Controls.TextEditLabelPair {
+                    width: 100
+                    height: 20
+                    labelWidth: 20
+                    content: model.x.toFixed(3).toString()
+                    regexvalidator: /^-?\d*(\.\d*)?$/
+                    labelText: ("x" + index)
+                    readOnly: (index == 0) || (index == editor.count - 1) // make first and last X read-only (piecewise linear)
+                    onContentEdited: {
+                        model.x = parseFloat(content);
+                        selectedNode.standardization.standardizationValue.solveParams()
+                        graphCanvas.repaint()
+                    }
+                }
+                Controls.TextEditLabelPair {
+                    width: 80
+                    height: 20
+                    labelWidth: 20
+                    content: model.y.toFixed(3).toString()
+                    regexvalidator: /^-?\d*(\.\d*)?$/
+                    labelText: ("y" + index)
+                    onContentEdited: {
+                        model.y = parseFloat(content)
+                        selectedNode.standardization.standardizationValue.solveParams()
+                        graphCanvas.repaint()
+                    }
+                }
             }
         }
     }
