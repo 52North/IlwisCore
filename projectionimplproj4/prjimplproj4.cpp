@@ -309,7 +309,7 @@ LatLon ProjectionImplementationProj4::coord2latlon(const Coordinate &crd) const
     if ( err != 0) {
         QString error(pj_strerrno(err));
         error = "projection error:" + error;
-        kernel()->issues()->log(error);
+        kernel()->issues()->log(error, IssueObject::itWarning);
         return LatLon();
     }
 
