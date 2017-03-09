@@ -60,7 +60,6 @@ Rectangle {
             content : modelData.value
             itemModel: choices
             onContentChanged: {
-                console.debug(content,modelData.value)
                 parmvalues.values[parmvalues.index] = content
             }
         }
@@ -143,7 +142,6 @@ Rectangle {
                                 height : 20
                                 sourceComponent: modelData.choicelist.length > 0 ? testRangeField : testTextField
                                 onLoaded: {
-                                    console.debug(detailsBack.values)
                                     controlfield.item.width = Math.max(0,parent.width - 20)
                                     controlfield.item.modelData = modelData
                                     controlfield.item.values = detailsBack.values

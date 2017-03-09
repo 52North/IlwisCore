@@ -1,8 +1,8 @@
 CODE,TYPE,COLUMNS,ROWS,DEFINITION,GAIN,DESCRIPTION
 average,linear,3,3,1 1 1 1 1 1 1 1 1 ,0.11111111,standard average or smooth filter 
 edgeenhancement,linear,3,3,-1 -1 -1 -1 16 -1 -1 -1 -1,0.125,detects linear features in an image
-laplace,linear,3,3,1 1 1 1 -8 1 1 1 1 1,1,edges enhancement
-shadowNW,linear,3,3,-3 -2 -1 -2 1 2 -1 2 4,1,creates shadow like areas;illumination is from the north-west
+laplace3x3,linear,3,3,1 1 1 1 -8 1 1 1 1,1,edges enhancement
+shadownw,linear,3,3,-3 -2 -1 -2 1 2 -1 2 4,1,creates shadow like areas;illumination is from the north-west
 dfdx,linear,5,1,1 -8 0 8 -1,0.08333333,calculates the first derivative in x-direction (df/dx) per pixel
 dfdy,linear,1,5,-1 8 0 -8 1,0.08333333,calculates the first derivative in y-direction (df/dx) per pixel
 dfddn,linear,5,5,1 0 0 0 0 0 -8 0 0 0 0 0 0 0 0 0 0 0 8 0 0 0 0 0 -1,0.83333333,It calculates the first derivative in the downward diagonal direction (df/downward diagonal) 
