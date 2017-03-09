@@ -646,6 +646,7 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
     QStringList parts = operationresource["outparameters"].toString().split("|");
     int maxparms = parts.last().toInt();
     int count = 1;
+    QString anonId =  QString::number(Identity::newAnonymousId());
     for(int i=(parms.size() - maxparms); i<parms.size(); ++i){
         QString output = parms[i];
 
@@ -658,10 +659,7 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
             QStringList parts = output.split("@@");
             output = parts[0];
             if ( output == ""){
-                if (!acceptIncompleteExpressions)
-                    continue;
-                else
-                    output = "?output_" + QString::number(i);
+                output = "output_" + anonId + "_" + QString::number(i);
             }
 
             //Check if user didnt put the same output name in another output field

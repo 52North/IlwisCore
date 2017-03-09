@@ -102,7 +102,11 @@ bool BinaryMathRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
-    if ( _coveragecoverage) {
+    if( _leftValue!= rUNDEF && _rightValue != rUNDEF){
+        double result = calc(_leftValue, _rightValue);
+        QVariant v = result;
+        ctx->setOutput(symTable,v,sUNDEF, itDOUBLE, Resource() );
+    }else if ( _coveragecoverage) {
         return executeCoverageCoverage(ctx, symTable);
 
     } else  {
@@ -217,10 +221,21 @@ OperationImplementation::State BinaryMathRaster::prepare(ExecutionContext *,cons
         if(!prepareCoverageCoverage())
             return sPREPAREFAILED;
     }
-    initialize(_outputGC->size().linearSize());
+    if ( ptype1 & ptype2 & itNUMBER){
+        bool ok1, ok2;
+        _leftValue =  _expression.input<double>(0, ok1) ;
+        _rightValue = _expression.input<double>(1, ok2) ;
+        if ( !(ok1 && ok2)){
+            kernel()->issues()->log(TR("Illegal values used in binarymath expression:") + QString::number(_leftValue) + "  " +  QString::number(_rightValue));
+            return sPREPAREFAILED;
+        }
 
-    if ( outputName != sUNDEF)
-        _outputGC->name(outputName);
+    }else{
+        initialize(_outputGC->size().linearSize());
+
+        if ( outputName != sUNDEF)
+            _outputGC->name(outputName);
+    }
 
     return sPREPARED;
 }
