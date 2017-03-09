@@ -19,6 +19,194 @@ Column {
     property int minY: 0
     property int maxY: 1
 
+    Row {
+        GroupBox {
+            id: costbenefit
+            ColumnLayout {
+                ExclusiveGroup { id: costbenefitGroup }
+                RadioButton {
+                    id: modeBenefit
+                    text: qsTr("Benefit")
+                    checked: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? (selectedNode.standardization.standardizationValue.benefit && selectedNode.standardization.standardizationValue.method <= 5) : false
+                    exclusiveGroup: costbenefitGroup
+                    property bool benefit: true
+                    onClicked: {
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
+                            selectedNode.standardization.standardizationValue.setMethod(methodCostBenefitGroup.current.method, costbenefitGroup.current.benefit)
+                        graphCanvas.repaint()
+                    }
+                }
+                RadioButton {
+                    id: modeCost
+                    text: qsTr("Cost")
+                    checked: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? (!selectedNode.standardization.standardizationValue.benefit && selectedNode.standardization.standardizationValue.method <= 5) : false
+                    exclusiveGroup: costbenefitGroup
+                    property bool benefit: false
+                    onClicked: {
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
+                            selectedNode.standardization.standardizationValue.setMethod(methodCostBenefitGroup.current.method, costbenefitGroup.current.benefit)
+                        graphCanvas.repaint()
+                    }
+                }
+                RadioButton {
+                    id: modeCombination
+                    text: qsTr("Combination")
+                    checked: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? (selectedNode.standardization.standardizationValue.method > 5) : false
+                    exclusiveGroup: costbenefitGroup
+                    property bool benefit: true
+                    onClicked: {
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
+                            selectedNode.standardization.standardizationValue.setMethod(methodCombinationGroup.current.method, methodCombinationGroup.current.benefit)
+                        graphCanvas.repaint()
+                    }
+                }
+            }
+        }
+
+        GroupBox {
+            id: methodCostBenefit
+            visible: modeBenefit.checked || modeCost.checked
+            enabled: modeBenefit.checked || modeCost.checked
+            ColumnLayout {
+                ExclusiveGroup { id: methodCostBenefitGroup }
+                RadioButton {
+                    id: methodMaximum
+                    text: qsTr("Maximum")
+                    checked: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? (selectedNode.standardization.standardizationValue.method === 1) : false
+                    exclusiveGroup: methodCostBenefitGroup
+                    property int method : 1
+                    onClicked: {
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
+                            selectedNode.standardization.standardizationValue.setMethod(methodCostBenefitGroup.current.method, costbenefitGroup.current.benefit)
+                        graphCanvas.repaint()
+                    }
+                }
+                RadioButton {
+                    id: methodInterval
+                    text: qsTr("Interval")
+                    checked: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? (selectedNode.standardization.standardizationValue.method === 2) : false
+                    exclusiveGroup: methodCostBenefitGroup
+                    property int method : 2
+                    onClicked: {
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
+                            selectedNode.standardization.standardizationValue.setMethod(methodCostBenefitGroup.current.method, costbenefitGroup.current.benefit)
+                        graphCanvas.repaint()
+                    }
+                }
+                RadioButton {
+                    id: methodGoal
+                    text: qsTr("Goal")
+                    checked: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? (selectedNode.standardization.standardizationValue.method === 3) : false
+                    exclusiveGroup: methodCostBenefitGroup
+                    property int method : 3
+                    onClicked: {
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
+                            selectedNode.standardization.standardizationValue.setMethod(methodCostBenefitGroup.current.method, costbenefitGroup.current.benefit)
+                        graphCanvas.repaint()
+                    }
+                }
+                RadioButton {
+                    id: methodConvex
+                    text: qsTr("Convex")
+                    checked: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? (selectedNode.standardization.standardizationValue.method === 4) : false
+                    exclusiveGroup: methodCostBenefitGroup
+                    property int method : 4
+                    onClicked: {
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
+                            selectedNode.standardization.standardizationValue.setMethod(methodCostBenefitGroup.current.method, costbenefitGroup.current.benefit)
+                        graphCanvas.repaint()
+                    }
+                }
+                RadioButton {
+                    id: methodConcave
+                    text: qsTr("Concave")
+                    checked: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? (selectedNode.standardization.standardizationValue.method === 5) : false
+                    exclusiveGroup: methodCostBenefitGroup
+                    property int method : 5
+                    onClicked: {
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
+                            selectedNode.standardization.standardizationValue.setMethod(methodCostBenefitGroup.current.method, costbenefitGroup.current.benefit)
+                        graphCanvas.repaint()
+                    }
+                }
+            }
+        }
+
+        GroupBox {
+            id: methodCombination
+            visible: modeCombination.checked
+            enabled: modeCombination.checked
+            ColumnLayout {
+                ExclusiveGroup { id: methodCombinationGroup }
+                RadioButton {
+                    id: methodUShapeUp
+                    text: qsTr("U-Shape, up")
+                    checked: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? (selectedNode.standardization.standardizationValue.benefit && selectedNode.standardization.standardizationValue.method === 6) : false
+                    exclusiveGroup: methodCombinationGroup
+                    property int method : 6
+                    property bool benefit : true
+                    onClicked: {
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
+                            selectedNode.standardization.standardizationValue.setMethod(methodCombinationGroup.current.method, methodCombinationGroup.current.benefit)
+                        graphCanvas.repaint()
+                    }
+                }
+                RadioButton {
+                    id: methodUShapeDown
+                    text: qsTr("U-Shape, down")
+                    checked: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? (!selectedNode.standardization.standardizationValue.benefit && selectedNode.standardization.standardizationValue.method === 6) : false
+                    exclusiveGroup: methodCombinationGroup
+                    property int method : 6
+                    property bool benefit : false
+                    onClicked: {
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
+                            selectedNode.standardization.standardizationValue.setMethod(methodCombinationGroup.current.method, methodCombinationGroup.current.benefit)
+                        graphCanvas.repaint()
+                    }
+                }
+                RadioButton {
+                    id: methodGaussianUp
+                    text: qsTr("Gaussian, up")
+                    checked: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? (selectedNode.standardization.standardizationValue.benefit && selectedNode.standardization.standardizationValue.method === 7) : false
+                    exclusiveGroup: methodCombinationGroup
+                    property int method : 7
+                    property bool benefit : true
+                    onClicked: {
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
+                            selectedNode.standardization.standardizationValue.setMethod(methodCombinationGroup.current.method, methodCombinationGroup.current.benefit)
+                        graphCanvas.repaint()
+                    }
+                }
+                RadioButton {
+                    id: methodGaussianDown
+                    text: qsTr("Gaussian, down")
+                    checked: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? (!selectedNode.standardization.standardizationValue.benefit && selectedNode.standardization.standardizationValue.method === 7) : false
+                    exclusiveGroup: methodCombinationGroup
+                    property int method : 7
+                    property bool benefit : false
+                    onClicked: {
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
+                            selectedNode.standardization.standardizationValue.setMethod(methodCombinationGroup.current.method, methodCombinationGroup.current.benefit)
+                        graphCanvas.repaint()
+                    }
+                }
+                RadioButton {
+                    id: methodPiecewiseLinear
+                    text: qsTr("Piecewise Linear")
+                    checked: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? (selectedNode.standardization.standardizationValue.method === 8) : false
+                    exclusiveGroup: methodCombinationGroup
+                    property int method : 8
+                    property bool benefit : true
+                    onClicked: {
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
+                            selectedNode.standardization.standardizationValue.setMethod(methodCombinationGroup.current.method, methodCombinationGroup.current.benefit)
+                        graphCanvas.repaint()
+                    }
+                }
+            }
+        }
+    }
+
     Canvas {
         id: graphCanvas
         width: parent.width

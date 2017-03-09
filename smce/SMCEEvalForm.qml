@@ -143,7 +143,7 @@ Column {
                     if (selectedNode) {
                         selectedNode.modelData.resetStandardizationEdits()
                         if (stdEditor && stdEditor.item && stdEditor.item.children)
-                            stdEditor.item.children[0].repaint() // a hack for now to repaint the canvas
+                            stdEditor.item.children[1].repaint() // a hack for now to repaint the canvas
                     }
                 }
             }
@@ -212,6 +212,6 @@ Column {
     function selNodeChanged() {
         if (selectedNode && selectedNode.type !== Node.Group)
             if (stdEditor && stdEditor.item && stdEditor.item.children)
-                stdEditor.item.children[0].repaint() // a hack for now to repaint the canvas
+                stdEditor.item.children[1].repaint() // a hack for now to repaint the canvas
     }
 }

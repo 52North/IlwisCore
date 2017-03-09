@@ -830,6 +830,588 @@ void SmceFunction::setAnchor(double x, double y)
 
 /* ******************************************************* */
 
+MaximumFunction::MaximumFunction(Node *node, QList<Anchor*> & anchors, double minX, double maxX, double minY, double maxY, bool benefit)
+: SmceFunction(node, anchors, 0, minX, maxX, minY, maxY, benefit)
+{
+
+}
+
+void MaximumFunction::solveParams()
+{
+}
+
+void MaximumFunction::setDefaultAnchors()
+{
+}
+
+double MaximumFunction::getFx(double x) const
+{
+    double a = _benefit ? ((_maxY -_minY) / _maxX) : ((_minY - _maxY) / _maxX);
+    double b = _benefit ? _minY : (_maxY - a * _minX);
+    return a * x + b;
+}
+
+QString MaximumFunction::getPython(QString rasterCoverage, QString outputName)
+{
+    double a = _benefit ? ((_maxY -_minY) / _maxX) : ((_minY - _maxY) / _maxX);
+    double b = _benefit ? _minY : (_maxY - a * _minX);
+    QString result = QString("");
+    return result;
+}
+
+QString MaximumFunction::getMapcalc(QString rasterCoverage)
+{
+    double a = _benefit ? ((_maxY -_minY) / _maxX) : ((_minY - _maxY) / _maxX);
+    double b = _benefit ? _minY : (_maxY - a * _minX);
+
+    //return a * x + b;
+    if (a != 0) {
+        if (b != 0)
+            return QString ("%1*%2+%3").arg(a).arg(rasterCoverage).arg(b);
+        else
+            return QString("%1*%2").arg(a).arg(rasterCoverage);
+    } else {
+        return QString("%1").arg(b);
+    }
+}
+
+/* ******************************************************* */
+
+IntervalFunction::IntervalFunction(Node *node, QList<Anchor*> & anchors, double minX, double maxX, double minY, double maxY, bool benefit)
+: SmceFunction(node, anchors, 0, minX, maxX, minY, maxY, benefit)
+{
+
+}
+
+void IntervalFunction::solveParams()
+{
+}
+
+void IntervalFunction::setDefaultAnchors()
+{
+}
+
+double IntervalFunction::getFx(double x) const
+{
+    double a = ((_benefit ? _maxY : _minY) - (_benefit ? _minY : _maxY)) / (_maxX - _minX);
+    double b = (_benefit ? _minY : _maxY) - a * _minX;
+    return a * x + b;
+}
+
+QString IntervalFunction::getPython(QString rasterCoverage, QString outputName)
+{
+    double a = ((_benefit ? _maxY : _minY) - (_benefit ? _minY : _maxY)) / (_maxX - _minX);
+    double b = (_benefit ? _minY : _maxY) - a * _minX;
+    QString result = QString("");
+    return result;
+}
+
+QString IntervalFunction::getMapcalc(QString rasterCoverage)
+{
+    double a = ((_benefit ? _maxY : _minY) - (_benefit ? _minY : _maxY)) / (_maxX - _minX);
+    double b = (_benefit ? _minY : _maxY) - a * _minX;
+
+    //return a * x + b;
+    if (a != 0) {
+        if (b != 0)
+            return QString ("%1*%2+%3").arg(a).arg(rasterCoverage).arg(b);
+        else
+            return QString("%1*%2").arg(a).arg(rasterCoverage);
+    } else {
+        return QString("%1").arg(b);
+    }
+}
+
+/* ******************************************************* */
+
+GoalFunction::GoalFunction(Node *node, QList<Anchor*> & anchors, double minX, double maxX, double minY, double maxY, bool benefit)
+: SmceFunction(node, anchors, 2, minX, maxX, minY, maxY, benefit)
+{
+
+}
+
+void GoalFunction::solveParams()
+{
+    _anchors[0]->setY(_benefit ? _minY : _maxY);
+    _anchors[1]->setY(_benefit ? _maxY : _minY);
+
+    a = (_anchors[1]->y() - _anchors[0]->y()) / (_anchors[1]->x() - _anchors[0]->x());
+    b = _anchors[0]->y() - a * _anchors[0]->x();
+}
+
+void GoalFunction::setDefaultAnchors()
+{
+    _anchors[0]->setX(_minX);
+    _anchors[1]->setX(_maxX);
+    solveParams();
+}
+
+double GoalFunction::getFx(double x) const
+{
+    if (x < _anchors[0]->x())
+        return _benefit ? _minY : _maxY;
+    else if (x > _anchors[1]->x())
+        return _benefit ? _maxY : _minY;
+    else
+        return a * x + b;
+}
+
+QString GoalFunction::getPython(QString rasterCoverage, QString outputName)
+{
+    solveParams();
+    QString result = QString("");
+    return result;
+}
+
+QString GoalFunction::getMapcalc(QString rasterCoverage)
+{
+    solveParams();
+    //return a * x + b;
+    if (a != 0) {
+        if (b != 0)
+            return QString ("%1*%2+%3").arg(a).arg(rasterCoverage).arg(b);
+        else
+            return QString("%1*%2").arg(a).arg(rasterCoverage);
+    } else {
+        return QString("%1").arg(b);
+    }
+}
+
+/* ******************************************************* */
+
+ConvexFunction::ConvexFunction(Node *node, QList<Anchor*> & anchors, double minX, double maxX, double minY, double maxY, bool benefit)
+: SmceFunction(node, anchors, 3, minX, maxX, minY, maxY, benefit)
+{
+
+}
+
+void ConvexFunction::solveParams()
+{
+    if (_anchors[1]->y() > _maxY - (_maxY - _minY) / 1000.0)
+        _anchors[1]->setY(_maxY - (_maxY - _minY) / 1000.0);
+    else if (_anchors[1]->y() < _minY + (_maxY - _minY) / 1000.0)
+        _anchors[1]->setY(_minY + (_maxY - _minY) / 1000.0);
+
+    if (_benefit)
+    {
+        // constraints
+        _anchors[0]->setY(_minY);
+        _anchors[2]->setY(_maxY);
+
+        a = _minY;
+        c = log((_anchors[1]->y() - a) / (_maxY - a)) / (_anchors[1]->x() - _anchors[2]->x());
+        b = (_anchors[1]->y() - a) / exp(c * _anchors[1]->x());
+
+        double rIntermediateSolution = a + b * exp(c * _anchors[0]->x());
+        double rStep = 10;
+        int iIterations = 100;
+        while (fabs(rIntermediateSolution - _minY) > 0.01 && (--iIterations > 0))
+        {
+            if (((rIntermediateSolution > _minY) && (rStep > 0)) || ((rIntermediateSolution < _minY) && (rStep < 0)))
+                rStep /= -2.0;
+            a += rStep;
+            c = log((_anchors[1]->y() - a) / (_maxY - a)) / (_anchors[1]->x() - _anchors[2]->x());
+            b = (_anchors[1]->y() - a) / exp(c * _anchors[1]->x());
+
+            rIntermediateSolution = a + b * exp(c * _anchors[0]->x());
+        }
+    } else {
+        // constraints
+        _anchors[0]->setY(_maxY);
+        _anchors[2]->setY(_minY);
+
+        a = -_maxY;
+        double rExp = (-a) / (_maxY - a - _anchors[1]->y());
+        if (rExp > 0)
+            c = -fabs(log((-a) / (_maxY - a - _anchors[1]->y())) / (_anchors[0]->x() - _anchors[1]->x()));
+        else
+            c = -fabs(log((_maxY - a - _minY) / (_maxY - a - _anchors[1]->y())) / (_anchors[2]->x() - _anchors[1]->x()));
+
+        b = (_maxY - a - _anchors[1]->y()) / exp(c * _anchors[1]->x());
+
+        double rIntermediateSolution = _maxY - (a + b * exp(c * _anchors[2]->x()));
+
+        double rStep = 10;
+        int iIterations = 100;
+        while ((fabs(rIntermediateSolution - _minY) > 0.01) && (--iIterations > 0))
+        {
+            if (((rIntermediateSolution < _minY) && (rStep > 0)) || ((rIntermediateSolution > _minY) && (rStep < 0)))
+                rStep /= -2.0;
+
+            a += rStep;
+            double rExp = (-a) / (_maxY - a - _anchors[1]->y());
+            if (rExp > 0)
+                c = -fabs(log((-a) / (_maxY - a - _anchors[1]->y())) / (_anchors[0]->x() - _anchors[1]->x()));
+            else
+                c = -fabs(log((_maxY - a - _minY) / (_maxY - a - _anchors[1]->y())) / (_anchors[2]->x() - _anchors[1]->x()));
+
+            b = (_maxY - a - _anchors[1]->y()) / exp(c * _anchors[1]->x());
+
+            rIntermediateSolution = _maxY - (a + b * exp(c * _anchors[2]->x()));
+        }
+    }
+}
+
+void ConvexFunction::setDefaultAnchors()
+{
+    if (_benefit)
+    {
+        _anchors[0]->setX(_minX);
+        _anchors[0]->setY(_minY);
+        _anchors[1]->setX(_minX + (_maxX - _minX) / 2.0);
+        _anchors[1]->setY(_minY + (_maxY - _minY) / 4.0);
+        _anchors[2]->setX(_maxX);
+        _anchors[2]->setY(_maxY);
+    } else {
+        _anchors[0]->setX(_minX);
+        _anchors[0]->setY(_maxY);
+        _anchors[1]->setX(_minX + (_maxX - _minX) / 2.0);
+        _anchors[1]->setY(_minY + (_maxY - _minY) / 4.0);
+        _anchors[2]->setX(_maxX);
+        _anchors[2]->setY(_minY);
+    }
+    solveParams();
+}
+
+double ConvexFunction::getFx(double x) const
+{
+    double rRet;
+
+    if (_benefit)
+        rRet = a + b * exp(c * x);
+    else
+        rRet = _maxY - (a + b * exp(c * x));
+
+    if (rRet < _minY)
+        rRet = _minY;
+    else if (rRet > _maxY)
+        rRet = _maxY;
+
+    return rRet;
+}
+
+QString ConvexFunction::getPython(QString rasterCoverage, QString outputName)
+{
+    solveParams();
+    QString result = QString("");
+    return result;
+}
+
+QString ConvexFunction::getMapcalc(QString rasterCoverage)
+{
+    solveParams();
+    //return a + b * exp(c * x) OR _maxY - (a + b * exp(c * x))
+    QString sRet;
+    if (_benefit)
+        sRet = QString("%1+%2*exp(%3*%4)").arg(a).arg(b).arg(c).arg(rasterCoverage);
+    else
+        sRet = QString("%1-(%2+%3*exp(%4*%5))").arg(_maxY).arg(a).arg(b).arg(c).arg(rasterCoverage);
+
+    return sRet;
+}
+
+/* ******************************************************* */
+
+ConcaveFunction::ConcaveFunction(Node *node, QList<Anchor*> & anchors, double minX, double maxX, double minY, double maxY, bool benefit)
+: SmceFunction(node, anchors, 3, minX, maxX, minY, maxY, benefit)
+{
+
+}
+
+void ConcaveFunction::solveParams()
+{
+    if (_anchors[1]->y() > _maxY - (_maxY - _minY) / 1000.0)
+        _anchors[1]->setY(_maxY - (_maxY - _minY) / 1000.0);
+    else if (_anchors[1]->y() < _minY + (_maxY - _minY) / 1000.0)
+        _anchors[1]->setY(_minY + (_maxY - _minY) / 1000.0);
+
+    if (_benefit)
+    {
+        // constraints
+        _anchors[0]->setY(_minY);
+        _anchors[2]->setY(_maxY);
+
+        a = _maxY;
+        c = -fabs(log((_anchors[1]->y() - a) / (_minY - a)) / (_anchors[1]->x() - _anchors[0]->x()));
+        b = (_anchors[1]->y() - a) / exp(c * _anchors[1]->x());
+
+        double rIntermediateSolution = a + b * exp(c * _anchors[2]->x());
+        double rStep = 10;
+        int iIterations = 100;
+        while (fabs(rIntermediateSolution - _maxY) > 0.01 && (--iIterations > 0))
+        {
+            if (((rIntermediateSolution > _maxY) && (rStep > 0)) || ((rIntermediateSolution < _maxY) && (rStep < 0)))
+                rStep /= -2.0;
+            a += rStep;
+            c = -fabs(log((_anchors[1]->y() - a) / (_minY - a)) / (_anchors[1]->x() - _anchors[0]->x()));
+            b = (_anchors[1]->y() - a) / exp(c * _anchors[1]->x());
+
+            rIntermediateSolution = a + b * exp(c * _anchors[2]->x());
+        }
+    } else {
+        // constraints
+        _anchors[0]->setY(_maxY);
+        _anchors[2]->setY(_minY);
+
+        a = _minY;
+        c = fabs(log((_maxY - a - _minY) / (_maxY - a - _anchors[1]->y())) / (_anchors[2]->x() - _anchors[1]->x()));
+        b = (_maxY - a - _anchors[1]->y()) / exp(c * _anchors[1]->x());
+
+        double rIntermediateSolution = _maxY - (a + b * exp(c * _anchors[0]->x()));
+
+        double rStep = 10;
+        int iIterations = 100;
+        while (fabs(rIntermediateSolution - _maxY) > 0.01 && (--iIterations > 0))
+        {
+            if (((rIntermediateSolution < _maxY) && (rStep > 0)) || ((rIntermediateSolution > _maxY) && (rStep < 0)))
+                rStep /= -2.0;
+
+            a += rStep;
+            c = fabs(log((_maxY - a - _minY) / (_maxY - a - _anchors[1]->y())) / (_anchors[2]->x() - _anchors[1]->x()));
+            b = (_maxY - a - _anchors[1]->y()) / exp(c * _anchors[1]->x());
+
+            rIntermediateSolution = _maxY - (a + b * exp(c * _anchors[0]->x()));
+        }
+    }
+}
+
+void ConcaveFunction::setDefaultAnchors()
+{
+    if (_benefit)
+    {
+        _anchors[0]->setX(_minX);
+        _anchors[0]->setY(_minY);
+        _anchors[1]->setX(_minX + (_maxX - _minX) / 2.0);
+        _anchors[1]->setY(_minY + (_maxY - _minY) / 1.5);
+        _anchors[2]->setX(_maxX);
+        _anchors[2]->setY(_maxY);
+    } else {
+        _anchors[0]->setX(_minX);
+        _anchors[0]->setY(_maxY);
+        _anchors[1]->setX(_minX + (_maxX - _minX) / 2.0);
+        _anchors[1]->setY(_minY + (_maxY - _minY) / 1.5);
+        _anchors[2]->setX(_maxX);
+        _anchors[2]->setY(_minY);
+    }
+    solveParams();
+}
+
+double ConcaveFunction::getFx(double x) const
+{
+    double rRet;
+
+    if (_benefit)
+        rRet = a + b * exp(c * x);
+    else
+        rRet = _maxY - (a + b * exp(c * x));
+
+    if (rRet < _minY)
+        rRet = _minY;
+    else if (rRet > _maxY)
+        rRet = _maxY;
+
+    return rRet;
+}
+
+QString ConcaveFunction::getPython(QString rasterCoverage, QString outputName)
+{
+    solveParams();
+    QString result = QString("");
+    return result;
+}
+
+QString ConcaveFunction::getMapcalc(QString rasterCoverage)
+{
+    solveParams();
+    //return a + b * exp(c * x) OR _maxY - (a + b * exp(c * x))
+    QString sRet;
+    if (_benefit)
+        sRet = QString("%1+%2*exp(%3*%4)").arg(a).arg(b).arg(c).arg(rasterCoverage);
+    else
+        sRet = QString("%1-(%2+%3*exp(%4*%5))").arg(_maxY).arg(a).arg(b).arg(c).arg(rasterCoverage);
+
+    return sRet;
+}
+
+/* ******************************************************* */
+
+QuadraticFunction::QuadraticFunction(Node *node, QList<Anchor*> & anchors, double minX, double maxX, double minY, double maxY, bool benefit)
+: SmceFunction(node, anchors, 3, minX, maxX, minY, maxY, benefit)
+{
+
+}
+
+void QuadraticFunction::solveParams()
+{
+    // constraints
+    if (_benefit) {
+        _anchors[0]->setY(_minY);
+        _anchors[2]->setY(_minY);
+    } else {
+        // constraints
+        _anchors[0]->setY(_maxY);
+        _anchors[2]->setY(_maxY);
+    }
+    double x0 = _anchors[0]->x();
+    double y0 = _anchors[0]->y();
+    double x1 = _anchors[1]->x();
+    double y1 = _anchors[1]->y();
+    double x2 = _anchors[2]->x();
+    double y2 = _anchors[2]->y();
+    double teller = (y2-y0)*(x1-x0)-(y1-y0)*(x2-x0);
+    double noemer = (x2*x2-x0*x0)*(x1-x0)-(x1*x1-x0*x0)*(x2-x0);
+    a = teller / noemer;
+    b = (y1-y0-a*(x1*x1-x0*x0))/(x1-x0);
+    c = y0-a*x0*x0-b*x0;
+}
+
+void QuadraticFunction::setDefaultAnchors()
+{
+    if (_benefit)
+    {
+        _anchors[0]->setX(_minX);
+        _anchors[0]->setY(_minY);
+        _anchors[1]->setX(_minX + (_maxX - _minX) / 2.0);
+        _anchors[1]->setY(_maxY);
+        _anchors[2]->setX(_maxX);
+        _anchors[2]->setY(_minY);
+    } else {
+        _anchors[0]->setX(_minX);
+        _anchors[0]->setY(_maxY);
+        _anchors[1]->setX(_minX + (_maxX - _minX) / 2.0);
+        _anchors[1]->setY(_minY);
+        _anchors[2]->setX(_maxX);
+        _anchors[2]->setY(_maxY);
+    }
+    solveParams();
+}
+
+double QuadraticFunction::getFx(double x) const
+{
+    double rRet;
+
+    rRet = a * x * x + b * x + c;
+
+    if (rRet < _minY)
+        rRet = _minY;
+    else if (rRet > _maxY)
+        rRet = _maxY;
+
+    return rRet;
+}
+
+QString QuadraticFunction::getPython(QString rasterCoverage, QString outputName)
+{
+    solveParams();
+    QString result = QString("");
+    return result;
+}
+
+QString QuadraticFunction::getMapcalc(QString rasterCoverage)
+{
+    solveParams();
+    // return a * x * x + b * x + c
+    // String sRet ("%lg*%S*%S+%lg*%S+%lg", a, sData, sData, b, sData, c);
+    // return (a * x + b) * x + c (this is optimized so that sData is used twice instead of 3x)
+    QString sRet  = QString("(%1*%2+%3)*%4+%5").arg(a).arg(rasterCoverage).arg(b).arg(rasterCoverage).arg(c);
+
+    return sRet;
+}
+
+/* ******************************************************* */
+
+GaussianFunction::GaussianFunction(Node *node, QList<Anchor*> & anchors, double minX, double maxX, double minY, double maxY, bool benefit)
+: SmceFunction(node, anchors, 3, minX, maxX, minY, maxY, benefit)
+{
+
+}
+
+void GaussianFunction::solveParams()
+{
+    if (_benefit) {
+        _anchors[1]->setX((_anchors[0]->x() + _anchors[2]->x()) / 2.0);
+        _anchors[0]->setY(_minY + (_maxY - _minY) / 1000.0);
+        _anchors[2]->setY(_minY + (_maxY - _minY) / 1000.0);
+        if (_anchors[1]->y() < _minY + (_maxY - _minY) / 500.0)
+            _anchors[1]->setY(_minY + (_maxY - _minY) / 500.0);
+    } else {
+        _anchors[1]->setX((_anchors[0]->x() + _anchors[2]->x()) / 2.0);
+        _anchors[0]->setY(_maxY - (_maxY - _minY) / 1000.0);
+        _anchors[2]->setY(_maxY - (_maxY - _minY) / 1000.0);
+        if (_anchors[1]->y() > _maxY - (_maxY - _minY) / 500.0)
+            _anchors[1]->setY(_maxY - (_maxY - _minY) / 500.0);
+    }
+    double x1 = _anchors[1]->x();
+    double y1 = _anchors[1]->y();
+    double x2 = _anchors[2]->x();
+    double y2 = _anchors[2]->y();
+    if (_benefit) {
+        a = y1;
+        c = x1;
+        b = log(y2 / y1) / pow(x2 - c, 2);
+    } else {
+        a = _maxY - y1;
+        c = x1;
+        b = log((_maxY - y2) / (_maxY - y1)) / pow(x2 - c, 2);
+    }
+}
+
+void GaussianFunction::setDefaultAnchors()
+{
+    if (_benefit)
+    {
+        _anchors[0]->setX(_minX);
+        _anchors[1]->setX(_minX + (_maxX - _minX) / 2.0);
+        _anchors[1]->setY(_maxY);
+        _anchors[2]->setX(_maxX);
+    } else {
+        _anchors[0]->setX(_minX);
+        _anchors[1]->setX(_minX + (_maxX - _minX) / 2.0);
+        _anchors[1]->setY(_minY);
+        _anchors[2]->setX(_maxX);
+    }
+    solveParams();
+}
+
+double GaussianFunction::getFx(double x) const
+{
+    double rRet;
+
+    if (_benefit)
+        rRet = a * exp(b * pow(x - c, 2));
+    else
+        rRet = _maxY - a * exp(b * pow(x - c, 2));
+
+    if (rRet < _minY)
+        rRet = _minY;
+    else if (rRet > _maxY)
+        rRet = _maxY;
+
+    return rRet;
+}
+
+QString GaussianFunction::getPython(QString rasterCoverage, QString outputName)
+{
+    solveParams();
+    QString result = QString("");
+    return result;
+}
+
+QString GaussianFunction::getMapcalc(QString rasterCoverage)
+{
+    solveParams();
+    // return a * exp(b * sq(x - c)) OR 1 - a * exp(b * sq(x - c))
+    QString sRet;
+    if (_benefit)
+        sRet = QString("%1*exp(%2*sq(%3-%4))").arg(a).arg(b).arg(rasterCoverage).arg(c);
+    else
+        sRet = QString("%1-%2*exp(%3*sq(%4-%5))").arg(_maxY).arg(a).arg(b).arg(rasterCoverage).arg(c);
+
+    return sRet;
+}
+
+/* ******************************************************* */
+
 PiecewiseLinear8Function::PiecewiseLinear8Function(Node *node, QList<Anchor*> & anchors, double minX, double maxX, double minY, double maxY, bool benefit)
 : SmceFunction(node, anchors, 9, minX, maxX, minY, maxY, benefit)
 {
@@ -1016,7 +1598,7 @@ Standardization * Standardization::create(Node * node)
                 double max = range->max();
                 if (node->type() == Node::NodeType::Factor) {
                     StandardizationValue * stdValue = new StandardizationValue(node, min, max);
-                    stdValue->setMethod(StandardizationValue::PiecewiseLinear8);
+                    stdValue->setMethod(StandardizationValue::Maximum, true);
                     return stdValue;
                 }
                 else if (node->type() == Node::NodeType::Constraint)
@@ -1148,6 +1730,7 @@ StandardizationValue::StandardizationValue()
 , _min(0)
 , _max(-1)
 , _method(StandardizationValueMethodType::None)
+, _benefit(true)
 {
 }
 
@@ -1157,6 +1740,7 @@ StandardizationValue::StandardizationValue(Node *node, double min, double max)
 , _min(min)
 , _max(max)
 , _method(StandardizationValueMethodType::None)
+, _benefit(true)
 {
 }
 
@@ -1180,12 +1764,21 @@ int StandardizationValue::method() const
     return _method;
 }
 
-void StandardizationValue::setMethod(StandardizationValueMethodType method)
+bool StandardizationValue::benefit() const
+{
+    return _benefit;
+}
+
+void StandardizationValue::setMethod(StandardizationValueMethodType method, bool benefit)
 {
     if (_stdValueMethod)
         delete _stdValueMethod;
     _method = method;
-    _stdValueMethod = StdValueMethod::create(_node, _anchors, _min, _max, _method);
+    _benefit = benefit;
+    _stdValueMethod = StdValueMethod::create(_node, _anchors, _min, _max, _method, _benefit);
+    emit methodChanged();
+    emit benefitChanged();
+    emit anchorsChanged();
 }
 
 QQmlListProperty<Anchor> StandardizationValue::anchors()
@@ -1234,7 +1827,7 @@ StandardizationValue * StandardizationValue::pStandardizationValue()
 Standardization * StandardizationValue::clone() const
 {
     StandardizationValue * stdClone = new StandardizationValue(_node, _min, _max);
-    stdClone->setMethod(_method);
+    stdClone->setMethod(_method, _benefit);
     for (int i = 0; i < _anchors.length(); ++i) {
         stdClone->_anchors.at(i)->setX(_anchors.at(i)->x());
         stdClone->_anchors.at(i)->setY(_anchors.at(i)->y());
@@ -1246,6 +1839,7 @@ Standardization * StandardizationValue::clone() const
 void StandardizationValue::store(QDataStream &stream)
 {
     stream << (quint8)_method;
+    stream << _benefit;
     for (Anchor * anchor : _anchors) {
         stream << anchor->x();
         stream << anchor->y();
@@ -1255,8 +1849,9 @@ void StandardizationValue::store(QDataStream &stream)
 void StandardizationValue::load(QDataStream &stream)
 {
     quint8 method;
-    stream >> method;
-    setMethod(static_cast<StandardizationValue::StandardizationValueMethodType>(method));
+    bool benefit = true;
+    stream >> method >> benefit;
+    setMethod(static_cast<StandardizationValue::StandardizationValueMethodType>(method), benefit);
     for (Anchor * anchor : _anchors) {
         double x;
         double y;
@@ -1290,11 +1885,18 @@ StdValueMethod::~StdValueMethod()
 
 }
 
-StdValueMethod * StdValueMethod::create(Node * node, QList<Anchor *> & anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method)
+StdValueMethod * StdValueMethod::create(Node * node, QList<Anchor *> & anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method, bool benefit)
 {
     switch (method) {
+    case StandardizationValue::Maximum:
+    case StandardizationValue::Interval:
+    case StandardizationValue::Goal:
+    case StandardizationValue::Convex:
+    case StandardizationValue::Concave:
+    case StandardizationValue::Ushape:
+    case StandardizationValue::Gaussian:
     case StandardizationValue::PiecewiseLinear8:
-        return new StdValueGeneral(node, anchors, min, max, method);
+        return new StdValueGeneral(node, anchors, min, max, method, benefit);
         break;
     default:
         return 0;
@@ -1303,22 +1905,36 @@ StdValueMethod * StdValueMethod::create(Node * node, QList<Anchor *> & anchors, 
 
 /* ******************************************************* */
 
-StdValueGeneral::StdValueGeneral(Node *node, QList<Anchor*> & anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method)
+StdValueGeneral::StdValueGeneral(Node *node, QList<Anchor*> & anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method, bool benefit)
 : StdValueMethod(node, min, max)
 {
     switch (method) {
     case StandardizationValue::None:
-    case StandardizationValue::Maximum:
-    case StandardizationValue::Interval:
-    case StandardizationValue::Goal:
-    case StandardizationValue::Convex:
-    case StandardizationValue::Concave:
-    case StandardizationValue::Ushape:
-    case StandardizationValue::Gaussian:
         _function = 0;
         break;
+    case StandardizationValue::Maximum:
+        _function = new MaximumFunction(node, anchors, min, max, 0, 1, benefit);
+        break;
+    case StandardizationValue::Interval:
+        _function = new IntervalFunction(node, anchors, min, max, 0, 1, benefit);
+        break;
+    case StandardizationValue::Goal:
+        _function = new GoalFunction(node, anchors, min, max, 0, 1, benefit);
+        break;
+    case StandardizationValue::Convex:
+        _function = new ConvexFunction(node, anchors, min, max, 0, 1, benefit);
+        break;
+    case StandardizationValue::Concave:
+        _function = new ConcaveFunction(node, anchors, min, max, 0, 1, benefit);
+        break;
+    case StandardizationValue::Ushape:
+        _function = new QuadraticFunction(node, anchors, min, max, 0, 1, benefit);
+        break;
+    case StandardizationValue::Gaussian:
+        _function = new GaussianFunction(node, anchors, min, max, 0, 1, benefit);
+        break;
     case StandardizationValue::PiecewiseLinear8:
-        _function = new PiecewiseLinear8Function(node, anchors, min, max, 0, 1, true);
+        _function = new PiecewiseLinear8Function(node, anchors, min, max, 0, 1, benefit);
         break;
     }
     if (_function != 0)

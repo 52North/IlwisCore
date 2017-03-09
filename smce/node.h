@@ -238,6 +238,102 @@ private:
     double rUnitDist2(double x, double y, Anchor * anchor);
 };
 
+class MaximumFunction : public SmceFunction
+{
+public:
+    MaximumFunction(Node *node, QList<Anchor *> & anchors, double minX, double maxX, double minY, double maxY, bool benefit);
+    virtual QString getPython(QString rasterCoverage, QString outputName);
+    virtual QString getMapcalc(QString rasterCoverage);
+    virtual void solveParams();
+    virtual void setDefaultAnchors();
+    virtual double getFx(double x) const;
+};
+
+class IntervalFunction : public SmceFunction
+{
+public:
+    IntervalFunction(Node *node, QList<Anchor *> & anchors, double minX, double maxX, double minY, double maxY, bool benefit);
+    virtual QString getPython(QString rasterCoverage, QString outputName);
+    virtual QString getMapcalc(QString rasterCoverage);
+    virtual void solveParams();
+    virtual void setDefaultAnchors();
+    virtual double getFx(double x) const;
+};
+
+class GoalFunction : public SmceFunction
+{
+public:
+    GoalFunction(Node *node, QList<Anchor *> & anchors, double minX, double maxX, double minY, double maxY, bool benefit);
+    virtual QString getPython(QString rasterCoverage, QString outputName);
+    virtual QString getMapcalc(QString rasterCoverage);
+    virtual void solveParams();
+    virtual void setDefaultAnchors();
+    virtual double getFx(double x) const;
+private:
+    double a;
+    double b; // y = ax + b
+};
+
+class ConvexFunction : public SmceFunction
+{
+public:
+    ConvexFunction(Node *node, QList<Anchor *> & anchors, double minX, double maxX, double minY, double maxY, bool benefit);
+    virtual QString getPython(QString rasterCoverage, QString outputName);
+    virtual QString getMapcalc(QString rasterCoverage);
+    virtual void solveParams();
+    virtual void setDefaultAnchors();
+    virtual double getFx(double x) const;
+private:
+    double a;
+    double b;
+    double c; // y = a + be^cx
+};
+
+class ConcaveFunction : public SmceFunction
+{
+public:
+    ConcaveFunction(Node *node, QList<Anchor *> & anchors, double minX, double maxX, double minY, double maxY, bool benefit);
+    virtual QString getPython(QString rasterCoverage, QString outputName);
+    virtual QString getMapcalc(QString rasterCoverage);
+    virtual void solveParams();
+    virtual void setDefaultAnchors();
+    virtual double getFx(double x) const;
+private:
+    double a;
+    double b;
+    double c; // y = 1 - (a + be^cx)
+};
+
+class QuadraticFunction : public SmceFunction
+{
+public:
+    QuadraticFunction(Node *node, QList<Anchor *> & anchors, double minX, double maxX, double minY, double maxY, bool benefit);
+    virtual QString getPython(QString rasterCoverage, QString outputName);
+    virtual QString getMapcalc(QString rasterCoverage);
+    virtual void solveParams();
+    virtual void setDefaultAnchors();
+    virtual double getFx(double x) const;
+private:
+    double a;
+    double b;
+    double c; // y = ax^2 + bx + c
+};
+
+class GaussianFunction : public SmceFunction
+{
+public:
+    GaussianFunction(Node *node, QList<Anchor *> & anchors, double minX, double maxX, double minY, double maxY, bool benefit);
+    virtual QString getPython(QString rasterCoverage, QString outputName);
+    virtual QString getMapcalc(QString rasterCoverage);
+    virtual void solveParams();
+    virtual void setDefaultAnchors();
+    virtual double getFx(double x) const;
+private:
+    double a;
+    double b;
+    double c; // y = a * e^(b(x-c))
+};
+
 class PiecewiseLinear8Function : public SmceFunction
 {
 public:
@@ -309,12 +405,14 @@ class StandardizationValue : public Standardization
     Q_PROPERTY( double min READ min NOTIFY minChanged )
     Q_PROPERTY( double max READ max NOTIFY maxChanged )
     Q_PROPERTY( int method READ method NOTIFY methodChanged )
+    Q_PROPERTY( int benefit READ benefit NOTIFY benefitChanged )
     Q_PROPERTY( QQmlListProperty<Anchor> anchors READ anchors NOTIFY anchorsChanged )
 
 signals:
     void minChanged();
     void maxChanged();
     void methodChanged();
+    void benefitChanged();
     void anchorsChanged();
 
 public:
@@ -324,7 +422,8 @@ public:
     double min() const;
     double max() const;
     int method() const;
-    void setMethod(StandardizationValueMethodType method);
+    bool benefit() const;
+    Q_INVOKABLE void setMethod(StandardizationValueMethodType method, bool benefit);
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     QQmlListProperty<Anchor> anchors();
@@ -345,6 +444,7 @@ private:
     const double _min;
     const double _max;
     StandardizationValueMethodType _method;
+    bool _benefit;
     QList <Anchor*> _anchors;
 };
 
@@ -359,7 +459,7 @@ public:
     virtual double getFx(double x) const = 0;
     virtual QString getPython(QString rasterCoverage, QString outputName) const = 0;
     virtual QString getMapcalc(QString rasterCoverage) const = 0;
-    static StdValueMethod * create(Node *node, QList<Anchor *> &anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method);
+    static StdValueMethod * create(Node *node, QList<Anchor *> &anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method, bool benefit);
 
 protected:
     Node * _node;
@@ -370,7 +470,7 @@ protected:
 class StdValueGeneral : public StdValueMethod
 {
 public:
-    StdValueGeneral(Node *node, QList<Anchor *> &anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method);
+    StdValueGeneral(Node *node, QList<Anchor *> &anchors, double min, double max, StandardizationValue::StandardizationValueMethodType method, bool benefit);
     virtual void solveParams();
     virtual void setAnchor(double x, double y);
     virtual double getFx(double x) const;
