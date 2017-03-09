@@ -25,6 +25,8 @@ private:
     IRasterCoverage _inputGC1;
     IRasterCoverage _inputGC2;
     IRasterCoverage _outputGC;
+    double _leftValue = rUNDEF;
+    double  _rightValue = rUNDEF;
     BoundingBox _box;
 
     NEW_OPERATION(BinaryMathRaster)    ;
