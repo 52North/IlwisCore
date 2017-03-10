@@ -211,7 +211,7 @@ OperationImplementation::State BinaryMathRaster::prepare(ExecutionContext *,cons
     IlwisTypes ptype2 = _expression.parm(1).valuetype();
     QString outputName = _expression.parm(0,false).value();
 
-    if (mathoperator( OperationHelper::unquote(_expression.parm(2).value()))){
+    if (!mathoperator( OperationHelper::unquote(_expression.parm(2).value()))){
         kernel()->issues()->log(TR("unknown operator " ) +  _expression.parm(2).value());
         return sPREPAREFAILED;
     }
