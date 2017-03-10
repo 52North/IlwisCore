@@ -211,7 +211,10 @@ OperationImplementation::State BinaryMathRaster::prepare(ExecutionContext *,cons
     IlwisTypes ptype2 = _expression.parm(1).valuetype();
     QString outputName = _expression.parm(0,false).value();
 
-    mathoperator( OperationHelper::unquote(_expression.parm(2).value()));
+    if (mathoperator( OperationHelper::unquote(_expression.parm(2).value()))){
+        kernel()->issues()->log(TR("unknown operator " ) +  _expression.parm(2).value());
+        return sPREPAREFAILED;
+    }
 
     if ( (hasType(ptype1,itRASTER) && hasType(ptype2,itNUMBER)) || (hasType(ptype2,itRASTER) && hasType(ptype1,itNUMBER)) ) {
         if(!prepareCoverageNumber(ptype1, ptype2))
@@ -244,12 +247,12 @@ quint64 BinaryMathRaster::createMetadata()
 {
 
     OperationResource operation({"ilwis://operations/binarymathraster"});
-    operation.setSyntax("binarymathraster(gridcoverage1|number,gridcoverage|number,rasteroperation=!add|substract|divide|times|mod|power)");
+    operation.setSyntax("binarymathraster(gridcoverage1|number,gridcoverage|number,rasteroperation=!add|subtract|divide|times|mod|power)");
     operation.setDescription(TR("Generates a new numerical rastercoverage/featurecoverage based on the operation, applied to all the pixels"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
     operation.addInParameter(1,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(2,itSTRING , TR("operator"),TR("operator (add, substract,divide, multiply) applied to the other 2 input operators"));
+    operation.addInParameter(2,itSTRING , TR("operator"),TR("operator (add, subtract,divide, multiply) applied to the other 2 input operators"));
     operation.setOutParameterCount({1});
     operation.addValidation(0,0,"domain=numericdomain");
     operation.addValidation(1,1,"domain=numericdomain");

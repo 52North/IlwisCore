@@ -159,13 +159,13 @@ OperationImplementation::State BinaryMathTable::prepare(ExecutionContext *, cons
 quint64 BinaryMathTable::createMetadata()
 {
     OperationResource operation({"ilwis://operations/binarymathtable"});
-    operation.setSyntax("binarymathtable(input-table, !column-name|number,tableoperation=!column-name|number,output-column-name, !add|substract|divide|times|mod)");
+    operation.setSyntax("binarymathtable(input-table, !column-name|number,tableoperation=!column-name|number,output-column-name, !add|subtract|divide|times|mod)");
     operation.setDescription(TR("generates a new numerical table based on the operation, applied to all the cells of a column"));
     operation.setInParameterCount({4});
     operation.addInParameter(0,itTABLE, TR("input table"),TR("input table from which the input column will be chosen"));
     operation.addInParameter(1,itSTRING | itNUMBER, TR("input column or number"),TR("column with a numerical domain or number"));
     operation.addInParameter(2,itSTRING | itNUMBER , TR("input column or number"),TR("column with a numerical domain or number"));
-    operation.addInParameter(3,itSTRING, TR("operator"),TR("operator (add, substract,divide, multiply) applied to the other 2 input operators"));
+    operation.addInParameter(3,itSTRING, TR("operator"),TR("operator (add, subtract,divide, multiply) applied to the other 2 input operators"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itCOLUMN, TR("output column"));
     operation.setKeywords("table,column,numeric,math");
