@@ -348,10 +348,12 @@ QString Node::getPython(QString outputName) const
         break;
     case NodeType::Factor:
         {
-            QString rasterCoverage = "ilwis.RasterCoverage('" + _fileName + "')";
-            result = _standardization->getPython(rasterCoverage, outputName);
+            QString coverageName = outputName + "_input";
+            result = coverageName + "=ilwis.RasterCoverage('" + _fileName + "')\n";
+            result += _standardization->getPython(coverageName, outputName);
             if (_weight > 0 && _weight < 1)
                 result += QString("%1=%2*%1\n").arg(outputName).arg(_weight);
+            result += "del " + coverageName + "\n";
             break;
         }
     default:
@@ -853,9 +855,7 @@ double MaximumFunction::getFx(double x) const
 
 QString MaximumFunction::getPython(QString rasterCoverage, QString outputName)
 {
-    double a = _benefit ? ((_maxY -_minY) / _maxX) : ((_minY - _maxY) / _maxX);
-    double b = _benefit ? _minY : (_maxY - a * _minX);
-    QString result = QString("");
+    QString result = QString("%1=%2\n").arg(outputName).arg(getMapcalc(rasterCoverage));
     return result;
 }
 
@@ -900,9 +900,7 @@ double IntervalFunction::getFx(double x) const
 
 QString IntervalFunction::getPython(QString rasterCoverage, QString outputName)
 {
-    double a = ((_benefit ? _maxY : _minY) - (_benefit ? _minY : _maxY)) / (_maxX - _minX);
-    double b = (_benefit ? _minY : _maxY) - a * _minX;
-    QString result = QString("");
+    QString result = QString("%1=%2\n").arg(outputName).arg(getMapcalc(rasterCoverage));
     return result;
 }
 
@@ -958,8 +956,7 @@ double GoalFunction::getFx(double x) const
 
 QString GoalFunction::getPython(QString rasterCoverage, QString outputName)
 {
-    solveParams();
-    QString result = QString("");
+    QString result = QString("%1=%2\n").arg(outputName).arg(getMapcalc(rasterCoverage));
     return result;
 }
 
@@ -1093,7 +1090,13 @@ double ConvexFunction::getFx(double x) const
 QString ConvexFunction::getPython(QString rasterCoverage, QString outputName)
 {
     solveParams();
-    QString result = QString("");
+    //return a + b * exp(c * x) OR _maxY - (a + b * exp(c * x))
+    QString sRet;
+    if (_benefit)
+        sRet = QString("%1+%2*ilwis.Engine.do('exp',%3*%4)").arg(a).arg(b).arg(c).arg(rasterCoverage);
+    else
+        sRet = QString("%1-(%2+%3*ilwis.Engine.do('exp',%4*%5))").arg(_maxY).arg(a).arg(b).arg(c).arg(rasterCoverage);
+    QString result = QString("%1=%2\n").arg(outputName).arg(sRet);
     return result;
 }
 
@@ -1216,7 +1219,13 @@ double ConcaveFunction::getFx(double x) const
 QString ConcaveFunction::getPython(QString rasterCoverage, QString outputName)
 {
     solveParams();
-    QString result = QString("");
+    //return a + b * exp(c * x) OR _maxY - (a + b * exp(c * x))
+    QString sRet;
+    if (_benefit)
+        sRet = QString("%1+%2*ilwis.Engine.do('exp',%3*%4)").arg(a).arg(b).arg(c).arg(rasterCoverage);
+    else
+        sRet = QString("%1-(%2+%3*ilwis.Engine.do('exp',%4*%5))").arg(_maxY).arg(a).arg(b).arg(c).arg(rasterCoverage);
+    QString result = QString("%1=%2\n").arg(outputName).arg(sRet);
     return result;
 }
 
@@ -1302,8 +1311,7 @@ double QuadraticFunction::getFx(double x) const
 
 QString QuadraticFunction::getPython(QString rasterCoverage, QString outputName)
 {
-    solveParams();
-    QString result = QString("");
+    QString result = QString("%1=%2\n").arg(outputName).arg(getMapcalc(rasterCoverage));
     return result;
 }
 
@@ -1393,7 +1401,13 @@ double GaussianFunction::getFx(double x) const
 QString GaussianFunction::getPython(QString rasterCoverage, QString outputName)
 {
     solveParams();
-    QString result = QString("");
+    // return a * exp(b * sq(x - c)) OR 1 - a * exp(b * sq(x - c))
+    QString sRet;
+    if (_benefit)
+        sRet = QString("%1*ilwis.Engine.do('exp',%2*ilwis.Engine.do('binarymathraster',%3-%4,2,'power'))").arg(a).arg(b).arg(rasterCoverage).arg(c);
+    else
+        sRet = QString("%1-%2*ilwis.Engine.do('exp',%3*ilwis.Engine.do('binarymathraster',%4-%5,2,'power'))").arg(_maxY).arg(a).arg(b).arg(rasterCoverage).arg(c);
+    QString result = QString("%1=%2\n").arg(outputName).arg(sRet);
     return result;
 }
 
@@ -1524,30 +1538,22 @@ QString PiecewiseLinear8Function::getLine(double a, QString x, double b)
 QString PiecewiseLinear8Function::getPython(QString rasterCoverage, QString outputName)
 {
     solveParams();
-    QString result = QString("%1_cond=ilwis.Engine.do('binarylogicalraster',%2,%3,'less')\n").arg(outputName).arg(rasterCoverage).arg(_anchors[7]->x());
-    result += QString("%1=%2\n").arg(outputName).arg(getLine(a8,rasterCoverage,b8));
+    QString result = QString("%1=%2\n").arg(outputName).arg(getLine(a8,rasterCoverage,b8));
     result += QString("%1_term2=%2\n").arg(outputName).arg(getLine(a7,rasterCoverage,b7));
-    result += QString("%1=ilwis.Engine.do('iffraster',%1_cond,%1_term2,%1)\n").arg(outputName);
-    result += QString("%1_cond=ilwis.Engine.do('binarylogicalraster',%2,%3,'less')\n").arg(outputName).arg(rasterCoverage).arg(_anchors[6]->x());
+    result += QString("%1=ilwis.Engine.do('iffraster',%2<%3,%1_term2,%1)\n").arg(outputName).arg(rasterCoverage).arg(_anchors[7]->x());
     result += QString("%1_term2=%2\n").arg(outputName).arg(getLine(a6,rasterCoverage,b6));
-    result += QString("%1=ilwis.Engine.do('iffraster',%1_cond,%1_term2,%1)\n").arg(outputName);
-    result += QString("%1_cond=ilwis.Engine.do('binarylogicalraster',%2,%3,'less')\n").arg(outputName).arg(rasterCoverage).arg(_anchors[5]->x());
+    result += QString("%1=ilwis.Engine.do('iffraster',%2<%3,%1_term2,%1)\n").arg(outputName).arg(rasterCoverage).arg(_anchors[6]->x());
     result += QString("%1_term2=%2\n").arg(outputName).arg(getLine(a5,rasterCoverage,b5));
-    result += QString("%1=ilwis.Engine.do('iffraster',%1_cond,%1_term2,%1)\n").arg(outputName);
-    result += QString("%1_cond=ilwis.Engine.do('binarylogicalraster',%2,%3,'less')\n").arg(outputName).arg(rasterCoverage).arg(_anchors[4]->x());
+    result += QString("%1=ilwis.Engine.do('iffraster',%2<%3,%1_term2,%1)\n").arg(outputName).arg(rasterCoverage).arg(_anchors[5]->x());
     result += QString("%1_term2=%2\n").arg(outputName).arg(getLine(a4,rasterCoverage,b4));
-    result += QString("%1=ilwis.Engine.do('iffraster',%1_cond,%1_term2,%1)\n").arg(outputName);
-    result += QString("%1_cond=ilwis.Engine.do('binarylogicalraster',%2,%3,'less')\n").arg(outputName).arg(rasterCoverage).arg(_anchors[3]->x());
+    result += QString("%1=ilwis.Engine.do('iffraster',%2<%3,%1_term2,%1)\n").arg(outputName).arg(rasterCoverage).arg(_anchors[4]->x());
     result += QString("%1_term2=%2\n").arg(outputName).arg(getLine(a3,rasterCoverage,b3));
-    result += QString("%1=ilwis.Engine.do('iffraster',%1_cond,%1_term2,%1)\n").arg(outputName);
-    result += QString("%1_cond=ilwis.Engine.do('binarylogicalraster',%2,%3,'less')\n").arg(outputName).arg(rasterCoverage).arg(_anchors[2]->x());
+    result += QString("%1=ilwis.Engine.do('iffraster',%2<%3,%1_term2,%1)\n").arg(outputName).arg(rasterCoverage).arg(_anchors[3]->x());
     result += QString("%1_term2=%2\n").arg(outputName).arg(getLine(a2,rasterCoverage,b2));
-    result += QString("%1=ilwis.Engine.do('iffraster',%1_cond,%1_term2,%1)\n").arg(outputName);
-    result += QString("%1_cond=ilwis.Engine.do('binarylogicalraster',%2,%3,'less')\n").arg(outputName).arg(rasterCoverage).arg(_anchors[1]->x());
+    result += QString("%1=ilwis.Engine.do('iffraster',%2<%3,%1_term2,%1)\n").arg(outputName).arg(rasterCoverage).arg(_anchors[2]->x());
     result += QString("%1_term2=%2\n").arg(outputName).arg(getLine(a1,rasterCoverage,b1));
-    result += QString("%1=ilwis.Engine.do('iffraster',%1_cond,%1_term2,%1)\n").arg(outputName);
+    result += QString("%1=ilwis.Engine.do('iffraster',%2<%3,%1_term2,%1)\n").arg(outputName).arg(rasterCoverage).arg(_anchors[1]->x());
     result += QString("del %1_term2\n").arg(outputName);
-    result += QString("del %1_cond\n").arg(outputName);
     return result;
 }
 
