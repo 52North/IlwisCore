@@ -69,9 +69,9 @@ bool AddNode::handleSubstract(int index, const NodeValue& vright,SymbolTable &sy
     IlwisTypes used = typesUsed(index, vright, symbols);
     bool ok = false;
     if ( hasType(used, itRASTER))
-        ok = handleBinaryCases(index, vright, "binarymathraster", "substract", symbols, ctx);
+        ok = handleBinaryCases(index, vright, "binarymathraster", "subtract", symbols, ctx);
     else if (  (used & itFEATURE) == 0){
-        ok = handleBinaryCases(index, vright, "binarymathfeature", "substract", symbols, ctx);
+        ok = handleBinaryCases(index, vright, "binarymathfeature", "subtract", symbols, ctx);
 
     }
     return ok;
