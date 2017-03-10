@@ -100,12 +100,12 @@ NumericRange *NumericOperation::constructRangeFrom(const SPNumericRange &range, 
 
 }
 
-void NumericOperation::mathoperator(const QString &oper)
+bool NumericOperation::mathoperator(const QString &oper)
 {
 
     if ( oper.toLower() == "add")
         _operator = otPLUS;
-    else if ( oper.toLower() == "substract")
+    else if ( oper.toLower() == "subtract")
         _operator = otMINUS;
     else if ( oper == "divide")
         _operator = otDIV;
@@ -113,4 +113,8 @@ void NumericOperation::mathoperator(const QString &oper)
         _operator = otMULT;
     else if ( oper.toLower() == "power")
         _operator = otPOW;
+    if ( _operator != otUNKNOWN)
+        return true;
+    return false;
+
 }

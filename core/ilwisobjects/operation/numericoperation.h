@@ -5,7 +5,7 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT NumericOperation : public OperationImplementation
 {
 public:
-    enum OperatorType{ otPLUS, otMINUS, otMULT, otDIV, otPOW};
+    enum OperatorType{ otPLUS, otMINUS, otMULT, otDIV, otPOW, otUNKNOWN};
 
     NumericOperation();
 
@@ -16,7 +16,7 @@ protected:
 
     NumericRange *constructRangeFrom(const SPNumericRange& range1, const SPNumericRange& range2) const;
     NumericRange *constructRangeFrom(const SPNumericRange& range, double number) const;
-    void mathoperator(const QString& oper);
+    bool mathoperator(const QString& oper);
     double calc(double v1, double v2) const{
         if ( v1 != rUNDEF && v2 != rUNDEF) {
             switch(_operator) {
@@ -42,7 +42,7 @@ protected:
     double _number1 = rUNDEF;
     double _number2 = rUNDEF;
     bool _firstorder = true;
-    OperatorType _operator;
+    OperatorType _operator = otUNKNOWN;
 };
 }
 
