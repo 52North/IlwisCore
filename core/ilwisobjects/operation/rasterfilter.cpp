@@ -22,7 +22,7 @@ LinearGridFilter::LinearGridFilter(const QString &name)
 }
 
 bool LinearGridFilter::makeCustomFilter(const QString& definition){
-    QString def = definition.mid(7, definition.size() - 8);
+    QString def = definition.mid(5, definition.size() - 5);
     QStringList parts = def.split(",");
     if ( parts.size() == 1)    {
         QStringList numbers = parts[0].split(" ");
@@ -56,7 +56,7 @@ bool LinearGridFilter::makeCustomFilter(const QString& definition){
 
 bool LinearGridFilter::definition(const QString &name)
 {
-    if ( name.indexOf("custom(") != -1){
+    if ( name.indexOf("code=") != -1){
         _valid =  makeCustomFilter(name);
         return _valid;
     }
