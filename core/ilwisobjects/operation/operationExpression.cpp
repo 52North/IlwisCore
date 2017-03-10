@@ -91,6 +91,9 @@ Parameter::PathType Parameter::pathType() const
 }
 
 IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &symtab) {
+    if ( (value.startsWith("\"") || value.startsWith("'")) &&
+         (value.endsWith("'") || value.endsWith("\"")))
+        return itSTRING;
     IlwisTypes tp = IlwisObject::findType(value);
     if ( value == "\"?\"" || value == "?")
         tp = itANY;
@@ -251,8 +254,9 @@ void OperationExpression::parseFunctionExpression(const QString &txt, const Symb
     if ( index == -1)
         specialExpressions(txt,symtab);
 
-    int startQuote = e.indexOf("\"");
-    int endQuote = e.indexOf("\"", startQuote+1 );
+    QRegExp pattern = QRegExp("[\'\"]");
+    int startQuote = e.indexOf(pattern);
+    int endQuote = e.indexOf(pattern, startQuote+1 );
     int index2 = e.indexOf("=");
     if ( (index2 > startQuote && index2 < endQuote) || index2 > index)
         index2 = -1;
@@ -310,9 +314,9 @@ void OperationExpression::parseFunctionExpression(const QString &txt, const Symb
                 blockCount++;
             if ( c == ')' && quoteCount == 0)
                 blockCount--;
-            if ( c == '"' && quoteCount == 0)
+            if ( (c == '"' || c == '\'') && quoteCount == 0)
                 quoteCount++;
-            else if ( c == '"' && quoteCount != 0)
+            else if (  (c == '"' || c == '\'') && quoteCount != 0)
                 quoteCount--;
 
             ++count;
