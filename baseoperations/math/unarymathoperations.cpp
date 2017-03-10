@@ -172,6 +172,26 @@ quint64 NaturalLogarithmCoverage::createMetadata() {
     return resource.id();
 }
 //----------------------------------------------------------
+double exp2(double v){
+    if (v != rUNDEF)
+        return exp(v);
+    return rUNDEF;
+}
+
+REGISTER_OPERATION(EulerExpCoverage)
+EulerExpCoverage::EulerExpCoverage(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathRasterAndNumber(metaid, expr, "value", exp2)
+{}
+OperationImplementation *EulerExpCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new EulerExpCoverage(metaid,expr);}
+
+quint64 EulerExpCoverage::createMetadata() {
+    Resource resource = UnaryMathRasterAndNumber::populateMetadata(QString("ilwis://operations/exp"), "Exp (Power of Euler's number) for rasters");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+//----------------------------------------------------------
 
 double abs2(double v){
     if ( v == rUNDEF)
@@ -454,7 +474,20 @@ quint64 NaturalLogarithmTable::createMetadata() {
     return resource.id();
 }
 //----------------------------------------------------------
+REGISTER_OPERATION(EulerExpTable)
+EulerExpTable::EulerExpTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", exp2)
+{}
+OperationImplementation *EulerExpTable::create(quint64 metaid, const Ilwis::OperationExpression &expr){return new EulerExpTable(metaid,expr);}
 
+quint64 EulerExpTable::createMetadata() {
+    Resource resource = UnaryMathTable::populateMetadata(QString("ilwis://operations/exp"), "Exp (Power of Euler's number) for Columns");
+    resource.addProperty("pin_1_desc",QString("input data source with a numerical domain"));
+    resource.addProperty("pout_1_desc",QString("output data source with a numerical domain"));
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+//----------------------------------------------------------
 REGISTER_OPERATION(AbsTable)
 AbsTable::AbsTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", abs2)
 {}
@@ -468,7 +501,6 @@ quint64 AbsTable::createMetadata() {
     mastercatalog()->addItems({resource});
     return resource.id();
 }
-
 //---------------------------------------------------------
 REGISTER_OPERATION(SqrtTable)
 SqrtTable::SqrtTable(quint64 metaid,const Ilwis::OperationExpression& expr) : UnaryMathTable(metaid, expr, "value", sqrt2)

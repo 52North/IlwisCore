@@ -100,8 +100,18 @@ public:
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-
     NEW_OPERATION(NaturalLogarithmCoverage);
+};
+
+class EulerExpCoverage : public UnaryMathRasterAndNumber
+{
+public:
+    EulerExpCoverage() {}
+    EulerExpCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(EulerExpCoverage);
 };
 
 class AbsCoverage : public UnaryMathRasterAndNumber
@@ -111,7 +121,6 @@ public:
     AbsCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
-
 
     NEW_OPERATION(AbsCoverage);
 };
@@ -270,8 +279,18 @@ public:
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
 
-
     NEW_OPERATION(NaturalLogarithmTable);
+};
+
+class EulerExpTable : public UnaryMathTable
+{
+public:
+    EulerExpTable() {}
+    EulerExpTable(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(EulerExpTable);
 };
 
 class AbsTable : public UnaryMathTable
@@ -281,7 +300,6 @@ public:
     AbsTable(quint64 metaid, const Ilwis::OperationExpression &expr);
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     static quint64 createMetadata();
-
 
     NEW_OPERATION(AbsTable);
 };
