@@ -34,6 +34,8 @@ protected:
                 return v1 * v2;break;
             case otPOW:
                 return std::pow(v1,v2);
+            default:
+                return rUNDEF;
             }
         }
         return rUNDEF;
