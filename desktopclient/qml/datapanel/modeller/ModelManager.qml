@@ -111,7 +111,7 @@ Rectangle {
             else if ( modellerDataPane.model.applicationCount > 0){
                 modellerViews.currentIndex = 1
                 applicationView.currentApplication = modellerDataPane.model.application(0)
-                analysisView.state = workflowView.state = "invisble"
+                analysisView.state = workflowView.state = "invisible"
             }else if ( modellerDataPane.model.analysisCount > 0){
                 modellerViews.currentIndex = 2
                 var analysis = modellerDataPane.model.analysisPattern(0)
@@ -121,7 +121,7 @@ Rectangle {
             } else if ( modellerDataPane.model.workflowCount > 0){
                 modellerViews.currentIndex = 3
                 workflowView.workflow = modellerDataPane.model.workflow(0)
-                 applicationView.state = analisysView.state = "invisble"
+                 applicationView.state = analisysView.state = "invisible"
             }
             else
                 modellerViews.currentIndex = 0

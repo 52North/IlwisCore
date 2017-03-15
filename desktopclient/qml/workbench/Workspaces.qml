@@ -11,7 +11,7 @@ import QtQuick 2.0
 
 WorkBenchShifter {
     clip : true
-    state : "invisble"
+    state : "invisible"
 
     property WorkSpaceModel workspace : uicontext.currentWorkSpace
 

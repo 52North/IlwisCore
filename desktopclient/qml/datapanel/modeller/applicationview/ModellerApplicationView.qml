@@ -14,8 +14,19 @@ Model.ModellerWorkArea {
     state : "invisible"
 
     onStateChanged: {
+        console.debug("s=", state)
         if ( state == "visible"){
-            updateView()
+            if ( !meme.item)
+                updateView()
+            else{
+               meme.item.visible = true
+                meme.item.enabled = true
+            }
+        }else if ( state == "invisible"){
+            if ( meme.item){
+                meme.item.visible = false
+                meme.item.enabled = false
+            }
         }
     }
 

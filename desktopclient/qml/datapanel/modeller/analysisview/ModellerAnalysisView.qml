@@ -12,6 +12,7 @@ Model.ModellerWorkArea {
 
     width : parent.width
     height : parent.height - 170
+
     color : "white"
     state : "invisible"
 
@@ -25,7 +26,6 @@ Model.ModellerWorkArea {
             }
         }else if ( state == "invisible"){
             if ( meme.item){
-                console.debug("aaaa",meme.item )
                 meme.item.visible = false
                 meme.item.enabled = false
             }

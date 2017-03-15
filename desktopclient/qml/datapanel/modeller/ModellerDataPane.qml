@@ -157,6 +157,7 @@ Item {
     }
 
     function datapaneChanged(index){
+        console.debug("active=", index)
         if ( index == 0) {
             conceptualView.state = "visible"
             workflowView.state = "invisible"
