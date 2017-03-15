@@ -33,12 +33,14 @@ public:
             res &= futures[i].get();
         }
 
+        double minv=1e307,maxv = -1e307;
         if ( res && outputRaster.isValid()) {
             if ( outputRaster->datadef().domain<>()->valueType() & itNUMBER) {
-                NumericStatistics stats;
-                PixelIterator iter(outputRaster);
-                stats.calculate(iter, iter.end());
-                NumericRange *rng = new NumericRange(stats[NumericStatistics::pMIN], stats[NumericStatistics::pMAX], std::pow(10,-stats.significantDigits()));
+                for(double v : outputRaster){
+                    minv = Ilwis::min(v,minv);
+                    maxv = Ilwis::max(v,maxv);
+                }
+                NumericRange *rng = new NumericRange(minv, maxv, 3);
                 outputRaster->datadefRef().range(rng);
             }
         }
