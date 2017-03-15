@@ -10,7 +10,7 @@ WorkBenchShifter {
     id : navigatorContainer
 
     property string startfolder
-    state : "invisble"
+    state : "invisible"
 
     signal catalogChanged()
 
