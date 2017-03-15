@@ -13,7 +13,7 @@ import ".." as Base
 WorkBenchShifter {
     id : infoContainer
     clip : true
-    state : "invisble"
+    state : "invisible"
 
     FunctionBarHeader{
         id : functionBarHeader
