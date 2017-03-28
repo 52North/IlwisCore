@@ -48,6 +48,9 @@ Rectangle {
         else if ( typeName == "numericdomain" ){
             source = "NumericDomainProperties.qml"
         }
+        else if ( typeName == "combinationmatrix" ){
+            source = "CombinationMatrixProperties.qml"
+        }
         else if ( typeName == "georeference"){
            source = "GeoreferenceProperties.qml"
         } else if ( typeName == "table" || typeName == "flattable"){
