@@ -622,6 +622,8 @@ QString IlwisObject::type2Name(IlwisTypes t)
         return "ColorDomain";
     case  itCOORDSYSTEM:
         return "CoordinateSystem";
+    case  itCOMBINATIONMATRIX:
+        return "CombinationMatrix";
     case  itCONVENTIONALCOORDSYSTEM:
         return "ConventionalCoordinateSystem";
     case itBOUNDSONLYCSY:
@@ -735,6 +737,9 @@ IlwisTypes IlwisObject::name2Type(const QString& dname)
     }
     if ( name.compare( "Model",Qt::CaseInsensitive) == 0) {
         return  itMODEL;
+    }
+    if ( name.compare( "CombinationMatrix",Qt::CaseInsensitive) == 0) {
+        return  itCOMBINATIONMATRIX;;
     }
     if ( name.compare( "OperationMetaData",Qt::CaseInsensitive) == 0) {
         return  itOPERATIONMETADATA;

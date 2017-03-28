@@ -18,6 +18,7 @@
 #include "ilwiscontext.h"
 #include "tranquilizer.h"
 #include "desktoptranquilizer.h"
+#include "combinationmatrix.h"
 #include "abstractfactory.h"
 #include "tranquilizerfactory.h"
 #include "script.h"
@@ -728,6 +729,57 @@ QString IlwisObjectModel::getProperty(const QString &propertyname) const
                 IEllipsoid ellipsoid = _ilwisobject.as<Ellipsoid>();
                 return QString::number(ellipsoid->excentricity());
             }
+        }
+        if ( propertyname == "xaxisdomain"){
+            if ( hasType(_ilwisobject->ilwisType(), itCOMBINATIONMATRIX)){
+                ICombinationMatrix matrix = _ilwisobject.as<CombinationMatrix>();
+                return matrix->axisDefinition(CombinationMatrix::aXAXIS).domain()->resource().url().toString();
+            }
+        }
+        if ( propertyname == "yaxisdomain"){
+            if ( hasType(_ilwisobject->ilwisType(), itCOMBINATIONMATRIX)){
+                ICombinationMatrix matrix = _ilwisobject.as<CombinationMatrix>();
+                return matrix->axisDefinition(CombinationMatrix::aYAXIS).domain()->resource().url().toString();
+            }
+        }
+        if ( propertyname == "xaxisvalueslength"){
+            if ( hasType(_ilwisobject->ilwisType(), itCOMBINATIONMATRIX)){
+                ICombinationMatrix matrix = _ilwisobject.as<CombinationMatrix>();
+                return QString::number(matrix->axisValueCount(CombinationMatrix::aXAXIS));
+            }
+        }
+        if ( propertyname == "yaxisvalueslength"){
+            if ( hasType(_ilwisobject->ilwisType(), itCOMBINATIONMATRIX)){
+                ICombinationMatrix matrix = _ilwisobject.as<CombinationMatrix>();
+                return QString::number(matrix->axisValueCount(CombinationMatrix::aYAXIS));
+            }
+        }
+        if ( propertyname == "combodomain"){
+            if ( hasType(_ilwisobject->ilwisType(), itCOMBINATIONMATRIX)){
+                ICombinationMatrix matrix = _ilwisobject.as<CombinationMatrix>();
+                return matrix->combinationDef().domain()->resource().url().toString();
+            }
+        }
+        if ( propertyname == "combinationmatrix"){
+            if ( hasType(_ilwisobject->ilwisType(), itCOMBINATIONMATRIX)){
+                ICombinationMatrix matrix = _ilwisobject.as<CombinationMatrix>();
+                int xcount = matrix->axisValueCount(CombinationMatrix::aXAXIS);
+                int ycount = matrix->axisValueCount(CombinationMatrix::aYAXIS);
+                QString values;
+                for(int x=0; x < xcount; ++x){
+                    values += "|";
+                    values+= matrix->axisValue(CombinationMatrix::aXAXIS,x)    ;
+                }
+                for(int y=0; y < ycount; ++y){
+                    values += "|" + matrix->axisValue(CombinationMatrix::aYAXIS,y)    ;
+                    for( int x=0; x < xcount; ++x){
+                        values += "|";
+                        values+= matrix->comboAsString(x,y)    ;
+                    }
+                }
+                return values;
+            }
+            return "";
         }
         if (propertyname == "proj4def"){
             IlwisTypes objectype = _ilwisobject->ilwisType();

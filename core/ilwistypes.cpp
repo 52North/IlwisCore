@@ -151,6 +151,8 @@ QString TypeHelper::type2HumanReadable(IlwisTypes t)
         return TR("location");
     case  itCOLUMN:
         return TR("Column");
+    case  itCOMBINATIONMATRIX:
+        return TR("Combination matrix");
     }
     return TR("?");
 
@@ -303,6 +305,8 @@ QString TypeHelper::type2name(IlwisTypes t)
         return "latlon";
     case itCOLUMN:
         return "column";
+    case itCOMBINATIONMATRIX:
+        return "combinationmatrix";
     }
 //    QString type;
 //    for(quint64 i =0; i < 64; ++i){
@@ -389,6 +393,9 @@ IlwisTypes TypeHelper::name2type(const QString &dname)
     }
     if ( name == "model") {
         return  itMODEL;
+    }
+    if ( name == "combinationmatrix") {
+        return  itCOMBINATIONMATRIX;
     }
     if ( name == "operationmetaData") {
         return  itOPERATIONMETADATA;
@@ -516,6 +523,9 @@ IlwisTypes TypeHelper::variant2type(const QVariant &v)
                 return  itSCRIPT;
             }
             if ( name == "Ilwis::Model" || name == "Ilwis::IModel") {
+                return  itMODEL;
+            }
+            if ( name == "Ilwis::CombinationMatrix" || name == "Ilwis::ICombinationMatrix") {
                 return  itMODEL;
             }
             if ( name == "Ilwis::Representation" ||  name == "Ilwis::IRepresentation")

@@ -35,6 +35,7 @@
 #include "internalellipsoidconnector.h"
 #include "internalscriptconnector.h"
 #include "internalmodelconnector.h"
+#include "internalcombinationmatrixconnector.h"
 #include "ilwiscontext.h"
 
 #include "coverage.h"
@@ -77,6 +78,7 @@ void InternalModule::prepare()
     factory->addCreator(itPROJECTION,"internal", InternalProjectionConnector::create);
     factory->addCreator(itELLIPSOID,"internal", InternalEllipsoidConnector::create);
     factory->addCreator(itSCRIPT,"internal", InternalScriptConnector::create);
+    factory->addCreator(itCOMBINATIONMATRIX,"internal", InternalCombinationMatrixConnector::create);
 
     FactoryInterface *projfactory = new ProjectionImplFactory();
     projfactory->prepare();
