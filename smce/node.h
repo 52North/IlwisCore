@@ -194,6 +194,10 @@ private:
 };
 
 class StandardizationValue;
+class StandardizationValueConstraint;
+class StandardizationClass;
+class StandardizationBool;
+class StandardizationBoolConstraint;
 
 class Anchor : public QObject
 {
@@ -371,10 +375,18 @@ class Standardization : public QObject
     Q_ENUMS(StandardizationType)
     Q_PROPERTY( int type READ type NOTIFY typeChanged )
     Q_PROPERTY( StandardizationValue * standardizationValue READ pStandardizationValue NOTIFY standardizationValueChanged )
+    Q_PROPERTY( StandardizationValueConstraint * standardizationValueConstraint READ pStandardizationValueConstraint NOTIFY standardizationValueConstraintChanged )
+    Q_PROPERTY( StandardizationClass * standardizationClass READ pStandardizationClass NOTIFY standardizationClassChanged )
+    Q_PROPERTY( StandardizationBool * standardizationBool READ pStandardizationBool NOTIFY standardizationBoolChanged )
+    Q_PROPERTY( StandardizationBoolConstraint * standardizationBoolConstraint READ pStandardizationBoolConstraint NOTIFY standardizationBoolConstraintChanged )
 
 signals:
    void typeChanged();
    void standardizationValueChanged();
+   void standardizationValueConstraintChanged();
+   void standardizationClassChanged();
+   void standardizationBoolChanged();
+   void standardizationBoolConstraintChanged();
 
 public:
     enum StandardizationType{ None=0, Value=1, ValueConstraint=2, Class=3, ClassConstraint=4, Bool=5, BoolConstraint=6 };
@@ -384,6 +396,10 @@ public:
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
     virtual StandardizationValue * pStandardizationValue();
+    virtual StandardizationValueConstraint * pStandardizationValueConstraint();
+    virtual StandardizationClass * pStandardizationClass();
+    virtual StandardizationBool * pStandardizationBool();
+    virtual StandardizationBoolConstraint * pStandardizationBoolConstraint();
     static Standardization * create(Node *node);
     Q_INVOKABLE virtual void apply();
     virtual Standardization * clone() const;
@@ -493,6 +509,7 @@ public:
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
+    virtual StandardizationValueConstraint * pStandardizationValueConstraint();
     virtual Standardization * clone() const;
 
 protected:
@@ -514,6 +531,7 @@ public:
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
+    virtual StandardizationClass * pStandardizationClass();
     virtual Standardization * clone() const;
 
 protected:
@@ -534,6 +552,7 @@ public:
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
+    virtual StandardizationBool * pStandardizationBool();
     virtual Standardization * clone() const;
 
 protected:
@@ -551,6 +570,7 @@ public:
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
+    virtual StandardizationBoolConstraint * pStandardizationBoolConstraint();
     virtual Standardization * clone() const;
 
 protected:

@@ -1652,6 +1652,26 @@ StandardizationValue * Standardization::pStandardizationValue()
     return 0;
 }
 
+StandardizationValueConstraint * Standardization::pStandardizationValueConstraint()
+{
+    return 0;
+}
+
+StandardizationClass * Standardization::pStandardizationClass()
+{
+    return 0;
+}
+
+StandardizationBool * Standardization::pStandardizationBool()
+{
+    return 0;
+}
+
+StandardizationBoolConstraint * Standardization::pStandardizationBoolConstraint()
+{
+    return 0;
+}
+
 void Standardization::apply()
 {
     _node->setStandardization(this);
@@ -2008,6 +2028,11 @@ int StandardizationValueConstraint::type() const
     return Standardization::StandardizationType::ValueConstraint;
 }
 
+StandardizationValueConstraint * StandardizationValueConstraint::pStandardizationValueConstraint()
+{
+    return this;
+}
+
 Standardization * StandardizationValueConstraint::clone() const
 {
     return new StandardizationValueConstraint(_node, _min, _max);
@@ -2052,6 +2077,11 @@ int StandardizationClass::type() const
     return _constraint ? Standardization::StandardizationType::ClassConstraint : Standardization::StandardizationType::Class;
 }
 
+StandardizationClass * StandardizationClass::pStandardizationClass()
+{
+    return this;
+}
+
 Standardization * StandardizationClass::clone() const
 {
     return new StandardizationClass(_node, _constraint);
@@ -2094,6 +2124,11 @@ int StandardizationBool::type() const
     return Standardization::StandardizationType::Bool;
 }
 
+StandardizationBool * StandardizationBool::pStandardizationBool()
+{
+    return this;
+}
+
 Standardization * StandardizationBool::clone() const
 {
     return new StandardizationBool(_node);
@@ -2134,6 +2169,11 @@ QString StandardizationBoolConstraint::getMapcalc(QString rasterCoverage) const
 int StandardizationBoolConstraint::type() const
 {
     return Standardization::StandardizationType::BoolConstraint;
+}
+
+StandardizationBoolConstraint * StandardizationBoolConstraint::pStandardizationBoolConstraint()
+{
+    return this;
 }
 
 Standardization * StandardizationBoolConstraint::clone() const
