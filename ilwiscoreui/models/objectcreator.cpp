@@ -22,6 +22,7 @@
 #include "applicationmodel.h"
 #include "model.h"
 #include "modellerfactory.h"
+#include "combinationmatrix.h"
 #include "workflow/modelbuilder.h"
 #include "workflow/analysismodel.h"
 
@@ -51,6 +52,7 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
     _creators["table" ] = new IlwisObjectCreatorModel("table", TR("Table"),itTABLE,"UnderDevelopment.qml", 200, this);
     _creators["representation" ] = new IlwisObjectCreatorModel("representation",TR("Representation"),itREPRESENTATION,"UnderDevelopment.qml", 250, this);
     _creators["domain" ] = new IlwisObjectCreatorModel("domain",TR("Domain"),itDOMAIN,"CreateDomain.qml", 250, this);
+    _creators["combinationmatrix" ] = new IlwisObjectCreatorModel("combinationmatrix",TR("Combinationmatrix"),itCOMBINATIONMATRIX,"CreateCombinationMatrix.qml", 600, this);
 }
 
 ObjectCreator::~ObjectCreator()
@@ -70,6 +72,26 @@ QStringList ObjectCreator::createableObjects() const
 }
 
 
+QString ObjectCreator::createCombinationMatrix(const QVariantMap &parms){
+    QString expression;
+    expression = QString("script %1{format(stream,\"combinationmatrix\")}=createcombinationmatrix(%2,%3,%4,\"%5\",\"%6\",\"%7\",\"%8\")")
+            .arg(parms["name"].toString())
+            .arg(parms["xaxisdomain"].toString())
+            .arg(parms["yaxisdomain"].toString())
+            .arg(parms["combodomain"].toString())
+            .arg(parms["xaxis"].toString())
+            .arg(parms["yaxis"].toString())
+            .arg(parms["combinations"].toString())
+            .arg(parms["description"].toString());
+
+    Ilwis::ExecutionContext ctx;
+    Ilwis::SymbolTable syms;
+    if(expression != "" && Ilwis::commandhandler()->execute(expression,&ctx,syms) ) {
+        ICombinationMatrix obj = syms.getSymbol(ctx._results[0])._var.value<ICombinationMatrix>();
+        return QString::number(obj->id());
+    }
+    return sUNDEF;
+}
 
 QString ObjectCreator::createItemDomain(const QVariantMap &parms){
     QString expression;
@@ -370,6 +392,8 @@ QString ObjectCreator::createObject(const QVariantMap &parms)
         return createScript(parms);
     }else if ( type == "model"){
         return createModel(parms);
+    } else if ( type == "combinationmatrix"){
+        return createCombinationMatrix(parms);
     }
 
 

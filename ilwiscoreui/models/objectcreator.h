@@ -53,6 +53,7 @@ private:
     QString createRasterCoverage(const QVariantMap &parms);
     QString createScript(const QVariantMap &parms);
     QString createModel(const QVariantMap &parms);
+    QString createCombinationMatrix(const QVariantMap &parms);
 };
 
 #endif // OBJECTCREATOR_H
