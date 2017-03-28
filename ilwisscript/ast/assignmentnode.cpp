@@ -27,6 +27,7 @@
 #include "mastercatalog.h"
 #include "ilwiscontext.h"
 #include "juliantime.h"
+#include "combinationmatrix.h"
 #include "selectnode.h"
 #include "selectornode.h"
 #include "outparametersnode.h"
@@ -73,6 +74,8 @@ IIlwisObject AssignmentNode::getObject(const Symbol& sym) const {
         return sym._var.value<Ilwis::IGeoReference>().as<IlwisObject>();
     if ( hasType(tp , itCOORDSYSTEM))
         return sym._var.value<Ilwis::ICoordinateSystem>().as<IlwisObject>();
+    if ( hasType(tp , itCOMBINATIONMATRIX))
+        return sym._var.value<Ilwis::ICombinationMatrix>().as<IlwisObject>();
     return IIlwisObject();
 
 }
@@ -208,6 +211,8 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                         ok &= copyObject<CoordinateSystem>(sym, result,symbols);
                     else if ( hasType(tp, itDOMAIN)){
                         ok &= copyObject<Domain>(sym, result,symbols);
+                   } else if ( hasType(tp, itCOMBINATIONMATRIX)){
+                       ok &= copyObject<CombinationMatrix>(sym, result,symbols);
                     } else if ( hasType(tp, itGEOREF)){
                         ok &= copyObject<GeoReference>(sym, result,symbols);
                     } else if (hasType(tp, itTABLE | itCOLUMN)){
