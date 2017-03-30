@@ -2003,6 +2003,10 @@ StandardizationValueConstraint::StandardizationValueConstraint()
 : Standardization()
 , _min(0)
 , _max(-1)
+, _minVal(0)
+, _maxVal(-1)
+, _useMin(false)
+, _useMax(false)
 {
 }
 
@@ -2011,16 +2015,92 @@ StandardizationValueConstraint::StandardizationValueConstraint(Node *node, doubl
 , _min(min)
 , _max(max)
 {
+    _useMin = true;
+    _useMax = false;
+    _minVal = (_min + _max) / 2.0;
+    _maxVal = _minVal;
+}
+
+double StandardizationValueConstraint::min() const
+{
+    return _min;
+}
+
+double StandardizationValueConstraint::max() const
+{
+    return _max;
+}
+
+double StandardizationValueConstraint::minVal() const
+{
+    return _minVal;
+}
+
+double StandardizationValueConstraint::maxVal() const
+{
+    return _maxVal;
+}
+
+void StandardizationValueConstraint::setMinVal(double minVal)
+{
+    _minVal = minVal;
+    emit minValChanged();
+}
+
+void StandardizationValueConstraint::setMaxVal(double maxVal)
+{
+    _maxVal = maxVal;
+    emit maxValChanged();
+}
+
+bool StandardizationValueConstraint::useMin() const
+{
+    return _useMin;
+}
+
+bool StandardizationValueConstraint::useMax() const
+{
+    return _useMax;
+}
+
+void StandardizationValueConstraint::setUseMin(bool useMin)
+{
+    _useMin = useMin;
+    emit useMinChanged();
+}
+
+void StandardizationValueConstraint::setUseMax(bool useMax)
+{
+    _useMax = useMax;
+    emit useMaxChanged();
 }
 
 QString StandardizationValueConstraint::getPython(QString rasterCoverage, QString outputName) const
 {
-    return outputName + "=" + rasterCoverage + "\n";
+    return outputName + "=" + getMapcalc(rasterCoverage) + "\n";
 }
 
 QString StandardizationValueConstraint::getMapcalc(QString rasterCoverage) const
 {
-    return rasterCoverage;
+    // cases:
+    // !_useMin && !_useMax (no constraint?)
+    // _useMin && !_useMax
+    // !_useMin && _useMax
+    // _useMin && _useMax && rMin <= rMax
+    // _useMin && _useMax && rMin > rMax
+    if (!(_useMin || _useMax))
+        return rasterCoverage;
+    else if (_useMin && !_useMax)
+        return QString("%1>=%2").arg(rasterCoverage).arg(_minVal);
+    else if (!_useMin && _useMax)
+        return QString("%1<=%2").arg(rasterCoverage).arg(_maxVal);
+    else // (_useMin && _useMax)
+    {
+        if (_minVal <= _maxVal)
+            return QString("(%1>=%2) & (%1<=%3)").arg(rasterCoverage).arg(_minVal).arg(_maxVal);
+        else // _maxVal < _minVal
+            return QString("(%1<=%2) | (%1>=%3)").arg(rasterCoverage).arg(_maxVal).arg(_minVal);
+    }
 }
 
 int StandardizationValueConstraint::type() const
@@ -2035,17 +2115,28 @@ StandardizationValueConstraint * StandardizationValueConstraint::pStandardizatio
 
 Standardization * StandardizationValueConstraint::clone() const
 {
-    return new StandardizationValueConstraint(_node, _min, _max);
+    StandardizationValueConstraint * stdClone = new StandardizationValueConstraint(_node, _min, _max);
+    stdClone->_minVal = _minVal;
+    stdClone->_maxVal = _maxVal;
+    stdClone->_useMin = _useMin;
+    stdClone->_useMax = _useMax;
+    return stdClone;
 }
 
 void StandardizationValueConstraint::store(QDataStream &stream)
 {
-
+    stream << _minVal;
+    stream << _maxVal;
+    stream << _useMin;
+    stream << _useMax;
 }
 
 void StandardizationValueConstraint::load(QDataStream &stream)
 {
-
+    stream >> _minVal;
+    stream >> _maxVal;
+    stream >> _useMin;
+    stream >> _useMax;
 }
 
 /* ******************************************************* */
