@@ -205,12 +205,11 @@ OperationImplementation::State BinaryLogical::prepare(ExecutionContext *,const S
     else if ( oper == "greatereq")
         _operator = loGREATEREQ;
 
-    if ( ((ptype1 | ptype2) & (itRASTER | itNUMBER)) ) {
-        if(!prepareCoverageNumber(ptype1, ptype2))
-            return sPREPAREFAILED;
-
-    } else if ( ptype1 & ptype2 & itRASTER ) {
+    if ( ptype1 & ptype2 & itRASTER ) {
         if(!prepareCoverageCoverage())
+            return sPREPAREFAILED;
+    } else if ( ((ptype1 | ptype2) & (itRASTER | itNUMBER)) ) {
+        if(!prepareCoverageNumber(ptype1, ptype2))
             return sPREPAREFAILED;
     }
 
