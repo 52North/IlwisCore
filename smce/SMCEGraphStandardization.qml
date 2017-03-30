@@ -12,12 +12,10 @@ Column {
     width : stdEditor.width
     spacing: 1
 
-    signal executeStandardization()
-
-    property int minX: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.min : 0
-    property int maxX: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.max : 0
-    property int minY: 0
-    property int maxY: 1
+    property double minX: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.min : 0
+    property double maxX: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) ? selectedNode.standardization.standardizationValue.max : 0
+    property double minY: 0
+    property double maxY: 1
 
     Row {
         GroupBox {
