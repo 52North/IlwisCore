@@ -21,8 +21,6 @@ Item {
 
     property TableModel table
 
-    signal executeStandardization
-
     Component{
         id : column
         TableColumn{            
@@ -117,7 +115,7 @@ Item {
         anchors.right: tableView.right
 
         onClicked: {
-            executeStandardization()
+            //executeStandardization()
         }
     }
 
