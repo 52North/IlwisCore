@@ -194,6 +194,21 @@ QList <Node*> Node::subFactors() const
     return result;
 }
 
+QList <Node*> Node::getConstraints() const
+{
+    QList<Node*> result;
+    for (Node * node : _subNodes) {
+        if (node->type() == NodeType::Group) {
+            QList<Node*> subResult = node->getConstraints();
+            for (Node * subNode : subResult)
+                result.append(subNode);
+        } else if (node->type() == NodeType::Constraint) {
+            result.append(node);
+        }
+    }
+    return result;
+}
+
 QQmlListProperty<Node> Node::subNodesQml()
 {
     return QQmlListProperty<Node>(this, _subNodes);
@@ -315,7 +330,7 @@ void Node::deleteChild(Node *node)
     recalcWeights();
 }
 
-QString Node::getPython(QString outputName) const
+QString Node::getPython(QString outputName, bool first) const
 {
     QString result;
     if (_weight == 0)
@@ -323,11 +338,37 @@ QString Node::getPython(QString outputName) const
     switch(_type) {
     case NodeType::Group:
         {
+            // Cases:
+            // 1: there are no children
+            // 2: there are only factors
+            // 3: there are only constraints
+            // 4: there are both factors and constraints
             QList<Node*> children = subFactors();
-            if (children.length() == 0)
-                return "";
-            else {
-                QString nodeOutputName = QString("%1_%2").arg(outputName).arg(level());
+            QString nodeOutputName = QString("%1_%2").arg(outputName).arg(level());
+            if (children.length() == 0) {
+                if (first) {
+                    QList<Node*> constraints = getConstraints();
+                    QString constraintScript;
+                    for (Node * node : constraints) {
+                        if (constraintScript.length() > 0) {
+                            QString term = node->getPython(nodeOutputName);
+                            if (term.length() > 0) {
+                                constraintScript += term;
+                                constraintScript += QString("%1=%1 & %2\n").arg(outputName + "_constraint").arg(nodeOutputName);
+                                constraintScript += QString("del %1\n").arg(nodeOutputName);
+                            }
+                        } else {
+                            constraintScript = node->getPython(outputName + "_constraint");
+                        }
+                    }
+                    if (constraintScript.length() > 0) {
+                        result += constraintScript;
+                        result += QString("%1=ilwis.Engine.do('iffraster',%2,1,0)\n").arg(outputName).arg(outputName + "_constraint");
+                        result += QString("del %1\n").arg(outputName + "_constraint");
+                    }
+                } else
+                    return "";
+            } else {
                 for (Node * node : children) {
                     if (result.length() > 0) {
                         QString term = node->getPython(nodeOutputName);
@@ -343,6 +384,27 @@ QString Node::getPython(QString outputName) const
                 if (_weight > 0 && _weight < 1) {
                     result += QString("%1=%2*%1\n").arg(outputName).arg(_weight);
                 }
+                if (first) {
+                    QList<Node*> constraints = getConstraints();
+                    QString constraintScript;
+                    for (Node * node : constraints) {
+                        if (constraintScript.length() > 0) {
+                            QString term = node->getPython(nodeOutputName);
+                            if (term.length() > 0) {
+                                constraintScript += term;
+                                constraintScript += QString("%1=%1 & %2\n").arg(outputName + "_constraint").arg(nodeOutputName);
+                                constraintScript += QString("del %1\n").arg(nodeOutputName);
+                            }
+                        } else {
+                            constraintScript = node->getPython(outputName + "_constraint");
+                        }
+                    }
+                    if (constraintScript.length() > 0) {
+                        result += constraintScript;
+                        result += QString("%1=ilwis.Engine.do('iffraster',%2,%1,0)\n").arg(outputName).arg(outputName + "_constraint");
+                        result += QString("del %1\n").arg(outputName + "_constraint");
+                    }
+                }
             }
         }
         break;
@@ -353,6 +415,14 @@ QString Node::getPython(QString outputName) const
             result += _standardization->getPython(coverageName, outputName);
             if (_weight > 0 && _weight < 1)
                 result += QString("%1=%2*%1\n").arg(outputName).arg(_weight);
+            result += "del " + coverageName + "\n";
+            break;
+        }
+    case NodeType::Constraint:
+        {
+            QString coverageName = outputName + "_input";
+            result = coverageName + "=ilwis.RasterCoverage('" + _fileName + "')\n";
+            result += _standardization->getPython(coverageName, outputName);
             result += "del " + coverageName + "\n";
             break;
         }

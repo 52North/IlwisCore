@@ -64,6 +64,7 @@ public:
     const Node * parent() const;
     QList <Node*> subNodes();
     QList <Node*> subFactors() const;
+    QList <Node*> getConstraints() const;
     QQmlListProperty<Node> subNodesQml();
     void addNode(Node *node);
     const QString fileName() const;
@@ -71,7 +72,7 @@ public:
     int level() const;
     void deleteChild(Node * node);
     void recalcWeights();
-    QString getPython(QString outputName) const;
+    QString getPython(QString outputName, bool first=false) const;
     QString getMapcalc() const;
     bool nodeDone();
     bool col1Done();
