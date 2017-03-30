@@ -496,6 +496,12 @@ QVariantList UIContextModel::debugProperty(const QString &property)
     return results;
 }
 
+QString UIContextModel::type2icon(const QString &typeName)
+{
+    IlwisTypes tp = TypeHelper::name2type(typeName);
+    return ResourceModel::iconPath(tp);
+}
+
 QString UIContextModel::worldmapCommand(const QString& id) const
 {
     try{

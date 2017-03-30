@@ -7,14 +7,14 @@ import "../Global.js" as Global
 DropArea {
     property alias content : textid.text
     property string labelText
-    property int labelWidth
+    property int labelWidth : 0
     property bool textCanBeCopied : false
     property int fontSize : 8
     property bool readOnly : false;
     property bool transparentBackgrond : true
     property var regexvalidator
     property bool boldLabel : true
-    property int editWidth : Math.max(0,width - label.width)
+    property int editWidth : Math.max(0,width - label.width - (keys.length > 0 ? 22 * keys.length : 0))
     property string ilwisobjectid // not always set
     height : Global.rowHeight
     width : parent.width
@@ -67,6 +67,34 @@ DropArea {
             contentEdited()
         }
     }
+
+    Row {
+        width : childrenRect.width
+        height : 20
+        anchors.left: textid.right
+        Repeater{
+            model : keys.length
+            Button{ width : 20;
+                height:20
+
+                checkable : true
+                checked : false
+                visible: keys.length > 0
+                enabled: visible
+                onClicked : {
+                    if ( keys.length > 0){
+                        var typeName = keys[index]
+                        mastercatalog.currentCatalog.filterChanged(typeName + "|exclusive" , checked)
+                    }
+                }
+                Image{anchors.centerIn : parent;width : 14; height:14
+                    source: keys.length > 0 ? "../images/" + uicontext.type2icon(keys[index]) : ""
+                    fillMode: Image.PreserveAspectFit
+                }
+            }
+        }
+    }
+
     onDropped : {
         content = drag.source.message
         if ( 'ilwisobjectid' in drag.source){

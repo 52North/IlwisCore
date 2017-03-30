@@ -65,6 +65,7 @@ public:
     virtual QFileInfo toLocalFile(const QUrl &url) const;
 
     static const std::unique_ptr<MasterCatalogCache>& cache();
+    std::vector<QString> providers() const;
 
 
 

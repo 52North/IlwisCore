@@ -211,6 +211,18 @@ void CatalogModel::fillKeywordFilter(){
     _filteredItems = QList<ResourceModel *>(tempList);
 }
 
+QStringList CatalogModel::dataProviders() const
+{
+    QStringList result;
+    ICatalog catalog;
+    if(catalog.prepare(resource(), {"mustexist", true})){
+        auto providers = catalog->explorerProviders();
+        for(auto p : providers)
+            result.push_back(p);
+    }
+    return result;
+}
+
 
 void CatalogModel::fillSpatialFilter()
 {

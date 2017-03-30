@@ -70,6 +70,7 @@
 #include "workflow.h"
 #include "analysispattern.h"
 #include "applicationmodel.h"
+#include "combinationmatrix.h"
 #include "script.h"
 #include "model.h"
 
@@ -124,8 +125,19 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
         return createCatalog(resource,options);
     } else if ( resource.ilwisType() & itREPRESENTATION) {
         return createRepresentation(resource,options);
+    }else if ( resource.ilwisType() & itCOMBINATIONMATRIX) {
+        return createCombinationMatrix(resource,options);
     }
     return 0;
+}
+
+IlwisObject *InternalIlwisObjectFactory::createCombinationMatrix(const Resource& resource, const IOOptions &options) const{
+    if (!hasType(resource.ilwisType(), itCOMBINATIONMATRIX)){
+        return nullptr;
+    }
+    CombinationMatrix *matrix = createFromResource<CombinationMatrix>(resource, options);
+
+    return matrix;
 }
 
 IlwisObject *InternalIlwisObjectFactory::createRepresentation(const Resource& resource, const IOOptions &options) const{
@@ -278,6 +290,8 @@ IlwisObject *InternalIlwisObjectFactory::create(IlwisTypes type, const QString& 
         return new Representation();
     case itMODEL:
         return new Model();
+    case itCOMBINATIONMATRIX:
+        return new CombinationMatrix();
     }
     if ( type & itFEATURE)
         return new FeatureCoverage();
@@ -323,6 +337,8 @@ bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
     }  else if ( resource.ilwisType() & itSCRIPT) {
         return true;
     } else if ( resource.ilwisType() & itMODEL) {
+        return true;
+    }else if ( resource.ilwisType() & itCOMBINATIONMATRIX) {
         return true;
     }
 
@@ -886,7 +902,7 @@ IlwisObject *InternalIlwisObjectFactory::createEllipsoid(const Resource& resourc
     QString query    ;
     QString code = resource.code();
 
-    IlwisObject *ell;
+    IlwisObject *ell = 0;
     if ( code == sUNDEF) // meant for new projections which will be initialized later (e.g by the streaming connector)
         ell = createFromResource<Ellipsoid>(resource, options);
     else if ( code != sUNDEF) {

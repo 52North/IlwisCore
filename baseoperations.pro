@@ -67,7 +67,9 @@ HEADERS += \
     baseoperations/conditions/compare.h \
     baseoperations/data/property.h \
     baseoperations/data/connect.h \
-    baseoperations/conditions/rangeoperation.h
+    baseoperations/conditions/rangeoperation.h \
+    baseoperations/creators/createcombinationmatrix.h \
+    baseoperations/math/mapcalc.h
     baseoperations/data/setattributetabel.h
 
 SOURCES += \
@@ -122,7 +124,9 @@ SOURCES += \
     baseoperations/conditions/compare.cpp \
     baseoperations/data/property.cpp \
     baseoperations/data/connect.cpp \
-    baseoperations/conditions/rangeoperation.cpp
+    baseoperations/conditions/rangeoperation.cpp \
+    baseoperations/creators/createcombinationmatrix.cpp \
+    baseoperations/math/mapcalc.cpp
     baseoperations/data/setattributetabel.cpp
 
 

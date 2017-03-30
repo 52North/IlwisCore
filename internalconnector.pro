@@ -36,7 +36,8 @@ HEADERS += \
     internalconnector/internalprojectionconnector.h \
     internalconnector/internalellipsoidconnector.h \
     internalconnector/internalscriptconnector.h \
-    internalconnector/internalmodelconnector.h
+    internalconnector/internalmodelconnector.h \
+    internalconnector/internalcombinationmatrixconnector.h
 
 SOURCES += \
     internalconnector/internalmodule.cpp \
@@ -58,7 +59,8 @@ SOURCES += \
     internalconnector/internalprojectionconnector.cpp \
     internalconnector/internalellipsoidconnector.cpp \
     internalconnector/internalscriptconnector.cpp \
-    internalconnector/internalmodelconnector.cpp
+    internalconnector/internalmodelconnector.cpp \
+    internalconnector/internalcombinationmatrixconnector.cpp
 
 OTHER_FILES += \
     internalconnector/internalconnector.json

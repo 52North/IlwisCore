@@ -3,11 +3,14 @@
 
 #include "kernel_global.h"
 
+class Proj4Parameters;
+
 namespace Ilwis {
 
 class Ellipsoid;
 class Projection;
 class GeodeticDatum;
+
 
 typedef IlwisData<Ellipsoid> IEllipsoid;
 typedef IlwisData<Projection> IProjection;

@@ -91,7 +91,7 @@ void CatalogView::filterChanged(const QString& typeIndication, bool state){
         type = typeIndication.split("|")[0];
         exclusive = true;
     }
-    IlwisTypes tp = IlwisObject::name2Type(type);
+    IlwisTypes tp = TypeHelper::name2type(type);
     auto iter  = _filters.find("object");
     if ( iter == _filters.end()){
         _filters["object"] = FilterItem("object",itANY);

@@ -34,6 +34,21 @@ Column {
         return ""
     }
 
+    function providersQuery(){
+        var query = ""
+        if ( currentCatalog) {
+            var prov = currentCatalog.dataProviders
+
+            for(var i=0; i < prov.length; ++i){
+                if ( query != "")
+                    query += " or "
+                query += "connector=\'" + prov[i] +"\'"
+            }
+            query =  " and (" + query +")"
+        }
+        return "(datatype & %1)!=0 and (readwrite='rc' or readwrite='rcu')" + query
+    }
+
     Controls.FormatsComboBox{
         id : rasters
         width : parent.width
@@ -41,6 +56,7 @@ Column {
         ilwisType: uicontext.typeName2typeId("rastercoverage");
         labelText: qsTr("Raster coverage")
         labelWidth: 120
+        query : providersQuery()
 
         Controls.ToolTip{
             target: rasters
@@ -48,6 +64,7 @@ Column {
         }
 
         Component.onCompleted: {
+            console.debug("passing")
             var name = preferences.preferedDataFormat("rastercoverage")
             if ( name !== "?")
                 rasters.select(name)
@@ -72,6 +89,7 @@ Column {
         ilwisType: uicontext.typeName2typeId("featurecoverage");
         labelText: qsTr("Feature coverage")
         labelWidth: 120
+        query : providersQuery()
 
         Controls.ToolTip{
             target: features
@@ -102,6 +120,7 @@ Column {
         ilwisType: uicontext.typeName2typeId("table");
         labelText: qsTr("Table")
         labelWidth: 120
+         query : providersQuery()
 
         Controls.ToolTip{
             target: table
@@ -131,6 +150,7 @@ Column {
         ilwisType: uicontext.typeName2typeId("coordinatesystem");
         labelText: qsTr("CoordinateSystem")
         labelWidth: 120
+        query : providersQuery()
 
         Controls.ToolTip{
             target: csy
@@ -161,6 +181,7 @@ Column {
         ilwisType: uicontext.typeName2typeId("domain");
         labelText: qsTr("Domain")
         labelWidth: 120
+        query : providersQuery()
 
         Controls.ToolTip{
             target: dom
@@ -190,6 +211,7 @@ Column {
         labelText: qsTr("Catalog")
         labelWidth: 120
         enabled : false // future
+        query : providersQuery()
 
         Controls.ToolTip{
             target: dom

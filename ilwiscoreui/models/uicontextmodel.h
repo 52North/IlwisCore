@@ -70,6 +70,7 @@ public:
     Q_INVOKABLE QObject *getItem(const QString &name, QObject *parent);
     Q_INVOKABLE QString consoleScriptId() const;
     Q_INVOKABLE QVariantList debugProperty(const QString& property);
+    Q_INVOKABLE QString type2icon(const QString& typeName);
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
     QList<VisualAttributeEditor *> propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;

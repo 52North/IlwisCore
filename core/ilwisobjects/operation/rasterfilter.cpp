@@ -21,10 +21,28 @@ LinearGridFilter::LinearGridFilter(const QString &name)
     definition(name);
 }
 
+bool LinearGridFilter::fillDef(int xsize, int ysize, const QStringList& numbers){
+    _rows = xsize;
+    _columns = ysize;
+    int index = 0;
+    double sum = 0;
+    _filterdef.resize( ysize);
+    for(std::vector<double>& row : _filterdef){
+        row.resize(xsize);
+        for(double& v : row)    {
+            v = numbers[index++] .toDouble() ;
+            sum += v;
+        }
+    }
+    _gain = sum != 0 ? 1.0 / sum : 1.0;
+
+    return true;
+}
+
 bool LinearGridFilter::makeCustomFilter(const QString& definition){
     QString def = definition.mid(5, definition.size() - 5);
     QStringList parts = def.split(",");
-    if ( parts.size() == 1)    {
+    if ( parts.size() == 1 || parts.size()==2)    {
         QStringList numbers = parts[0].split(" ");
         if ( numbers.size() % 2 == 0){
             kernel()->issues()->log(TR("Custom linear filters must have odd sizes"));
@@ -35,21 +53,20 @@ bool LinearGridFilter::makeCustomFilter(const QString& definition){
             kernel()->issues()->log(TR("Custom linear filters must be square if no dimensions are given"));
             return false;
         }
-        int xysize  = root;
-        _rows = xysize;
-        _columns = xysize;
-        int index = 0;
-        double sum = 0;
-        _filterdef.resize(xysize);
-        for(std::vector<double>& row : _filterdef){
-            row.resize(xysize);
-            for(double& v : row)    {
-                v = numbers[index++] .toDouble() ;
-                sum += v;
-            }
+        fillDef(root,root,numbers);
+        if ( parts.size() == 2){
+            _gain = parts[1].toDouble() ;
         }
-        _gain = sum != 0 ? 1.0 / sum : 1.0;
-
+    }else {
+        if ( parts.size() == 3 || parts.size() == 4){
+            int xsize = parts[0].toInt();
+            int ysize = parts[1].toInt();
+            QStringList numbers = parts[2].split(" ");
+            fillDef(xsize, ysize, numbers);
+        }
+        if (parts.size() == 4){
+            _gain = parts[3].toDouble() ;
+        }
     }
     return true;
 }

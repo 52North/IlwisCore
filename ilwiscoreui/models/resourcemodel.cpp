@@ -292,6 +292,8 @@ QString ResourceModel::iconPath(IlwisTypes tp)
         return "pixel20.png";
     else if ( tp & itMODEL)
         return "model.png";
+    else if ( tp & itCOMBINATIONMATRIX)
+        return "combomatrix.png";
     else
         return "eye.png";
 }

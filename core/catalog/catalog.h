@@ -117,6 +117,7 @@ public:
 
     IlwisObject *clone();
     void unload();
+    std::vector<QString> explorerProviders();
 
     static const QString DEFAULT_WORKSPACE;
     static bool isSpatialDataLocation(const QUrl& url);

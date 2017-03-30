@@ -87,6 +87,15 @@ const std::unique_ptr<MasterCatalogCache> &CatalogConnector::cache()
     return _mcCache;
 }
 
+std::vector<QString> CatalogConnector::providers() const
+{
+    std::vector<QString> result;
+    for(const auto& explorer: _dataProviders) {
+        result.push_back(explorer->provider());
+    }
+    return result;
+}
+
 QFileInfo CatalogConnector::toLocalFile(const Resource &resource) const
 {
     QFileInfo currentPath =  toLocalFile(resource.url(true));

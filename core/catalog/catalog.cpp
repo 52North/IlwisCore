@@ -180,6 +180,16 @@ void Catalog::unload()
     }
 }
 
+std::vector<QString> Catalog::explorerProviders()
+{
+     CatalogConnector *cconnector = dynamic_cast< CatalogConnector *>(connector().data());
+     if ( cconnector){
+         return cconnector->providers();
+     }
+     return std::vector<QString>();
+
+}
+
 bool Catalog::isSpatialDataLocation(const QUrl &url)
 {
     QString loc = url.toString();

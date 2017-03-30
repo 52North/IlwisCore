@@ -68,12 +68,20 @@ Ilwis::OperationImplementation::State LinearRasterFilter::prepare(ExecutionConte
         return sPREPAREFAILED;
     }
     QString expr = _expression.parm(1).value();
-    int copylist = itDOMAIN | itCOORDSYSTEM | itGEOREF;
+    int copylist =  itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF;
     _outputRaster = OperationHelperRaster::initialize(_inputRaster.as<IlwisObject>(),itRASTER, copylist);
     if ( !_outputRaster.isValid()) {
         ERROR1(ERR_NO_INITIALIZED_1, "output rastercoverage");
         return sPREPAREFAILED;
     }
+    IDomain dom("code=domain:value");
+    _outputRaster->datadefRef() = DataDefinition(dom);
+
+    for(quint32 i = 0; i < _outputRaster->size().zsize(); ++i){
+     QString index = _outputRaster->stackDefinition().index(i);
+        _outputRaster->setBandDefinition(index,DataDefinition(dom));
+    }
+
     if ( outputName != sUNDEF)
         _outputRaster->name(outputName);
     _filter.reset(new LinearGridFilter(expr));

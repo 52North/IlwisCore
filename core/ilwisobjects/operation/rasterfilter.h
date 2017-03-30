@@ -33,6 +33,7 @@ private:
 
     bool definition(const QString& name);
     bool makeCustomFilter(const QString &definition);
+    bool fillDef(int xsize, int ysize, const QStringList &numbers);
 };
 
 class KERNELSHARED_EXPORT RankOrderGridFilter : public RasterFilter{

@@ -50,6 +50,7 @@ private:
     IlwisObject *createRepresentation(const Resource &resource, const IOOptions &options) const;
     Domain *createItemDomain(Ilwis::InternalDatabaseConnection &db, const IOOptions &options, const Resource &resource) const;
     NumericDomain *createNumericDomain(const QString &code, Ilwis::InternalDatabaseConnection &db, const IOOptions &options, const Resource &resource) const;
+    IlwisObject *createCombinationMatrix(const Resource &resource, const IOOptions &options) const;
 
     template<class T> T *createFromResource(const Resource& resource, const IOOptions &options) const{
         T *obj = new T(resource);
@@ -61,6 +62,7 @@ private:
 
         return obj;
     }
+
 
 };
 }
