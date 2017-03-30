@@ -8,7 +8,6 @@ ComboxLabelPair {
     onQueryChanged: {
         itemModel = uicontext.formatList(query, ilwisType)
         if ( itemModel.length === 0){
-            console.debug(ilwisType, itemModel.length)
             enabled : false
             select("")
         }
