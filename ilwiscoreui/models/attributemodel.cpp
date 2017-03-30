@@ -85,6 +85,8 @@ QString AttributeModel::attributename() const
 QString AttributeModel::attributeDomain() const
 {
   if ( _coldefinition.isValid()){
+      if ( _coldefinition.datadef().domain()->ilwisType() == itTEXTDOMAIN)
+          return "text"; // all text domains are unique with a anonymous name; you don't want that in the UI
       return _coldefinition.datadef().domain()->name();
   }
   return "";
