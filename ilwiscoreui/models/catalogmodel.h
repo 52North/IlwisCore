@@ -32,6 +32,7 @@ public:
     Q_PROPERTY(int isScanned READ isScanned CONSTANT)
     Q_PROPERTY(bool canBeAnimated READ canBeAnimated CONSTANT)
     Q_PROPERTY(QStringList objectCounts READ objectCounts NOTIFY objectCountsChanged)
+    Q_PROPERTY(QStringList dataProviders READ dataProviders CONSTANT)
 
 
     ~CatalogModel();
@@ -86,6 +87,7 @@ private:
     bool isActiveFilter(const QString& name) const;
     void fillNameFilter();
     void fillKeywordFilter();
+    QStringList dataProviders() const;
 public slots:
      void containerContentChanged();
 signals:
