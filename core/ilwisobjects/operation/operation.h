@@ -59,6 +59,8 @@ protected:
 
     template<typename T, typename S> bool compare2(LogicalOperator oper, const T& v1, const S& v2){
         switch(oper) {
+        case loAND:
+            return ((bool)v1) && ((bool)v2);
         case loOR:
             return ((bool)v1) || ((bool)v2);
         case loXOR:
