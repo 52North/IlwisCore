@@ -27,7 +27,7 @@ Rectangle {
 
     Text {
         id : titleText
-        text : qsTr("Attributes22")
+        text : qsTr("Attributes")
         font.bold: true
         font.pointSize: 9
         height : 25

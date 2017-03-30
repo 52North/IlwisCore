@@ -56,6 +56,7 @@ Column {
         ilwisType: uicontext.typeName2typeId("rastercoverage");
         labelText: qsTr("Raster coverage")
         labelWidth: 120
+        query : providersQuery()
 
         Controls.ToolTip{
             target: rasters
@@ -63,6 +64,7 @@ Column {
         }
 
         Component.onCompleted: {
+            console.debug("passing")
             var name = preferences.preferedDataFormat("rastercoverage")
             if ( name !== "?")
                 rasters.select(name)
@@ -118,6 +120,7 @@ Column {
         ilwisType: uicontext.typeName2typeId("table");
         labelText: qsTr("Table")
         labelWidth: 120
+         query : providersQuery()
 
         Controls.ToolTip{
             target: table
@@ -147,6 +150,7 @@ Column {
         ilwisType: uicontext.typeName2typeId("coordinatesystem");
         labelText: qsTr("CoordinateSystem")
         labelWidth: 120
+        query : providersQuery()
 
         Controls.ToolTip{
             target: csy
@@ -177,6 +181,7 @@ Column {
         ilwisType: uicontext.typeName2typeId("domain");
         labelText: qsTr("Domain")
         labelWidth: 120
+        query : providersQuery()
 
         Controls.ToolTip{
             target: dom
@@ -206,6 +211,7 @@ Column {
         labelText: qsTr("Catalog")
         labelWidth: 120
         enabled : false // future
+        query : providersQuery()
 
         Controls.ToolTip{
             target: dom
