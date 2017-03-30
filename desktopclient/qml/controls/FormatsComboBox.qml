@@ -5,6 +5,10 @@ ComboxLabelPair {
     property string ilwisType
     property string query : "(datatype & %1)!=0 and (readwrite='rc' or readwrite='rcu')"
 
+    onQueryChanged: {
+        itemModel = uicontext.formatList(query, ilwisType)
+    }
+
     function selectedFormatString() {
         var expr = "name='" + comboText + "'";
         var result = uicontext.formatList(expr, "format")
