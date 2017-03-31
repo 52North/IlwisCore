@@ -28,9 +28,6 @@ Item {
         anchors.top: nodeText.bottom
     }
 
-
-
-
     Button {
         id : applyBut
         height : 22
@@ -40,5 +37,4 @@ Item {
 
         }
     }
-
 }
