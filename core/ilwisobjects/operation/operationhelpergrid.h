@@ -40,7 +40,8 @@ public:
                     minv = Ilwis::min(v,minv);
                     maxv = Ilwis::max(v,maxv);
                 }
-                NumericRange *rng = new NumericRange(minv, maxv, 3);
+                double resolution = outputRaster->datadefRef().domain()->range<NumericRange>()->resolution();
+                NumericRange *rng = new NumericRange(minv, maxv, resolution);
                 outputRaster->datadefRef().range(rng);
             }
         }
