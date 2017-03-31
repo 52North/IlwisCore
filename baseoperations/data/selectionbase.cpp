@@ -194,7 +194,7 @@ bool SelectionBase::ExpressionPart::match(const SPFeatureI &feature,SelectionBas
             bool ok1,ok2;
             double v1 = val.toDouble(&ok1);
             double v2 = _rightSide.toDouble(&ok2);
-            bool ok3 = operation->compare1(_operator, v1, v2);
+            bool ok3 = operation->compare2(_operator, v1, v2);
             return ok1&& ok2 && ok3;
         }
     }
@@ -225,7 +225,7 @@ bool SelectionBase::ExpressionPart::match(const Pixel& location,double pixelValu
         }
         bool ok1;
         double v2 = _rightSide.toDouble(&ok1);
-        bool ok2 = operation->compare1(_operator, pixelValue, v2);
+        bool ok2 = operation->compare2(_operator, pixelValue, v2);
         return ok1&& ok2;
     }
     return true;
