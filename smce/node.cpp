@@ -282,7 +282,6 @@ Node * Node::addGroup(QString name)
     node->setName(name);
     node->setWeight(-1); // a new empty group has no weight, until factors are added to it
     addNode(node);
-    recalcWeights();
     return node;
 }
 
@@ -306,18 +305,25 @@ void Node::addConstraint(QString name)
 
 void Node::recalcWeights()
 {
-    QList<Node*> sub = subFactors();
-    if (sub.size() > 0) {
-        if (sub.size() > 1) {
-            for (Node* node : sub) {
-                node->setWeight(0);
-            }
-        } else
-            sub[0]->setWeight(1);
-        if (_parent != 0 && weight() == -1)
-            setWeight(0); // first-time set weight for group with factor-children
-    } else if (_parent != 0)
-        setWeight(-1); // no weight if group has no factor-children
+    if (_weights) {
+        _weights->Recalculate();
+        _weights->apply();
+    } else {
+        QList<Node*> sub = subFactors();
+        if (sub.size() > 0) {
+            if (sub.size() > 1) {
+                for (Node* node : sub) {
+                    node->setWeight(0);
+                }
+            } else
+                sub[0]->setWeight(1);
+            if (_parent != 0 && weight() == -1)
+                setWeight(0); // first-time set weight for group with factor-children
+        } else if (_parent != 0)
+            setWeight(-1); // no weight if group has no factor-children
+    }
+    if (_parent != 0)
+        _parent->recalcWeights(); // propagate all the way to the root; adding the first or deleting the last factor in a (sub)group may influence all its parents
 }
 
 void Node::deleteNode()
