@@ -613,6 +613,7 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
     QString expression;
     QStringList parms = parameters.split("|");
     bool hasMissingParameters = false;
+    std::vector<QString> reserved={"and","or","xor","*","/","mod","not","+","-"};
     int maxinputparameters = operationresource["inparameters"].toString().split("|").last().toInt();
     for(int i = 0; i < parms.size(); ++ i){
         if (operationresource.ilwisType() & itWORKFLOW){
@@ -636,7 +637,11 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
         if(i < maxinputparameters ){
             if ( expression.size() != 0)
                 expression += ",";
-            expression += (parms[i] == "" ?  "?input_" + QString::number(i+1) : parms[i]);
+            QString parm = parms[i];
+            auto iter = std::find(reserved.begin(), reserved.end(), parm);
+            if ( iter != reserved.end())
+                parm  = "\'" + parm+ "\'";
+            expression += (parm == "" ?  "?input_" + QString::number(i+1) : parm);
         }
 
     }
