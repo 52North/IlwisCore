@@ -64,6 +64,7 @@ public:
     const Node * parent() const;
     QList <Node*> subNodes();
     QList <Node*> subFactors() const;
+    QList <Node*> getConstraints() const;
     QQmlListProperty<Node> subNodesQml();
     void addNode(Node *node);
     const QString fileName() const;
@@ -71,7 +72,7 @@ public:
     int level() const;
     void deleteChild(Node * node);
     void recalcWeights();
-    QString getPython(QString outputName) const;
+    QString getPython(QString outputName, bool first=false) const;
     QString getMapcalc() const;
     bool nodeDone();
     bool col1Done();
@@ -194,6 +195,10 @@ private:
 };
 
 class StandardizationValue;
+class StandardizationValueConstraint;
+class StandardizationClass;
+class StandardizationBool;
+class StandardizationBoolConstraint;
 
 class Anchor : public QObject
 {
@@ -371,10 +376,18 @@ class Standardization : public QObject
     Q_ENUMS(StandardizationType)
     Q_PROPERTY( int type READ type NOTIFY typeChanged )
     Q_PROPERTY( StandardizationValue * standardizationValue READ pStandardizationValue NOTIFY standardizationValueChanged )
+    Q_PROPERTY( StandardizationValueConstraint * standardizationValueConstraint READ pStandardizationValueConstraint NOTIFY standardizationValueConstraintChanged )
+    Q_PROPERTY( StandardizationClass * standardizationClass READ pStandardizationClass NOTIFY standardizationClassChanged )
+    Q_PROPERTY( StandardizationBool * standardizationBool READ pStandardizationBool NOTIFY standardizationBoolChanged )
+    Q_PROPERTY( StandardizationBoolConstraint * standardizationBoolConstraint READ pStandardizationBoolConstraint NOTIFY standardizationBoolConstraintChanged )
 
 signals:
    void typeChanged();
    void standardizationValueChanged();
+   void standardizationValueConstraintChanged();
+   void standardizationClassChanged();
+   void standardizationBoolChanged();
+   void standardizationBoolConstraintChanged();
 
 public:
     enum StandardizationType{ None=0, Value=1, ValueConstraint=2, Class=3, ClassConstraint=4, Bool=5, BoolConstraint=6 };
@@ -384,6 +397,10 @@ public:
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
     virtual StandardizationValue * pStandardizationValue();
+    virtual StandardizationValueConstraint * pStandardizationValueConstraint();
+    virtual StandardizationClass * pStandardizationClass();
+    virtual StandardizationBool * pStandardizationBool();
+    virtual StandardizationBoolConstraint * pStandardizationBoolConstraint();
     static Standardization * create(Node *node);
     Q_INVOKABLE virtual void apply();
     virtual Standardization * clone() const;
@@ -463,7 +480,7 @@ public:
 
 protected:
     Node * _node;
-    const double _min;
+    const double _min; // the min/max of the rastercoverage
     const double _max;
 };
 
@@ -486,13 +503,38 @@ private:
 class StandardizationValueConstraint : public Standardization
 {
     Q_OBJECT
+    Q_PROPERTY( double min READ min NOTIFY minChanged )
+    Q_PROPERTY( double max READ max NOTIFY maxChanged )
+    Q_PROPERTY( double minVal READ minVal WRITE setMinVal NOTIFY minValChanged )
+    Q_PROPERTY( double maxVal READ maxVal WRITE setMaxVal NOTIFY maxValChanged )
+    Q_PROPERTY( bool useMin READ useMin WRITE setUseMin NOTIFY useMinChanged )
+    Q_PROPERTY( bool useMax READ useMax WRITE setUseMax NOTIFY useMaxChanged )
+
+signals:
+    void minChanged();
+    void maxChanged();
+    void minValChanged();
+    void maxValChanged();
+    void useMinChanged();
+    void useMaxChanged();
 
 public:
     StandardizationValueConstraint();
     StandardizationValueConstraint(Node *node, double min, double max);
+    double min() const;
+    double max() const;
+    double minVal() const;
+    double maxVal() const;
+    void setMinVal(double minVal);
+    void setMaxVal(double maxVal);
+    bool useMin() const;
+    bool useMax() const;
+    void setUseMin(bool useMin);
+    void setUseMax(bool useMax);
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
+    virtual StandardizationValueConstraint * pStandardizationValueConstraint();
     virtual Standardization * clone() const;
 
 protected:
@@ -500,8 +542,12 @@ protected:
     virtual void load(QDataStream &stream);
 
 protected:
-    const double _min;
+    const double _min; // the min/max of the rastercoverage
     const double _max;
+    double _minVal; // the min/max thresholds that the user has chosen
+    double _maxVal;
+    bool _useMin; // whether _minVal and/or _maxVal must be used
+    bool _useMax;
 };
 
 class StandardizationClass : public Standardization
@@ -514,6 +560,7 @@ public:
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
+    virtual StandardizationClass * pStandardizationClass();
     virtual Standardization * clone() const;
 
 protected:
@@ -534,6 +581,7 @@ public:
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
+    virtual StandardizationBool * pStandardizationBool();
     virtual Standardization * clone() const;
 
 protected:
@@ -551,6 +599,7 @@ public:
     virtual QString getPython(QString rasterCoverage, QString outputName) const;
     virtual QString getMapcalc(QString rasterCoverage) const;
     virtual int type() const;
+    virtual StandardizationBoolConstraint * pStandardizationBoolConstraint();
     virtual Standardization * clone() const;
 
 protected:

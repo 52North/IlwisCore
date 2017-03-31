@@ -158,6 +158,7 @@ DISTFILES += \
     smce/SMCENodeEval.qml \
     smce/SMCEDefForm.qml \
     smce/SMCEEvalForm.qml \
-    smce/SMCEGraphStandardization.qml
+    smce/SMCEGraphStandardization.qml \
+    smce/SMCEValueConstraintStandardization.qml
 
 

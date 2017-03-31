@@ -194,6 +194,21 @@ QList <Node*> Node::subFactors() const
     return result;
 }
 
+QList <Node*> Node::getConstraints() const
+{
+    QList<Node*> result;
+    for (Node * node : _subNodes) {
+        if (node->type() == NodeType::Group) {
+            QList<Node*> subResult = node->getConstraints();
+            for (Node * subNode : subResult)
+                result.append(subNode);
+        } else if (node->type() == NodeType::Constraint) {
+            result.append(node);
+        }
+    }
+    return result;
+}
+
 QQmlListProperty<Node> Node::subNodesQml()
 {
     return QQmlListProperty<Node>(this, _subNodes);
@@ -315,7 +330,7 @@ void Node::deleteChild(Node *node)
     recalcWeights();
 }
 
-QString Node::getPython(QString outputName) const
+QString Node::getPython(QString outputName, bool first) const
 {
     QString result;
     if (_weight == 0)
@@ -323,11 +338,37 @@ QString Node::getPython(QString outputName) const
     switch(_type) {
     case NodeType::Group:
         {
+            // Cases:
+            // 1: there are no children
+            // 2: there are only factors
+            // 3: there are only constraints
+            // 4: there are both factors and constraints
             QList<Node*> children = subFactors();
-            if (children.length() == 0)
-                return "";
-            else {
-                QString nodeOutputName = QString("%1_%2").arg(outputName).arg(level());
+            QString nodeOutputName = QString("%1_%2").arg(outputName).arg(level());
+            if (children.length() == 0) {
+                if (first) {
+                    QList<Node*> constraints = getConstraints();
+                    QString constraintScript;
+                    for (Node * node : constraints) {
+                        if (constraintScript.length() > 0) {
+                            QString term = node->getPython(nodeOutputName);
+                            if (term.length() > 0) {
+                                constraintScript += term;
+                                constraintScript += QString("%1=%1 & %2\n").arg(outputName + "_constraint").arg(nodeOutputName);
+                                constraintScript += QString("del %1\n").arg(nodeOutputName);
+                            }
+                        } else {
+                            constraintScript = node->getPython(outputName + "_constraint");
+                        }
+                    }
+                    if (constraintScript.length() > 0) {
+                        result += constraintScript;
+                        result += QString("%1=ilwis.Engine.do('iffraster',%2,1,0)\n").arg(outputName).arg(outputName + "_constraint");
+                        result += QString("del %1\n").arg(outputName + "_constraint");
+                    }
+                } else
+                    return "";
+            } else {
                 for (Node * node : children) {
                     if (result.length() > 0) {
                         QString term = node->getPython(nodeOutputName);
@@ -343,6 +384,27 @@ QString Node::getPython(QString outputName) const
                 if (_weight > 0 && _weight < 1) {
                     result += QString("%1=%2*%1\n").arg(outputName).arg(_weight);
                 }
+                if (first) {
+                    QList<Node*> constraints = getConstraints();
+                    QString constraintScript;
+                    for (Node * node : constraints) {
+                        if (constraintScript.length() > 0) {
+                            QString term = node->getPython(nodeOutputName);
+                            if (term.length() > 0) {
+                                constraintScript += term;
+                                constraintScript += QString("%1=%1 & %2\n").arg(outputName + "_constraint").arg(nodeOutputName);
+                                constraintScript += QString("del %1\n").arg(nodeOutputName);
+                            }
+                        } else {
+                            constraintScript = node->getPython(outputName + "_constraint");
+                        }
+                    }
+                    if (constraintScript.length() > 0) {
+                        result += constraintScript;
+                        result += QString("%1=ilwis.Engine.do('iffraster',%2,%1,0)\n").arg(outputName).arg(outputName + "_constraint");
+                        result += QString("del %1\n").arg(outputName + "_constraint");
+                    }
+                }
             }
         }
         break;
@@ -353,6 +415,14 @@ QString Node::getPython(QString outputName) const
             result += _standardization->getPython(coverageName, outputName);
             if (_weight > 0 && _weight < 1)
                 result += QString("%1=%2*%1\n").arg(outputName).arg(_weight);
+            result += "del " + coverageName + "\n";
+            break;
+        }
+    case NodeType::Constraint:
+        {
+            QString coverageName = outputName + "_input";
+            result = coverageName + "=ilwis.RasterCoverage('" + _fileName + "')\n";
+            result += _standardization->getPython(coverageName, outputName);
             result += "del " + coverageName + "\n";
             break;
         }
@@ -1652,6 +1722,26 @@ StandardizationValue * Standardization::pStandardizationValue()
     return 0;
 }
 
+StandardizationValueConstraint * Standardization::pStandardizationValueConstraint()
+{
+    return 0;
+}
+
+StandardizationClass * Standardization::pStandardizationClass()
+{
+    return 0;
+}
+
+StandardizationBool * Standardization::pStandardizationBool()
+{
+    return 0;
+}
+
+StandardizationBoolConstraint * Standardization::pStandardizationBoolConstraint()
+{
+    return 0;
+}
+
 void Standardization::apply()
 {
     _node->setStandardization(this);
@@ -1983,6 +2073,10 @@ StandardizationValueConstraint::StandardizationValueConstraint()
 : Standardization()
 , _min(0)
 , _max(-1)
+, _minVal(0)
+, _maxVal(-1)
+, _useMin(false)
+, _useMax(false)
 {
 }
 
@@ -1991,16 +2085,92 @@ StandardizationValueConstraint::StandardizationValueConstraint(Node *node, doubl
 , _min(min)
 , _max(max)
 {
+    _useMin = true;
+    _useMax = false;
+    _minVal = (_min + _max) / 2.0;
+    _maxVal = _minVal;
+}
+
+double StandardizationValueConstraint::min() const
+{
+    return _min;
+}
+
+double StandardizationValueConstraint::max() const
+{
+    return _max;
+}
+
+double StandardizationValueConstraint::minVal() const
+{
+    return _minVal;
+}
+
+double StandardizationValueConstraint::maxVal() const
+{
+    return _maxVal;
+}
+
+void StandardizationValueConstraint::setMinVal(double minVal)
+{
+    _minVal = minVal;
+    emit minValChanged();
+}
+
+void StandardizationValueConstraint::setMaxVal(double maxVal)
+{
+    _maxVal = maxVal;
+    emit maxValChanged();
+}
+
+bool StandardizationValueConstraint::useMin() const
+{
+    return _useMin;
+}
+
+bool StandardizationValueConstraint::useMax() const
+{
+    return _useMax;
+}
+
+void StandardizationValueConstraint::setUseMin(bool useMin)
+{
+    _useMin = useMin;
+    emit useMinChanged();
+}
+
+void StandardizationValueConstraint::setUseMax(bool useMax)
+{
+    _useMax = useMax;
+    emit useMaxChanged();
 }
 
 QString StandardizationValueConstraint::getPython(QString rasterCoverage, QString outputName) const
 {
-    return outputName + "=" + rasterCoverage + "\n";
+    return outputName + "=" + getMapcalc(rasterCoverage) + "\n";
 }
 
 QString StandardizationValueConstraint::getMapcalc(QString rasterCoverage) const
 {
-    return rasterCoverage;
+    // cases:
+    // !_useMin && !_useMax (no constraint?)
+    // _useMin && !_useMax
+    // !_useMin && _useMax
+    // _useMin && _useMax && rMin <= rMax
+    // _useMin && _useMax && rMin > rMax
+    if (!(_useMin || _useMax))
+        return rasterCoverage;
+    else if (_useMin && !_useMax)
+        return QString("%1>=%2").arg(rasterCoverage).arg(_minVal);
+    else if (!_useMin && _useMax)
+        return QString("%1<=%2").arg(rasterCoverage).arg(_maxVal);
+    else // (_useMin && _useMax)
+    {
+        if (_minVal <= _maxVal)
+            return QString("(%1>=%2) & (%1<=%3)").arg(rasterCoverage).arg(_minVal).arg(_maxVal);
+        else // _maxVal < _minVal
+            return QString("(%1<=%2) | (%1>=%3)").arg(rasterCoverage).arg(_maxVal).arg(_minVal);
+    }
 }
 
 int StandardizationValueConstraint::type() const
@@ -2008,19 +2178,35 @@ int StandardizationValueConstraint::type() const
     return Standardization::StandardizationType::ValueConstraint;
 }
 
+StandardizationValueConstraint * StandardizationValueConstraint::pStandardizationValueConstraint()
+{
+    return this;
+}
+
 Standardization * StandardizationValueConstraint::clone() const
 {
-    return new StandardizationValueConstraint(_node, _min, _max);
+    StandardizationValueConstraint * stdClone = new StandardizationValueConstraint(_node, _min, _max);
+    stdClone->_minVal = _minVal;
+    stdClone->_maxVal = _maxVal;
+    stdClone->_useMin = _useMin;
+    stdClone->_useMax = _useMax;
+    return stdClone;
 }
 
 void StandardizationValueConstraint::store(QDataStream &stream)
 {
-
+    stream << _minVal;
+    stream << _maxVal;
+    stream << _useMin;
+    stream << _useMax;
 }
 
 void StandardizationValueConstraint::load(QDataStream &stream)
 {
-
+    stream >> _minVal;
+    stream >> _maxVal;
+    stream >> _useMin;
+    stream >> _useMax;
 }
 
 /* ******************************************************* */
@@ -2050,6 +2236,11 @@ QString StandardizationClass::getMapcalc(QString rasterCoverage) const
 int StandardizationClass::type() const
 {
     return _constraint ? Standardization::StandardizationType::ClassConstraint : Standardization::StandardizationType::Class;
+}
+
+StandardizationClass * StandardizationClass::pStandardizationClass()
+{
+    return this;
 }
 
 Standardization * StandardizationClass::clone() const
@@ -2094,6 +2285,11 @@ int StandardizationBool::type() const
     return Standardization::StandardizationType::Bool;
 }
 
+StandardizationBool * StandardizationBool::pStandardizationBool()
+{
+    return this;
+}
+
 Standardization * StandardizationBool::clone() const
 {
     return new StandardizationBool(_node);
@@ -2134,6 +2330,11 @@ QString StandardizationBoolConstraint::getMapcalc(QString rasterCoverage) const
 int StandardizationBoolConstraint::type() const
 {
     return Standardization::StandardizationType::BoolConstraint;
+}
+
+StandardizationBoolConstraint * StandardizationBoolConstraint::pStandardizationBoolConstraint()
+{
+    return this;
 }
 
 Standardization * StandardizationBoolConstraint::clone() const
