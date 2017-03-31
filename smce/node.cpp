@@ -188,9 +188,12 @@ QList<Node*> Node::subNodes()
 QList <Node*> Node::subFactors() const
 {
     QList<Node*> result;
-    for (Node * node : _subNodes)
-        if (node->type() == NodeType::Group || node->type() == NodeType::Factor)
+    for (Node * node : _subNodes) {
+        if (node->type() == NodeType::Factor)
             result.append(node);
+        else if (node->type() == NodeType::Group && node->subFactors().length() > 0)
+            result.append(node);
+    }
     return result;
 }
 
@@ -277,6 +280,7 @@ Node * Node::addGroup(QString name)
     Node * node = new Node(this);
     node->setType(Group);
     node->setName(name);
+    node->setWeight(-1); // a new empty group has no weight, until factors are added to it
     addNode(node);
     recalcWeights();
     return node;
@@ -302,13 +306,18 @@ void Node::addConstraint(QString name)
 
 void Node::recalcWeights()
 {
-    if (subFactors().size() > 1) {
-        for (Node* node : subFactors()) {
-            node->setWeight(0);
-        }
-    } else if (subFactors().size() == 1) {
-        subFactors()[0]->setWeight(1);
-    }
+    QList<Node*> sub = subFactors();
+    if (sub.size() > 0) {
+        if (sub.size() > 1) {
+            for (Node* node : sub) {
+                node->setWeight(0);
+            }
+        } else
+            sub[0]->setWeight(1);
+        if (_parent != 0 && weight() == -1)
+            setWeight(0); // first-time set weight for group with factor-children
+    } else if (_parent != 0)
+        setWeight(-1); // no weight if group has no factor-children
 }
 
 void Node::deleteNode()
