@@ -142,8 +142,8 @@ Column {
                 onClicked: {
                     if (selectedNode) {
                         selectedNode.modelData.resetStandardizationEdits()
-                        if (stdEditor && stdEditor.item && stdEditor.item.children)
-                            stdEditor.item.children[1].repaint() // a hack for now to repaint the canvas
+                        if (stdEditor && stdEditor.item)
+                            stdEditor.item.selItemChanged()
                     }
                 }
             }
@@ -211,7 +211,7 @@ Column {
 
     function selNodeChanged() {
         if (selectedNode && selectedNode.type !== Node.Group)
-            if (stdEditor && stdEditor.item && stdEditor.item.children)
-                stdEditor.item.children[1].repaint() // a hack for now to repaint the canvas
+            if (stdEditor && stdEditor.item)
+                stdEditor.item.refresh()
     }
 }

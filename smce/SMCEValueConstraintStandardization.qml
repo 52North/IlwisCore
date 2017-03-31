@@ -19,6 +19,13 @@ Column {
     property bool useMin: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValueConstraint !== null) ? selectedNode.standardization.standardizationValueConstraint.useMin : false
     property bool useMax: (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValueConstraint !== null) ? selectedNode.standardization.standardizationValueConstraint.useMax : false
 
+    function refresh() {
+        minimum.checked = useMin
+        maximum.checked = useMax
+        minText.text = minVal.toFixed(3).toString()
+        maxText.text = maxVal.toFixed(3).toString()
+    }
+
     Text {
         text: qsTr("The minimum is ") + minX.toString()
     }
@@ -33,14 +40,18 @@ Column {
 
     Row {
         CheckBox {
+            id: minimum
             text: qsTr("Minimum")
-            checked: useMin
             onClicked: {
                 if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValueConstraint !== null)
                     selectedNode.standardization.standardizationValueConstraint.useMin = checked
             }
+            Component.onCompleted: {
+                checked = useMin
+            }
         }
         TextField {
+            id: minText
             text : ""
             font.pointSize: 8
             visible: useMin
@@ -78,14 +89,18 @@ Column {
 
     Row {
         CheckBox {
+            id: maximum
             text: qsTr("Maximum")
-            checked: useMax
             onClicked: {
                 if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValueConstraint !== null)
                     selectedNode.standardization.standardizationValueConstraint.useMax = checked
             }
+            Component.onCompleted: {
+                checked = useMax
+            }
         }
         TextField {
+            id: maxText
             text : ""
             font.pointSize: 8
             visible: useMax

@@ -17,6 +17,10 @@ Column {
     property double minY: 0
     property double maxY: 1
 
+    function refresh() {
+        graphCanvas.repaint()
+    }
+
     Row {
         GroupBox {
             id: costbenefit
