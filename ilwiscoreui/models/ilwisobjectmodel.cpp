@@ -919,6 +919,7 @@ QString IlwisObjectModel::copy(const QString &newUrl, const QString &format, con
                 QString newUrl = _ilwisobject->resource(IlwisObject::cmOUTPUT).url(true).toString();
                 QUrl oldUrl = _ilwisobject->resource().url();
                 QUrl oldUrlraw = _ilwisobject->resource().url(true);
+                _ilwisobject->loadData(); // before changing urls the object must be completely loaded
                 _ilwisobject->resourceRef().setUrl(newUrl,false,false);
                 _ilwisobject->resourceRef().setUrl(newUrl,true,false);
                 _ilwisobject->store();
