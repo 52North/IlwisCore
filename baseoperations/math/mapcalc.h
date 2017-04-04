@@ -50,6 +50,7 @@ private:
 
     MapCalc::MathAction string2action(const QString &action);
     double calcBinary(MathAction act, double v1, double v2);
+    QStringList tokenizer(const QString &expr);
 };
 
 class MapCalc1 : public MapCalc{

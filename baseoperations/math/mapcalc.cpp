@@ -251,30 +251,59 @@ bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
     return true;
 }
 
-
-
+QStringList MapCalc::tokenizer(const QString &expr)
+{
+    QStringList tokens;
+    std::vector<QString> seperators1 = {"*", "+","-","/","(",")","<",">",","};
+    std::vector<QString> seperators2 = {"==","!=",">=","<="};
+    QString token;
+    bool inQuotes = false;
+    for(int i=0; i < expr.size(); ++i){
+        QChar c = expr[i];
+        QChar lookAhead =  i < expr.size() - 1 ? expr[i+1] : ' ';
+        if ( c == ' ')
+            continue;
+        if ( c == '\''){
+            if ( inQuotes){
+                tokens.push_back("'" + token + "'");
+                token = "";
+            }
+            inQuotes = !inQuotes;
+            continue;
+        }
+        QString sep2 = QString(c) + QString(lookAhead).trimmed();
+        auto iter2 = std::find(seperators2.begin(), seperators2.end(), sep2);
+        if (iter2 != seperators2.end()){
+            if (token != ""){
+                tokens.push_back(token);
+                token = "";
+            }
+            tokens.push_back(sep2);
+            i+=1;
+        }else{
+            QString sep1 = QString(c);
+            auto iter1 = std::find(seperators1.begin(), seperators1.end(), sep1);
+            if (iter1 != seperators1.end()){
+                if (token != "")
+                    tokens.push_back(token);
+                tokens.push_back(sep1);
+                token = "";
+            }else{
+                token += c;
+            }
+        }
+    }
+    if (token != "")
+        tokens.push_back(token);
+    return tokens;
+}
 
 QStringList MapCalc::shuntingYard(const QString &expr)
 {
     QStringList rpn;
     std::stack<QString> tokenstack;
 
-    QStringList parts = expr.split(QRegExp("\\b"));
-    QStringList tokens;
-    // some post processing on the tokenization; more complex regexp needed
-    for(QString part : parts){
-        part = part.trimmed();
-        if ( part != ""){
-            if ( part[0] == ')' && part.size() > 1){
-                for(int i=0; i < part.size(); ++i){
-                    if ( part[i] != ' ')
-                        tokens.push_back(QString(part[i]));
-                }
-
-            }else
-                tokens.push_back(part);
-        }
-    }
+    QStringList tokens = tokenizer(expr);
 
     for(QString token : tokens){
         if ( token == "")
@@ -403,33 +432,56 @@ std::vector<std::vector<QString>> MapCalc::linearize(const QStringList &tokens)
     std::vector<std::vector<QString>> result;
     bool ok;
     for(const QString& token : tokens)    {
-        token.toInt(&ok);
-        if ( ok){
-            tokenstack.push(token);
-        }else {
-            std::vector<QString> evalItem;
-            if ( isOperator(token)){
-                QString v1 = tokenstack.top(); tokenstack.pop();
-                QString v2 = tokenstack.top(); tokenstack.pop();
-                evalItem = {token, v1, v2};
-
-            }else {
-                evalItem.push_back(token);
-                int n = _functions[token];
-                for(int i=0; i < n; ++i){
-                    QString v = tokenstack.top(); tokenstack.pop();
-                    evalItem.push_back(v);
-                }
+        if ( token[0] == '@'){
+            if (token.length()<2){
+                kernel()->issues()->log(TR("Illegal construct in expression, expected number after @:") + token);
+                return std::vector<std::vector<QString>>();
             }
-            result.push_back(evalItem);
-            int n = -result.size();
-            tokenstack.push(QString::number(n));
+            int index = token.mid(1).toInt(&ok);
+            if (!ok){
+                kernel()->issues()->log(TR("Illegal construct in expression, expected number after @:") + token);
+                return std::vector<std::vector<QString>>();
+            }
+            if ( index > _inputRasters.size() ){
+                kernel()->issues()->log(TR("Illegal parameter index after @, not enough rasters as input:") + token);
+                return std::vector<std::vector<QString>>();
+            }
+            auto iterP = _inputRasters.find(index);
+            if ( iterP == _inputRasters.end()){
+                kernel()->issues()->log(TR("Error in expression. Index for raster parameter not correct :") + token);
+                return std::vector<std::vector<QString>>();
+            }
+            tokenstack.push(token);
+        }else{
+            token.toDouble(&ok);
+            if ( ok){
+                tokenstack.push(token);
+            }else {
+                std::vector<QString> evalItem;
+                if ( isOperator(token)){
+                    QString v1 = tokenstack.top(); tokenstack.pop();
+                    QString v2 = tokenstack.top(); tokenstack.pop();
+                    evalItem = {token, v1, v2};
+
+                }else {
+                    evalItem.push_back(token);
+                    int n = _functions[token];
+                    for(int i=0; i < n; ++i){
+                        QString v = tokenstack.top(); tokenstack.pop();
+                        evalItem.push_back(v);
+                    }
+                }
+                result.push_back(evalItem);
+                int n = -result.size();
+                tokenstack.push("LINK:" + QString::number(result.size() - 1));
+            }
         }
     }
     for(std::vector<QString>& calc : result){
         bool start = true;
         Action action;
         for(QString part : calc){
+            ParmValue val;
             if ( start)    {
                 action._action = string2action(part);
                 if ( action._action == maUNKNOWN){
@@ -438,24 +490,21 @@ std::vector<std::vector<QString>> MapCalc::linearize(const QStringList &tokens)
                 }
                 start = false;
             }else{
-                int vindex = part.toInt(&ok);
-                if (!ok){
-                    kernel()->issues()->log(TR("Error in expression. Index value is not valid :") + part);
-                    return std::vector<std::vector<QString>>();
-                }
-                ParmValue val;
-                auto iterP = _inputRasters.find(vindex);
-                if ( iterP != _inputRasters.end()){
+                int pindex = iUNDEF;
+                if ( part[0] == '@'){
+                    pindex = part.mid(1).toInt(&ok);
+                    auto iterP = _inputRasters.find(pindex);
                     val._type = MapCalc::ITERATOR;
                     val._iter = &(*iterP).second;
                 }else {
-                    auto iterP = _inputNumbers.find(vindex);
-                    if ( iterP != _inputNumbers.end()){
+                    double number = part.toDouble(&ok);
+                    if (ok){
                         val._type = MapCalc::NUMERIC;
-                        val._value = (*iterP).second;
-                    }else if ( vindex < 0){
+                        val._value = number;
+                    }else if (part.indexOf("LINK:") == 0){
+                        int link = part.mid(5).toInt();
                         val._type = MapCalc::LINK;
-                        val._link = std::abs(vindex) - 1;
+                        val._link = link;
                     }else {
                         kernel()->issues()->log(TR("Error in expression. Index value is not valid :") + part);
                         return std::vector<std::vector<QString>>();
@@ -505,7 +554,9 @@ OperationImplementation::State MapCalc::prepare(ExecutionContext *,const SymbolT
         _outputRaster->setBandDefinition(index,DataDefinition(dom));
     }
 
-    linearize(shuntingYard(expr));
+    auto v = linearize(shuntingYard(expr));
+    if ( v.size() == 0)
+        return sPREPAREFAILED;
 
     return sPREPARED;
 }
