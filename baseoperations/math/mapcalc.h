@@ -14,7 +14,7 @@ public:
 
     State prepare(ExecutionContext *ctx,const SymbolTable&);
 private:
-    enum ParmType {NUMERIC, ITERATOR,LINK};
+    enum ParmType {NUMERIC, ITERATOR,LINK, STRING, DOMAINITEM};
     enum MathAction{maIFF, maSIN, maCOS, maTAN, maASIN, maACOS,maATAN, maLOG10, maLN,
                     maABS,maCEIL, maFLOOR,maSQRT,maMAX,maMIN,maPOW,maADD,maMINUS,maDIVIDE,maMULT,
                     maEQ, maNEQ,maLESSEQ,maGREATEREQ,maLESS,maGREATER,
@@ -27,6 +27,7 @@ private:
         double _value = rUNDEF;
         int  _link = -1;
         PixelIterator *_iter;
+        QString _string;
     };
     struct Action{
         std::vector<ParmValue> _values;
@@ -38,19 +39,22 @@ private:
     std::map<int, PixelIterator> _inputRasters;
     std::map<int, double> _inputNumbers;
     IRasterCoverage _outputRaster;
+    std::map<int,IDomain> _itemdomains;
 
     bool isAssociative(const QString &token, int type) ;
     bool isOperator(const QString &token) ;
     bool isNumber(const QString &token) const;
     bool isFunction(const QString &func);
     int cmpPrecedence(const QString &token1, const QString &token2) ;
-    std::vector<std::vector<QString> > linearize(const QStringList &tokens);
+    IDomain linearize(const QStringList &tokens);
     QStringList shuntingYard(const QString &expr);
     std::vector<Action> _actions;
 
     MapCalc::MathAction string2action(const QString &action);
     double calcBinary(MathAction act, double v1, double v2);
     QStringList tokenizer(const QString &expr);
+    Ilwis::IDomain collectDomainInfo(std::vector<std::vector<QString> >& rpn);
+    IDomain findOutDomain(const std::vector<std::vector<QString>>&rpn,const std::vector<QString>& node);
 };
 
 class MapCalc1 : public MapCalc{

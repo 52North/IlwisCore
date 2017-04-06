@@ -7,6 +7,13 @@
 #include "symboltable.h"
 #include "ilwisoperation.h"
 #include "numericoperation.h"
+#include "domainitem.h"
+#include "identifieritem.h"
+#include "identifierrange.h"
+#include "itemdomain.h"
+#include "table.h"
+#include "basetable.h"
+#include "flattable.h"
 #include "MapCalc.h"
 
 using namespace Ilwis;
@@ -42,6 +49,7 @@ bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
         case ParmType::ITERATOR:
             return *(*(parm._iter));break;
         case ParmType::NUMERIC:
+        case ParmType::DOMAINITEM:
             return parm._value;break;
         }
         return rUNDEF;
@@ -232,17 +240,34 @@ bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
             ++(item.second);
         }
     }
-    double rmin = rUNDEF, rmax= rUNDEF, precission = 0;
-    bool isInt = true;
-    for(double v : _outputRaster ){
-        rmin = Ilwis::min(rmin, v);
-        rmax = Ilwis::max(rmax, v);
-        if ( v != rUNDEF){
-            isInt &=  std::abs((qint64)v - v) <EPS8;
+
+
+    if ( _outputRaster->datadef().domain()->ilwisType() == itNUMERICDOMAIN){
+        double rmin = rUNDEF, rmax= rUNDEF;
+        bool isInt = true;
+        for(double v : _outputRaster ){
+            rmin = Ilwis::min(rmin, v);
+            rmax = Ilwis::max(rmax, v);
+            if ( v != rUNDEF){
+                isInt &=  std::abs((qint64)v - v) <EPS8;
+            }
         }
+        NumericRange *range = new NumericRange(rmin,rmax, isInt ? 1 : 0);
+        _outputRaster->datadefRef().range(range);
+    }else {
+        IFlatTable tbl;
+        tbl.prepare();
+        tbl->addColumn(COVERAGEKEYCOLUMN,_outputRaster->datadef().domain());
+        int rec = 0;
+        ItemRangeIterator iter(_outputRaster->datadef().range<>().data());
+        while (iter.isValid()) {
+            SPDomainItem item = (*iter);
+            tbl->setCell(0,rec++,item->raw());
+            ++iter;
+        }
+        _outputRaster->setAttributes(tbl);
+
     }
-    NumericRange *range = new NumericRange(rmin,rmax, isInt ? 1 : 0);
-    _outputRaster->datadefRef().range(range);
 
     QVariant value;
     value.setValue<IRasterCoverage>(_outputRaster);
@@ -357,7 +382,7 @@ QStringList MapCalc::shuntingYard(const QString &expr)
 }
 
 bool MapCalc::isFunction(const QString& func){
-    auto iter = _functions.find(func);
+    auto iter = _functions.find(func.toLower());
     return iter != _functions.end();
 }
 
@@ -426,30 +451,31 @@ MapCalc::MathAction MapCalc::string2action(const QString& action){
     return maUNKNOWN;
 }
 
-std::vector<std::vector<QString>> MapCalc::linearize(const QStringList &tokens)
+IDomain MapCalc::linearize(const QStringList &tokens)
 {
     std::stack<QString> tokenstack;
     std::vector<std::vector<QString>> result;
+
     bool ok;
     for(const QString& token : tokens)    {
         if ( token[0] == '@'){
             if (token.length()<2){
                 kernel()->issues()->log(TR("Illegal construct in expression, expected number after @:") + token);
-                return std::vector<std::vector<QString>>();
+                return IDomain();
             }
             int index = token.mid(1).toInt(&ok);
             if (!ok){
                 kernel()->issues()->log(TR("Illegal construct in expression, expected number after @:") + token);
-                return std::vector<std::vector<QString>>();
+                return IDomain();
             }
             if ( index > _inputRasters.size() ){
                 kernel()->issues()->log(TR("Illegal parameter index after @, not enough rasters as input:") + token);
-                return std::vector<std::vector<QString>>();
+               return IDomain();
             }
             auto iterP = _inputRasters.find(index);
             if ( iterP == _inputRasters.end()){
                 kernel()->issues()->log(TR("Error in expression. Index for raster parameter not correct :") + token);
-                return std::vector<std::vector<QString>>();
+               return IDomain();
             }
             tokenstack.push(token);
         }else{
@@ -457,26 +483,31 @@ std::vector<std::vector<QString>> MapCalc::linearize(const QStringList &tokens)
             if ( ok){
                 tokenstack.push(token);
             }else {
-                std::vector<QString> evalItem;
-                if ( isOperator(token)){
-                    QString v1 = tokenstack.top(); tokenstack.pop();
-                    QString v2 = tokenstack.top(); tokenstack.pop();
-                    evalItem = {token, v1, v2};
+                if ( token[0] == '\''){
+                    tokenstack.push(token);
 
                 }else {
-                    evalItem.push_back(token);
-                    int n = _functions[token];
-                    for(int i=0; i < n; ++i){
-                        QString v = tokenstack.top(); tokenstack.pop();
-                        evalItem.push_back(v);
+                    std::vector<QString> evalItem;
+                    if ( isOperator(token)){
+                        QString v1 = tokenstack.top(); tokenstack.pop();
+                        QString v2 = tokenstack.top(); tokenstack.pop();
+                        evalItem = {token, v1, v2};
+
+                    }else {
+                        evalItem.push_back(token);
+                        int n = _functions[token];
+                        for(int i=0; i < n; ++i){
+                            QString v = tokenstack.top(); tokenstack.pop();
+                            evalItem.push_back(v);
+                        }
                     }
+                    result.push_back(evalItem);
+                    tokenstack.push("LINK:" + QString::number(result.size() - 1));
                 }
-                result.push_back(evalItem);
-                int n = -result.size();
-                tokenstack.push("LINK:" + QString::number(result.size() - 1));
             }
         }
     }
+    IDomain outputDomain = collectDomainInfo(result);
     for(std::vector<QString>& calc : result){
         bool start = true;
         Action action;
@@ -485,13 +516,29 @@ std::vector<std::vector<QString>> MapCalc::linearize(const QStringList &tokens)
             if ( start)    {
                 action._action = string2action(part);
                 if ( action._action == maUNKNOWN){
-                    kernel()->issues()->log(TR("Error in expression. Operation value is not valid or known :") + part);
-                    return std::vector<std::vector<QString>>();
+                    kernel()->issues()->log(TR("Error in expression. Operator type is not valid or known :") + part);
+                    return IDomain();
                 }
                 start = false;
             }else{
                 int pindex = iUNDEF;
-                if ( part[0] == '@'){
+                if ( part.indexOf("DOMAIN:") == 0){
+                     val._type = MapCalc::DOMAINITEM;
+                     // retrieve the domain index in _itemdomains to find the matching domain
+                     int domainIndex = part.mid(7,1).toInt();
+                     IItemDomain dom = _itemdomains[domainIndex].as<ItemDomain<DomainItem>>();
+                     // get the name from the string to retrieve the corresponding domainitem
+                     QString itemName =part.mid(9);
+                     itemName = itemName.mid(1,itemName.size() - 2);
+                     SPDomainItem item = dom->item(itemName);
+                     // the raw is stored as this is used to compare against
+                     val._value = !item.isNull() ?  item->raw() : rUNDEF;
+                }
+                else if ( part[0] == '\''){
+                    val._type = MapCalc::STRING;
+                    val._string =part.mid(1,part.size() - 2);
+                }
+                else if ( part[0] == '@'){
                     pindex = part.mid(1).toInt(&ok);
                     auto iterP = _inputRasters.find(pindex);
                     val._type = MapCalc::ITERATOR;
@@ -507,7 +554,7 @@ std::vector<std::vector<QString>> MapCalc::linearize(const QStringList &tokens)
                         val._link = link;
                     }else {
                         kernel()->issues()->log(TR("Error in expression. Index value is not valid :") + part);
-                        return std::vector<std::vector<QString>>();
+                        return IDomain();
                     }
                 }
                 action._values.push_back(val);
@@ -516,8 +563,120 @@ std::vector<std::vector<QString>> MapCalc::linearize(const QStringList &tokens)
         std::reverse(action._values.begin(), action._values.end());
         _actions.push_back(action);
     }
-    return result;
+    return outputDomain;
 }
+
+int  checkItem(int domainCount, QString& item, QString& copy_item, std::set<QString>& domainItems){
+    if (copy_item.indexOf("LINK:") == -1){
+        if ( copy_item[0] == '\''){
+            // add a prefix to the string to be able to link it to a domain.
+            domainItems.insert(item.mid(1,item.size() - 2));
+            item = "DOMAIN:"+ QString::number(domainCount)+":" + item;
+        }
+        return -1;
+    }else {
+        int nextLink = copy_item.mid(5).toInt();
+        // remove the link as we dont want to encounter when we do a subsequent run through the list of tokens
+        copy_item = sUNDEF;
+        return nextLink;
+    }
+}
+
+int checkIndexItem(int domainCount, std::vector<std::vector<QString>>& rpn,std::vector<std::vector<QString>>& copy_rpn, int index, std::set<QString>& domainItems){
+    auto& item = copy_rpn[index];
+    // an token may be a regular item or a link; if is a link we follow it further all string encountered belong to the same domain
+    int nextLink1 = checkItem(domainCount,rpn[index][1], item[1], domainItems);
+    if ( nextLink1 >= 0)
+        checkIndexItem(domainCount, rpn, copy_rpn, nextLink1, domainItems);
+    int nextLink2 =checkItem(domainCount, rpn[index][2], item[2], domainItems);
+    if ( nextLink2 >= 0)
+       checkIndexItem(domainCount, rpn, copy_rpn, nextLink2, domainItems);
+    return 0;
+}
+IDomain MapCalc::collectDomainInfo(std::vector<std::vector<QString>>& rpn){
+
+    int domainCount = 0;
+    std::vector<std::vector<QString>> copy_rpn = rpn;
+    int maxLink = -1;
+    int index = -1;
+    std::map<int,IDomain> itemdomains;
+    bool found = false;
+    do{
+        found = false;
+        for(int i=0; i < copy_rpn.size(); ++i )    {
+            auto& copy_item = copy_rpn[i];
+            auto& item = rpn[i];
+            if ( copy_item[0] == "iff"){
+                QString cItem = copy_item[1];
+                if (cItem.indexOf("LINK:") == 0){
+                    maxLink = std::max(cItem.mid(5).toInt(), maxLink);
+                    index = i;
+                    found = true;
+                }
+            }else if ( item[0] == "=="){
+                if ( item[1][0] == '\''){
+                    if ( item[2][0] == '@'){
+                        IRasterCoverage raster = _inputRasters[item[2].mid(1).toInt()].raster();
+                        if ( raster->datadef().domain()->ilwisType() == itITEMDOMAIN){
+                            _itemdomains[domainCount] = raster->datadef().domain();
+                            rpn[i][1] = "DOMAIN:"+ QString::number(domainCount++) +":" + rpn[i][1];
+                        }
+                    }
+                }
+            }
+        }
+
+        if ( found){
+            std::set<QString> domainItems;
+            checkIndexItem(domainCount, rpn, copy_rpn,index,domainItems);
+            if ( domainItems.size() > 0){
+                INamedIdDomain dom;
+                dom.prepare();
+                for(QString item : domainItems){
+                    dom->addItem(new NamedIdentifier(item));
+                }
+                _itemdomains[domainCount++] = dom;
+            }
+        }
+
+    }while(found);
+
+    IDomain dom;
+    dom.prepare("code=domain:value");
+    if ( rpn.back()[0] == "iff"){
+        dom = findOutDomain(rpn, rpn.back());
+    }
+
+    return dom;
+
+}
+
+IDomain MapCalc::findOutDomain(const std::vector<std::vector<QString>>&rpn,const std::vector<QString>& node){
+    auto findDomainperItem = [&](const std::vector<std::vector<QString>>&rpn, const QString& currentItem)->IDomain{
+        if ( currentItem.indexOf("DOMAIN:") == 0)    {
+            int index = currentItem.mid(7,1).toInt();
+            return _itemdomains[index];
+        } if (currentItem.indexOf("LINK:") == 0){
+            int nextItem = currentItem.mid(5).toInt() ;
+            return findOutDomain(rpn, rpn[nextItem]);
+        }
+        bool ok;
+        currentItem.toDouble(&ok);
+        if ( ok){
+            IDomain dom;
+            dom.prepare("code=domain:value");
+            return dom;
+        }
+        return IDomain();
+    };
+    IDomain dom = findDomainperItem(rpn,node[2]);
+    if (!dom.isValid()){
+        dom = findDomainperItem(rpn, node[3]);
+    }
+    return dom;
+
+}
+
 OperationImplementation::State MapCalc::prepare(ExecutionContext *,const SymbolTable&) {
 
 
@@ -545,18 +704,18 @@ OperationImplementation::State MapCalc::prepare(ExecutionContext *,const SymbolT
     OperationHelperRaster helper;
     helper.initialize((*_inputRasters.begin()).second.raster(), _outputRaster, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
-    IDomain dom;
-    dom.prepare("code=domain:value");
-    _outputRaster->datadefRef().domain(dom);
+
+
+    IDomain outputDomain = linearize(shuntingYard(expr));
+    if( !outputDomain.isValid())
+        return sPREPAREFAILED;
+
+    _outputRaster->datadefRef().domain(outputDomain);
 
     for(quint32 i = 0; i < _outputRaster->size().zsize(); ++i){
         QString index = _outputRaster->stackDefinition().index(i);
-        _outputRaster->setBandDefinition(index,DataDefinition(dom));
+        _outputRaster->setBandDefinition(index,DataDefinition(outputDomain));
     }
-
-    auto v = linearize(shuntingYard(expr));
-    if ( v.size() == 0)
-        return sPREPAREFAILED;
 
     return sPREPARED;
 }
