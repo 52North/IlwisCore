@@ -17,7 +17,7 @@ private:
     enum ParmType {NUMERIC, ITERATOR,LINK, STRING, DOMAINITEM};
     enum MathAction{maIFF, maSIN, maCOS, maTAN, maASIN, maACOS,maATAN, maLOG10, maLN,
                     maABS,maCEIL, maFLOOR,maSQRT,maMAX,maMIN,maPOW,maADD,maMINUS,maDIVIDE,maMULT,
-                    maEQ, maNEQ,maLESSEQ,maGREATEREQ,maLESS,maGREATER,
+                    maEQ, maNEQ,maLESSEQ,maGREATEREQ,maLESS,maGREATER,maOR, maAND,
                     maUNKNOWN};
     const int LEFT_ASSOC = 0;
     const int RIGHT_ASSOC = 1;

@@ -28,16 +28,18 @@ MapCalc::MapCalc(quint64 metaid,const Ilwis::OperationExpression &expr) : Numeri
     _functions ={{"iff",3},{"sin",1},{"cos",1},{"tan",1},{"asin",1},{"acos",1},{"atan",1},
                  {"log10",1},{"ln",1},{"abs",1},{"ciel",1},{"floor",1},{"sqrt",1},{"max",2},
                  {"min",2},{"pow",2}};
-    _operators["+"] = { 0, LEFT_ASSOC };
-    _operators["-"] = { 0, LEFT_ASSOC };
+    _operators["+"] = { 2, LEFT_ASSOC };
+    _operators["-"] = { 2, LEFT_ASSOC };
     _operators["*"] = { 5, LEFT_ASSOC };
     _operators["/"] = { 5, LEFT_ASSOC };
-    _operators[">"] = { 0, LEFT_ASSOC };
-    _operators["<"] = { 0, LEFT_ASSOC };
-    _operators["<="] = { 0, LEFT_ASSOC };
-    _operators[">="] = { 0, LEFT_ASSOC };
-    _operators["!="] = { 0, LEFT_ASSOC };
-    _operators["=="] = { 0, LEFT_ASSOC };
+    _operators[">"] = { 1, LEFT_ASSOC };
+    _operators["<"] = { 1, LEFT_ASSOC };
+    _operators["<="] = { 1, LEFT_ASSOC };
+    _operators[">="] = { 1, LEFT_ASSOC };
+    _operators["!="] = { 1, LEFT_ASSOC };
+    _operators["=="] = { 1, LEFT_ASSOC };
+    _operators["&&"] = { 0, LEFT_ASSOC };
+    _operators["||"] = { 0, LEFT_ASSOC };
 }
 
 bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
@@ -221,6 +223,20 @@ bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
                 calcResult =  v1 == rUNDEF || v2 == rUNDEF ? 0 : ( v1 > v2);
                 break;
             }
+            case maAND:
+            {
+                double v1 = GetValue(action._values[0],result);
+                double v2 = GetValue(action._values[1],result);
+                calcResult =  v1 == rUNDEF || v2 == rUNDEF ? 0 : ( (bool)v1 && (bool)v2);
+                break;
+            }
+            case maOR:
+            {
+                double v1 = GetValue(action._values[0],result);
+                double v2 = GetValue(action._values[1],result);
+                calcResult =  v1 == rUNDEF || v2 == rUNDEF ? 0 : ( (bool)v1 || (bool)v2);
+                break;
+            }
             case maIFF:
             {
                 double v1 = GetValue(action._values[0],result);
@@ -280,7 +296,7 @@ QStringList MapCalc::tokenizer(const QString &expr)
 {
     QStringList tokens;
     std::vector<QString> seperators1 = {"*", "+","-","/","(",")","<",">",","};
-    std::vector<QString> seperators2 = {"==","!=",">=","<="};
+    std::vector<QString> seperators2 = {"==","!=",">=","<=","&&","||"};
     QString token;
     bool inQuotes = false;
     for(int i=0; i < expr.size(); ++i){
@@ -359,6 +375,10 @@ QStringList MapCalc::shuntingYard(const QString &expr)
             {
                 rpn.push_back(tokenstack.top());
                 tokenstack.pop();
+            }
+            if(tokenstack.empty()){
+                kernel()->issues()->log(TR("Illegal construct in expression; maybe missing brackets?"));
+                return QStringList();
             }
             tokenstack.pop();
             if ( isFunction(tokenstack.top())){
@@ -447,12 +467,17 @@ MapCalc::MathAction MapCalc::string2action(const QString& action){
     if ( action == ">=") return maGREATEREQ;
     if ( action == "<") return maLESS;
     if ( action == ">") return maGREATER;
+    if ( action == "&&") return maAND;
+    if ( action == "||") return maOR;
 
     return maUNKNOWN;
 }
 
 IDomain MapCalc::linearize(const QStringList &tokens)
 {
+    if ( tokens.size() == 0)
+        return IDomain();
+
     std::stack<QString> tokenstack;
     std::vector<std::vector<QString>> result;
 
@@ -489,6 +514,10 @@ IDomain MapCalc::linearize(const QStringList &tokens)
                 }else {
                     std::vector<QString> evalItem;
                     if ( isOperator(token)){
+                        if ( tokenstack.size() < 2){
+                            kernel()->issues()->log(TR("Invalid token encountered; not enough values to use after this token: '") + token + "'");
+                            return IDomain();
+                        }
                         QString v1 = tokenstack.top(); tokenstack.pop();
                         QString v2 = tokenstack.top(); tokenstack.pop();
                         evalItem = {token, v1, v2};
@@ -516,7 +545,7 @@ IDomain MapCalc::linearize(const QStringList &tokens)
             if ( start)    {
                 action._action = string2action(part);
                 if ( action._action == maUNKNOWN){
-                    kernel()->issues()->log(TR("Error in expression. Operator type is not valid or known :") + part);
+                    kernel()->issues()->log(TR("Error in expression. Operator type is not valid/ known or improperly used : '") + part + "\'");
                     return IDomain();
                 }
                 start = false;
@@ -595,6 +624,7 @@ int checkIndexItem(int domainCount, std::vector<std::vector<QString>>& rpn,std::
 }
 IDomain MapCalc::collectDomainInfo(std::vector<std::vector<QString>>& rpn){
 
+
     int domainCount = 0;
     std::vector<std::vector<QString>> copy_rpn = rpn;
     int maxLink = -1;
@@ -613,13 +643,21 @@ IDomain MapCalc::collectDomainInfo(std::vector<std::vector<QString>>& rpn){
                     index = i;
                     found = true;
                 }
-            }else if ( item[0] == "=="){
+            }else if ( item[0] == "=="){ // @1='sometext' or 'sometext=@1'
                 if ( item[1][0] == '\''){
                     if ( item[2][0] == '@'){
                         IRasterCoverage raster = _inputRasters[item[2].mid(1).toInt()].raster();
                         if ( raster->datadef().domain()->ilwisType() == itITEMDOMAIN){
                             _itemdomains[domainCount] = raster->datadef().domain();
                             rpn[i][1] = "DOMAIN:"+ QString::number(domainCount++) +":" + rpn[i][1];
+                        }
+                    }
+                }else  if ( item[2][0] == '\''){
+                    if ( item[1][0] == '@'){
+                        IRasterCoverage raster = _inputRasters[item[1].mid(1).toInt()].raster();
+                        if ( raster->datadef().domain()->ilwisType() == itITEMDOMAIN){
+                            _itemdomains[domainCount] = raster->datadef().domain();
+                            rpn[i][2] = "DOMAIN:"+ QString::number(domainCount++) +":" + rpn[i][2];
                         }
                     }
                 }
