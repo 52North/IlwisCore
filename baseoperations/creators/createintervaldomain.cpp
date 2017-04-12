@@ -94,15 +94,15 @@ Ilwis::OperationImplementation::State CreateIntervalDomain::prepare(ExecutionCon
         return sPREPAREFAILED;
     }
     //check if no ranges overlap
-    double last = -1e308;
+    double last = rUNDEF;
     for(int i=0; i < _items.size(); i+=5){
        double currentMin = _items[i+1].toDouble();
        double currentMax = _items[i+2].toDouble();
-       if ( currentMin < last){
+       if ( last != rUNDEF && currentMax > last){
            kernel()->issues()->log(TR("Domain items overlap which is not allowed"));
            return sPREPAREFAILED;
        }
-       last = currentMax;
+       last = currentMin;
     }
     if ( _parentdomain.isValid()){
         for(int i =0; i < _items.size(); i+=5){
