@@ -149,6 +149,9 @@ void OperationExpression::setExpression(const QString &e, const SymbolTable &sym
     int index1 = e.indexOf(" ");
     int index2 = e.indexOf("=");
     int index3 = e.indexOf("[");
+    int index4 = e.lastIndexOf(")");
+    if ( index4 > index3)
+        index3 = -1;
     bool isCommand = index1 != -1 && ( index1 < index2 || index2 == -1);
     if ( isCommand) {
         _type = otCommand;
