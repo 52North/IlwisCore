@@ -502,6 +502,27 @@ QString UIContextModel::type2icon(const QString &typeName)
     return ResourceModel::iconPath(tp);
 }
 
+void UIContextModel::addMessage(const QString &message, const QString &type)
+{
+    IssueObject::IssueType tp = IssueObject::itNone;
+    if ( type == "error"){
+        tp = IssueObject::itError;
+    }
+    if ( type == "warning"){
+        tp = IssueObject::itWarning;
+    }
+    if ( type == "message"){
+        tp = IssueObject::itMessage;
+    }
+    if ( type == "debug"){
+        tp = IssueObject::itDebug;
+    }
+    if ( type == "result"){
+        tp = IssueObject::itRESULT;
+    }
+    kernel()->issues()->log(message,tp);
+}
+
 QString UIContextModel::worldmapCommand(const QString& id) const
 {
     try{
