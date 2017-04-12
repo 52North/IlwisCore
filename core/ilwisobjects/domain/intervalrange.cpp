@@ -154,17 +154,19 @@ void IntervalRange::add(DomainItem *item)
 
     if (!item->isValid())
         return;
+    bool inserted = false;
     SPInterval nitem(static_cast<Interval *>(item));
     for(auto iter = _items.rbegin(); iter != _items.rend(); ++iter) {
-        if ( nitem->range() >= (*iter)->range()) {
+        if ( nitem->range().max() < (*iter)->range().min()) {
             if ( nitem->raw() == iUNDEF)
                 nitem->_raw = _items.size();
             _items.insert(iter.base(),1, nitem );
-            return;
+            inserted = true;
+            break;
         }
     }
-    if ( _items.size() == 0) { // no overlapping items allowed; so the only case that is legal here is the first
-        nitem->_raw = 0;
+    if ( !inserted) { // no overlapping items allowed; so the only case that is legal here is the first
+        nitem->_raw = _items.size();
         _items.push_back(nitem);
     }
 }
