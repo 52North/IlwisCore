@@ -27,7 +27,7 @@ private:
         double _value = rUNDEF;
         int  _link = -1;
         PixelIterator *_iter;
-        QString _string;
+        QString _string; // could be a string value or a colum name
     };
     struct Action{
         std::vector<ParmValue> _values;

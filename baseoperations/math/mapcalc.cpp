@@ -488,7 +488,7 @@ IDomain MapCalc::linearize(const QStringList &tokens)
                 kernel()->issues()->log(TR("Illegal construct in expression, expected number after @:") + token);
                 return IDomain();
             }
-            int index = token.mid(1).toInt(&ok);
+            int index = token.mid(1,1).toInt(&ok);
             if (!ok){
                 kernel()->issues()->log(TR("Illegal construct in expression, expected number after @:") + token);
                 return IDomain();
@@ -536,13 +536,20 @@ IDomain MapCalc::linearize(const QStringList &tokens)
             }
         }
     }
+    if ( result.size() == 0){
+        // the tokenstack  contains the last item if expression contains only one single actionable token
+        if ( tokenstack.size() == 1 && tokenstack.top().indexOf("LINK:") == -1){
+            result.push_back({tokenstack.top()});
+        }else
+            return IDomain();
+    }
     IDomain outputDomain = collectDomainInfo(result);
     for(std::vector<QString>& calc : result){
         bool start = true;
         Action action;
         for(QString part : calc){
             ParmValue val;
-            if ( start)    {
+            if ( start && calc.size() > 1)    {
                 action._action = string2action(part);
                 if ( action._action == maUNKNOWN){
                     kernel()->issues()->log(TR("Error in expression. Operator type is not valid/ known or improperly used : '") + part + "\'");
@@ -568,10 +575,15 @@ IDomain MapCalc::linearize(const QStringList &tokens)
                     val._string =part.mid(1,part.size() - 2);
                 }
                 else if ( part[0] == '@'){
-                    pindex = part.mid(1).toInt(&ok);
+                    pindex = part.mid(1,1).toInt(&ok);
                     auto iterP = _inputRasters.find(pindex);
                     val._type = MapCalc::ITERATOR;
                     val._iter = &(*iterP).second;
+                    if ( part.size() > 2 ){
+                         if(part[2] == '[' && part.endsWith("]")){
+                            val._string = part.mid(3,part.size() - 4) ;
+                         }
+                    }
                 }else {
                     double number = part.toDouble(&ok);
                     if (ok){
