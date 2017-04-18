@@ -149,6 +149,7 @@ Controls.DropableItem{
                     for(var i=0; i < items.length; ++i){
                         itemNames.push(items[i].name)
                     }
+                    itemNames.push("?")
                     xaxisvalues.model = itemNames
                     xaxisvalues.currentIndex = -1
                 }
@@ -171,6 +172,7 @@ Controls.DropableItem{
                     for(var i=0; i < items.length; ++i){
                         itemNames.push(items[i].name)
                     }
+                    itemNames.push("?")
                     yaxisvalues.model = itemNames
                     yaxisvalues.currentIndex = -1
                 }
@@ -194,6 +196,7 @@ Controls.DropableItem{
                             for(var i=0; i < items.length; ++i){
                                 itemNames.push(items[i].name)
                             }
+                            itemNames.push("?")
 
                         }else{
                             combosAreItem = false
