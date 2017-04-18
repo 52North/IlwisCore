@@ -35,7 +35,8 @@ SOURCES += \
     rasteroperations/densifyraster.cpp \
     rasteroperations/distanceraster.cpp \
     rasteroperations/line2raster.cpp \
-    rasteroperations/filter/stackminmaxfilter.cpp
+    rasteroperations/filter/stackminmaxfilter.cpp \
+    rasteroperations/classification/comboclassification.cpp
 
 
 HEADERS += \
@@ -58,7 +59,8 @@ HEADERS += \
     rasteroperations/densifyraster.h \
     rasteroperations/distanceraster.h \
     rasteroperations/line2raster.h \
-    rasteroperations/filter/stackminmaxfilter.h
+    rasteroperations/filter/stackminmaxfilter.h \
+    rasteroperations/classification/comboclassification.h
 
 
 OTHER_FILES += \ 
