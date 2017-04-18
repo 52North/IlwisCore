@@ -453,7 +453,7 @@ Resource MasterCatalog::name2Resource(const QString &nm, IlwisTypes tp) const
         return Resource();
     QString name = OSHelper::neutralizeFileName(nm);
     if ( tp == itUNKNOWN) { // no definitive type given we, try to find based on name/type combination. will work mostely but not guaranteed. this is anyway a last resort method
-        std::vector<IlwisTypes> types { itRASTER, itFEATURE, itTABLE, itGEOREF, itCOORDSYSTEM, itDOMAIN};
+        std::vector<IlwisTypes> types { itRASTER, itFEATURE, itTABLE, itGEOREF, itCOORDSYSTEM, itDOMAIN,itCOMBINATIONMATRIX};
         for(IlwisTypes type: types) {
             Resource resource = name2Resource(name, type);
             if (resource.isValid())
