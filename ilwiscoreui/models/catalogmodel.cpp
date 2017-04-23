@@ -223,6 +223,16 @@ QStringList CatalogModel::dataProviders() const
     return result;
 }
 
+bool CatalogModel::isFileBased() const
+{
+    if ( resource().hasProperty("catalogtype")){
+        int tp = resource()["catalogtype"].toInt();
+        bool fb = hasType(tp, CatalogModel::ctFILEBASED);
+        return fb;
+    }
+    return false;
+}
+
 
 void CatalogModel::fillSpatialFilter()
 {
@@ -406,6 +416,10 @@ int CatalogModel::getCatalogType(const Resource& res, int predefineds){
             bits |= CatalogModel::ctMUTABLE;
         else
             bits |= CatalogModel::ctFIXED;
+    }
+    QFileInfo inf(res.url(true).toLocalFile());
+    if ( inf.isFile()){
+        bits |= CatalogModel::ctFILEBASED;
     }
     return bits;
 }

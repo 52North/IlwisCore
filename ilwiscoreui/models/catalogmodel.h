@@ -23,7 +23,7 @@ class ILWISCOREUISHARED_EXPORT CatalogModel : public ResourceModel
 {
     Q_OBJECT
 public:
-    enum CatalogType{ ctUNKNOWN=0, ctBOOKMARK=1, ctFIXED=2, ctMUTABLE=4, ctLOCAL=8, ctREMOTE=16, ctDATA=32, ctOPERATION=64, ctINTERNAL=128, ctDONTCARE=256};
+    enum CatalogType{ ctUNKNOWN=0, ctBOOKMARK=1, ctFIXED=2, ctMUTABLE=4, ctLOCAL=8, ctREMOTE=16, ctDATA=32, ctOPERATION=64, ctINTERNAL=128, ctFILEBASED=256,ctDONTCARE=512};
 
     Q_PROPERTY(QQmlListProperty<ResourceModel> resources READ resources NOTIFY contentChanged)
     Q_PROPERTY(QQmlListProperty<ResourceModel> coverages READ coverages NOTIFY coveragesChanged)
@@ -33,6 +33,7 @@ public:
     Q_PROPERTY(bool canBeAnimated READ canBeAnimated CONSTANT)
     Q_PROPERTY(QStringList objectCounts READ objectCounts NOTIFY objectCountsChanged)
     Q_PROPERTY(QStringList dataProviders READ dataProviders CONSTANT)
+    Q_PROPERTY(bool isFileBased READ isFileBased CONSTANT)
 
 
     ~CatalogModel();
@@ -88,6 +89,7 @@ private:
     void fillNameFilter();
     void fillKeywordFilter();
     QStringList dataProviders() const;
+    bool isFileBased() const;
 public slots:
      void containerContentChanged();
 signals:
