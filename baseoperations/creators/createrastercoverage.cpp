@@ -37,16 +37,21 @@ bool CreateRasterCoverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
 
     initialize(_outputRaster->size().linearSize());
+    double minv=1e307,maxv = -1e307;
     PixelIterator pout(_outputRaster);
     for(auto& band : _bands){
         for(double value : band){
             *pout = value;
+            minv = Ilwis::min(value,minv);
+            maxv = Ilwis::max(value,maxv);
             if(!trq()->update(1))
                 return false;
             ++pout;
         }
     }
-
+    double resolution = _outputRaster->datadefRef().domain()->range<NumericRange>()->resolution();
+    NumericRange *rng = new NumericRange(minv, maxv, resolution);
+    _outputRaster->datadefRef().range(rng);
 
 
     QVariant value;
