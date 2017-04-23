@@ -159,7 +159,7 @@ Kernel::~Kernel() {
     context()->configurationRef().store();
     if ( _dbPublic.isOpen()){
         qDebug() << "closing database";
-        _dbPublic.close();
+       // _dbPublic.close();
     }
 }
 
