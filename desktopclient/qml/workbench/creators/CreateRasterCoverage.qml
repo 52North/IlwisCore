@@ -218,7 +218,7 @@ Controls.DropableItem{
                     return false;
                 }
             }
-             var url = applyButton.currentCatalogCorrectUrl() + "/"+ namevalue.name
+             var url = applyButton.currentCatalogCorrectUrl() + "/"+ namevalue.content
             var createInfo = {georeference : grfvalue.content,
                 domain : domvalue.content,
                 stackdefinition : bandsvalue.content,
@@ -228,6 +228,7 @@ Controls.DropableItem{
                 bands : bywildcard.checked ? bywildcardtext.content : rasterlist.bands(),
                 autoresample : resampleCB.checked}
 
+            console.debug(url)
             objectcreator.createObject(createInfo)
 
             return true;
