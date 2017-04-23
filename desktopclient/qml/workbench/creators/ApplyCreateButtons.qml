@@ -16,7 +16,7 @@ Item {
         if ( !panel)
             return ""
         if ( panel.panelType === "catalog"){
-            var url = panel.currentCatalog.url
+            var url = panel.currentCatalog.isFileBased ? panel.currentCatalog.container : panel.currentCatalog.url
             if ( url.indexOf("file://") !== 0) {
                 overwrite.visible = false
                 return ""
