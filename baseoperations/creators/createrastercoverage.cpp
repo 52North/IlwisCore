@@ -44,8 +44,7 @@ bool CreateRasterCoverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
             *pout = value;
             minv = Ilwis::min(value,minv);
             maxv = Ilwis::max(value,maxv);
-            if(!trq()->update(1))
-                return false;
+            updateTranquilizer(pout.linearPosition(), 1000);
             ++pout;
         }
     }
@@ -293,7 +292,7 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
         }
 
     }
-
+    initialize(_outputRaster->size().linearSize());
     return sPREPARED;
 }
 
