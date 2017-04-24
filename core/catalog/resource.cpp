@@ -833,6 +833,10 @@ void Resource::modifiedTime(const double &tme, bool force)
 {
     if(context()->initializationFinished() || force){
         _changed = true;
+        if ( _modifiedTime != rUNDEF ){
+            return; // hmpff. we can only solve this in other debugger; current debugger mingw crashes if I start in debug mode
+            //qDebug() << "modifying" << url().toString() << ilwisType();
+        }
         _modifiedTime = tme;
     }
 }
@@ -857,5 +861,5 @@ void Resource::changed(bool yesno)
 {
     _changed = yesno;
     if ( yesno)
-        _modifiedTime = Ilwis::Time::now();
+        modifiedTime(Ilwis::Time::now());
 }
