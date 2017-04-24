@@ -198,7 +198,7 @@ bool CreateRasterCoverage::parseStackDefintion(const QString& stacDef){
 
     if  (ok){
         int n = 0;
-        if ( items.size() > _bands.size() && _bands.size() != 0){
+        if ( items.size() >= _bands.size() && _bands.size() != 0){
             n = _bands.size();
         }else if ( items.size() < _bands.size())
             n = items.size();
