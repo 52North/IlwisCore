@@ -313,7 +313,7 @@ public:
     Resource copy(quint64 id) const;
     bool isRoot() const;
     double modifiedTime() const;
-    void modifiedTime(const double& time);
+    void modifiedTime(const double& time, bool force=false);
     double createTime() const;
     void createTime(const double& time);
     static bool isRoot(const QString &txt) ;

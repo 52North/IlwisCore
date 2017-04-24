@@ -16,7 +16,8 @@ int main(int argc, char *argv[])
         bool scriptStatementAtBegin = false;
 
 #ifdef QT_DEBUG
-        QString expr = "r1_true.mpl{format(ilwis3,\"map\")}=timesat(r1sb.mpl,4,true,true,true)";
+        //QString expr = "aaas{format(map,'ilwis3')}=linearrasterfilter(file:///d:/projects/ilwis/ilwis4/testdata/small21.mpr,\"code=0.5 0 0.5 0 1 0 0.5 0 0.5\");";
+        QString expr = "runpython(\"import ilwis\")";
 #else
         QString expr;
         // expected:

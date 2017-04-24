@@ -829,10 +829,12 @@ double Resource::modifiedTime() const
     return _modifiedTime;
 }
 
-void Resource::modifiedTime(const double &tme)
+void Resource::modifiedTime(const double &tme, bool force)
 {
-    _changed = true;
-    _modifiedTime = tme;
+    if(context()->initializationFinished() || force){
+        _changed = true;
+        _modifiedTime = tme;
+    }
 }
 
 double Resource::createTime() const

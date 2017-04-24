@@ -228,8 +228,8 @@ Controls.DropableItem{
                 bands : bywildcard.checked ? bywildcardtext.content : rasterlist.bands(),
                 autoresample : resampleCB.checked}
 
-            console.debug(url)
             objectcreator.createObject(createInfo)
+
 
             return true;
         }
