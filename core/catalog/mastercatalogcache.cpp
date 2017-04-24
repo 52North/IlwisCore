@@ -112,7 +112,6 @@ std::vector<Resource> MasterCatalogCache::find(const QUrl& url, Time modifiedtim
             for(const Resource& resource : (*iter).second){
                 auto t1 =  modifiedtime;
                 auto t2 =  Ilwis::Time(resource.modifiedTime());
-                qDebug() << t1.toString() << t2.toString() << url.toString();
                 if ( t1 == t2)
                     resources.push_back(resource);
             }
