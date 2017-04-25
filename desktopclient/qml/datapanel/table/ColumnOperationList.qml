@@ -14,19 +14,25 @@ Item {
     height: parent.height -10
     property var currentColumn
 
+     function setOperations(operations){
+        operationlist.model = operations
+         console.debug("aa", operationlist.model[0].name)
+     }
+
     function setOperation(newindex){
         operationlist.currentIndex = newindex
-        columnOperation.columnIndex = currentColumn.columnIndex
-        if ( operationlist.model && newindex < operationlist.model.length )
+         columnOperation.columnIndex = currentColumn ? currentColumn.columnIndex : 0
+        if ( operationlist.model && newindex < operationlist.model.length ){
             columnOperation.currentOperation = operationlist.model[newindex]
+        }
     }
 
     onCurrentColumnChanged: {
         if ( currentColumn)
             operationlist.model = currentColumn.operations
         else{
-            operationlist.model = null
-            columnOperation.currentOperation = null
+           // operationlist.model = null
+          //  columnOperation.currentOperation = null
         }
     }
 

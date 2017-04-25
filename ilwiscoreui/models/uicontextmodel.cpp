@@ -19,6 +19,7 @@
 #include "visualattributemodel.h"
 #include "tableoperations/sortcolumn.h"
 #include "tableoperations/convertcolumndomain.h"
+#include "tableoperations/columnvisibility.h"
 #include "tableoperations/tableoperationfactory.h"
 #include "dataformat.h"
 #include "oshelper.h"
@@ -241,6 +242,7 @@ void UIContextModel::prepare()
     Ilwis::Desktop::TableOperationFactory *factory = new Ilwis::Desktop::TableOperationFactory();
     factory->registerTableOperation("sortcolumn",Ilwis::Desktop::SortColumn::create);
     factory->registerTableOperation("convertcolumndomain",Ilwis::Desktop::ConvertColumnDomain::create);
+    factory->registerTableOperation("columnvisibility",Ilwis::Desktop::ColumnVisibility::create);
     Ilwis::kernel()->addFactory(factory);
     QString rawUrlWorldMap = OSHelper::createFileUrlFromParts(ilwisloc, "/resources/country_boundaries.ilwis");
 
