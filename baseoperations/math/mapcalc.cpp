@@ -58,7 +58,7 @@ bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
     };
 
     auto CalcBinary = [](MathAction act, double v1, double v2) ->double{
-        if (v1 == rUNDEF  || v2 == rUNDEF)
+        if (isNumericalUndef(v1)  || isNumericalUndef(2))
             return rUNDEF;
         switch(act){
         case maADD:
@@ -381,6 +381,10 @@ QStringList MapCalc::shuntingYard(const QString &expr)
                 return QStringList();
             }
             tokenstack.pop();
+            if(tokenstack.empty()){
+                kernel()->issues()->log(TR("Illegal construct in expression; maybe missing brackets?"));
+                return QStringList();
+            }
             if ( isFunction(tokenstack.top())){
                 rpn.push_back(tokenstack.top());
                 tokenstack.pop();
@@ -495,12 +499,12 @@ IDomain MapCalc::linearize(const QStringList &tokens)
             }
             if ( index > _inputRasters.size() ){
                 kernel()->issues()->log(TR("Illegal parameter index after @, not enough rasters as input:") + token);
-               return IDomain();
+                return IDomain();
             }
             auto iterP = _inputRasters.find(index);
             if ( iterP == _inputRasters.end()){
                 kernel()->issues()->log(TR("Error in expression. Index for raster parameter not correct :") + token);
-               return IDomain();
+                return IDomain();
             }
             tokenstack.push(token);
         }else{
@@ -543,68 +547,73 @@ IDomain MapCalc::linearize(const QStringList &tokens)
         }else
             return IDomain();
     }
-    IDomain outputDomain = collectDomainInfo(result);
-    for(std::vector<QString>& calc : result){
-        bool start = true;
-        Action action;
-        for(QString part : calc){
-            ParmValue val;
-            if ( start && calc.size() > 1)    {
-                action._action = string2action(part);
-                if ( action._action == maUNKNOWN){
-                    kernel()->issues()->log(TR("Error in expression. Operator type is not valid/ known or improperly used : '") + part + "\'");
-                    return IDomain();
-                }
-                start = false;
-            }else{
-                int pindex = iUNDEF;
-                if ( part.indexOf("DOMAIN:") == 0){
-                     val._type = MapCalc::DOMAINITEM;
-                     // retrieve the domain index in _itemdomains to find the matching domain
-                     int domainIndex = part.mid(7,1).toInt();
-                     IItemDomain dom = _itemdomains[domainIndex].as<ItemDomain<DomainItem>>();
-                     // get the name from the string to retrieve the corresponding domainitem
-                     QString itemName =part.mid(9);
-                     itemName = itemName.mid(1,itemName.size() - 2);
-                     SPDomainItem item = dom->item(itemName);
-                     // the raw is stored as this is used to compare against
-                     val._value = !item.isNull() ?  item->raw() : rUNDEF;
-                }
-                else if ( part[0] == '\''){
-                    val._type = MapCalc::STRING;
-                    val._string =part.mid(1,part.size() - 2);
-                }
-                else if ( part[0] == '@'){
-                    pindex = part.mid(1,1).toInt(&ok);
-                    auto iterP = _inputRasters.find(pindex);
-                    val._type = MapCalc::ITERATOR;
-                    val._iter = &(*iterP).second;
-                    if ( part.size() > 2 ){
-                         if(part[2] == '[' && part.endsWith("]")){
-                            val._string = part.mid(3,part.size() - 4) ;
-                         }
-                    }
-                }else {
-                    double number = part.toDouble(&ok);
-                    if (ok){
-                        val._type = MapCalc::NUMERIC;
-                        val._value = number;
-                    }else if (part.indexOf("LINK:") == 0){
-                        int link = part.mid(5).toInt();
-                        val._type = MapCalc::LINK;
-                        val._link = link;
-                    }else {
-                        kernel()->issues()->log(TR("Error in expression. Index value is not valid :") + part);
+    try{
+        IDomain outputDomain = collectDomainInfo(result);
+
+        for(std::vector<QString>& calc : result){
+            bool start = true;
+            Action action;
+            for(QString part : calc){
+                ParmValue val;
+                if ( start && calc.size() > 1)    {
+                    action._action = string2action(part);
+                    if ( action._action == maUNKNOWN){
+                        kernel()->issues()->log(TR("Error in expression. Operator type is not valid/ known or improperly used : '") + part + "\'");
                         return IDomain();
                     }
+                    start = false;
+                }else{
+                    int pindex = iUNDEF;
+                    if ( part.indexOf("DOMAIN:") == 0){
+                        val._type = MapCalc::DOMAINITEM;
+                        // retrieve the domain index in _itemdomains to find the matching domain
+                        int domainIndex = part.mid(7,1).toInt();
+                        IItemDomain dom = _itemdomains[domainIndex].as<ItemDomain<DomainItem>>();
+                        // get the name from the string to retrieve the corresponding domainitem
+                        QString itemName =part.mid(9);
+                        itemName = itemName.mid(1,itemName.size() - 2);
+                        SPDomainItem item = dom->item(itemName);
+                        // the raw is stored as this is used to compare against
+                        val._value = !item.isNull() ?  item->raw() : rUNDEF;
+                    }
+                    else if ( part[0] == '\''){
+                        val._type = MapCalc::STRING;
+                        val._string =part.mid(1,part.size() - 2);
+                    }
+                    else if ( part[0] == '@'){
+                        pindex = part.mid(1,1).toInt(&ok);
+                        auto iterP = _inputRasters.find(pindex);
+                        val._type = MapCalc::ITERATOR;
+                        val._iter = &(*iterP).second;
+                        if ( part.size() > 2 ){
+                            if(part[2] == '[' && part.endsWith("]")){
+                                val._string = part.mid(3,part.size() - 4) ;
+                            }
+                        }
+                    }else {
+                        double number = part.toDouble(&ok);
+                        if (ok){
+                            val._type = MapCalc::NUMERIC;
+                            val._value = number;
+                        }else if (part.indexOf("LINK:") == 0){
+                            int link = part.mid(5).toInt();
+                            val._type = MapCalc::LINK;
+                            val._link = link;
+                        }else {
+                            kernel()->issues()->log(TR("Error in expression. Index value is not valid :") + part);
+                            return IDomain();
+                        }
+                    }
+                    action._values.push_back(val);
                 }
-                action._values.push_back(val);
             }
+            std::reverse(action._values.begin(), action._values.end());
+            _actions.push_back(action);
         }
-        std::reverse(action._values.begin(), action._values.end());
-        _actions.push_back(action);
+        return outputDomain;
+    } catch (ErrorObject& err){
+        return IDomain();
     }
-    return outputDomain;
 }
 
 int  checkItem(int domainCount, QString& item, QString& copy_item, std::set<QString>& domainItems){
@@ -626,12 +635,16 @@ int  checkItem(int domainCount, QString& item, QString& copy_item, std::set<QStr
 int checkIndexItem(int domainCount, std::vector<std::vector<QString>>& rpn,std::vector<std::vector<QString>>& copy_rpn, int index, std::set<QString>& domainItems){
     auto& item = copy_rpn[index];
     // an token may be a regular item or a link; if is a link we follow it further all string encountered belong to the same domain
+    if ( index >= rpn.size())
+        throw ErrorObject("Corrupt expression; unexpected token found");
     int nextLink1 = checkItem(domainCount,rpn[index][1], item[1], domainItems);
     if ( nextLink1 >= 0)
         checkIndexItem(domainCount, rpn, copy_rpn, nextLink1, domainItems);
+    if ( index >= rpn.size())
+        throw ErrorObject("Corrupt expression; unexpected token found");
     int nextLink2 =checkItem(domainCount, rpn[index][2], item[2], domainItems);
     if ( nextLink2 >= 0)
-       checkIndexItem(domainCount, rpn, copy_rpn, nextLink2, domainItems);
+        checkIndexItem(domainCount, rpn, copy_rpn, nextLink2, domainItems);
     return 0;
 }
 IDomain MapCalc::collectDomainInfo(std::vector<std::vector<QString>>& rpn){
