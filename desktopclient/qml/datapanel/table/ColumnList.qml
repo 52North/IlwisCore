@@ -68,9 +68,6 @@ Item {
             var iconP = "../../images/" + name
             return iconP
         }
-        Component.onCompleted: {
-            currentIndex = 0
-        }
 
         Component {
             id: attributeHighlight
