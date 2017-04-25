@@ -64,7 +64,6 @@ Column {
         }
 
         Component.onCompleted: {
-            console.debug("passing")
             var name = preferences.preferedDataFormat("rastercoverage")
             if ( name !== "?")
                 rasters.select(name)

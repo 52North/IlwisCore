@@ -120,7 +120,6 @@ Controls.DropableItem{
             if ( !illegal){
                 var found = false
                 for(var n=0; n < container.itemArray.length; ++n){
-                    console.debug(items[i].minvalue, container.itemArray[n].minvalue)
                     if ( Number(items[i].minvalue) > Number(container.itemArray[n].minvalue)){
                         container.itemArray.splice(n,0, items[i])
                         found = true
