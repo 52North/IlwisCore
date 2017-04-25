@@ -37,6 +37,7 @@ public:
 
 signals:
     void activeCreatorsChanged();
+    void error(const QString& err);
 
 public slots:
 
@@ -54,6 +55,7 @@ private:
     QString createScript(const QVariantMap &parms);
     QString createModel(const QVariantMap &parms);
     QString createCombinationMatrix(const QVariantMap &parms);
+    void executeoperation(const QString &expr);
 };
 
 #endif // OBJECTCREATOR_H
