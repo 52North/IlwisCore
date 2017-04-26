@@ -326,21 +326,29 @@ IlwisObject *FlatTable::clone()
     }
     return 0;
 }
-ITable FlatTable::copyTable(const QString &nm) const
+ITable FlatTable::copyTable(const QString &nm)
 {
     QString  url;
     if ( nm.indexOf(ANONYMOUS_PREFIX) == 0){
         url = INTERNAL_CATALOG + "/" + Identity::newAnonymousName();
-    }else
+    }else if ( nm.indexOf("://") != -1){
+        url = nm;
+    }else if ( nm != "")
         url = INTERNAL_CATALOG + "/" + (nm != sUNDEF ? name() : nm);
+
     IFlatTable tbl;
-    tbl.prepare(url);
-    for(int i=0; i < columnCount(); ++i){
-        tbl->addColumn(columndefinition(i));
-    }
-    int i = 0;
-    for(auto record : _datagrid){
-         tbl->record(i++, record);
+    if (initLoad()){
+        if ( url != "")
+            tbl.prepare(url);
+        else
+            tbl.prepare();
+        for(int i=0; i < columnCount(); ++i){
+            tbl->addColumn(columndefinition(i));
+        }
+        int i = 0;
+        for(auto record : _datagrid){
+            tbl->record(i++, record);
+        }
     }
     return tbl;
 }
