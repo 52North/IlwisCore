@@ -381,11 +381,7 @@ QStringList MapCalc::shuntingYard(const QString &expr)
                 return QStringList();
             }
             tokenstack.pop();
-            if(tokenstack.empty()){
-                kernel()->issues()->log(TR("Illegal construct in expression; maybe missing brackets?"));
-                return QStringList();
-            }
-            if ( isFunction(tokenstack.top())){
+            if (!tokenstack.empty() && isFunction(tokenstack.top())){
                 rpn.push_back(tokenstack.top());
                 tokenstack.pop();
             }
@@ -566,9 +562,9 @@ IDomain MapCalc::linearize(const QStringList &tokens)
                     int pindex = iUNDEF;
                     if ( part.indexOf("DOMAIN:") == 0){
                         val._type = MapCalc::DOMAINITEM;
-                        // retrieve the domain index in _itemdomains to find the matching domain
+                        // retrieve the domain index in _domains to find the matching domain
                         int domainIndex = part.mid(7,1).toInt();
-                        IItemDomain dom = _itemdomains[domainIndex].as<ItemDomain<DomainItem>>();
+                        IItemDomain dom = _domains[domainIndex].as<ItemDomain<DomainItem>>();
                         // get the name from the string to retrieve the corresponding domainitem
                         QString itemName =part.mid(9);
                         itemName = itemName.mid(1,itemName.size() - 2);
@@ -673,7 +669,7 @@ IDomain MapCalc::collectDomainInfo(std::vector<std::vector<QString>>& rpn){
                     if ( item[2][0] == '@'){
                         IRasterCoverage raster = _inputRasters[item[2].mid(1).toInt()].raster();
                         if ( raster->datadef().domain()->ilwisType() == itITEMDOMAIN){
-                            _itemdomains[domainCount] = raster->datadef().domain();
+                            _domains[domainCount] = raster->datadef().domain();
                             rpn[i][1] = "DOMAIN:"+ QString::number(domainCount++) +":" + rpn[i][1];
                         }
                     }
@@ -681,7 +677,7 @@ IDomain MapCalc::collectDomainInfo(std::vector<std::vector<QString>>& rpn){
                     if ( item[1][0] == '@'){
                         IRasterCoverage raster = _inputRasters[item[1].mid(1).toInt()].raster();
                         if ( raster->datadef().domain()->ilwisType() == itITEMDOMAIN){
-                            _itemdomains[domainCount] = raster->datadef().domain();
+                            _domains[domainCount] = raster->datadef().domain();
                             rpn[i][2] = "DOMAIN:"+ QString::number(domainCount++) +":" + rpn[i][2];
                         }
                     }
@@ -698,7 +694,7 @@ IDomain MapCalc::collectDomainInfo(std::vector<std::vector<QString>>& rpn){
                 for(QString item : domainItems){
                     dom->addItem(new NamedIdentifier(item));
                 }
-                _itemdomains[domainCount++] = dom;
+                _domains[domainCount++] = dom;
             }
         }
 
@@ -718,7 +714,7 @@ IDomain MapCalc::findOutDomain(const std::vector<std::vector<QString>>&rpn,const
     auto findDomainperItem = [&](const std::vector<std::vector<QString>>&rpn, const QString& currentItem)->IDomain{
         if ( currentItem.indexOf("DOMAIN:") == 0)    {
             int index = currentItem.mid(7,1).toInt();
-            return _itemdomains[index];
+            return _domains[index];
         } if (currentItem.indexOf("LINK:") == 0){
             int nextItem = currentItem.mid(5).toInt() ;
             return findOutDomain(rpn, rpn[nextItem]);

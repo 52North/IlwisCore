@@ -39,7 +39,7 @@ private:
     std::map<int, PixelIterator> _inputRasters;
     std::map<int, double> _inputNumbers;
     IRasterCoverage _outputRaster;
-    std::map<int,IDomain> _itemdomains;
+    std::map<int,IDomain> _domains;
 
     bool isAssociative(const QString &token, int type) ;
     bool isOperator(const QString &token) ;
