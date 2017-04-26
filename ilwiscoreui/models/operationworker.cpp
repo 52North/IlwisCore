@@ -36,6 +36,9 @@ void OperationWorker::run(const OperationExpression &expression){
                     }  else if ( hasType(symbol._type, itSTRING)){
                         QVariantList varList = symbol._var.value<QVariantList>();
                         kernel()->issues()->log(varList[0].toString(), IssueObject::itRESULT);
+                    }else if ( hasType(symbol._type, itBOOL)){
+                        QVariantList varList = symbol._var.value<QVariantList>();
+                        kernel()->issues()->log(varList[0].toString(), IssueObject::itRESULT);
                     }
                 }
             }
