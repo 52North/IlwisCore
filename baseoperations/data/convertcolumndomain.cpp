@@ -39,7 +39,7 @@ ConvertColumnDomain::ConvertColumnDomain(quint64 metaid, const Ilwis::OperationE
 {
 }
 
-template<class DomainType, class RangeType> bool translate2ItemColumn(ITable& inputTable, const QString& colName, std::vector<QVariant>& values, const QString& domName){
+template<class DomainType, class RangeType> bool translate2ItemColumn(ITable& inputTable, ITable& outputTable, const QString& colName, std::vector<QVariant>& values, const QString& domName){
 
     //std::vector<QVariant> values = oldvalues;
     RangeType range;
@@ -79,7 +79,7 @@ template<class DomainType, class RangeType> bool translate2ItemColumn(ITable& in
         domain.prepare();
         domain->range(new RangeType(range));
     }
-    inputTable->columndefinitionRef(colName) = ColumnDefinition(colName, domain);
+    outputTable->columndefinitionRef(colName) = ColumnDefinition(colName, domain);
     for(auto& v : values){
         auto item = domain->item(v.toString());
         if ( item)
@@ -88,11 +88,11 @@ template<class DomainType, class RangeType> bool translate2ItemColumn(ITable& in
             v = rUNDEF;
         }
     }
-    inputTable->column(colName, values);
+    outputTable->column(colName, values);
     return true;
 }
 
-bool translate2TimeColumn(ITable& inputTable, const QString& colName, std::vector<QVariant>& values){
+bool translate2TimeColumn(ITable& inputTable, ITable& outputTable, const QString& colName, std::vector<QVariant>& values){
     ITimeDomain domain;
     domain.prepare();
     TimeInterval range;
@@ -104,12 +104,12 @@ bool translate2TimeColumn(ITable& inputTable, const QString& colName, std::vecto
         }
     }
     domain->range(new TimeInterval(range));
-    inputTable->columndefinitionRef(colName) = ColumnDefinition(colName, domain);
+    outputTable->columndefinitionRef(colName) = ColumnDefinition(colName, domain);
 
     return true;
 }
 
-template<class NumberType> bool translate2NumericColumn(ITable& inputTable, const QString& colName, std::vector<QVariant>& values, double undef){
+template<class NumberType> bool translate2NumericColumn(ITable& inputTable, ITable& outputTable, const QString& colName, std::vector<QVariant>& values, double undef){
     INumericDomain domain;
     domain.prepare();
     NumericRange range;
@@ -120,12 +120,12 @@ template<class NumberType> bool translate2NumericColumn(ITable& inputTable, cons
         range.add(nv);
     }
     domain->range(new NumericRange(range));
-    inputTable->columndefinitionRef(colName) = ColumnDefinition(colName, domain);
+    outputTable->columndefinitionRef(colName) = ColumnDefinition(colName, domain);
 
     return true;
 }
 
-bool translate2colorColumn(ITable& , const QString& , std::vector<QVariant>& ){
+bool translate2colorColumn(ITable& , ITable& outputTable, const QString& , std::vector<QVariant>& ){
 // TODO: not yet implemented
     kernel()->issues()->log("Using unimplemeted feature", IssueObject::itWarning);
 
@@ -139,34 +139,33 @@ bool ConvertColumnDomain::execute(ExecutionContext *ctx, SymbolTable &symTable)
             return false;
 
     bool ok = false;
+    ITable outputTable = _inputTable->copyTable("");
     std::vector<QVariant> values = _inputTable->column(_columnName);
     if ( _targetDomainType == "identifier" ){
-        ok = translate2ItemColumn<INamedIdDomain, NamedIdentifierRange>(_inputTable, _columnName, values, _domainName);
+        ok = translate2ItemColumn<INamedIdDomain, NamedIdentifierRange>(_inputTable,outputTable, _columnName, values, _domainName);
     }
     if ( _targetDomainType == "thematic" ){
-        ok = translate2ItemColumn<IThematicDomain, ThematicRange>(_inputTable, _columnName, values, _domainName);
+        ok = translate2ItemColumn<IThematicDomain, ThematicRange>(_inputTable,outputTable, _columnName, values, _domainName);
     }
     if ( _targetDomainType == "time" ){
-        ok = translate2TimeColumn(_inputTable, _columnName, values);
+        ok = translate2TimeColumn(_inputTable,outputTable, _columnName, values);
     }
     if ( _targetDomainType == "float" ){
-        translate2NumericColumn<double>(_inputTable, _columnName, values, rUNDEF);
+        translate2NumericColumn<double>(_inputTable,outputTable, _columnName, values, rUNDEF);
     }
     if ( _targetDomainType == "integer" ){
-        ok = translate2NumericColumn<qint32>(_inputTable, _columnName, values, iUNDEF);
+        ok = translate2NumericColumn<qint32>(_inputTable,outputTable, _columnName, values, iUNDEF);
     }
     if ( _targetDomainType == "color" ){
-        ok = translate2colorColumn(_inputTable, _columnName, values);
+        ok = translate2colorColumn(_inputTable,outputTable, _columnName, values);
     }
     if (ok){
-       _inputTable->column(_columnName, values);
-       _inputTable->columndefinitionRef(_columnName).datadef().domain()->name(_domainName);
+       outputTable->column(_columnName, values);
+       //_inputTable->columndefinitionRef(_columnName).datadef().domain()->name(_domainName);
 
-        if ( ctx != 0) {
-            QVariant value;
-            value.setValue<ITable>(_inputTable);
-            ctx->setOutput(symTable, value, _inputTable->name(), itTABLE,_inputTable->resource());
-        }
+       QVariant value;
+       value.setValue<ITable>(outputTable);
+       ctx->setOutput(symTable, value, outputTable->name(),itTABLE,outputTable->resource());
     }
 
 
@@ -205,7 +204,7 @@ Ilwis::OperationImplementation::State ConvertColumnDomain::prepare(ExecutionCont
        return sPREPAREFAILED;
     }
     _sourceDomainType = _inputTable->columndefinition(colName).datadef().domain()->ilwisType();
-    if (  !hasType(_sourceDomainType,itTEXTDOMAIN | itNUMERICDOMAIN | itITEMDOMAIN)){
+    if (  !hasType(_sourceDomainType,itTEXTDOMAIN | itNUMERICDOMAIN | itITEMDOMAIN|itNUMERICDOMAIN)){
         ERROR2(ERR_INVALID_PROPERTY_FOR_2,TR("Domain type"),colName);
         return sPREPAREFAILED;
     }
@@ -220,6 +219,25 @@ Ilwis::OperationImplementation::State ConvertColumnDomain::prepare(ExecutionCont
     _domainName = _columnName;
     if ( _expression.parameterCount() == 4){
         _domainName = _expression.input<QString>(3);
+        if ( _domainName.indexOf("://") != -1){
+            IDomain targetDomain;
+            targetDomain.prepare(_domainName);
+            if ( !targetDomain.isValid()){
+                kernel()->issues()->log(TR("Could not load : ") + _domainName);
+                return sPREPAREFAILED;
+            }
+            IlwisTypes vtype = targetDomain->valueType();
+            if ( hasType(vtype, itDOMAINITEM))
+                _targetDomainType = "thematic";
+            else if ( hasType(vtype,itINTEGER))
+                _targetDomainType = "integer";
+            else if ( hasType(vtype,itFLOAT | itDOUBLE))
+                _targetDomainType = "float";
+            else {
+                kernel()->issues()->log(TR("Non convertable value type : ") + TypeHelper::type2name(vtype));
+                return sPREPAREFAILED;
+            }
+        }
     }
 
     return sPREPARED;
@@ -231,12 +249,13 @@ quint64 ConvertColumnDomain::createMetadata()
     operation.setLongName("convert column to other domain");
     operation.setSyntax("convertcolumndomain(inputtable,columnname,targetdomaintype=!identifier|thematic|time|float|integer|color[, domain-name])");
     operation.setDescription(TR("translates the values of a string column in a table to a regular domain"));
-    operation.setInParameterCount({3,4});
+    operation.setInParameterCount({4});
     operation.addInParameter(0,itTABLE|itFEATURE|itRASTER, TR("input table/coverage"),TR("input table/coverage with a to be translated string/numeric or id domain column"));
     operation.addInParameter(1,itSTRING,  TR("string column"),TR("Column to be translated; must contain string values"));
     operation.addInParameter(2,itSTRING, TR("target domain type"),TR("The domain to which the string values are to be translated") );
-    operation.addOptionalInParameter(3,itSTRING,  TR("domain name"),TR("optional name of the to be created domain. If not given it will get the name of the column"));
-    operation.setOutParameterCount({0});
+    operation.addInParameter(3,itDOMAIN,  TR("domain name"),TR("optional name of the to be created domain. If not given it will get the name of the column"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itTABLE, TR("output table"),TR("New table with converted domain"));
     operation.setKeywords("table, domain, transformation");
 
     mastercatalog()->addItems({operation});
