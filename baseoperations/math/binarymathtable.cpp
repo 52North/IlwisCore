@@ -66,7 +66,7 @@ bool BinaryMathTable::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( _outputTable.isValid()) {
         QVariant var;
         var.setValue<ITable>(_outputTable);
-        ctx->setOutput(symTable,var, _outputTable->name(),itTABLE,_outputTable->resource(),_outColumn);
+        ctx->setOutput(symTable,var, _outputTable->name(),itCOLUMN,_outputTable->resource(),_outColumn);
         return true;
     }
 
@@ -159,7 +159,7 @@ OperationImplementation::State BinaryMathTable::prepare(ExecutionContext *, cons
 quint64 BinaryMathTable::createMetadata()
 {
     OperationResource operation({"ilwis://operations/binarymathtable"});
-    operation.setSyntax("binarymathtable(input-table, !column-name|number,tableoperation=!column-name|number,output-column-name, !add|subtract|divide|times|mod)");
+    operation.setSyntax("binarymathtable(input-table, !column-name|number,!column-name|number, !add|subtract|divide|times|mod)");
     operation.setDescription(TR("generates a new numerical table based on the operation, applied to all the cells of a column"));
     operation.setInParameterCount({4});
     operation.addInParameter(0,itTABLE, TR("input table"),TR("input table from which the input column will be chosen"));
