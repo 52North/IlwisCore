@@ -348,6 +348,11 @@ bool ResourceModel::isRoot() const
     return _isRoot;
 }
 
+bool ResourceModel::changed() const
+{
+    return item().hasChanged();
+}
+
 QString ResourceModel::id() const
 {
     try {
