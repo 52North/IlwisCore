@@ -75,7 +75,9 @@ quint32 WorkflowModel::addNode(const QString &id, const QVariantMap& parameters)
                 Pixel lu(parameters["x"].toInt(), parameters["y"].toInt());
                 Pixel rd(lu.x + parameters["w"].toInt(), lu.y + parameters["w"].toInt());
                 node->box(BoundingBox(lu, rd));
-                return _workflow->addNode(node, ownerid);
+                auto id =  _workflow->addNode(node, ownerid);
+                emit changedChanged();
+                return id;
             }else {
                 kernel()->issues()->log(TR("Could not create node in the workflow; maybe illegal node type?"));
             }
