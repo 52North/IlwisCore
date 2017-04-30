@@ -111,6 +111,8 @@ Rectangle {
                 var flow = workflowView.currentItem
                 var node = workflowView.workflow.getNode(flow.target.itemid)
                 var txt = node["parameters"][flow.flowPoints.fromParameterIndex].flowlabel
+                if ( !txt)
+                    return "";
                 return txt
             }
         }
@@ -126,6 +128,8 @@ Rectangle {
             var flow = workflowView.currentItem
             var node = workflowView.workflow.getNode(flow.target.itemid)
             var txt = node["parameters"][flow.flowPoints.toParameterIndex].description
+            if ( !txt)
+                return "";
             return txt
         }
     }
