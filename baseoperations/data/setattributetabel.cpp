@@ -30,14 +30,18 @@ bool SetAttributeTable::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
-    if ( _inputCoverage->ilwisType() == itRASTER){
-        IRasterCoverage raster = _inputCoverage.as<RasterCoverage>();
-        raster->primaryKey(_primaryKey);
-        raster->setAttributes(_inputTable);
-        QVariant v;
-        v.setValue(raster);
-        ctx->setOutput(symTable, v, raster->name(),itRASTER, raster->resource());
+    _outputRaster->primaryKey(_primaryKey);
+    _outputRaster->setAttributes(_inputTable);
+
+    PixelIterator iterOut(_outputRaster);
+    for(auto v : _inputRaster){
+        *iterOut = v;
     }
+
+
+    QVariant v;
+    v.setValue(_outputRaster);
+    ctx->setOutput(symTable, v, _outputRaster->name(),itRASTER, _outputRaster->resource());
 
     return true;
 }
@@ -53,7 +57,7 @@ Ilwis::OperationImplementation::State SetAttributeTable::prepare(ExecutionContex
     OperationHelper::check([&] ()->bool { return _inputTable.prepare(_expression.input<QString>(0), itTABLE); },
     {ERR_COULD_NOT_LOAD_2,_expression.input<QString>(0), "" } );
 
-    OperationHelper::check([&] ()->bool { return _inputCoverage.prepare(_expression.input<QString>(1), itCOVERAGE); },
+    OperationHelper::check([&] ()->bool { return _inputRaster.prepare(_expression.input<QString>(1), itRASTER); },
     {ERR_COULD_NOT_LOAD_2,_expression.input<QString>(1), "" } );
 
     _primaryKey = _expression.input<QString>(2);
@@ -77,29 +81,34 @@ Ilwis::OperationImplementation::State SetAttributeTable::prepare(ExecutionContex
         return sPREPAREFAILED;
     }
 
-    if ( _inputCoverage->ilwisType() == itRASTER){
-        ColumnDefinition coldef = _inputTable->columndefinition(index);
-        IRasterCoverage raster = _inputCoverage.as<RasterCoverage>();
-        if ( coldef.datadef().domain() != raster->datadef().domain()){
-            kernel()->issues()->log(TR("Key column doesnt match raster domain ") + _primaryKey);
-            return sPREPAREFAILED;
-        }
+    ColumnDefinition coldef = _inputTable->columndefinition(index);
+    if ( !coldef.datadef().domain()->isCompatibleWith(_inputRaster->datadef().domain().ptr())){
+        kernel()->issues()->log(TR("Key column doesnt match raster domain ") + _primaryKey);
+        return sPREPAREFAILED;
     }
 
+    OperationHelperRaster helper;
+    helper.initialize(_inputRaster, _outputRaster, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF|itDOMAIN);
 
+    for(quint32 i = 0; i < _outputRaster->size().zsize(); ++i){
+        QString index = _outputRaster->stackDefinition().index(i);
+        DataDefinition datadef = _outputRaster->datadef(i);
+        _outputRaster->setBandDefinition(index,DataDefinition(datadef.domain(), datadef.range()->clone()));
+    }
     return sPREPARED;
 }
 
 quint64 SetAttributeTable::createMetadata()
 {
     OperationResource operation({"ilwis://operations/setattributetable"});
-    operation.setSyntax("setattributetable(inputtable, coverage, primarykey)");
+    operation.setSyntax("setattributetable(inputtable, raster, primarykey)");
     operation.setDescription(TR("assigns the input table as attribute data to coverage, note that for features is is a (kind of) copy as they dont have real attribute tables"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itTABLE , TR("input table"),TR("Table with at least one column suitable as primary key, For features this column must hold the indexes for the features to be coupled"));
-    operation.addInParameter(1,itCOVERAGE , TR("coverage"),TR("For rasters the domain must be the same as the primary key, features are coupled either by index or by index number in the key column"));
+    operation.addInParameter(1,itRASTER , TR("coverage"),TR("For rasters the domain must be the same as the primary key, features are coupled either by index or by index number in the key column"));
     operation.addInParameter(2,itSTRING , TR("key column"),TR("Column that serves as primary key for connecting the table to the coverage"));
-    operation.setOutParameterCount({0});
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itRASTER , TR("output raster"),TR("A new raster with an attribute table"));
     operation.setKeywords("coverage, selection");
 
     mastercatalog()->addItems({operation});
