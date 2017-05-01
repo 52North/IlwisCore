@@ -287,6 +287,7 @@ bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     QVariant value;
     value.setValue<IRasterCoverage>(_outputRaster);
+    _outputRaster->setDescription(_expression.toString());
     ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER,_outputRaster->resource() );
 
     return true;
