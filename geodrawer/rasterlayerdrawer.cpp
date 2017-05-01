@@ -45,7 +45,7 @@ bool RasterLayerDrawer::prepare(DrawerInterface::PreparationType prepType, const
 
     IRasterCoverage raster = coverage().as<RasterCoverage>();
     if ( !_rasterImage){
-        setActiveVisualAttribute(raster->hasAttributes() ? COVERAGEKEYCOLUMN : PIXELVALUE);
+        setActiveVisualAttribute(raster->hasAttributes() ? raster->primaryKey() : PIXELVALUE);
        _visualAttribute = visualProperty(activeAttribute());
        _rasterImage.reset(RasterImageFactory::create(raster->datadef().domain()->ilwisType(), rootDrawer(), raster,_visualAttribute,IOOptions()));
        if (!_rasterImage){
@@ -141,7 +141,7 @@ void RasterLayerDrawer::coverage(const ICoverage &cov)
 
     }
     //set default
-    setActiveVisualAttribute(raster->hasAttributes() ? COVERAGEKEYCOLUMN : PIXELVALUE);
+    setActiveVisualAttribute(raster->hasAttributes() ? raster->primaryKey() : PIXELVALUE);
 }
 
 
