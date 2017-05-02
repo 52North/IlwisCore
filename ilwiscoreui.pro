@@ -102,7 +102,8 @@ HEADERS += ilwiscoreui/ilwiscoreui_global.h \
     ilwiscoreui/models/workflow/modelbuilder.h \
     ilwiscoreui/models/workflow/analysismodel.h \
     ilwiscoreui/models/workflow/conceptmodel.h \
-    ilwiscoreui/models/workflow/applicationmodelui.h
+    ilwiscoreui/models/workflow/applicationmodelui.h \
+    ilwiscoreui/tableoperations/columnvisibility.h
 
 SOURCES += \
     ilwiscoreui/models/attributemodel.cpp \
@@ -184,7 +185,8 @@ SOURCES += \
     ilwiscoreui/models/workflow/modelbuilder.cpp \
     ilwiscoreui/models/workflow/analysismodel.cpp \
     ilwiscoreui/models/workflow/conceptmodel.cpp \
-    ilwiscoreui/models/workflow/applicationmodelui.cpp
+    ilwiscoreui/models/workflow/applicationmodelui.cpp \
+    ilwiscoreui/tableoperations/columnvisibility.cpp
 
 DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF
 

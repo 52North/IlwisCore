@@ -979,7 +979,7 @@ QVariantList IlwisObjectModel::layerInfo() const
             IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
             QVariantMap mp;
             for(quint32 i=0; i < raster->size().zsize(); ++i){
-                QString name = raster->name() + " " + raster->stackDefinition().index(i);
+                QString name =  raster->stackDefinition().index(i);
                 if ( raster->datadefRef(i).range()){
                     QString range = raster->datadefRef(i).range()->toString();
                     QString rangelist;

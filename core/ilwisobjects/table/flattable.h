@@ -85,7 +85,7 @@ public:
 
     bool canUse(const IlwisObject *obj, bool strict=false) const ;
 
-    ITable copyTable(const QString &nm) const;
+    ITable copyTable(const QString &nm) ;
     bool merge(const IlwisObject *obj);
 protected:
     bool isColumnIndexValid(quint32 index) const{

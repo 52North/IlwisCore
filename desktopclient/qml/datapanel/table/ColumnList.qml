@@ -20,6 +20,10 @@ Item {
             columnlist.currentIndex = newindex
             columnOperationList.currentColumn =columnlist.model[newindex]
             columnOperationList.setOperation(0)
+        }else if ( newindex === 0){
+            columnlist.currentIndex = newindex
+            columnOperationList.currentColumn = null
+            columnOperationList.setOperations(table.operations)
         }
     }
 
@@ -79,22 +83,6 @@ Item {
                 width : 130
                 height : 18
                 spacing : 3
-                CheckBox{
-                    id : visibilityCheck
-                    width : 17
-                    height: 17
-                    checked : true
-
-                    style: Base.CheckBoxStyle1{}
-
-                    opacity : index == 0 ? 0 : 1
-                    enabled : index == 0 ? false : true
-
-                    onCheckedChanged: {
-                        var col = tableView.getColumn(index)
-                        col.visible = checked
-                    }
-                }
                 Image{
                     id : domicon
                     source : columnlist.iconsource(icon)

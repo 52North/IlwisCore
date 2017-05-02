@@ -157,10 +157,10 @@ Kernel::~Kernel() {
     issues()->log(QString("Ilwis closed at %1").arg(Time::now().toString()),IssueObject::itMessage);
 
     context()->configurationRef().store();
-    if ( _dbPublic.isOpen()){
-        qDebug() << "closing database";
-        _dbPublic.close();
-    }
+//    if ( _dbPublic.isOpen()){
+//        qDebug() << "closing database";
+//          _dbPublic.close();
+//    }
 }
 
 const QVariant *Kernel::getFromTLS(const QString& key) const{

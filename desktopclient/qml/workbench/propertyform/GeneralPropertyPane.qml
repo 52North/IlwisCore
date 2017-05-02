@@ -28,7 +28,8 @@ Rectangle {
         height : 164
         width : parent.width - 6
         Controls.TextEditLabelPair{ id : objectDisplayName; labelText : qsTr("Name"); readOnly: !propertyForm.editable; labelWidth: 120; content : displayName; width : parent.width - 4}
-        Controls.TextEditLabelPair{ labelText : qsTr("Location"); readOnly: true; labelWidth: 120; content : url; width : parent.width - 4}
+        Controls.TextEditLabelPair{ labelText : qsTr("Logical Location"); readOnly: true; labelWidth: 120; content : url; width : parent.width - 4}
+        Controls.TextEditLabelPair{ labelText : qsTr("Physical Location"); readOnly: true; labelWidth: 120; content : rawUrl; width : parent.width - 4}
         Controls.TextEditLabelPair{ labelText : qsTr("External format"); readOnly: true; labelWidth: 120; content : externalFormat; width : parent.width - 4}
         Controls.TextEditLabelPair{ labelText : qsTr("Creation date"); readOnly: true; labelWidth: 120; content : creationDate; width : parent.width - 4}
         Controls.TextEditLabelPair{ labelText : qsTr("Modified date"); readOnly: true; labelWidth: 120; content : modifiedDate; width : parent.width - 4}

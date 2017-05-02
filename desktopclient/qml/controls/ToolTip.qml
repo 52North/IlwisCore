@@ -91,7 +91,7 @@ MouseArea {
 
     Timer{
         id : hideTimer
-        interval: 7000
+        interval: 12000
         onTriggered: {
             toolTip.visible = false
         }

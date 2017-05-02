@@ -25,6 +25,7 @@
 #include "combinationmatrix.h"
 #include "workflow/modelbuilder.h"
 #include "workflow/analysismodel.h"
+#include "operationworker.h"
 
 using namespace Ilwis;
 
@@ -492,18 +493,41 @@ QString ObjectCreator::createRasterCoverage(const QVariantMap& parms){
 
     QString output = QString("script %1{format(stream,\"rastercoverage\")}=").arg(name);
     expr = output + expr;
-    Ilwis::ExecutionContext ctx;
-    Ilwis::SymbolTable syms;
-    if(Ilwis::commandhandler()->execute(expr,&ctx,syms) ) {
-        if ( ctx._results.size() > 0){
-            IIlwisObject obj = syms.getSymbol(ctx._results[0])._var.value<IIlwisObject>();
-            if ( obj.isValid())
-                return QString::number(obj->id());
-        }
-    }
+    executeoperation(expr);
+//    Ilwis::ExecutionContext ctx;
+//    Ilwis::SymbolTable syms;
+//    if(Ilwis::commandhandler()->execute(expr,&ctx,syms) ) {
+//        if ( ctx._results.size() > 0){
+//            IIlwisObject obj = syms.getSymbol(ctx._results[0])._var.value<IIlwisObject>();
+//            if ( obj.isValid())
+//                return QString::number(obj->id());
+//        }
+//    }
     return sUNDEF;
 }
 
+void ObjectCreator::executeoperation(const QString& expr) {
+
+    try {
+        OperationExpression opExpr(expr);
+        if (opExpr.isValid()){
+
+            QThread* thread = new QThread;
+            OperationWorker* worker = new OperationWorker(opExpr);
+            worker->moveToThread(thread);
+            thread->setProperty("workingcatalog", qVariantFromValue(context()->workingCatalog()));
+            thread->connect(thread, &QThread::started, worker, &OperationWorker::process);
+            thread->connect(worker, &OperationWorker::finished, thread, &QThread::quit);
+            thread->connect(worker, &OperationWorker::finished, worker, &OperationWorker::deleteLater);
+            thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+            thread->start();
+
+
+        }
+    } catch (const ErrorObject& err){
+        emit error(err.message());
+    }
+}
 
 
 

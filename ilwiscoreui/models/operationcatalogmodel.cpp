@@ -75,7 +75,7 @@ void tableCase(const IIlwisObject &obj, const QString& condition, int parmIndex,
     mp["parameterIndex"] = parmIndex;
     QStringList names;
     int index;
-    IlwisTypes domainType;
+    IlwisTypes domainType = itTEXTDOMAIN | itITEMDOMAIN | itNUMERICDOMAIN;
     if ( (index = condition.indexOf(" with ")) != -1){
         QString domainPart = condition.mid(index + 6);
         QStringList parts = domainPart.split("=");

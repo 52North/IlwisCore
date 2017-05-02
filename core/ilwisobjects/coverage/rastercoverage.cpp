@@ -177,6 +177,7 @@ void RasterCoverage::copyTo(IlwisObject *obj)
     }
     raster->_attributeTable = _attributeTable;
     raster->_size = _size;
+    raster->_primaryKey = _primaryKey;
 
 }
 
@@ -423,8 +424,9 @@ QVariant RasterCoverage::coord2value(const Coordinate &c, const QString &attrnam
             if (!hasAttributes())
                 vmap[PIXELVALUE] = value;
             else{
+                int record = _recordLookup[value];
                 for(int i=0; i < attributeTable()->columnCount(); ++i){
-                    QVariant attrvalue = attributeTable()->cell(i, (quint32)value);
+                    QVariant attrvalue = attributeTable()->cell(i, record);
                     vmap[attributeTable()->columndefinitionRef(i).name()] = attrvalue;
                 }
             }
@@ -449,41 +451,36 @@ void RasterCoverage::setAttributes(const ITable& tbl, const QString& joinColumn)
     if ( isReadOnly())
         return;
     changed(true);
-    if (joinColumn != sUNDEF){
-//        int index = tbl->columnIndex(joinColumn);
-//        if ( index == iUNDEF){
-//            kernel()->issues()->log(TR("Join Column doesnt exist in potential attribute table ") + joinColumn, IssueObject::itWarning);
-//            return;
-//        }
-//        if ( !tbl->columndefinition(index).datadef().domain()->isCompatibleWith(datadef().domain().ptr())){
-//            kernel()->issues()->log(TR("Join Column Domain isnt compatible with raster domain") + joinColumn, IssueObject::itWarning);
-//            return;
-//        }
-//        ITable  newtabel;
-//        newtabel.prepare();
-//        newtabel->name(name());
-//        for(int i=0; i < tbl->columnCount(); ++i)
-//            newtabel->addColumn(tbl->columndefinition(i));
-
-//        ItemIterator<DomainItem> iter(static_cast<ItemRange *>(datadef().range().data()));
-
-//        while(iter != iter.end()){
-
-//        }
-
-    }
     _attributeTable = tbl;
+    _recordLookup.clear();
+    if ( _attributeTable.isValid()){
+        std::vector<QVariant> values = tbl->column(primaryKey());
+        if ( values.size() > 0){
+            int count = 0;
+            for(auto v : values)
+                _recordLookup[v.toDouble()] = count++;
+        }
+    }
 }
 
 QString RasterCoverage::primaryKey() const
 {
-        return _primaryKey;
+    return _primaryKey;
 
 }
 
 void RasterCoverage::primaryKey(const QString &key)
 {
-        _primaryKey = key;
+    _primaryKey = key;
+    _recordLookup.clear();
+    if ( _attributeTable.isValid()){
+        std::vector<QVariant> values = _attributeTable->column(primaryKey());
+        if ( values.size() > 0){
+            int count = 0;
+            for(auto v : values)
+                _recordLookup[v.toDouble()] = count++;
+        }
+    }
 }
 
 RasterStackDefinition &RasterCoverage::stackDefinitionRef()

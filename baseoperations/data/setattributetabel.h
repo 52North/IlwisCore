@@ -18,7 +18,9 @@ public:
 
 private:
     ITable _inputTable;
-    ICoverage _inputCoverage;
+    IRasterCoverage _inputRaster;
+    IRasterCoverage _outputRaster;
+
     QString _primaryKey;
 
     NEW_OPERATION(SetAttributeTable);

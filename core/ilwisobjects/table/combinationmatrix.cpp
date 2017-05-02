@@ -78,7 +78,7 @@ double CombinationMatrix::combo(const QString &xValue, const QString &yValue)
 
 double CombinationMatrix::combo(int x, int y) const
 {
-    if ( x < _axisValues[aXAXIS].size() &&  y < _axisValues[aYAXIS].size()){
+    if ( (x >= 0 && x < _axisValues[aXAXIS].size()) &&  (y>=0 && y < _axisValues[aYAXIS].size())){
             return _combos[x][y] ;
     }
     return rUNDEF;

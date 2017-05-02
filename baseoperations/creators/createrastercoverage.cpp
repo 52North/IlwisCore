@@ -37,20 +37,25 @@ bool CreateRasterCoverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
 
     initialize(_outputRaster->size().linearSize());
+    double minv=1e307,maxv = -1e307;
     PixelIterator pout(_outputRaster);
     for(auto& band : _bands){
         for(double value : band){
             *pout = value;
-            if(!trq()->update(1))
-                return false;
+            minv = Ilwis::min(value,minv);
+            maxv = Ilwis::max(value,maxv);
+            updateTranquilizer(pout.linearPosition(), 1000);
             ++pout;
         }
     }
-
+    double resolution = _outputRaster->datadefRef().domain()->range<NumericRange>()->resolution();
+    NumericRange *rng = new NumericRange(minv, maxv, resolution);
+    _outputRaster->datadefRef().range(rng);
 
 
     QVariant value;
     value.setValue<IRasterCoverage>(_outputRaster);
+    _outputRaster->setDescription(_expression.toString());
     ctx->setOutput(symTable,value,_outputRaster->name(),itRASTER,_outputRaster->resource());
 
     return true;
@@ -193,7 +198,7 @@ bool CreateRasterCoverage::parseStackDefintion(const QString& stacDef){
 
     if  (ok){
         int n = 0;
-        if ( items.size() > _bands.size() && _bands.size() != 0){
+        if ( items.size() >= _bands.size() && _bands.size() != 0){
             n = _bands.size();
         }else if ( items.size() < _bands.size())
             n = items.size();
@@ -288,7 +293,7 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
         }
 
     }
-
+    initialize(_outputRaster->size().linearSize());
     return sPREPARED;
 }
 
@@ -297,13 +302,22 @@ QString CreateRasterCoverage::expandWildCards(const QString& wildmaps){
     QString maps = wildmaps;
     maps.replace("*","%");
     maps.replace("?","_");
+    QString extraPath ;
+    if ( maps.indexOf("/") != -1){
+        QStringList parts = maps.split("/");
+        maps = parts.back();
+        for(int i=0; i < parts.size() - 1; ++i)
+            extraPath +=  "/" + parts[i] ;
+    }
     QString containerPath = context()->workingCatalog()->resource().url().toString();
-    QString query = "container='" + containerPath + "' and name LIKE " + maps;
+    QString query = "container='" + containerPath + extraPath + "' and name LIKE '" + maps + "'";
     std::vector<Resource> resources = mastercatalog()->select(query);
     for(auto resource : resources){
-        if ( result != "")
-            result += ",";
-        result += resource.url().toString();
+        if ( resource.ilwisType() == itRASTER){
+            if ( result != "")
+                result += ",";
+            result += resource.url().toString();
+        }
     }
     return result;
 }
@@ -322,7 +336,7 @@ quint64 CreateRasterCoverage::createMetadata()
     resource.addOptionalInParameter(5, itBOOL,TR("Auto resample"), TR("Checking this option will automatically resample all bands to the input georeference"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itRASTER, TR("raster coverage"), TR("The newly created raster"));
-    resource.setKeywords("raster,create,internal");
+    resource.setKeywords("raster,create");
 
     mastercatalog()->addItems({resource});
     return resource.id();

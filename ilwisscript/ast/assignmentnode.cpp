@@ -216,15 +216,12 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                     } else if ( hasType(tp, itGEOREF)){
                         ok &= copyObject<GeoReference>(sym, result,symbols);
                     } else if (hasType(tp, itTABLE | itCOLUMN)){
-                        if ( tp == itTABLE)
-                            ok &= copyObject<Table>(sym, result,symbols,true);
-                        else if ( tp == itFLATTABLE)
-                            ok &= copyObject<FlatTable>(sym, result,symbols,true);
+                        ok &= copyObject<Table>(sym, result,symbols, tp==itCOLUMN);
                         QSharedPointer<Selector> selector = _outParms->selector(result);
                         if (!selector.isNull()){
                             QString varName = selector->variable();
                             ITable source =  sym._var.value<ITable>();
-                            QString oldColName = additionalInfo[source->name()].toString();
+                            QString oldColName = additionalInfo[val.id()].toString();
                             QVariant newT= symbols.getValue(result);
                             ITable newTable = newT.value<ITable>();
                             ColumnDefinition& coldef = newTable->columndefinitionRef(oldColName);

@@ -829,10 +829,16 @@ double Resource::modifiedTime() const
     return _modifiedTime;
 }
 
-void Resource::modifiedTime(const double &tme)
+void Resource::modifiedTime(const double &tme, bool force)
 {
-    _changed = true;
-    _modifiedTime = tme;
+    if(context()->initializationFinished() || force){
+        _changed = true;
+        if ( _modifiedTime != rUNDEF ){
+            return; // hmpff. we can only solve this in other debugger; current debugger mingw crashes if I start in debug mode
+            //qDebug() << "modifying" << url().toString() << ilwisType();
+        }
+        _modifiedTime = tme;
+    }
 }
 
 double Resource::createTime() const
@@ -855,5 +861,5 @@ void Resource::changed(bool yesno)
 {
     _changed = yesno;
     if ( yesno)
-        _modifiedTime = Ilwis::Time::now();
+        modifiedTime(Ilwis::Time::now());
 }

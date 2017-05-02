@@ -218,7 +218,7 @@ Controls.DropableItem{
                     return false;
                 }
             }
-             var url = applyButton.currentCatalogCorrectUrl() + "/"+ namevalue.name
+             var url = applyButton.currentCatalogCorrectUrl() + "/"+ namevalue.content
             var createInfo = {georeference : grfvalue.content,
                 domain : domvalue.content,
                 stackdefinition : bandsvalue.content,
@@ -229,6 +229,7 @@ Controls.DropableItem{
                 autoresample : resampleCB.checked}
 
             objectcreator.createObject(createInfo)
+
 
             return true;
         }

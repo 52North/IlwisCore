@@ -94,15 +94,15 @@ Ilwis::OperationImplementation::State CreateIntervalDomain::prepare(ExecutionCon
         return sPREPAREFAILED;
     }
     //check if no ranges overlap
-    double last = -1e308;
+    double last = rUNDEF;
     for(int i=0; i < _items.size(); i+=5){
        double currentMin = _items[i+1].toDouble();
        double currentMax = _items[i+2].toDouble();
-       if ( currentMin < last){
+       if ( last != rUNDEF && currentMax > last){
            kernel()->issues()->log(TR("Domain items overlap which is not allowed"));
            return sPREPAREFAILED;
        }
-       last = currentMax;
+       last = currentMin;
     }
     if ( _parentdomain.isValid()){
         for(int i =0; i < _items.size(); i+=5){
@@ -133,7 +133,7 @@ quint64 CreateIntervalDomain::createMetadata()
     resource.addOptionalInParameter(4, itDOMAIN, TR("Parent domain"), TR("optional indication of a parent domain"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itITEMDOMAIN, TR("output domain"), TR("The newly created domain"));
-    resource.setKeywords("domain, create, interval, itemdomain,internal");
+    resource.setKeywords("domain, create, interval, itemdomain");
 
     mastercatalog()->addItems({resource});
     return resource.id();

@@ -5,6 +5,9 @@
 #include "table.h"
 #include "tablemodel.h"
 #include "columnmodel.h"
+#include "abstractfactory.h"
+#include "../tableoperations/tableoperation.h"
+#include "../tableoperations/tableoperationfactory.h"
 #include "mastercatalog.h"
 
 using namespace Ilwis;
@@ -30,6 +33,11 @@ TableModel::TableModel(const Ilwis::Resource &resource, QObject *parent): QAbstr
     if ( resource.isValid()){
         _table = Ilwis::ITable(resource);
         setColumns();
+        auto *factory = Ilwis::kernel()->factory<Ilwis::Desktop::TableOperationFactory>("ilwis::tableoperationfactory");
+        QVariantMap parameters = {{"tableonly",true}};
+        _operations = factory->selectedOperations(this, parameters);
+        for(auto iter = _operations.begin(); iter != _operations.end(); ++iter)
+            (*iter)->setParent(this);
 
     }
 }
@@ -222,4 +230,9 @@ TableModel::~TableModel()
 QQmlListProperty<ColumnModel> TableModel::columns()
 {
     return QQmlListProperty<ColumnModel>(this, _columns) ;
+}
+
+QQmlListProperty<Ilwis::Desktop::TableOperation> TableModel::operations()
+{
+    return QQmlListProperty<Ilwis::Desktop::TableOperation>(this, _operations);
 }

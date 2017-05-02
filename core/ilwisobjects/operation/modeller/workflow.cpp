@@ -25,7 +25,6 @@ Workflow::Workflow()
 
 Workflow::Workflow(const Resource &resource) : OperationMetaData(resource)
 {
-
 }
 
 std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNode> graph)
@@ -84,6 +83,7 @@ void Workflow::setFixedParameter(const QString &data, NodeId nodeId, qint32 parm
             WorkFlowParameter& param = node->inputRef(parmIndex);
             IlwisTypes tp = OperationHelper::determineType(data);
             param.value(data, tp);
+            changed(true);
         }
     }
 
@@ -96,6 +96,7 @@ void Workflow::addConditionFlow(NodeId fromNode, NodeId toNode, qint32 testIndex
         if ( testIndex < condition->testCount()){
             WorkFlowCondition::Test test = condition->test(testIndex);
             addFlow(fromNode, test._operation->id(), inParmIndex, outParmIndex, attachRctIndxFrom, attachRctIndxTo);
+            changed(true);
         }
     }
 }
@@ -115,13 +116,14 @@ void Workflow::addFlow(NodeId fromNode, NodeId toNode, qint32 inParmIndex, qint3
                    parm.inputLink(from, outParmIndex);
                    loop->addInput(parm);
                    to->inputRef(inParmIndex).inputLink(loop,current);
-
+                   changed(true);
                    return;
                 }
             }
             to->inputRef(inParmIndex).inputLink(from,outParmIndex);
             to->inputRef(inParmIndex).attachement(attachRctIndxFrom, true);
             to->inputRef(inParmIndex).attachement(attachRctIndxTo, false);
+            changed(true);
         }
     }
 }
@@ -132,6 +134,7 @@ void Workflow::removeFlow(NodeId toNode, qint32 parameterIndex)
     if (node){
         WorkFlowParameter& param = node->inputRef(parameterIndex);
         param.inputLink(SPWorkFlowNode());
+        changed(true);
     }
 }
 
@@ -150,6 +153,7 @@ void Workflow::addJunctionFlow(int junctionIdTo, const QString &operationIdFrom,
         junction->inputRef(2).attachement(rectFrom, true);
         junction->inputRef(2).attachement(rectTo, false);
     }
+    changed(true);
 
 }
 
@@ -346,6 +350,7 @@ void Workflow::reworkInputNames(SPWorkFlowNode& node){
                 if ( spaceIndex != -1 && spaceIndex < 8){
                     QString newName = parm.name().mid(spaceIndex + 1);
                     parm.name(newName);
+                    changed(true);
                 }
             }
         }
@@ -367,6 +372,7 @@ NodeId Workflow::addNode(SPWorkFlowNode node, NodeId parent)
             }
         }else
            _graph.push_back(node);
+        changed(true);
         return node->id();
     }
     return i64UNDEF;
@@ -419,6 +425,7 @@ void Workflow::removeNode(NodeId id)
                     if ( param.inputLink()){
                         if ( param.inputLink()->id() == deleteNodeId){
                             param.inputLink(SPWorkFlowNode());
+                            changed(true);
                         }
                     }
                 }
@@ -448,6 +455,7 @@ quint64 Workflow::createMetadata()
 {
     QString opname = name();
     OperationResource operation = resource();
+    operation.addProperty("namespace","ilwis");
     opname.remove(".ilwis");
     if (!operation.isValid())
         operation = OperationResource(QUrl("ilwis://operations/" + opname));

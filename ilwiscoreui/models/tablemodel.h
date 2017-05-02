@@ -8,6 +8,9 @@
 namespace Ilwis{
 class Table;
 typedef IlwisData<Table> ITable;
+namespace Desktop{
+    class TableOperation;
+}
 }
 class ColumnModel;
 
@@ -21,6 +24,7 @@ class ILWISCOREUISHARED_EXPORT TableModel : public QAbstractTableModel
     Q_PROPERTY(QQmlListProperty<ColumnModel> columns READ columns NOTIFY columnsChanged)
     Q_PROPERTY(QString url READ url CONSTANT)
     Q_PROPERTY(QString  id READ id CONSTANT)
+    Q_PROPERTY(QQmlListProperty<Ilwis::Desktop::TableOperation> operations READ operations NOTIFY operationsChanged)
 
 public:
     TableModel();
@@ -50,10 +54,12 @@ public:
 
     ~TableModel();
 
+    QQmlListProperty<Ilwis::Desktop::TableOperation> operations();
 signals:
   void columnCountChanged();
   void recordCountChanged();
   void columnsChanged();
+  void operationsChanged();
 
 private:
     QQmlListProperty<ColumnModel> columns();
@@ -61,6 +67,7 @@ private:
     Ilwis::ITable _table;
     QList<ColumnModel *> _columns;
     std::vector<quint32> _order;
+     QList<Ilwis::Desktop::TableOperation *> _operations;
 };
 
 

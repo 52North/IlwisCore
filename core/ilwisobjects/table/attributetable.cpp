@@ -75,7 +75,7 @@ const Record &AttributeTable::record(quint32 n) const
     return (*iter)->record();
 }
 
-ITable AttributeTable::copyTable(const QString &nm) const
+ITable AttributeTable::copyTable(const QString &nm)
 {
     QString  url;
     if ( nm.indexOf(ANONYMOUS_PREFIX) == 0){

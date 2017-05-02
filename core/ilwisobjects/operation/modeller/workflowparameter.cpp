@@ -75,10 +75,15 @@ QString WorkFlowParameter::value() const
 
 void WorkFlowParameter::value(const QString &v, IlwisTypes type)
 {
+    if ( v == "" && _state == pkCALCULATED)
+        return;
+
     _value = v;
     _valueType = type;
     if ( _value != sUNDEF && _state !=  pkCALCULATED)
         _state = pkFIXED;
+    if ( _value == "")
+        _state = pkFREE;
 }
 
 IlwisTypes WorkFlowParameter::valueType() const

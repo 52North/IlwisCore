@@ -101,21 +101,34 @@ Controls.DropableItem{
             for ( var j = 0; j < container.itemArray.length; ++j){
                 // double names allowed
                 if( items[i].name === container.itemArray[j].name){
+                    uicontext.addMessage(qsTr("Duplicate names are not allowed"),"warning")
                     illegal = true
                 }
                 // no double codes allowed unless its empty
                 if( items[i].code !== "" && (items[i].code === container.itemArray[j].code)){
+                    uicontext.addMessage(qsTr("Duplicate codes are not allowed"),"warning")
                     illegal = true
                 }
-                if ( Number(items[i].minvalue) < Number(container.itemArray[j].minvalue)){
-                    illegal = true
-                }
+//                if ( Number(items[i].minvalue) > Number(container.itemArray[j].minvalue)){
+//                    console.debug("check 3",items[i].minvalue, container.itemArray[j].minvalue )
+//                    illegal = true
+//                }
 
                 if ( illegal)
                     break
             }
-            if ( !illegal)
-                container.itemArray.push(items[i])
+            if ( !illegal){
+                var found = false
+                for(var n=0; n < container.itemArray.length; ++n){
+                    if ( Number(items[i].minvalue) > Number(container.itemArray[n].minvalue)){
+                        container.itemArray.splice(n,0, items[i])
+                        found = true
+                        break
+                    }
+                }
+                if (!found)
+                    container.itemArray.push(items[i])
+            }
         }
         commonpart.domitems.item.model = container.itemArray
     }
