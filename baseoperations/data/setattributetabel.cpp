@@ -36,6 +36,7 @@ bool SetAttributeTable::execute(ExecutionContext *ctx, SymbolTable& symTable)
     PixelIterator iterOut(_outputRaster);
     for(auto v : _inputRaster){
         *iterOut = v;
+        ++iterOut;
     }
 
 
