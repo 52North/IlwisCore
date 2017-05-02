@@ -234,9 +234,11 @@ const QString Node::fileName() const
 
 void Node::setFileName(QString fileName)
 {
-    if (fileName.indexOf("://") < 0)
+    if (fileName.indexOf("://") < 0) {
         _fileName = fileName;
-    else {
+        if (_fileName.length() > 0 && (!_fileName.endsWith(".mpr") && !_fileName.endsWith(".tif") && !_fileName.endsWith(".img")))
+            _fileName += ".mpr";
+    } else {
         QUrl url (fileName);
         _fileName = url.fileName();
     }
