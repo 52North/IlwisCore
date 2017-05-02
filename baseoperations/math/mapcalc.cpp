@@ -273,7 +273,7 @@ bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
     }else {
         IFlatTable tbl;
         tbl.prepare();
-        tbl->addColumn(COVERAGEKEYCOLUMN,_outputRaster->datadef().domain());
+        tbl->addColumn(_outputRaster->primaryKey(),_outputRaster->datadef().domain());
         int rec = 0;
         ItemRangeIterator iter(_outputRaster->datadef().range<>().data());
         while (iter.isValid()) {
