@@ -222,6 +222,7 @@ private:
     Size<> _size;
     ITable _attributeTable;
     QString _primaryKey = "coverage_key";
+    std::map<Raw, int> _recordLookup; // lookup table for converting a raw value to a record in the attribute table
 
     bool bandPrivate(quint32 bandIndex,  PixelIterator inputIter) ;
     PixelIterator bandPrivate(quint32 index, const Ilwis::BoundingBox &box=BoundingBox());
