@@ -12,12 +12,12 @@ import "../../../Global.js" as Global
 Rectangle  {
     width : 600
     height : parent.height
-    color : "white"
     ScrollView{
         id: operationFormScrollView
         property var container
         width : parent.width
         property alias appForm : appFrame
+        height : parent.height - 30
 
         Bench.ApplicationForm{
             id : appFrame
@@ -55,12 +55,7 @@ Rectangle  {
         var constantValues = []
         var parms = node.parameters
         if ( parms){
-            for(var i=0; i < parms.length; ++i){
-                var parm = parms[i]
-                constantValues.push(parm.state === 'fixed' ? parm.value : "")
-            }
-
-            var form = formbuilder.index2Form(currentOperation.operation.id, false, true, {}, {}, constantValues)
+            var form = formbuilder.index2Form(currentOperation.operation.id,node)
             appFrame.formQML = ""
             appFrame.formQML = form
             appFrame.formTitle = currentOperation.operation.displayName
