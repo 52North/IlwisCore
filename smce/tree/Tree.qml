@@ -11,6 +11,7 @@ Rectangle {
     id: smceTree
     anchors.fill: parent
     signal selNodeChanged(var node)
+    signal selItemChanged(var item)
     property var selectedItem: null
     property var tree : smcePanel.manager.analisysView.currentAnalysis.tree()
     property var inPlaceEdit: null
@@ -26,6 +27,7 @@ Rectangle {
             item.forceActiveFocus()
             selectedItem = item
         }
+        selItemChanged(item)
     }
 
     function saveEditAndFinish() {
@@ -276,6 +278,10 @@ Rectangle {
                                         width: childrenRect.width
                                         height: parent.height
                                         state: "unselected"
+
+                                        function selectLastChild() {
+                                            lastChild().col(0)
+                                        }
 
                                         Keys.onPressed: {
                                             switch (event.key) {

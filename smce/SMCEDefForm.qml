@@ -49,6 +49,7 @@ Column {
         visible: selectedNode != null && selectedNode.type === Node.Group
         onClicked: {
             selectedNode.modelData.addGroup("New Group ...")
+            selectedItem.selectLastChild()
         }
     }
     Button {
@@ -56,6 +57,7 @@ Column {
         visible: selectedNode != null && selectedNode.type === Node.Group
         onClicked: {
             selectedNode.modelData.addFactor("New Factor ...")
+            selectedItem.selectLastChild()
         }
     }
     Button {
@@ -63,6 +65,7 @@ Column {
         visible: selectedNode != null && selectedNode.type === Node.Group
         onClicked: {
             selectedNode.modelData.addConstraint("New Constraint ...")
+            selectedItem.selectLastChild()
         }
     }
     Button {
@@ -70,6 +73,7 @@ Column {
         visible: selectedNode != null && selectedNode.type === Node.Group && selectedNode.level === 0
         onClicked: {
             selectedNode.modelData.addMask("New Mask Area ...")
+            selectedItem.selectLastChild()
         }
     }
     Button {

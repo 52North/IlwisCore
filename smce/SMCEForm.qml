@@ -7,6 +7,7 @@ Item {
     height: parent.height
     property string form: "SMCEDefForm.qml"
     property var selectedNode: null
+    property var selectedItem: null
 
     Rectangle {
         width: parent.width
@@ -58,5 +59,9 @@ Item {
             if (formEditor.item)
                 formEditor.item.selNodeChanged()
         }
+    }
+
+    function setSelectedItem(item) {
+        selectedItem = item
     }
 }

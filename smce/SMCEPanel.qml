@@ -98,6 +98,11 @@ Column {
                 if (manager.analysisManager.item.loaderItem != null)
                     manager.analysisManager.item.loaderItem.setSelectedNode(node)
             }
+            onSelItemChanged: {
+                if (manager.analysisManager.item.loaderItem != null) {
+                    manager.analysisManager.item.loaderItem.setSelectedItem(item)
+                }
+            }
         }
     }
 
