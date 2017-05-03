@@ -57,8 +57,6 @@ ToolBar{
                 analysis.execute(input, output)
                 mastercatalog.currentCatalog.scanContainer(false,true)
                 var fileName = tree.fileName
-                if (fileName.indexOf(".mpr", fileName.length - 4) === -1)
-                    fileName += ".mpr"
                 openMap(fileName)
             }
         }

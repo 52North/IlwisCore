@@ -102,7 +102,7 @@ Column {
             }
 
             Button {
-                text : qsTr("Reset")
+                text : qsTr("Cancel")
                 onClicked: {
                     if (selectedNode)
                         selectedNode.modelData.resetWeightEdits()
@@ -138,12 +138,12 @@ Column {
             }
 
             Button {
-                text : qsTr("Reset")
+                text : qsTr("Cancel")
                 onClicked: {
                     if (selectedNode) {
                         selectedNode.modelData.resetStandardizationEdits()
                         if (stdEditor && stdEditor.item)
-                            stdEditor.item.selItemChanged()
+                            stdEditor.item.refresh()
                     }
                 }
             }

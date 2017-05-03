@@ -64,19 +64,6 @@ Column {
                     }
                 }
             }
-            RadioButton {
-                id: resultModeButton
-                text: qsTr("Results analysis")
-                exclusiveGroup: modeGroup
-                enabled: tree.treeEditDone
-                Layout.minimumWidth: 100
-                onClicked: {
-                    if (manager.analysisManager.item.loaderItem != null) {
-                        manager.analysisManager.item.loaderItem.setForm("resultMode")
-                        tree.setSmceMode(Node.StdWeigh)
-                    }
-                }
-            }
         }
         Component.onCompleted: {
             tree.setSmceMode(Node.EditTree)
@@ -97,6 +84,11 @@ Column {
             onSelNodeChanged: {
                 if (manager.analysisManager.item.loaderItem != null)
                     manager.analysisManager.item.loaderItem.setSelectedNode(node)
+            }
+            onSelItemChanged: {
+                if (manager.analysisManager.item.loaderItem != null) {
+                    manager.analysisManager.item.loaderItem.setSelectedItem(item)
+                }
             }
         }
     }

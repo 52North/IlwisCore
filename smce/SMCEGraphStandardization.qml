@@ -57,8 +57,12 @@ Column {
                     exclusiveGroup: costbenefitGroup
                     property bool benefit: true
                     onClicked: {
-                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null)
-                            selectedNode.standardization.standardizationValue.setMethod(methodCombinationGroup.current.method, methodCombinationGroup.current.benefit)
+                        if (selectedNode && selectedNode.standardization !== null && selectedNode.standardization.standardizationValue !== null) {
+                            if (methodCombinationGroup.current)
+                                selectedNode.standardization.standardizationValue.setMethod(methodCombinationGroup.current.method, methodCombinationGroup.current.benefit)
+                            else
+                                selectedNode.standardization.standardizationValue.setMethod(6, true)
+                        }
                         graphCanvas.repaint()
                     }
                 }

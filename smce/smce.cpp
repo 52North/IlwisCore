@@ -34,7 +34,16 @@ bool SMCE::execute(const QVariantMap &inputParameters, QVariantMap &outputParame
 {
     QString script("import ilwis\n");
     script += _tree->getPython("standardized", true);
-    script += QString("standardized.store('" + _tree->fileName() + "', 'map', 'ilwis3')\n");
+    if (_tree->fileName().endsWith(".mpr"))
+        script += QString("standardized.store('" + _tree->fileName() + "', 'map', 'ilwis3')\n");
+    else if (_tree->fileName().endsWith(".tif"))
+        script += QString("standardized.store('" + _tree->fileName() + "', 'GTiff', 'gdal')\n");
+    else if (_tree->fileName().endsWith(".img"))
+        script += QString("standardized.store('" + _tree->fileName() + "', 'HFA', 'gdal')\n");
+    else {
+        _tree->setFileName(_tree->fileName() + ".mpr");
+        script += QString("standardized.store('" + _tree->fileName() + "', 'map', 'ilwis3')\n");
+    }
     QString expr = QString("runpython(\"%1\")").arg(script);
     qDebug() << expr;
     Ilwis::ExecutionContext ctx;
