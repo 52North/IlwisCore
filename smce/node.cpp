@@ -569,6 +569,12 @@ void Node::setSmceMode(int mode)
     treeRoot->recursivelyEmitDoneChanged();
 }
 
+int Node::smceMode()
+{
+    Node * treeRoot = root();
+    return treeRoot->_smceMode;
+}
+
 void Node::recursivelyEmitDoneChanged() const
 {
     emit doneChanged();

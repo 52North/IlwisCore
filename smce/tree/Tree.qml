@@ -280,7 +280,8 @@ Rectangle {
                                         Keys.onPressed: {
                                             switch (event.key) {
                                             case Qt.Key_Delete:
-                                                model.modelData.deleteNode()
+                                                if (model.modelData.smceMode() === Node.EditTree)
+                                                    model.modelData.deleteNode()
                                                 break
                                             case Qt.Key_Left:
                                                 if(model.type === Node.Group && objRecursiveColumn.state == "expanded")
@@ -354,10 +355,12 @@ Rectangle {
                                     case Qt.Key_F2:
                                     case Qt.Key_Enter:
                                     case Qt.Key_Return:
-                                        col1MouseArea.startEdit()
+                                        if (model.modelData.smceMode() === Node.EditTree)
+                                            col1MouseArea.startEdit()
                                         break
                                     case Qt.Key_Delete:
-                                        model.fileName = ""
+                                        if (model.modelData.smceMode() === Node.EditTree)
+                                            model.fileName = ""
                                         break
                                     case Qt.Key_Left:
                                         col(0)
@@ -380,7 +383,7 @@ Rectangle {
                                             cancelTimer()
                                             console.log("openMap("+model.fileName+")")
                                             openMap(model.fileName)
-                                        } else
+                                        } else if (model.modelData.smceMode() === Node.EditTree)
                                             startEdit()
                                     }
 
@@ -395,10 +398,12 @@ Rectangle {
                                     onClicked: {
                                         if (selectionChanged) {
                                             selectionChanged = false
-                                        } else if (clickTimer != null) {
-                                            startEdit()
-                                        } else
-                                            clickTimer = Qt.createQmlObject("import QtQuick 2.0; Timer { id: clickTimer; interval: 500; running: true; onTriggered: {col1MouseArea.startEdit()}}", col1Rect, "clickTimer")
+                                        } else if (model.modelData.smceMode() === Node.EditTree) {
+                                            if (clickTimer != null) {
+                                                startEdit()
+                                            } else
+                                                clickTimer = Qt.createQmlObject("import QtQuick 2.0; Timer { id: clickTimer; interval: 500; running: true; onTriggered: {col1MouseArea.startEdit()}}", col1Rect, "clickTimer")
+                                        }
                                     }
 
                                     function startEdit() {
@@ -416,17 +421,19 @@ Rectangle {
                                     }
 
                                     onDropped: {
-                                        if (dropAllowed(drop)) {
+                                        if (dropAllowed(drop) && (model.modelData.smceMode() === Node.EditTree)) {
                                             model.fileName = drop.source.message
                                         }
                                         col1MouseArea.cursorShape = Qt.ArrowCursor
                                         col1Rect.markDropCandidate(false)
                                     }
                                     onEntered: {
-                                        if (dropAllowed(drag)) {
-                                            col1Rect.markDropCandidate(true)
-                                        } else {
-                                            col1MouseArea.cursorShape = Qt.ForbiddenCursor
+                                        if (model.modelData.smceMode() === Node.EditTree) {
+                                            if (dropAllowed(drag)) {
+                                                col1Rect.markDropCandidate(true)
+                                            } else {
+                                                col1MouseArea.cursorShape = Qt.ForbiddenCursor
+                                            }
                                         }
                                     }
                                     onExited: {

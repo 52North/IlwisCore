@@ -87,6 +87,7 @@ public:
     Q_INVOKABLE void deleteNode();
     Q_INVOKABLE bool done(int mode, int col, bool recursive) const;
     Q_INVOKABLE void setSmceMode(int mode);
+    Q_INVOKABLE int smceMode();
 
 protected:
     void emitDoneChanged() const;
