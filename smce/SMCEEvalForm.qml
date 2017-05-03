@@ -102,7 +102,7 @@ Column {
             }
 
             Button {
-                text : qsTr("Reset")
+                text : qsTr("Cancel")
                 onClicked: {
                     if (selectedNode)
                         selectedNode.modelData.resetWeightEdits()
@@ -138,7 +138,7 @@ Column {
             }
 
             Button {
-                text : qsTr("Reset")
+                text : qsTr("Cancel")
                 onClicked: {
                     if (selectedNode) {
                         selectedNode.modelData.resetStandardizationEdits()
