@@ -45,11 +45,23 @@ Column {
     }
 
     Button {
+        text : qsTr("Cancel")
+        onClicked: {
+            while(nameField.canUndo)
+                nameField.undo()
+            while (unitField.children[1].canUndo)
+                unitField.children[1].undo()
+        }
+    }
+
+    Button {
         text : qsTr("Add Group")
         visible: selectedNode != null && selectedNode.type === Node.Group
         onClicked: {
             selectedNode.modelData.addGroup("New Group ...")
             selectedItem.selectLastChild()
+            nameField.forceActiveFocus()
+            nameField.selectAll()
         }
     }
     Button {
@@ -58,6 +70,8 @@ Column {
         onClicked: {
             selectedNode.modelData.addFactor("New Factor ...")
             selectedItem.selectLastChild()
+            nameField.forceActiveFocus()
+            nameField.selectAll()
         }
     }
     Button {
@@ -66,6 +80,8 @@ Column {
         onClicked: {
             selectedNode.modelData.addConstraint("New Constraint ...")
             selectedItem.selectLastChild()
+            nameField.forceActiveFocus()
+            nameField.selectAll()
         }
     }
     Button {
@@ -74,6 +90,8 @@ Column {
         onClicked: {
             selectedNode.modelData.addMask("New Mask Area ...")
             selectedItem.selectLastChild()
+            nameField.forceActiveFocus()
+            nameField.selectAll()
         }
     }
     Button {
