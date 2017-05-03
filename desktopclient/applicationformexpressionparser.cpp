@@ -14,13 +14,13 @@ ApplicationFormExpressionParser::ApplicationFormExpressionParser()
 ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::addParameter(const Resource& resource,
                                                                                              quint32 index,
                                                                                              const QStringList& choices,
-                                                                                             bool optional, int optionGroup, const QString& defvalue) const{
+                                                                                             bool optional, int optionGroup, bool workflowContex,const QString& defvalue) const{
     FormParameter parm;
     QString prefix = QString("pin_%1_").arg(index + 1);
     FieldType alternateUIType = ftNONE;
     if ( resource.hasProperty((prefix + "validationcondition"))){
         OperationResource::UIElement elem = (OperationResource::UIElement)resource[prefix + "altUIType"].toInt();
-        if ( elem == OperationResource::ueCOMBO){
+        if ( elem == OperationResource::ueCOMBO && !workflowContex){ // no comboboxes in the workflow context as the controlling field is porbably not filled in
             alternateUIType = ftCOMBOBOX;
         }
     }
@@ -60,12 +60,12 @@ ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::
 void ApplicationFormExpressionParser::setParameter(const Resource& resource, bool& inChoiceList,
                                                    std::vector<FormParameter>& parameters, QString& part,
                                                    QStringList& choices, int& parmCount,
-                                                   bool isOptional, int optionGroup,
+                                                   bool isOptional, int optionGroup,bool workflowContext,
                                                    const QString& defvalue = "") const
 {
     if ( inChoiceList)
         choices << part;
-    parameters.push_back(addParameter(resource, parmCount, choices, isOptional, optionGroup, defvalue));
+    parameters.push_back(addParameter(resource, parmCount, choices, isOptional, optionGroup, workflowContext, defvalue));
     choices.clear();
     part = "";
     inChoiceList = false;
@@ -93,7 +93,7 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
 
     return parameters;
 }
-std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpressionParser::getParameters(const Resource& resource) const
+std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpressionParser::getParameters(const Resource& resource, bool workflowContext, const QVariantList& nodeparameters) const
 {
     std::vector<FormParameter> parameters;
     QString expression = resource["syntax"].toString();
@@ -115,11 +115,11 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
         if ( c == ',' && !part.isEmpty()){
             part = part.trimmed();
             QString defvalue =  part[0]=='!' ? "true" : "";
-            setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup,defvalue);
+            setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup, workflowContext,defvalue);
         } else if ( c == '['){
             if ( !part.isEmpty() ) {
                 part = part.trimmed();
-                setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional,optionGroup);
+                setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional,optionGroup, workflowContext);
                 checkGroup = true;
             }
             isOptional = true;
@@ -127,7 +127,7 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
             if ( !part.isEmpty()) {
                 part = part.trimmed();
                 QString defvalue =  part[0]=='!' ? "true" : "";
-                setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup,defvalue);
+                setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup, workflowContext,defvalue);
             }
             checkGroup = false;
             isOptional = false;
@@ -144,7 +144,17 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
     // last parameter
     if (part != ""){
         part = part.trimmed();
-        setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional,optionGroup);
+        setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional,optionGroup, workflowContext);
+    }
+    if ( nodeparameters.size() == parameters.size()){
+        for(int i=0; i < parameters.size(); ++i)     {
+            FormParameter& parm = parameters[i];
+            QVariantMap props = nodeparameters[i].value<QVariantMap>();
+            QString nodeLabel = props["label"].toString();
+            if ( nodeLabel != ""){
+                parm._label = nodeLabel;
+            }
+        }
     }
     return parameters;
 
@@ -291,8 +301,6 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
            onDropped : { pin_%1.text = drag.source.message }\
         TextArea{ id : pin_%1; property string itemType : \"textarea\";text: \"%7\"; anchors.fill : parent optionalOutputMarker %8}}";
 
-
-   // QString textArea = "TextArea{ id : pin_%1; x : %2 + %5; height : 55; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5 optionalOutputMarker}";
     QString iconField1 = "Button{ width : 20; height:20; checkable : true;checked : false;"
             "onClicked : {mastercatalog.currentCatalog.filterChanged(\"%2|exclusive\" , checked)}"
             "Image{anchors.centerIn : parent;width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}}";
@@ -488,12 +496,16 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
     return formRows;
 }
 
-QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showoutputformat, bool showEmptyOptionInList, QStringList hiddenFields, QVariantList operationNames, QStringList constantValues)  {
-    try {
+QString ApplicationFormExpressionParser::index2FormInternal(quint64 metaid,
+                                                            bool showoutputformat,
+                                                            bool showEmptyOptionInList,
+                                                            QStringList hiddenFields,
+                                                            QVariantList operationNames,
+                                                            QStringList constantValues,
+                                                            const std::vector<FormParameter>& parameters)
+{
         Resource resource = mastercatalog()->id2Resource(metaid);
-        std::vector<FormParameter> parameters = getParameters(resource);
-
-        std::vector<FormParameter> outparameters = getOutputParameters(resource);
+         std::vector<FormParameter> outparameters = getOutputParameters(resource);
         QString results;
         QString mid = QString::number(metaid);
         QString validation = "function addValidation(e, idx, u){var r = operations.resolveValidation(metaid, u,idx);";
@@ -540,9 +552,34 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showout
         QString component = columnStart + inputpart + seperator + outputPart + "}";
 
 
-       //for debugging, check if the qml is ok; can be retrieved from teh log file
-          //  kernel()->issues()->log(component);
+        //for debugging, check if the qml is ok; can be retrieved from teh log file
+        //  kernel()->issues()->log(component);
         return component;
+}
+
+QString ApplicationFormExpressionParser::index2Form(quint64 metaid, const QVariantMap& node)  {
+    Resource resource = mastercatalog()->id2Resource(metaid);
+
+
+    QVariantList parms = node["parameters"].value<QVariantList>();
+
+    QStringList constantValues;
+    for(int i=0; i < parms.size(); ++i){
+        auto parm = parms[i].value<QVariantMap>();
+        constantValues.push_back(parm["state"].toString() == "fixed" ? parm["value"].toString() : "");
+    }
+    std::vector<FormParameter> parameters = getParameters(resource,true, parms);
+
+    return index2FormInternal(metaid, false, true, {}, {}, constantValues,parameters);
+}
+
+QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showoutputformat, bool showEmptyOptionInList, QStringList hiddenFields, QVariantList operationNames, QStringList constantValues)  {
+    try {
+        Resource resource = mastercatalog()->id2Resource(metaid);
+        std::vector<FormParameter> parameters = getParameters(resource,false);
+
+        return index2FormInternal(metaid, showoutputformat, showEmptyOptionInList, hiddenFields, operationNames, constantValues,parameters);
+
     }catch(const ErrorObject&){
 
     } catch(const std::exception& ex){
