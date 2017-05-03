@@ -38,6 +38,7 @@ Column {
 
     Button {
         text : qsTr("Apply")
+        enabled: selectedNode.modelData.nameAllowed(nameField.text)
         onClicked: {
             selectedNode.name = nameField.text
             selectedNode.unit = unitField.content
@@ -47,10 +48,8 @@ Column {
     Button {
         text : qsTr("Cancel")
         onClicked: {
-            while(nameField.canUndo)
-                nameField.undo()
-            while (unitField.children[1].canUndo)
-                unitField.children[1].undo()
+            selectedNode.name = selectedNode.name
+            selectedNode.unit = selectedNode.unit
         }
     }
 
@@ -58,7 +57,7 @@ Column {
         text : qsTr("Add Group")
         visible: selectedNode != null && selectedNode.type === Node.Group
         onClicked: {
-            selectedNode.modelData.addGroup("New Group ...")
+            selectedNode.modelData.addGroup(selectedNode.modelData.uniqueName("New Group ..."))
             selectedItem.selectLastChild()
             nameField.forceActiveFocus()
             nameField.selectAll()
@@ -68,7 +67,7 @@ Column {
         text : qsTr("Add Factor")
         visible: selectedNode != null && selectedNode.type === Node.Group
         onClicked: {
-            selectedNode.modelData.addFactor("New Factor ...")
+            selectedNode.modelData.addFactor(selectedNode.modelData.uniqueName("New Factor ..."))
             selectedItem.selectLastChild()
             nameField.forceActiveFocus()
             nameField.selectAll()
@@ -78,7 +77,7 @@ Column {
         text : qsTr("Add Constraint")
         visible: selectedNode != null && selectedNode.type === Node.Group
         onClicked: {
-            selectedNode.modelData.addConstraint("New Constraint ...")
+            selectedNode.modelData.addConstraint(selectedNode.modelData.uniqueName("New Constraint ..."))
             selectedItem.selectLastChild()
             nameField.forceActiveFocus()
             nameField.selectAll()
@@ -88,7 +87,7 @@ Column {
         text : qsTr("Add Mask Area")
         visible: selectedNode != null && selectedNode.type === Node.Group && selectedNode.level === 0
         onClicked: {
-            selectedNode.modelData.addMask("New Mask Area ...")
+            selectedNode.modelData.addMask(selectedNode.modelData.uniqueName("New Mask Area ..."))
             selectedItem.selectLastChild()
             nameField.forceActiveFocus()
             nameField.selectAll()

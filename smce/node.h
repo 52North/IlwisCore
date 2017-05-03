@@ -62,7 +62,7 @@ public:
     void setStandardization(Standardization * standardization);
     Q_INVOKABLE void resetStandardizationEdits();
     const Node * parent() const;
-    QList <Node*> subNodes();
+    QList <Node*> subNodes() const;
     QList <Node*> subFactors() const;
     QList <Node*> getConstraints() const;
     QQmlListProperty<Node> subNodesQml();
@@ -88,6 +88,8 @@ public:
     Q_INVOKABLE bool done(int mode, int col, bool recursive) const;
     Q_INVOKABLE void setSmceMode(int mode);
     Q_INVOKABLE int smceMode();
+    Q_INVOKABLE QString uniqueName(QString name);
+    Q_INVOKABLE bool nameAllowed(QString name);
 
 protected:
     void emitDoneChanged() const;

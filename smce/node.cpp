@@ -94,6 +94,40 @@ void Node::setName(QString name)
     emit nameChanged();
 }
 
+QString Node::uniqueName(QString name)
+{ // produce a unique name that can be safely added as a child to the current node
+    QString unique = name;
+    QList <Node*> siblings = subNodes();
+    bool found = false;
+    int seq = 0;
+    while(!found) {
+        found = true;
+        for (Node* node : siblings) {
+            if (node->name() == unique) {
+                ++seq;
+                unique = QString("%1 (%2)").arg(name).arg(seq);
+                found = false;
+                break;
+            }
+        }
+    }
+    return unique;
+}
+
+bool Node::nameAllowed(QString name)
+{
+    if (parent()) {
+        QList <Node*> siblings = parent()->subNodes();
+        for (Node* node : siblings) {
+            if (node == this) // except ourselves
+                continue;
+            if (node->name() == name)
+                return false;
+        }
+    }
+    return true;
+}
+
 const QString Node::unit() const
 {
     return _unit;
@@ -180,7 +214,7 @@ const Node * Node::parent() const
     return _parent;
 }
 
-QList<Node*> Node::subNodes()
+QList<Node*> Node::subNodes() const
 {
     return _subNodes;
 }
