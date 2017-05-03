@@ -493,6 +493,15 @@ const RasterStackDefinition &RasterCoverage::stackDefinition() const
     return _bandDefinition;
 }
 
+int RasterCoverage::raw2record(Raw raw) const
+{
+    if ( hasAttributes() && !isNumericalUndef(raw)){
+        auto iter = _recordLookup.find(raw);
+        return (*iter).second;
+    }
+    return iUNDEF;
+}
+
 void RasterCoverage::name(const QString &nam)
 {
     if ( isReadOnly())
