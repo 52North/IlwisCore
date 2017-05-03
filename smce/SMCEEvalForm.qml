@@ -143,7 +143,7 @@ Column {
                     if (selectedNode) {
                         selectedNode.modelData.resetStandardizationEdits()
                         if (stdEditor && stdEditor.item)
-                            stdEditor.item.selItemChanged()
+                            stdEditor.item.refresh()
                     }
                 }
             }
