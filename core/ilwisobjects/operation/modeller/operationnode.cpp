@@ -50,16 +50,20 @@ OperationNode::OperationNode(const QString &name, const QString &description, qu
 
 IOperationMetaData OperationNode::operation() const
 {
+    if ( !_operation.isValid() && _syntax != "" ){
+        std::vector<Resource> items = mastercatalog()->select("catalogitemproperties.propertyname='syntax' and catalogitemproperties.propertyvalue='" + _syntax + "'");
+        if ( items.size() >= 1){
+            const_cast<OperationNode *>(this)->_operation.prepare(items[0]);
+        }
+    }
     return _operation;
 }
 
-void OperationNode::operation(const QString& provider, const QString& syntax)
+void OperationNode::operation(const QString& provider, const QString& syntax, bool isWorkflow)
 {
-    std::vector<Resource> items = mastercatalog()->select("catalogitemproperties.propertyname='syntax' and catalogitemproperties.propertyvalue='" + syntax + "'");
-    if ( items.size() >= 1){
-        _operation.prepare(items[0]);
-
-    }
+    _provider = provider;
+    _syntax = syntax;
+    _isWorkflow = isWorkflow;
 }
 
 WorkFlowNode::NodeTypes OperationNode::type() const
@@ -101,4 +105,9 @@ QString OperationNode::label() const
     if ( lbl == "")
         return name();
     return lbl;
+}
+
+bool OperationNode::isWorkflow() const
+{
+    return _isWorkflow;
 }
