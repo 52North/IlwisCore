@@ -125,7 +125,7 @@ Item{
         onClicked: {
             applicationForm.state = operationsList.currentIndex == index && applicationForm.state != "minimized" ? "minimized" : "maximized"
             operationsList.currentIndex = index;
-            makeForm(id, displayName, url)
+            makeForm(currentOperation.id, currentOperation.displayName, currentOperation.url)
         }
         onPressed:{
             drag.target =  Qt.createQmlObject('import QtQuick 2.0; Image{
