@@ -130,6 +130,11 @@ IOperationMetaData WorkFlowNode::operation() const
     return IOperationMetaData();
 }
 
+bool WorkFlowNode::isWorkflow() const
+{
+    return false;
+}
+
 std::vector<SPWorkFlowNode> WorkFlowNode::subnodes(const QString &reason) const
 {
     return std::vector<SPWorkFlowNode>();

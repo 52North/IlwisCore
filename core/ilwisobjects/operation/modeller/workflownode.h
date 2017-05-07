@@ -40,6 +40,7 @@ public:
     void conditionIdOfTest(NodeId id);
 
     virtual IOperationMetaData operation() const;
+    virtual bool isWorkflow() const;
     virtual Ilwis::WorkFlowNode::NodeTypes type() const = 0;
     virtual std::vector<std::shared_ptr<WorkFlowNode>> subnodes(const QString& reason="") const;
     virtual void addSubNode(const std::shared_ptr<WorkFlowNode>& node, const QString& reason);
