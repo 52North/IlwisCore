@@ -419,10 +419,6 @@ QColor ContinuousColorRange::valueAt(double& index, const Range *rng)
     delta = colors->limitColor2().alpha() - colors->limitColor1().alpha();
     int alpha = std::max(0.0,std::min(255.0,colors->limitColor1().alpha() + delta * index));
 
-//    if ( red > 255 || green > 255 || blue > 255){
-//        qDebug() << "stop";
-//    }
-
     return QColor(red,green,blue, alpha);
 
 }
