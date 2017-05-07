@@ -7,6 +7,7 @@
 #include "ilwiscoordinate.h"
 #include "box.h"
 #include "workflownode.h"
+#include "operationExpression.h"
 #include "workflow.h"
 #include "analysispattern.h"
 #include "applicationmodel.h"
