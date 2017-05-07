@@ -40,7 +40,10 @@ OperationCatalogModel::OperationCatalogModel(QObject *p) : CatalogModel()
 
 OperationCatalogModel::OperationCatalogModel(const Resource &res,QObject *p) : CatalogModel(res,CatalogModel::ctOPERATION|CatalogModel::ctFIXED|CatalogModel::ctINTERNAL, p)
 {
+}
 
+OperationCatalogModel::~OperationCatalogModel()
+{
 }
 
 QQmlListProperty<OperationsByKeyModel> OperationCatalogModel::operationKeywords()
@@ -346,6 +349,7 @@ void OperationCatalogModel::gatherItems() {
     _allItems.clear();
     _refresh = false;
 
+
     WorkSpaceModel *currentModel = uicontext()->currentWorkSpace();
     bool isDefault = false;
     if (currentModel){
@@ -401,8 +405,12 @@ void OperationCatalogModel::gatherItems() {
 
 
     qSort(_keywords.begin(), _keywords.end());
-
     _keywords.push_front(""); // all
+    OperationCatalogModel *oc = uicontext()->globalOperationCatalog();
+    if ( oc != this){
+       oc->_refresh = true;
+       oc->operations();
+    }
 }
 
 QStringList OperationCatalogModel::keywords() const

@@ -30,6 +30,7 @@ public:
 
     OperationCatalogModel(QObject * parent=0);
     OperationCatalogModel(const Ilwis::Resource& res,QObject *p);
+    ~OperationCatalogModel();
 
    QMLOperationList operations();
    QQmlListProperty<OperationsByKeyModel> operationKeywords();
