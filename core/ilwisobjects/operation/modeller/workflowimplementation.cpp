@@ -82,7 +82,8 @@ bool WorkflowImplementation::execute(ExecutionContext *ctx, SymbolTable &symTabl
             return false;
         }
         ExecutionNode& exnode = executionNode(node);
-        if(!exnode.execute(&ctx2, symTable2, this, _expression, _workflow->parmid2order())){
+        WorkflowIdMapping mapping(_expression, _workflow->parmid2order());
+        if(!exnode.execute(&ctx2, symTable2, this, mapping)){
             removeLock(_runid);
             return false;
         }
