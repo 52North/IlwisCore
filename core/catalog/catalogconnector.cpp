@@ -17,7 +17,18 @@
 #include "domain.h"
 #include "datadefinition.h"
 #include "columndefinition.h"
+#include "raster.h"
+#include "commandhandler.h"
 #include "ilwiscontext.h"
+#include "symboltable.h"
+#include "ilwisoperation.h"
+#include "workflownode.h"
+#include "conditionNode.h"
+#include "junctionNode.h"
+#include "loopnode.h"
+#include "executionnode.h"
+#include "workflowimplementation.h"
+#include "workflow.h"
 #include "table.h"
 #include "catalog.h"
 #include "mastercatalogcache.h"
@@ -201,6 +212,22 @@ bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &optio
     QFuture<std::vector<Resource>> res = QtConcurrent::mappedReduced(explorers,loadExplorerData, gatherData);
     res.waitForFinished();
     std::vector<Resource> items = res.result();
+    std::vector<Resource> updateableItems;
+    for(auto& item : items){
+        IWorkflow wf;
+        if(item.ilwisType() == itWORKFLOW ){
+            if ( wf.prepare(item)){
+                wf->createMetadata();
+                Resource res = wf->resource();
+                res.code(item.code());
+                item = res;
+                updateableItems.push_back(item);
+            }
+        }
+    }
+    if ( updateableItems.size() > 0)
+        mastercatalog()->updateItems(updateableItems);
+
     if ( items.size() > 0){
         auto addedItems = mastercatalog()->addContainerContent(source().url().toString(), items);
         if ( addedItems.size() > 0){
