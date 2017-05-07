@@ -29,21 +29,24 @@ ExecutionNode::ExecutionNode(const SPWorkFlowNode& node) : _node(node)
     _parameterValues.resize(node->inputCount(),sUNDEF);
 }
 
-bool ExecutionNode::execute(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation *workflowImpl, const OperationExpression &expression, const std::map<quint64, int> &idmap)
+bool ExecutionNode::execute(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation *workflowImpl, WorkflowIdMapping &mapping)
 {
+    bool ok;
     switch(_node->type()) {
     case WorkFlowNode::ntCONDITION:
-        return executeCondition(ctx, symTable, workflowImpl, expression, idmap);
+        ok = executeCondition(ctx, symTable, workflowImpl, mapping);break;
     case WorkFlowNode::ntJUNCTION:
-        return executeJunction(ctx, symTable, workflowImpl, expression, idmap);
+        ok = executeJunction(ctx, symTable, workflowImpl, mapping); break;
     case WorkFlowNode::ntOPERATION:
-        return executeOperation(ctx, symTable, workflowImpl, expression, idmap);
+        ok = executeOperation(ctx, symTable, workflowImpl, mapping); break;
     case WorkFlowNode::ntLOOP:
-        return executeLoop(ctx, symTable, workflowImpl, expression, idmap);
+        ok = executeLoop(ctx, symTable, workflowImpl, mapping); break;
     default:
         return false;
     }
-    return false;
+   // if ( )
+   // mapping.advanceOffset(parameterCount());
+    return ok;
 }
 
 void ExecutionNode::unloadInputs(ExecutionContext *ctx, SymbolTable &symTable){
@@ -61,17 +64,9 @@ void ExecutionNode::unloadInputs(ExecutionContext *ctx, SymbolTable &symTable){
     }
 }
 
-bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, const OperationExpression &expression, const std::map<quint64, int> &idmap)
+bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping)
 {
-    auto getValue = [&](const WorkFlowParameter& parm, const OperationExpression& expression, const std::map<quint64, int>& idmap)-> QVariant{
-        auto iter = idmap.find(parm.id());
-        if  ( iter != idmap.end())       {
-            int idx = (*iter).second;
-            return expression.parm(idx).value();
-        }
-        return parameterValue(parm.order());
-    };
-    //auto iter = ctx->_additionalInfo.find("testoperation");
+     //auto iter = ctx->_additionalInfo.find("testoperation");
     SymbolTable symTable2(symTable);
     int inputCount = _node->inputCount();
     for(int i=0; i < inputCount; ++i){
@@ -82,7 +77,7 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
             if (parameter.inputLink()) {
                 ExecutionNode& exNode = workflowImpl->executionNode(parameter.inputLink());
                 ExecutionContext ctx2;
-                if ( exNode.execute(&ctx2, symTable2, workflowImpl, expression, idmap)) {
+                if ( exNode.execute(&ctx2, symTable2, workflowImpl, mapping)) {
                     unloadInputs(ctx, symTable);
                     QString outputName = ctx2._results[parameter.outputParameterIndex()];
                     QVariant val = symTable2.getValue(outputName);
@@ -91,6 +86,11 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
                     _parameterValues[i] = sval;
                 }else{
                     return false;
+                }
+                // if this is a workflow it has used a number of parameters that were in the list of input parameters; they are used and
+                // are not considered anymore for matching input values and node execution
+                if ( parameter.inputLink()->isWorkflow()){
+                    mapping.advanceOffset(parameter.inputLink()->inputCount());
                 }
             }
         }
@@ -107,15 +107,15 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
         if ( parms != "")
             parms += ",";
         if ( hasType(inParam.valueType(),itILWISOBJECT)){
-            parms += getValue(inParam, expression, idmap).toString();
+            parms += mapping.getValue(inParam, *this).toString();
         }else if ( hasType(inParam.valueType(),itINTEGER )) {
-            parms += QString::number(getValue(inParam,expression, idmap).toLongLong());
+            parms += QString::number(mapping.getValue(inParam,*this).toLongLong());
         } else if ( hasType(inParam.valueType(),itDOUBLE | itFLOAT)) {
-            parms += QString::number(getValue(inParam,expression, idmap).toDouble());
+            parms += QString::number(mapping.getValue(inParam,*this).toDouble());
         } else if (hasType(inParam.valueType(),itSTRING)){
-            parms += "\"" + getValue(inParam,expression, idmap).toString() + "\"";
+            parms += "\"" + mapping.getValue(inParam,*this).toString() + "\"";
         }else
-            parms += getValue(inParam,expression, idmap).toString();
+            parms += mapping.getValue(inParam,*this).toString();
     }
     expr = expr + parms + ")";
 
@@ -131,7 +131,7 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
     return ok;
 }
 
-bool ExecutionNode::executeCondition(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, const OperationExpression &expression, const std::map<quint64, int> &idmap)
+bool ExecutionNode::executeCondition(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping)
 {
 
     bool testRestult = true;
@@ -142,7 +142,7 @@ bool ExecutionNode::executeCondition(ExecutionContext *ctx, SymbolTable &symTabl
        ExecutionContext ctx;
        ctx._additionalInfo["testoperation"] = true;
        ExecutionNode& exNode = workflowImpl->executionNode(test._operation);
-       if (!exNode.execute(&ctx,symTableLocal,workflowImpl, expression, idmap))
+       if (!exNode.execute(&ctx,symTableLocal,workflowImpl, mapping))
            return false;
        if ( ctx._results.size() == 1){
            Symbol sym = symTableLocal.getSymbol(ctx._results[0]);
@@ -165,7 +165,7 @@ bool ExecutionNode::executeCondition(ExecutionContext *ctx, SymbolTable &symTabl
     return true;
 }
 
-bool ExecutionNode::executeJunction(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, const OperationExpression &expression, const std::map<quint64, int> &idmap)
+bool ExecutionNode::executeJunction(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping)
 {
     WorkFlowParameter& condParm = _node->inputRef(0);
      // if the value of the condition (basically the test value
@@ -176,7 +176,7 @@ bool ExecutionNode::executeJunction(ExecutionContext *ctx, SymbolTable &symTable
         ExecutionContext ctxLocal;
         SymbolTable symTableLocal(symTable);
         ExecutionNode& exNode = workflowImpl->executionNode(condParm.inputLink());
-        if (exNode.execute(&ctxLocal, symTableLocal,workflowImpl, expression, idmap)){
+        if (exNode.execute(&ctxLocal, symTableLocal,workflowImpl, mapping)){
             QString outputName = ctxLocal._results[0];
             QVariant val = symTableLocal.getValue(outputName);
             QString sval = OperationHelper::variant2string(val, symTableLocal.getSymbol(outputName)._type);
@@ -190,13 +190,13 @@ bool ExecutionNode::executeJunction(ExecutionContext *ctx, SymbolTable &symTable
                 workflowImpl->executionNode(_node->inputRef(1).inputLink()) :
                 workflowImpl->executionNode(_node->inputRef(2).inputLink());
 
-    exNode.execute(ctx, symTableLocal,workflowImpl, expression, idmap);
+    exNode.execute(ctx, symTableLocal,workflowImpl, mapping);
     symTable.copyFrom(ctx, symTableLocal);
 
     return true;
 }
 
-bool ExecutionNode::executeContent(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, const OperationExpression &expression, const std::map<quint64, int> &idmap){
+bool ExecutionNode::executeContent(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping){
     SymbolTable symTable2(symTable);
     int inputCount = _node->inputCount();
     for(int i=0; i < inputCount; ++i){
@@ -205,7 +205,7 @@ bool ExecutionNode::executeContent(ExecutionContext *ctx, SymbolTable &symTable,
             ExecutionContext ctx2;
             if (parameter.inputLink()) {
                 ExecutionNode& exNode = workflowImpl->executionNode(parameter.inputLink());
-                if ( exNode.execute(&ctx2, symTable2,workflowImpl, expression, idmap)) {
+                if ( exNode.execute(&ctx2, symTable2,workflowImpl, mapping)) {
                     QString outputName = ctx2._results[parameter.outputParameterIndex()];
                     QVariant val = symTable2.getValue(outputName);
                     QString sval = OperationHelper::variant2string(val, symTable2.getSymbol(outputName)._type);
@@ -230,10 +230,15 @@ QString ExecutionNode::parameterValue(int parmIndex) const
     return _node->inputRef(parmIndex).value();
 }
 
-bool ExecutionNode::executeLoop(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, const OperationExpression &expression, const std::map<quint64, int> &idmap)
+int ExecutionNode::parameterCount() const
+{
+    return _parameterValues.size();
+}
+
+bool ExecutionNode::executeLoop(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping)
 {
     while( next()){
-        if(!executeContent(ctx,symTable, workflowImpl, expression, idmap))
+        if(!executeContent(ctx,symTable, workflowImpl, mapping))
             return false;
     }
 
