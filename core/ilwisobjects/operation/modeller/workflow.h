@@ -3,17 +3,30 @@
 
 #include <map>
 #include "kernel_global.h"
+#include "operationExpression.h"
 
 namespace Ilwis {
 
 class WorkFlowNode;
 class WorkFlowParameter;
+class ExecutionNode;
 
 typedef std::shared_ptr<WorkFlowNode> SPWorkFlowNode;
 
 typedef std::map<SPWorkFlowNode, std::vector<SPWorkFlowNode>>::iterator WorkFlowMIter;
 typedef std::map<SPWorkFlowNode, std::vector<SPWorkFlowNode>>::const_iterator CWorkFlowMIter;
 typedef std::vector<SPWorkFlowNode>::iterator WorkFlowVIter;
+
+class WorkflowIdMapping{
+public :
+    WorkflowIdMapping(const OperationExpression& expr, const std::map<quint64, int>& mapping);
+    QVariant getValue(WorkFlowParameter& parm,const ExecutionNode& exnode) const;
+    void advanceOffset(int n);
+private:
+    OperationExpression _expression;
+    std::map<quint64, int> _mapping;
+    int _offset = 0;  //subworkflows move an offset over the parameters; this offset determines were we are
+};
 
 class KERNELSHARED_EXPORT Workflow : public OperationMetaData
 {

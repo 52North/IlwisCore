@@ -363,7 +363,7 @@ NodeId Workflow::addNode(SPWorkFlowNode node, NodeId parent)
     if ( iter == _graph.end() ){
         if ( node->id() == i64UNDEF)
             node->nodeId(generateId());
-        if ( node->type() == WorkFlowNode::ntOPERATION && node->operation()->ilwisType() == itWORKFLOW)
+        if ( node->type() == WorkFlowNode::ntOPERATION && node->isWorkflow())
             reworkInputNames(node);
         if ( parent != i64UNDEF){
             SPWorkFlowNode parentNode = nodeById(parent);
@@ -494,3 +494,26 @@ IlwisTypes Workflow::ilwisType() const
 }
 
 
+
+WorkflowIdMapping::WorkflowIdMapping(const OperationExpression &expr, const std::map<quint64, int> &mapping) :
+    _expression(expr),
+    _mapping(mapping)
+{
+
+}
+
+QVariant WorkflowIdMapping::getValue(WorkFlowParameter &parm, const ExecutionNode &exnode) const
+{
+    auto iter = _mapping.find(parm.id());
+    if  ( iter != _mapping.end())       {
+        int idx = (*iter).second;
+        return _expression.parm(idx).value();
+    }
+    return exnode.parameterValue(parm.order());
+}
+
+void WorkflowIdMapping::advanceOffset(int n)
+{
+    _offset += n;
+    _offset = std::max(0,_offset);
+}
