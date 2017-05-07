@@ -491,8 +491,7 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
         }
 
     }catch(...){
-        qDebug() << "Probably optional parameters";
-    }
+     }
     return formRows;
 }
 
