@@ -59,7 +59,6 @@ void XmlStreamParser::abort()
 
 void XmlStreamParser::readChannelFinished()
 {
-    qDebug() << "readChannelFinished()";
     _readingChannelFinished = true;
     readIncomingData();
 }
@@ -67,9 +66,7 @@ void XmlStreamParser::readChannelFinished()
 void XmlStreamParser::readIncomingData()
 {
     if (_device->size() > 0) {
-        qDebug() << "reading " << _device->size() << " bytes";
         _reader->addData(_device->read(_device->size()));
-        qDebug() << "... chunk written to device.";
     }
     _loop->quit();
 }
@@ -117,12 +114,10 @@ bool XmlStreamParser::resolveFromPrematureEndOfDocument()
         return false;
     }
     if ( !_readingChannelFinished) {
-        qDebug() << "Wait for new data ...";
         _timer->start(10000); // ... limited to 10s
         _loop->exec(); // wait for readyRead() or timeout()
 
         qint64 line = _reader->lineNumber();
-        qDebug() << QString("Continue parsing at line %1").arg(line);
     }
     return true;
 }
