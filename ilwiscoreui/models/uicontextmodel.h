@@ -34,6 +34,7 @@ class LayerManager;
 class CoverageLayerModel;
 class VisualAttributeModel;
 class MasterCatalogModel;
+class OperationCatalogModel;
 
 
 typedef std::function<VisualAttributeEditor *()> CreatePropertyEditor;
@@ -95,6 +96,7 @@ public:
     int threadCount() const;
     WorkSpaceModel *currentWorkSpace() const;
     MasterCatalogModel *masterCatalogModel() const;
+    OperationCatalogModel *globalOperationCatalog() const;
     void setCurrentWorkSpace(WorkSpaceModel* cws);
     void initializeDataPane();
     qint64 addMapPanel(const QString &filter, const QString &side, const QString url);

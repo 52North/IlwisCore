@@ -25,6 +25,7 @@
 #include "oshelper.h"
 #include "operationmetadata.h"
 #include "script.h"
+#include "operationcatalogmodel.h"
 #include "scriptmodel.h"
 #include "ilwiscontext.h"
 
@@ -304,6 +305,20 @@ MasterCatalogModel *UIContextModel::masterCatalogModel() const
             MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel *>();
             if (mcmodel){
                 return mcmodel;
+            }
+        }
+    }
+    return 0;
+}
+
+OperationCatalogModel *UIContextModel::globalOperationCatalog() const
+{
+    if ( _qmlcontext){
+        QVariant operations = _qmlcontext->contextProperty("operations");
+        if ( operations.isValid()){
+            OperationCatalogModel *operationsmodel = operations.value<OperationCatalogModel *>();
+            if (operationsmodel){
+                return operationsmodel;
             }
         }
     }
