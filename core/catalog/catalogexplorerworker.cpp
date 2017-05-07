@@ -16,7 +16,6 @@ void CatalogExplorerWorker::process(){
         }
 
         if ( location.isValid() && Ilwis::Catalog::isSpatialDataLocation(location.url())){
-            qDebug() << "scanning " << location.url();
             QString query = QString("(type & %1) != 0 and container='%2'").arg(QString::number(itCOVERAGE)).
                     arg(Ilwis::OSHelper::neutralizeFileName(location.url().toString()));
             calculatelatLonEnvelopes(query, location.name());
