@@ -22,6 +22,7 @@ public :
     WorkflowIdMapping(const OperationExpression& expr, const std::map<quint64, int>& mapping);
     QVariant getValue(WorkFlowParameter& parm,const ExecutionNode& exnode) const;
     void advanceOffset(int n);
+    int offset() const;
 private:
     OperationExpression _expression;
     std::map<quint64, int> _mapping;
@@ -54,6 +55,7 @@ public:
     qint32 operationOutputParameterCount(NodeId nodeId);
     bool isParameterValueDefined(NodeId node, qint32 parameterIndex) const;
     quint64 createMetadata();
+    quint64 createMetadata(int offset);
 
     IlwisTypes ilwisType() const;
     std::map<quint64, int> parmid2order() const;
@@ -66,6 +68,7 @@ public:
     const std::vector<SPWorkFlowNode>& graph() const;
     const std::vector<SPWorkFlowNode> nodes(int filter=WorkFlowNode::ntALL) const;
     bool isValid() const;
+
 
 private:
     std::vector<SPWorkFlowNode> _graph;

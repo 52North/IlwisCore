@@ -451,8 +451,7 @@ std::map<quint64, int> Workflow::parmid2order() const {
     return _parmid2order;
 }
 
-quint64 Workflow::createMetadata()
-{
+quint64 Workflow::createMetadata(int offset){
     QString opname = name();
     OperationResource operation = resource();
     operation.addProperty("namespace","ilwis");
@@ -466,7 +465,7 @@ quint64 Workflow::createMetadata()
     QString syntax = opname + "(";
     operation.setInParameterCount({inputparams.size()});
     for(WorkFlowParameter parm : inputparams){
-        _parmid2order[parm.id()] = count;
+        _parmid2order[parm.id()] = count + offset;
         QString label = QString("%1:%2 %3").arg(parm.nodeId()).arg(parm.order()).arg(parm.name());
         operation.addInParameter(count,parm.valueType(), label,parm.description());
         if ( count != 0 )
@@ -486,6 +485,11 @@ quint64 Workflow::createMetadata()
     mastercatalog()->addItems({operation});
     Operation::registerOperation(operation.id(),WorkflowImplementation::create);
     return operation.id();
+}
+
+quint64 Workflow::createMetadata()
+{
+    return createMetadata(0);
 }
 
 IlwisTypes Workflow::ilwisType() const
@@ -516,4 +520,9 @@ void WorkflowIdMapping::advanceOffset(int n)
 {
     _offset += n;
     _offset = std::max(0,_offset);
+}
+
+int WorkflowIdMapping::offset() const
+{
+    return _offset;
 }
