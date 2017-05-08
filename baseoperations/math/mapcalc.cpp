@@ -494,14 +494,13 @@ IDomain MapCalc::linearize(const QStringList &tokens)
                 kernel()->issues()->log(TR("Illegal construct in expression, expected number after @:") + token);
                 return IDomain();
             }
-            if ( index > _inputRasters.size() ){
-                kernel()->issues()->log(TR("Illegal parameter index after @, not enough rasters as input:") + token);
-                return IDomain();
-            }
-            auto iterP = _inputRasters.find(index);
-            if ( iterP == _inputRasters.end()){
-                kernel()->issues()->log(TR("Error in expression. Index for raster parameter not correct :") + token);
-                return IDomain();
+            auto iter = _inputRasters.find(index);
+            if ( iter == _inputRasters.end() ){
+                auto iter2 = _inputNumbers.find(index);
+                if ( iter2 == _inputNumbers.end()){
+                    kernel()->issues()->log(TR("Illegal parameter index after @, not enough elements as input:") + token);
+                    return IDomain();
+                }
             }
             tokenstack.push(token);
         }else{
@@ -580,12 +579,18 @@ IDomain MapCalc::linearize(const QStringList &tokens)
                     else if ( part[0] == '@'){
                         pindex = part.mid(1,1).toInt(&ok);
                         auto iterP = _inputRasters.find(pindex);
-                        val._type = MapCalc::ITERATOR;
-                        val._iter = &(*iterP).second;
-                        if ( part.size() > 2 ){
-                            if(part[2] == '[' && part.endsWith("]")){
-                                val._string = part.mid(3,part.size() - 4) ;
+                        if ( iterP != _inputRasters.end()){
+                            val._type = MapCalc::ITERATOR;
+                            val._iter = &(*iterP).second;
+                            if ( part.size() > 2 ){
+                                if(part[2] == '[' && part.endsWith("]")){
+                                    val._string = part.mid(3,part.size() - 4) ;
+                                }
                             }
+                        }else {
+                             auto iterP = _inputNumbers.find(pindex);
+                             val._type = MapCalc::NUMERIC;
+                             val._value = (*iterP).second;
                         }
                     }else {
                         double number = part.toDouble(&ok);
@@ -668,18 +673,26 @@ IDomain MapCalc::collectDomainInfo(std::vector<std::vector<QString>>& rpn){
             }else if ( item[0] == "=="){ // @1='sometext' or 'sometext=@1'
                 if ( item[1][0] == '\''){
                     if ( item[2][0] == '@'){
-                        IRasterCoverage raster = _inputRasters[item[2].mid(1).toInt()].raster();
-                        if ( raster->datadef().domain()->ilwisType() == itITEMDOMAIN){
-                            _domains[domainCount] = raster->datadef().domain();
-                            rpn[i][1] = "DOMAIN:"+ QString::number(domainCount++) +":" + rpn[i][1];
+                        int index = item[2].mid(1).toInt();
+                        auto iterP = _inputRasters.find(index);
+                        if ( iterP != _inputRasters.end()){
+                            IRasterCoverage raster = _inputRasters[index].raster();
+                            if ( raster->datadef().domain()->ilwisType() == itITEMDOMAIN){
+                                _domains[domainCount] = raster->datadef().domain();
+                                rpn[i][1] = "DOMAIN:"+ QString::number(domainCount++) +":" + rpn[i][1];
+                            }
                         }
                     }
                 }else  if ( item[2][0] == '\''){
                     if ( item[1][0] == '@'){
-                        IRasterCoverage raster = _inputRasters[item[1].mid(1).toInt()].raster();
-                        if ( raster->datadef().domain()->ilwisType() == itITEMDOMAIN){
-                            _domains[domainCount] = raster->datadef().domain();
-                            rpn[i][2] = "DOMAIN:"+ QString::number(domainCount++) +":" + rpn[i][2];
+                        int index = item[2].mid(1).toInt();
+                        auto iterP = _inputRasters.find(index);
+                        if ( iterP != _inputRasters.end()){
+                            IRasterCoverage raster = _inputRasters[index].raster();
+                            if ( raster->datadef().domain()->ilwisType() == itITEMDOMAIN){
+                                _domains[domainCount] = raster->datadef().domain();
+                                rpn[i][2] = "DOMAIN:"+ QString::number(domainCount++) +":" + rpn[i][2];
+                            }
                         }
                     }
                 }
