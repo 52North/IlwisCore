@@ -24,9 +24,14 @@ ExecutionNode::ExecutionNode(){
 
 }
 
-ExecutionNode::ExecutionNode(const SPWorkFlowNode& node) : _node(node)
+ExecutionNode::ExecutionNode(const SPWorkFlowNode& node, WorkflowIdMapping &mapping) : _node(node)
 {
     _parameterValues.resize(node->inputCount(),sUNDEF);
+    if ( node->isWorkflow()){
+        IWorkflow wf = node->operation().as<Workflow>();
+        wf->createMetadata(mapping.offset());
+        mapping.advanceOffset(node->inputCount());
+    }
 }
 
 bool ExecutionNode::execute(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation *workflowImpl, WorkflowIdMapping &mapping)
@@ -75,7 +80,7 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
         WorkFlowParameter& parameter = _node->inputRef(i);
         if ( parameterValue(i) == sUNDEF){
             if (parameter.inputLink()) {
-                ExecutionNode& exNode = workflowImpl->executionNode(parameter.inputLink());
+                ExecutionNode& exNode = workflowImpl->executionNode(parameter.inputLink(), mapping);
                 ExecutionContext ctx2;
                 if ( exNode.execute(&ctx2, symTable2, workflowImpl, mapping)) {
                     unloadInputs(ctx, symTable);
@@ -87,11 +92,11 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
                 }else{
                     return false;
                 }
-                // if this is a workflow it has used a number of parameters that were in the list of input parameters; they are used and
-                // are not considered anymore for matching input values and node execution
-                if ( parameter.inputLink()->isWorkflow()){
-                    mapping.advanceOffset(parameter.inputLink()->inputCount());
-                }
+//                // if this is a workflow it has used a number of parameters that were in the list of input parameters; they are used and
+//                // are not considered anymore for matching input values and node execution
+//                if ( parameter.inputLink()->isWorkflow()){
+//                    mapping.advanceOffset(parameter.inputLink()->inputCount());
+//                }
             }
         }
     }
@@ -141,7 +146,7 @@ bool ExecutionNode::executeCondition(ExecutionContext *ctx, SymbolTable &symTabl
        SymbolTable symTableLocal(symTable);
        ExecutionContext ctx;
        ctx._additionalInfo["testoperation"] = true;
-       ExecutionNode& exNode = workflowImpl->executionNode(test._operation);
+       ExecutionNode& exNode = workflowImpl->executionNode(test._operation,mapping);
        if (!exNode.execute(&ctx,symTableLocal,workflowImpl, mapping))
            return false;
        if ( ctx._results.size() == 1){
@@ -175,7 +180,7 @@ bool ExecutionNode::executeJunction(ExecutionContext *ctx, SymbolTable &symTable
     if (parameterValue(0) == sUNDEF){
         ExecutionContext ctxLocal;
         SymbolTable symTableLocal(symTable);
-        ExecutionNode& exNode = workflowImpl->executionNode(condParm.inputLink());
+        ExecutionNode& exNode = workflowImpl->executionNode(condParm.inputLink(),mapping);
         if (exNode.execute(&ctxLocal, symTableLocal,workflowImpl, mapping)){
             QString outputName = ctxLocal._results[0];
             QVariant val = symTableLocal.getValue(outputName);
@@ -187,8 +192,8 @@ bool ExecutionNode::executeJunction(ExecutionContext *ctx, SymbolTable &symTable
     ExecutionContext ctxLocal;
     SymbolTable symTableLocal(symTable);
     ExecutionNode& exNode = parameterValue(0) == "true" ?
-                workflowImpl->executionNode(_node->inputRef(1).inputLink()) :
-                workflowImpl->executionNode(_node->inputRef(2).inputLink());
+                workflowImpl->executionNode(_node->inputRef(1).inputLink(),mapping) :
+                workflowImpl->executionNode(_node->inputRef(2).inputLink(),mapping);
 
     exNode.execute(ctx, symTableLocal,workflowImpl, mapping);
     symTable.copyFrom(ctx, symTableLocal);
@@ -204,7 +209,7 @@ bool ExecutionNode::executeContent(ExecutionContext *ctx, SymbolTable &symTable,
         if ( parameterValue(i) == sUNDEF){
             ExecutionContext ctx2;
             if (parameter.inputLink()) {
-                ExecutionNode& exNode = workflowImpl->executionNode(parameter.inputLink());
+                ExecutionNode& exNode = workflowImpl->executionNode(parameter.inputLink(),mapping);
                 if ( exNode.execute(&ctx2, symTable2,workflowImpl, mapping)) {
                     QString outputName = ctx2._results[parameter.outputParameterIndex()];
                     QVariant val = symTable2.getValue(outputName);

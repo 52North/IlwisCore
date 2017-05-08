@@ -9,7 +9,7 @@ class ExecutionNode
 {
 public:
     ExecutionNode();
-    ExecutionNode(const SPWorkFlowNode& node);
+    ExecutionNode(const SPWorkFlowNode& node, Ilwis::WorkflowIdMapping &mapping);
 
     bool execute(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping &mapping);
     void clearCalculatedValues();
