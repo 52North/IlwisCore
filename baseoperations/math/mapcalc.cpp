@@ -185,14 +185,14 @@ bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
             {
                 double v1 = GetValue(action._values[0],result);
                 double v2 = GetValue(action._values[1],result);
-                calcResult =  v1 == rUNDEF || v2 == rUNDEF ? 0 : ( v1 == v2);
+                calcResult =  v1 == v2;
                 break;
             }
             case maNEQ:
             {
                 double v1 = GetValue(action._values[0],result);
                 double v2 = GetValue(action._values[1],result);
-                calcResult =  v1 == rUNDEF || v2 == rUNDEF ? 0 : ( v1 != v2);
+                calcResult =  v1 != v2;
                 break;
             }
             case maLESSEQ:
@@ -508,7 +508,10 @@ IDomain MapCalc::linearize(const QStringList &tokens)
             if ( ok){
                 tokenstack.push(token);
             }else {
-                if ( token[0] == '\''){
+                if ( token == "?"){
+                    tokenstack.push(sUNDEF);
+                }
+                else if ( token[0] == '\''){
                     tokenstack.push(token);
 
                 }else {
@@ -601,6 +604,9 @@ IDomain MapCalc::linearize(const QStringList &tokens)
                             int link = part.mid(5).toInt();
                             val._type = MapCalc::LINK;
                             val._link = link;
+                        }else if ( part == sUNDEF){
+                            val._type = MapCalc::NUMERIC;
+                            val._value = rUNDEF;
                         }else {
                             kernel()->issues()->log(TR("Error in expression. Index value is not valid :") + part);
                             return IDomain();
