@@ -70,7 +70,8 @@ quint64 TableValue::createMetadata()
 
     OperationResource operation({"ilwis://operations/tablevalue"});
     operation.setSyntax("tablevalue(inputtable,columnname,recordnr)");
-    operation.setDescription(TR("returns the value at pixel location x,y (optional z)"));
+    operation.setLongName("Table value by record");
+    operation.setDescription(TR("returns the value at location column and record number"));
     operation.setInParameterCount({3});
     operation.addInParameter(0,itTABLE , TR("input table"),TR("input table from which a cell value will be selected"));
     operation.addInParameter(1,itSTRING, TR("column"), TR("column name from which a cell value will be selected"), OperationResource::ueCOMBO);
