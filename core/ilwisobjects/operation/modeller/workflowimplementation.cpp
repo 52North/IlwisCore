@@ -81,8 +81,8 @@ bool WorkflowImplementation::execute(ExecutionContext *ctx, SymbolTable &symTabl
             removeLock(_runid);
             return false;
         }
-        ExecutionNode& exnode = executionNode(node);
         WorkflowIdMapping mapping(_expression, _workflow->parmid2order());
+        ExecutionNode& exnode = executionNode(node, mapping);
         if(!exnode.execute(&ctx2, symTable2, this, mapping)){
             removeLock(_runid);
             return false;
@@ -132,11 +132,11 @@ Ilwis::OperationImplementation::State WorkflowImplementation::prepare(ExecutionC
     return sPREPARED;
 }
 
-ExecutionNode &WorkflowImplementation::executionNode(const SPWorkFlowNode &node)
+ExecutionNode &WorkflowImplementation::executionNode(const SPWorkFlowNode &node, WorkflowIdMapping &mapping)
 {
     auto iter = _nodes.find(node->id());
     if ( iter == _nodes.end()){
-        _nodes[node->id()] = ExecutionNode(node);
+        _nodes[node->id()] = ExecutionNode(node, mapping);
         return _nodes[node->id()];
     }
     return (*iter).second;
