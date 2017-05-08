@@ -661,6 +661,8 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
     QString anonId =  QString::number(Identity::newAnonymousId());
     for(int i=(parms.size() - maxparms); i<parms.size(); ++i){
         QString output = parms[i];
+        if ( output == "")
+            output =QString("output_%1_%2").arg(operationid).arg(i);
 
 
         QString pout = QString("pout_%1_type").arg(count++);
