@@ -154,6 +154,7 @@ quint64 Script::createMetadata()
     resource.addProperty("pout_1_name", TR("succes"));
     resource.addProperty("pout_1_domain","bool");
     resource.addProperty("pout_1_desc",TR("returns the succes of the execution of the script"));
+    resource.addProperty("keyword","internal");
 
     resource.prepare();
     urlTxt += "=" + QString::number(resource.id());
