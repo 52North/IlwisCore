@@ -211,4 +211,39 @@ quint64 SelectionRaster::createMetadata()
     mastercatalog()->addItems({operation});
     return operation.id();
 }
+//---------------------------------------------------
+REGISTER_OPERATION(AttributeRaster)
+AttributeRaster::AttributeRaster() : SelectionRaster()
+{}
+
+AttributeRaster::AttributeRaster(quint64 metaid, const Ilwis::OperationExpression &expr) : SelectionRaster(metaid, expr){}
+
+Ilwis::OperationImplementation *AttributeRaster::create(quint64 metaid,const Ilwis::OperationExpression& expr){
+    return new AttributeRaster(metaid, expr);
+}
+
+Ilwis::OperationImplementation::State AttributeRaster::prepare(ExecutionContext *ctx, const SymbolTable& tbl){
+    QString newExpression = QString("selection(%1,attributes(%2))").arg(_expression.input<QString>(0),_expression.input<QString>(1) );
+    _expression = OperationExpression(newExpression);
+    return SelectionRaster::prepare(ctx, tbl);
+}
+
+quint64 AttributeRaster::createMetadata()
+{
+    OperationResource operation({"ilwis://operations/attributeraster"});
+    operation.setLongName("Attribute Raster");
+    operation.setSyntax("attributeraster(coverage,attributecolumn)");
+    operation.setDescription(TR("the operation select one column of the attribute table to create a new raster with only that attribute"));
+    operation.setInParameterCount({2});
+    operation.addInParameter(0,itRASTER, TR("input rastercoverage"),TR("input rastercoverage with a domain as specified by the selection"));
+    operation.addInParameter(1,itSTRING,  TR("attribute column"),TR("name of the attribute column to use for the attribute raster; must be numeric or item domain"),OperationResource::ueCOMBO);
+    operation.setOutParameterCount({1});
+     operation.addValidation(0,1,"columns");
+    operation.addOutParameter(0, itRASTER, TR("attribute raster"));
+    operation.setKeywords("raster,selection,attribute");
+
+    mastercatalog()->addItems({operation});
+    return operation.id();
+}
+
 

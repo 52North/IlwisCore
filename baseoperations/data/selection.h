@@ -24,6 +24,22 @@ private:
 
 
 };
+
+class AttributeRaster : public SelectionRaster
+{
+public:
+    AttributeRaster();
+    AttributeRaster(quint64 metaid, const Ilwis::OperationExpression &expr);
+
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const SymbolTable&);
+
+    static quint64 createMetadata();
+
+    NEW_OPERATION(AttributeRaster)    ;
+
+
+};
 }
 }
 #endif // SELECTION_H

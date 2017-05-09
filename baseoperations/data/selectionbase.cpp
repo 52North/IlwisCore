@@ -299,6 +299,11 @@ std::vector<QString> SelectionBase::bands(const IRasterCoverage& raster) const
             }
         }
     }
+    if ( bands.size() == 0){ // no bands selection, so all bands do count
+        const RasterStackDefinition& stackdef = raster->stackDefinition();
+        for(quint32 z=0; z < stackdef.count(); ++z)
+            bands.insert(raster->stackDefinition().index(z));
+    }
     std::vector<QString> result(bands.size());
     std::copy(bands.begin(), bands.end(), result.begin());
     return result;
