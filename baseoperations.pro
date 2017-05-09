@@ -69,7 +69,9 @@ HEADERS += \
     baseoperations/data/connect.h \
     baseoperations/conditions/rangeoperation.h \
     baseoperations/creators/createcombinationmatrix.h \
-    baseoperations/math/mapcalc.h
+    baseoperations/math/mapcalc.h \
+    baseoperations/data/tablevalue.h \
+    baseoperations/data/tablevaluebyprimarykey.h
     baseoperations/data/setattributetabel.h
 
 SOURCES += \
@@ -126,7 +128,9 @@ SOURCES += \
     baseoperations/data/connect.cpp \
     baseoperations/conditions/rangeoperation.cpp \
     baseoperations/creators/createcombinationmatrix.cpp \
-    baseoperations/math/mapcalc.cpp
+    baseoperations/math/mapcalc.cpp \
+    baseoperations/data/tablevalue.cpp \
+    baseoperations/data/tablevaluebyprimarykey.cpp
     baseoperations/data/setattributetabel.cpp
 
 
