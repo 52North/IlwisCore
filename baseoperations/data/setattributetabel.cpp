@@ -107,8 +107,8 @@ quint64 SetAttributeTable::createMetadata()
     operation.setInParameterCount({3});
     operation.addInParameter(0,itTABLE , TR("input table"),TR("Table with at least one column suitable as primary key, For features this column must hold the indexes for the features to be coupled"));
     operation.addInParameter(1,itRASTER , TR("coverage"),TR("For rasters the domain must be the same as the primary key, features are coupled either by index or by index number in the key column"));
-    operation.addInParameter(2,itSTRING , TR("key column"),TR("Column that serves as primary key for connecting the table to the coverage"));
-    operation.addValidation(0,2,"columns");
+    operation.addInParameter(2,itSTRING , TR("key column"),TR("Column that serves as primary key for connecting the table to the coverage"), OperationResource::ueCOMBO);
+    operation.addValidation(0,2,"columns with domain=numericdomain,textdomain,itemdomain");
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itRASTER , TR("output raster"),TR("A new raster with an attribute table"));
     operation.setKeywords("coverage, selection");
