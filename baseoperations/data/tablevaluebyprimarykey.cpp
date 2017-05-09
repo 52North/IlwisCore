@@ -90,7 +90,7 @@ quint64 TableValueByPrimaryKey::createMetadata()
     operation.setOutParameterCount({1});
     operation.addValidation(0,1,"columns");
     operation.addValidation(0,3,"columns");
-    operation.addOutParameter(0,itDOUBLE|itSTRING , TR("value"),TR("value in the indicated cell"));
+    operation.addOutParameter(0,itANY , TR("value"),TR("value in the indicated cell"));
     operation.setKeywords("raster,pixel");
 
     mastercatalog()->addItems({operation});
