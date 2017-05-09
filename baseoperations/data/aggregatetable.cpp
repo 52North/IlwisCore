@@ -34,7 +34,7 @@ QVariant AggregateTable::stringCase(IlwisTypes tp, const std::vector<int>& recor
          _aggregationMehtod == "average" ||
          _aggregationMehtod == "minimum" ||
          _aggregationMehtod == "maximum")
-        return hasType(tp, itTEXTDOMAIN) ? QVariant(sUNDEF) : QVariant(rUNDEF);
+        return hasType(tp, itTEXTDOMAIN) ? QVariant(sUNDEF) : QVariant((const int)iUNDEF);
 
     std::vector<QVariant> values = _inputTable->column(c);
     std::map<QVariant, int> ordered;
