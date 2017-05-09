@@ -26,6 +26,7 @@ public:
     void addOptionalOutParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF);
     void setKeywords(const QString &words);
     void addValidation(quint32 parent, quint32 child, const QString &validationCondition);
+    void parameterNeedsQuotes(quint32 order);
 };
 
 

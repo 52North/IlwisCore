@@ -430,6 +430,12 @@ void OperationResource::addInParameter(quint32 order, IlwisTypes type, const QSt
         addProperty(prefix + "altUIType", altUIType);
 }
 
+void OperationResource::parameterNeedsQuotes(quint32 order)
+{
+    QString prefix = "pin_" + QString::number(order + 1) + "_";
+    addProperty(prefix + "needsquotes", true);
+}
+
 void OperationResource::addOptionalInParameter(quint32 order, IlwisTypes type, const QString &name, const QString &description, UIElement altUIType)
 {
     addInParameter(order, type, name, description, altUIType);
