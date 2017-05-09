@@ -84,7 +84,11 @@ void tableCase(const IIlwisObject &obj, const QString& condition, int parmIndex,
         QStringList parts = domainPart.split("=");
         QVariantMap mp;
         if ( parts.size() == 2){
-            domainType = IlwisObject::name2Type(parts[1]);
+            QStringList types = parts[1].split(",");
+            IlwisTypes domainType = 0;
+            for(auto tp: types){
+                domainType |= IlwisObject::name2Type(tp);
+            }
       }
     }
     for(int c=0; c < tbl->columnCount(); ++c){
