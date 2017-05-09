@@ -204,6 +204,7 @@ quint64 SelectionRaster::createMetadata()
     operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER, TR("input rastercoverage"),TR("input rastercoverage with a domain as specified by the selection"));
     operation.addInParameter(1,itSTRING,  TR("selection-definition"),TR("Selection can either be attribute, layer index or area definition (e.g. box)"));
+    operation.parameterNeedsQuotes(1);
     operation.setOutParameterCount({1});
     operation.addOutParameter(0, itRASTER, TR("selection"));
     operation.setKeywords("raster,selection,submap,attribute");
