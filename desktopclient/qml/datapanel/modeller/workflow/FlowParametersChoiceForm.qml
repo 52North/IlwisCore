@@ -18,6 +18,7 @@ WorkflowChoiceForm {
     property string typeFilter : ""
 
     onNodeToChanged: {
+       
         if ( nodeFrom && nodeTo){
             var outParameterNames = [], count=0
             if ( nodeTo.type === "junctionitem"){
@@ -52,7 +53,7 @@ WorkflowChoiceForm {
                     modellerDataPane.addError(1, 'There were no possible matches found between ' + nodeFrom.itemid + ' and ' + nodeTo.itemid)
                     refresh()
                 } else {
-                    fillInputModel(nodeFrom.parameterType(fromParameterIndex))
+                    fillInputModel(nodeFrom.parameterType(fromParameterIndex,true))
                 }
             }else{
                 outModel.clear()
