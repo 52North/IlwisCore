@@ -85,6 +85,7 @@ quint64 TableValueByPrimaryKey::createMetadata()
     operation.addInParameter(0,itTABLE , TR("input table"),TR("input table from which a cell value will be selected"));
     operation.addInParameter(1,itSTRING, TR("primary key column"), TR("column name from which a cell value will be selected"), OperationResource::ueCOMBO);
     operation.addInParameter(2,itSTRING, TR("primary key value"), TR("Primary key value to be located in the primary key column. This record "));
+    operation.parameterNeedsQuotes(2);
     operation.addInParameter(3,itSTRING, TR("value column"), TR("column were the value will be located"), OperationResource::ueCOMBO);
     operation.setOutParameterCount({1});
     operation.addValidation(0,1,"columns");
