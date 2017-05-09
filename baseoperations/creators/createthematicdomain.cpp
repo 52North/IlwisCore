@@ -44,6 +44,7 @@ bool CreateThematicDomain::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     QVariant value;
     value.setValue<IDomain>(thematicdomain);
+    thematicdomain->addDescription(_expression.toString());
     ctx->setOutput(symTable,value,thematicdomain->name(),itDOMAIN,thematicdomain->resource());
 
     return true;

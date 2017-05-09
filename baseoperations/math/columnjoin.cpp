@@ -265,6 +265,7 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
         }else {
             QVariant var;
             var.setValue<ITable>(_outputTable);
+            _outputTable->addDescription(_expression.toString());
             ctx->setOutput(symTable,var, _outputTable->name(),itTABLE,_outputTable->resource(),_foreignKeyColumn);
         }
         return true;
@@ -358,10 +359,12 @@ quint64 ColumnJoin::createMetadata()
     operation.setDescription(TR("Join a base table or coverage with attributes from another table that share a common domain"));
     operation.setInParameterCount({4});
     operation.addInParameter(0,itTABLE|itCOVERAGE, TR("table/ coverage"),TR("Base table or coverage with attributes from which where join is to do be done"));
-    operation.addInParameter(1,itSTRING | itNUMBER , TR("input column name or number"),TR("column with a numerical domain or number"));
+    operation.addInParameter(1,itSTRING | itNUMBER , TR("input column name or number"),TR("column with a numerical domain or number"), OperationResource::ueCOMBO);
     operation.addInParameter(2,itTABLE, TR("input-table"),TR("input table-column from which the input column will be chosen"));
-    operation.addInParameter(3,itSTRING | itNUMBER, TR("input column name or number"),TR("column with a numerical domain or number"));
+    operation.addInParameter(3,itSTRING | itNUMBER, TR("input column name or number"),TR("column with a numerical domain or number"), OperationResource::ueCOMBO);
     operation.setOutParameterCount({1});
+     operation.addValidation(0,1,"columns");
+   operation.addValidation(0,3,"columns");
     operation.addOutParameter(0,itTABLE|itCOVERAGE, TR("output table/ coverage"));
     operation.setKeywords("table,aggregate,column");
     mastercatalog()->addItems({operation});

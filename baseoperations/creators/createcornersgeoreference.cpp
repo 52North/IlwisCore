@@ -58,6 +58,7 @@ bool CreateCornersGeoreference::execute(ExecutionContext *ctx, SymbolTable &symT
 
     QVariant value;
     value.setValue<IGeoReference>(georef);
+     georef->addDescription(_expression.toString());
     ctx->setOutput(symTable,value,georef->name(),itGEOREF,georef->resource());
 
     return true;

@@ -52,6 +52,7 @@ bool CreateCombinationMatrix::execute(ExecutionContext *ctx, SymbolTable &symTab
     }
     QVariant value;
     value.setValue<>(matrix);
+    matrix->addDescription(_expression.toString());
     ctx->setOutput(symTable,value,matrix->name(),itCOMBINATIONMATRIX,matrix->resource());
 
     return true;

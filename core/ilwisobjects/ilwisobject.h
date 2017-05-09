@@ -155,6 +155,7 @@ public:
 
     QString description() const;
     void setDescription(const QString& desc);
+    void addDescription(const QString &desc);
     quint64 id() const;
 
     /*!
@@ -389,6 +390,7 @@ public:
     virtual void setPseudoUndef(double v);
     const QScopedPointer<ConnectorInterface> &constConnector(int mode=cmINPUT | cmOUTPUT) const;
     void resetOutputConnector();
+
 
 protected:
    QScopedPointer<ConnectorInterface>& connector(int mode=cmINPUT | cmOUTPUT);

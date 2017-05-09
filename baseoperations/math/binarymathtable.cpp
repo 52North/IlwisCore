@@ -66,6 +66,7 @@ bool BinaryMathTable::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( _outputTable.isValid()) {
         QVariant var;
         var.setValue<ITable>(_outputTable);
+        _outputTable->addDescription(_expression.toString());
         ctx->setOutput(symTable,var, _outputTable->name(),itCOLUMN,_outputTable->resource(),_outColumn);
         return true;
     }

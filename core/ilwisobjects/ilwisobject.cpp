@@ -199,6 +199,18 @@ void IlwisObject::setDescription(const QString &desc)
     }
 }
 
+void IlwisObject::addDescription(const QString &desc)
+{
+    if ( !connector().isNull()){
+        connector()->sourceRef().modifiedTime(Time::now());
+        QString descOld = connector()->sourceRef().description();
+        if ( descOld != "")
+            descOld += "\n";
+        descOld += desc;
+        connector()->sourceRef().setDescription(descOld);
+    }
+}
+
 quint64 IlwisObject::id() const
 {
     if ( !constConnector().isNull()){

@@ -70,6 +70,7 @@ bool Ilwis::BaseOperations::CreateProjectedCoordinateSystem::execute(ExecutionCo
 
     QVariant value;
     value.setValue<ICoordinateSystem>(csy);
+    csy->addDescription(_expression.toString());
     ctx->setOutput(symTable,value,csy->name(),itCOORDSYSTEM,csy->resource());
     return true;
 }
