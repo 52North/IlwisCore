@@ -60,6 +60,11 @@ void TermNode::setParameters(ParametersNode *n)
     _content = csMethod;
 }
 
+void TermNode::setParameters()
+{
+    _content = csMethod;
+}
+
 QString TermNode::nodeType() const
 {
     return "term";
@@ -123,16 +128,18 @@ bool TermNode::doMethodStatement(SymbolTable &symbols, int scope, ExecutionConte
             parms += (*iter).second.toString();
         }
     }
-    for(int i=0; i < _parameters->noOfChilderen(); ++i) {
-        bool ok = _parameters->child(i)->evaluate(symbols, scope, ctx);
+    if ( !_parameters.isNull()){
+        for(int i=0; i < _parameters->noOfChilderen(); ++i) {
+            bool ok = _parameters->child(i)->evaluate(symbols, scope, ctx);
 
-        if (!ok)
-            return false;
-        QString name = getName(_parameters->child(i)->value());
-        if ( parms.size() > 1)
-            parms += ",";
-        parms += name;
+            if (!ok)
+                return false;
+            QString name = getName(_parameters->child(i)->value());
+            if ( parms.size() > 1)
+                parms += ",";
+            parms += name;
 
+        }
     }
     parms += ")";
     QString expression = _id->id() + parms;

@@ -11,6 +11,7 @@ public:
     void setExpression(ExpressionNode *n);
     void setString(char *s);
     void setParameters(ParametersNode *n);
+    void setParameters();
     QString nodeType() const;
     void setLogicalNegation(bool yesno);
     void setNumericalNegation(bool yesno);
