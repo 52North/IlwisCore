@@ -135,7 +135,10 @@ term returns [ TermNode *node]
 	|	STRING						{ node->setString((char *)($STRING.text->chars)); }
 	|	id1 = ID '(' 					{ node->setId(new IDNode((char *)($id1.text->chars))); }
 		(actualParameters				{ node->setParameters($actualParameters.node); }
-		)? ')'						
+		) ')'
+	|	id4 = ID '(' 					{ node->setId(new IDNode((char *)($id4.text->chars))); }
+								{ node->setParameters(); }
+		 ')'									
 	|	id2 = ID 					{ node->setId(new IDNode((char *)($id2.text->chars)));}
 		(id3=selector					{node->addSelector($id3.node);})+
 	|	id2 = ID					{ node->setId(new IDNode((char *)($id2.text->chars)));}
