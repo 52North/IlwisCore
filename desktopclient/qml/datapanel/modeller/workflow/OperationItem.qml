@@ -393,9 +393,9 @@ Rectangle {
                 var node = workflow.getNode(flow.target.itemid)
                 if ( node.type === "operationnode"){
                     var lst = node["parameters"]
-                    label = node["parameters"][flow.flowPoints.fromParameterIndex].flowlabel
+                    label = node["parameters"][flow.flowPoints.toParameterIndex].flowlabel
                 }else if ( node.type === "junctionnode"){
-                    label = flow.flowPoints.fromParameterIndex.toString()
+                    label = flow.flowPoints.toParameterIndex.toString()
                 }
                 drawInfoBox(ctx, pt1,pt2, label)
             }
