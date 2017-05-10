@@ -38,8 +38,8 @@ MapCalc::MapCalc(quint64 metaid,const Ilwis::OperationExpression &expr) : Numeri
     _operators[">="] = { 1, LEFT_ASSOC };
     _operators["!="] = { 1, LEFT_ASSOC };
     _operators["=="] = { 1, LEFT_ASSOC };
-    _operators["&&"] = { 0, LEFT_ASSOC };
-    _operators["||"] = { 0, LEFT_ASSOC };
+    _operators["and"] = { 0, LEFT_ASSOC };
+    _operators["or"] = { 0, LEFT_ASSOC };
 }
 
 bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
@@ -112,73 +112,73 @@ bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
             case maSIN:
             {
                 double v = GetValue(action._values[0],result);
-                calcResult =  v == rUNDEF ? rUNDEF : std::sin(v);
+                calcResult =  isNumericalUndef(v) ? rUNDEF : std::sin(v);
                 break;
             }
             case maCOS:
             {
                 double v = GetValue(action._values[0],result);
-                calcResult =  v == rUNDEF ? rUNDEF : std::cos(v);
+                calcResult =  isNumericalUndef(v) ? rUNDEF : std::cos(v);
                 break;
             }
             case maTAN:
             {
                 double v = GetValue(action._values[0],result);
-                calcResult =  (std::abs(v) == M_PI / 2 || v == rUNDEF) ? rUNDEF : std::tan(v);
+                calcResult =  (std::abs(v) == M_PI / 2 || isNumericalUndef(v)) ? rUNDEF : std::tan(v);
                 break;
             }
             case maACOS:
             {
                 double v = GetValue(action._values[0],result);
-                calcResult =  ( v < -1 || v > 1 || v == rUNDEF) ? rUNDEF : std::acos(v);
+                calcResult =  ( v < -1 || v > 1 || isNumericalUndef(v)) ? rUNDEF : std::acos(v);
                 break;
             }
             case maASIN:
             {
                 double v = GetValue(action._values[0],result);
-                calcResult =  ( v < -1 || v > 1 || v == rUNDEF) ? rUNDEF : std::asin(v);
+                calcResult =  ( v < -1 || v > 1 || isNumericalUndef(v)) ? rUNDEF : std::asin(v);
                 break;
             }
             case maATAN:
             {
                 double v = GetValue(action._values[0],result);
-                calcResult =  ( v < -M_PI/2 || v > M_PI/2 || v == rUNDEF) ? rUNDEF : std::acos(v);
+                calcResult =  ( v < -M_PI/2 || v > M_PI/2 || isNumericalUndef(v)) ? rUNDEF : std::acos(v);
                 break;
             }
             case maLOG10:
             {
                 double v = GetValue(action._values[0],result);
-                calcResult =  ( v <= 0 && v == rUNDEF) ? rUNDEF : std::log10(v);
+                calcResult =  ( v <= 0 && isNumericalUndef(v)) ? rUNDEF : std::log10(v);
                 break;
             }
             case maLN:
             {
                 double v = GetValue(action._values[0],result);
-                calcResult =  ( v <= 0 && v == rUNDEF) ? rUNDEF : std::log(v);
+                calcResult =  ( v <= 0 && isNumericalUndef(v)) ? rUNDEF : std::log(v);
                 break;
             }
             case maABS:
             {
                 double v = GetValue(action._values[0],result);
-                calcResult =  (v == rUNDEF) ? rUNDEF : std::abs(v);
+                calcResult =  (isNumericalUndef(v)) ? rUNDEF : std::abs(v);
                 break;
             }
             case maSQRT:
             {
                 double v = GetValue(action._values[0],result);
-                calcResult =  (v < 0 || v == rUNDEF) ? rUNDEF : std::sqrt(v);
+                calcResult =  (v < 0 || isNumericalUndef(v)) ? rUNDEF : std::sqrt(v);
                 break;
             }
             case maFLOOR:
             {
                 double v = GetValue(action._values[0],result);
-                calcResult =  v == rUNDEF ? rUNDEF : std::floor(v);
+                calcResult =  isNumericalUndef(v) ? rUNDEF : std::floor(v);
                 break;
             }
             case maCEIL:
             {
                 double v = GetValue(action._values[0],result);
-                calcResult =  v == rUNDEF ? rUNDEF : std::ceil(v);
+                calcResult =  isNumericalUndef(v) ? rUNDEF : std::ceil(v);
                 break;
             }
             case maEQ:
@@ -199,42 +199,42 @@ bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
             {
                 double v1 = GetValue(action._values[0],result);
                 double v2 = GetValue(action._values[1],result);
-                calcResult =  v1 == rUNDEF || v2 == rUNDEF ? 0 : ( v1 <= v2);
+                calcResult =  isNumericalUndef(v1) || isNumericalUndef(v2) ? 0 : ( v1 <= v2);
                 break;
             }
             case maLESS:
             {
                 double v1 = GetValue(action._values[0],result);
                 double v2 = GetValue(action._values[1],result);
-                calcResult =  v1 == rUNDEF || v2 == rUNDEF ? 0 : ( v1 < v2);
+                calcResult = isNumericalUndef(v1) || isNumericalUndef(v2) ? 0 : ( v1 < v2);
                 break;
             }
             case maGREATEREQ:
             {
                 double v1 = GetValue(action._values[0],result);
                 double v2 = GetValue(action._values[1],result);
-                calcResult =  v1 == rUNDEF || v2 == rUNDEF ? 0 : ( v1 >= v2);
+                calcResult =  isNumericalUndef(v1) ||isNumericalUndef(v2) ? 0 : ( v1 >= v2);
                 break;
             }
             case maGREATER:
             {
                 double v1 = GetValue(action._values[0],result);
                 double v2 = GetValue(action._values[1],result);
-                calcResult =  v1 == rUNDEF || v2 == rUNDEF ? 0 : ( v1 > v2);
+                calcResult =  isNumericalUndef(v1) || isNumericalUndef(v2) ? 0 : ( v1 > v2);
                 break;
             }
             case maAND:
             {
                 double v1 = GetValue(action._values[0],result);
                 double v2 = GetValue(action._values[1],result);
-                calcResult =  v1 == rUNDEF || v2 == rUNDEF ? 0 : ( (bool)v1 && (bool)v2);
+                calcResult = isNumericalUndef(v1) || isNumericalUndef(v2) ? 0 : ( (bool)v1 && (bool)v2);
                 break;
             }
             case maOR:
             {
                 double v1 = GetValue(action._values[0],result);
                 double v2 = GetValue(action._values[1],result);
-                calcResult =  v1 == rUNDEF || v2 == rUNDEF ? 0 : ( (bool)v1 || (bool)v2);
+                calcResult =  isNumericalUndef(v1) || isNumericalUndef(v2) ? 0 : ( (bool)v1 || (bool)v2);
                 break;
             }
             case maIFF:
@@ -297,7 +297,7 @@ QStringList MapCalc::tokenizer(const QString &expr)
 {
     QStringList tokens;
     std::vector<QString> seperators1 = {"*", "+","-","/","(",")","<",">",","};
-    std::vector<QString> seperators2 = {"==","!=",">=","<=","&&","||"};
+    std::vector<QString> seperators2 = {"==","!=",">=","<=","and","or"};
     QString token;
     bool inQuotes = false;
     for(int i=0; i < expr.size(); ++i){
@@ -468,8 +468,8 @@ MapCalc::MathAction MapCalc::string2action(const QString& action){
     if ( action == ">=") return maGREATEREQ;
     if ( action == "<") return maLESS;
     if ( action == ">") return maGREATER;
-    if ( action == "&&") return maAND;
-    if ( action == "||") return maOR;
+    if ( action == "and") return maAND;
+    if ( action == "or") return maOR;
 
     return maUNKNOWN;
 }
