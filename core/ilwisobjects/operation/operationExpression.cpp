@@ -344,7 +344,8 @@ void OperationExpression::parseFunctionExpression(const QString &txt, const Symb
 
         }
         cur = 0;
-        inputParams[keyword == 0 ? ++paramIndex : keyword] = rest.size() + 1;
+        if ( rest != "") // rest == "" means there are no parameters
+            inputParams[keyword == 0 ? ++paramIndex : keyword] = rest.size() + 1;
         int index4 = 0;
         foreach(const auto& input, inputParams) {
             if (keyword > 0) {
