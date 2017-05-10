@@ -53,6 +53,12 @@ TabView {
         runTab.active = true
         runTab.item.fillAppFrame()
     }
+
+    function updateSelectedForm() {
+        selectedTab.active = true
+        selectedTab.item.fillAppFrame()
+    }
+
     function executeRunForm(runparms){
         runTab.active = true
         return runTab.item.executeRunForm(runparms)

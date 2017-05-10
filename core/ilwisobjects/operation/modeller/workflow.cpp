@@ -466,7 +466,7 @@ quint64 Workflow::createMetadata(int offset){
     operation.setInParameterCount({inputparams.size()});
     for(WorkFlowParameter parm : inputparams){
         _parmid2order[parm.id()] = count + offset;
-        QString label = QString("%1:%2 %3").arg(parm.nodeId()).arg(parm.order()).arg(parm.name());
+        QString label = QString("%1 %2").arg(parm.nodeId()).arg(parm.label());
         operation.addInParameter(count,parm.valueType(), label,parm.description());
         if ( count != 0 )
             syntax += ",";

@@ -64,6 +64,8 @@ Rectangle {
                         onContentChanged: {
                             workflowView.workflow.updateOperationParameters(workflowView.currentItem.itemid, index, content)
                             workflowView.currentItem.resetInputNames()
+                            dataforms.updateSelectedForm()
+                            dataforms.updateRunForm()
                         }
                     }
                 }
