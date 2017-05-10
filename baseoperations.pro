@@ -71,7 +71,8 @@ HEADERS += \
     baseoperations/creators/createcombinationmatrix.h \
     baseoperations/math/mapcalc.h \
     baseoperations/data/tablevalue.h \
-    baseoperations/data/tablevaluebyprimarykey.h
+    baseoperations/data/tablevaluebyprimarykey.h \
+    baseoperations/data/setvariable.h
     baseoperations/data/setattributetabel.h
 
 SOURCES += \
@@ -130,7 +131,8 @@ SOURCES += \
     baseoperations/creators/createcombinationmatrix.cpp \
     baseoperations/math/mapcalc.cpp \
     baseoperations/data/tablevalue.cpp \
-    baseoperations/data/tablevaluebyprimarykey.cpp
+    baseoperations/data/tablevaluebyprimarykey.cpp \
+    baseoperations/data/setvariable.cpp
     baseoperations/data/setattributetabel.cpp
 
 
