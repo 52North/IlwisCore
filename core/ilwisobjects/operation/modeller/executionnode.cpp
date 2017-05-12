@@ -85,9 +85,10 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
                 if ( exNode.execute(&ctx2, symTable2, workflowImpl, mapping)) {
                     unloadInputs(ctx, symTable);
                     QString outputName = ctx2._results[parameter.outputParameterIndex()];
+                    Symbol sym =  symTable2.getSymbol(outputName);
                     QVariant val = symTable2.getValue(outputName);
-                    QString sval = OperationHelper::variant2string(val, symTable2.getSymbol(outputName)._type);
-                    parameter.value("", symTable2.getSymbol(outputName)._type);
+                    QString sval = OperationHelper::variant2string(val,sym._type);
+                    parameter.value("", sym._type);
                     _parameterValues[i] = sval;
                 }else{
                     return false;
@@ -105,22 +106,33 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
 
     SPOperationNode opNode = std::static_pointer_cast<OperationNode>(_node);
     IOperationMetaData metadata = opNode->operation();
-    QString expr = metadata->name()  + "(";
+    QString expr = "script "+ metadata->name()  + "(";
     QString parms;
     for(int i=0; i < inputCount; ++i){
+        bool ok = false;
         WorkFlowParameter& inParam = _node->inputRef(i);
         if ( parms != "")
             parms += ",";
         if ( hasType(inParam.valueType(),itILWISOBJECT)){
             parms += mapping.getValue(inParam, *this).toString();
-        }else if ( hasType(inParam.valueType(),itINTEGER )) {
-            parms += QString::number(mapping.getValue(inParam,*this).toLongLong());
-        } else if ( hasType(inParam.valueType(),itDOUBLE | itFLOAT)) {
-            parms += QString::number(mapping.getValue(inParam,*this).toDouble());
-        } else if (hasType(inParam.valueType(),itSTRING)){
-            parms += "\"" + mapping.getValue(inParam,*this).toString() + "\"";
-        }else
-            parms += mapping.getValue(inParam,*this).toString();
+        }else {
+            if (hasType(inParam.valueType(),itDOUBLE | itFLOAT)) {
+                double v = mapping.getValue(inParam,*this).toDouble(&ok);
+                if ( ok)
+                    parms += QString::number(v);
+            }
+            if ( !ok && hasType(inParam.valueType(),itINTEGER )) {
+                qint64 v = mapping.getValue(inParam,*this).toLongLong(&ok);
+                if ( ok)
+                    parms += QString::number(v);
+            }
+            if (  !ok && hasType(inParam.valueType(),itSTRING)){
+                parms += "\"" + mapping.getValue(inParam,*this).toString() + "\"";
+                ok = true;
+            }
+            if (!ok)
+                parms += mapping.getValue(inParam,*this).toString();
+        }
     }
     expr = expr + parms + ")";
 
