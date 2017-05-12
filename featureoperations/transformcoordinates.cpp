@@ -57,7 +57,7 @@ quint64 TransformCoordinates::createMetadata()
     operation.addInParameter(1,itSTRING, TR("coordinate system definition"),TR("defintion of new projection in terms of epsg or proj4 or the url of an existing coordinate system"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itFEATURE, TR("output feature coverage"), TR("output feature coverage where all vertices have new coordinates"));
-    operation.setKeywords("features, vector, coordinatesystem");
+    operation.setKeywords("features, vector, coordinatesystem,internal"); // internal for the moment as there is no implementation
 
     mastercatalog()->addItems({operation});
     return operation.id();
@@ -65,6 +65,7 @@ quint64 TransformCoordinates::createMetadata()
 
 OperationImplementation::State TransformCoordinates::prepare(ExecutionContext *ctx, const SymbolTable &sym)
 {
+    kernel()->issues()->log(TR("not implemented"));
     return sPREPAREFAILED;
 }
 

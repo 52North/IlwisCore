@@ -63,11 +63,10 @@ bool RasterToPoint::execute(ExecutionContext *ctx, SymbolTable &symTable)
          }
         ++iter;
     }
-    if ( ctx != 0) {
-        QVariant value;
-        value.setValue<IFeatureCoverage>(_outputfeatures);
-        ctx->setOutput(symTable,value,_outputfeatures->name(), itFEATURE, _outputfeatures->resource() );
-    }
+    QVariant value;
+    value.setValue<IFeatureCoverage>(_outputfeatures);
+    _outputfeatures->addDescription(_expression.toString());
+    ctx->setOutput(symTable,value,_outputfeatures->name(), itFEATURE, _outputfeatures->resource() );
     return true;
 }
 

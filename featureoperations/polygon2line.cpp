@@ -84,6 +84,7 @@ bool Polygon2Line::execute(ExecutionContext *ctx, SymbolTable &symTable)
     }
     QVariant value;
     value.setValue<IFeatureCoverage>(_outputfeatures);
+    _outputfeatures->addDescription(_expression.toString());
     ctx->setOutput(symTable, value, _outputfeatures->name(), itFEATURE,_outputfeatures->resource());
 
     return true;
