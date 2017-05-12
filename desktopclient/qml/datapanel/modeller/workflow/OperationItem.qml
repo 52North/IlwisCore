@@ -470,6 +470,12 @@ Rectangle {
         return true
     }
 
+    function checkValidityFlow(nodeFrom, nodeTo){
+        var type = nodeTo.parameterType(0,false)
+        var outParameterNames = nodeFrom.parameterNames(type,true)
+        return outParameterNames.length > 0
+    }
+
     function attachFlow(target, attachRectTo){
         //If not connected to itself
         if ( currentItem !== target){
@@ -477,11 +483,13 @@ Rectangle {
                 if (operation.needChoice(target.operation)) {
                     wfCanvas.showAttachmentForm(target, attachRectTo,"")
                 } else {
-                    var fromIndex = 0
-                    var toIndex = 0
-                    var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
-                    currentItem.setFlow(target, attachRectTo, flowPoints,-1)
-                    target.resetColors()
+                    if ( checkValidityFlow(workarea.currentItem, target)){
+                        var fromIndex = 0
+                        var toIndex = 0
+                        var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
+                        currentItem.setFlow(target, attachRectTo, flowPoints,-1)
+                        target.resetColors()
+                    }
 
                 }
                 if ( condition)
