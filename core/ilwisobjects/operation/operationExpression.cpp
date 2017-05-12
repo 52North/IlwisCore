@@ -646,8 +646,8 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
             auto iter = std::find(reserved.begin(), reserved.end(), parm);
             if ( iter != reserved.end() || needsquotes){
                 if ( parm.size() > 1){ // do not quote already quoted strings
-                    if ( parm[0] != '\"' ||  parm[0]  != '\'')
-                        parm  = "\'" + parm+ "\'";
+                    if ( parm[0] != '\"' )
+                        parm  = "\"" + parm+ "\"";
                 }
 
             }
