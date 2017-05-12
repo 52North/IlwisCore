@@ -207,3 +207,55 @@ quint64 StringReplace::createMetadata()
     mastercatalog()->addItems({resource});
     return resource.id();
 }
+
+//---------------------------------------------------------------------------------
+REGISTER_OPERATION(StringAdd)
+
+StringAdd::StringAdd()
+{
+}
+
+StringAdd::StringAdd(quint64 metaid, const Ilwis::OperationExpression &expr) : OperationImplementation(metaid, expr)
+{
+}
+
+bool StringAdd::execute(ExecutionContext *ctx, SymbolTable &symTable)
+{
+    if (_prepState == sNOTPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
+            return false;
+    QString newString = _text1 + _text2;
+    QVariant value = newString;
+    ctx->setOutput(symTable, value, sUNDEF, itSTRING, Resource());
+
+    return true;
+}
+
+Ilwis::OperationImplementation *StringAdd::create(quint64 metaid, const Ilwis::OperationExpression &expr)
+{
+    return new StringAdd(metaid, expr);
+}
+
+Ilwis::OperationImplementation::State StringAdd::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &)
+{
+    _text1 = _expression.parm(0).value();
+    _text2 = _expression.parm(1).value();
+    return sPREPARED;
+}
+
+quint64 StringAdd::createMetadata()
+{
+    OperationResource resource({"ilwis://operations/addstrings"});
+    resource.setLongName("addstrings");
+    resource.setSyntax("addstrings(text1, text2)");
+    resource.setInParameterCount({2});
+    resource.addInParameter(0, itSTRING, TR("first string"), TR("beginning of the output string"));
+    resource.addInParameter(1, itSTRING, TR("second string"), TR("end of the output string"));
+    resource.setOutParameterCount({1});
+    resource.addOutParameter(0, itSTRING, TR("output string"), TR("concattanation of the two input string"));
+
+    resource.setKeywords("string,workflow");
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}

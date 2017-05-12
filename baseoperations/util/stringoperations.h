@@ -65,6 +65,26 @@ private:
 
     NEW_OPERATION(StringReplace);
 };
+
+class StringAdd : public OperationImplementation
+{
+public:
+    StringAdd();
+
+    StringAdd(quint64 metaid, const Ilwis::OperationExpression &expr);
+
+    bool execute(ExecutionContext *ctx,SymbolTable& symTable);
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &);
+
+    static quint64 createMetadata();
+
+private:
+    QString _text2;
+    QString _text1;
+
+    NEW_OPERATION(StringAdd);
+};
 }
 }
 #endif // STRINGOPERATIONS_H
