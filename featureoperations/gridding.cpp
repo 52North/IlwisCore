@@ -60,6 +60,7 @@ bool Gridding::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( ctx != 0) {
         QVariant value;
         value.setValue<IFeatureCoverage>(_outfeatures);
+        _outfeatures->addDescription(_expression.toString());
         ctx->setOutput(symTable, value, _outfeatures->name(), itFEATURE,_outfeatures->resource());
     }
     return true;
