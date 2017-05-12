@@ -354,8 +354,16 @@ void CatalogModel::gatherItems() {
         if ( previousContainer.toString() == "ilwis://")
             hasParent = false;
     }
-    if ( hasParent)
-        _allItems.push_front(new ResourceModel(Resource(previousContainer.toString() + "/..", itCATALOG), this));
+    if ( hasParent){
+        if (!previousContainer.isValid()){
+            QString scheme =  item().container().scheme();
+            if ( scheme == "file"){
+                previousContainer = item().container();
+            }
+        }
+        if (previousContainer.isValid())
+            _allItems.push_front(new ResourceModel(Resource(previousContainer.toString() + "/..", itCATALOG), this));
+    }
 
 }
 
