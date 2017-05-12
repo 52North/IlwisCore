@@ -242,7 +242,7 @@ bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
                 double v1 = GetValue(action._values[0],result);
                 double v2 = GetValue(action._values[1],result);
                 double v3 = GetValue(action._values[2],result);
-                calcResult =  (bool)v1 ? v2 : v3;
+                calcResult =( isNumericalUndef(v1) || isNumericalUndef(v2)) ? rUNDEF : (bool)v1 ? v2 : v3;
                 break;
             }
 
