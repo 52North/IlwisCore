@@ -147,7 +147,12 @@ QString OperationHelper::variant2string(const QVariant& v, IlwisTypes tp){
             return obj->resource().url()    .toString();
         }
     }
-    //TODO: other ilwis types
+    if ( hasType(tp, itCOLUMN)){
+        IIlwisObject obj = OperationHelper::variant2ilwisobject(v,itTABLE);
+        if ( obj.isValid()){
+            return obj->resource().url()    .toString();
+        }
+    }
     return "";
 }
 
