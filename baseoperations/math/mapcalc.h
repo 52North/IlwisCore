@@ -4,7 +4,7 @@
 
 namespace Ilwis {
 namespace BaseOperations{
-class MapCalc : public NumericOperation
+class MapCalc : public CalculatorOperation
 {
 public:
     MapCalc();
@@ -14,47 +14,14 @@ public:
 
     State prepare(ExecutionContext *ctx,const SymbolTable&);
 private:
-    enum ParmType {NUMERIC, ITERATOR,LINK, STRING, DOMAINITEM};
-    enum MathAction{maIFF, maSIN, maCOS, maTAN, maASIN, maACOS,maATAN, maLOG10, maLN,
-                    maABS,maCEIL, maFLOOR,maSQRT,maMAX,maMIN,maPOW,maADD,maMINUS,maDIVIDE,maMULT,
-                    maEQ, maNEQ,maLESSEQ,maGREATEREQ,maLESS,maGREATER,maOR, maAND,
-                    maUNKNOWN};
-    const int LEFT_ASSOC = 0;
-    const int RIGHT_ASSOC = 1;
-    struct ParmValue{
-
-        ParmType _type = ITERATOR;
-        double _value = rUNDEF;
-        int  _link = -1;
-        PixelIterator *_iter;
-        QString _string; // could be a string value or a colum name
-    };
-    struct Action{
-        std::vector<ParmValue> _values;
-        MathAction _action;
-    };
-
-    std::map<QString, int> _functions;
-    std::map<QString, std::vector<int>> _operators;
     std::map<int, PixelIterator> _inputRasters;
-    std::map<int, double> _inputNumbers;
+
     IRasterCoverage _outputRaster;
-    std::map<int,IDomain> _domains;
 
-    bool isAssociative(const QString &token, int type) ;
-    bool isOperator(const QString &token) ;
-    bool isNumber(const QString &token) const;
-    bool isFunction(const QString &func);
-    int cmpPrecedence(const QString &token1, const QString &token2) ;
-    IDomain linearize(const QStringList &tokens);
-    QStringList shuntingYard(const QString &expr);
-    std::vector<Action> _actions;
-
-    MapCalc::MathAction string2action(const QString &action);
-    double calcBinary(MathAction act, double v1, double v2);
-    QStringList tokenizer(const QString &expr);
     Ilwis::IDomain collectDomainInfo(std::vector<std::vector<QString> >& rpn);
     IDomain findOutDomain(const std::vector<std::vector<QString>>&rpn,const std::vector<QString>& node);
+    void fillValues(int pindex, const QString &part, ParmValue &val);
+    bool check(int index) const;
 };
 
 class MapCalc1 : public MapCalc{
