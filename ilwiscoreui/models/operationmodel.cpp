@@ -279,7 +279,8 @@ QStringList OperationModel::parameterIndexes(const QString &typefilter, bool fro
             found = false;
             if ( typefilter != ""){
                 quint64 tp2 = getProperty((fromOperation ? "pout_" : "pin_") + QString::number(i + 1) + "_type").toULongLong();
-                if ( hasType(tp1, tp2)){
+                //output == column is in reality a table
+                if ( hasType(tp1, tp2) || (hasType(tp2,itTABLE) && tp1 == itCOLUMN) ||  (hasType(tp1,itTABLE) && tp2 == itCOLUMN) ){
                     found = true;
                 }
             }
