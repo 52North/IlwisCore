@@ -13,14 +13,15 @@ public:
     bool execute(ExecutionContext *ctx, SymbolTable& symTable);
 
     State prepare(ExecutionContext *ctx,const SymbolTable&);
+
 private:
     std::map<int, PixelIterator> _inputRasters;
 
     IRasterCoverage _outputRaster;
 
-    Ilwis::IDomain collectDomainInfo(std::vector<std::vector<QString> >& rpn);
     IDomain findOutDomain(const std::vector<std::vector<QString>>&rpn,const std::vector<QString>& node);
     void fillValues(int pindex, const QString &part, ParmValue &val);
+    DataDefinition datadef(int index);
     bool check(int index) const;
 };
 

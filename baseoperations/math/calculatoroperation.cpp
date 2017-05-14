@@ -131,10 +131,7 @@ QStringList CalculatorOperation::shuntingYard(const QString &expr)
                 rpn.push_back(tokenstack.top());
                 tokenstack.pop();
             }
-            if(tokenstack.empty()){
-                kernel()->issues()->log(TR("Illegal construct in expression; maybe missing brackets?"));
-                return QStringList();
-            }
+            check(!tokenstack.empty(),TR("Illegal construct in expression; maybe missing brackets?"));
             tokenstack.pop();
             if (!tokenstack.empty() && isFunction(tokenstack.top())){
                 rpn.push_back(tokenstack.top());
@@ -209,10 +206,7 @@ bool CalculatorOperation::isOperator(const QString& token)
 
 bool CalculatorOperation::isAssociative(const QString& token, int type)
 {
-    if (!isOperator(token))
-    {
-        throw new std::logic_error("Invalid token: " + token.toStdString());
-    }
+    check(!isOperator(token),TR("Illegal construct in expression; Invalid token: " + token));
     if (_operators[token][1] == type) {
         return true;
     }
@@ -221,11 +215,161 @@ bool CalculatorOperation::isAssociative(const QString& token, int type)
 
 int CalculatorOperation::cmpPrecedence(const QString& token1, const QString& token2)
 {
-    if (!isOperator(token1) || !isOperator(token2))
-    {
-        throw new std::logic_error("Invalid token: " + token1.toStdString() +" " + token2.toStdString());
-    }
+    check(!isOperator(token1),TR("Illegal construct in expression; Invalid token: " + token1));
+    check(!isOperator(token2),TR("Illegal construct in expression; Invalid token: " + token2));
+
     return _operators[token1][0] - _operators[token2][0];
+}
+
+int  CalculatorOperation::checkItem(int domainCount, QString& item, QString& copy_item, std::set<QString>& domainItems){
+    if (copy_item.indexOf("LINK:") == -1){
+        check(copy_item.size() > 0, TR("invalid syntax"));
+        if ( copy_item[0] == '\''){
+            // add a prefix to the string to be able to link it to a domain.
+            domainItems.insert(item.mid(1,item.size() - 2));
+            item = "DOMAIN:"+ QString::number(domainCount)+":" + item;
+        }
+        return -1;
+    }else {
+        check(copy_item.size()>5, TR("invalid syntax"));
+        int nextLink = copy_item.mid(5).toInt();
+        // remove the link as we dont want to encounter when we do a subsequent run through the list of tokens
+        copy_item = sUNDEF;
+        return nextLink;
+    }
+}
+
+
+
+IDomain CalculatorOperation::collectDomainInfo(std::vector<std::vector<QString>>& rpn){
+    int domainCount = 0;
+    std::vector<std::vector<QString>> copy_rpn = rpn;
+    int maxLink = -1;
+    int index = -1;
+    std::map<int,IDomain> itemdomains;
+    bool found = false;
+    do{
+        found = false;
+        for(int i=0; i < copy_rpn.size(); ++i )    {
+            auto& copy_item = copy_rpn[i];
+            auto& item = rpn[i];
+            check(copy_item.size()>0, TR("invalid syntax"));
+            if ( copy_item[0] == "iff"){
+                QString cItem = copy_item[1];
+                if (cItem.indexOf("LINK:") == 0){
+                    maxLink = std::max(cItem.mid(5).toInt(), maxLink);
+                    index = i;
+                    found = true;
+                }
+            }else {
+                check(item.size()>0, TR("invalid syntax"));
+                if ( item[0] == "=="){ // @1='sometext' or 'sometext=@1'
+                    check(item.size()>1 && item[1].size() > 0, TR("invalid syntax"));
+                    if ( item[1][0] == '\''){
+                        check(item.size()>2 && item[2].size() > 0, TR("invalid syntax"));
+                        if ( item[2][0] == '@'){
+                            int index = item[2].mid(1).toInt();
+                            DataDefinition def = datadef(index);
+                            if ( def.isValid())
+                                if ( def.domain()->ilwisType() == itITEMDOMAIN){
+                                    _domains[domainCount] =def.domain();
+                                    rpn[i][1] = "DOMAIN:"+ QString::number(domainCount++) +":" + rpn[i][1];
+                                }
+                        }
+                    }else  {
+                        check(item.size()>2 && item[2].size() > 0, TR("invalid syntax"));
+                        if ( item[2][0] == '\''){
+                            check(item[1].size() > 0, TR("invalid syntax"));
+                            if ( item[1][0] == '@'){
+                                int index = item[2].mid(1).toInt();
+                                DataDefinition def = datadef(index);
+                                if ( def.isValid())
+                                    if ( def.domain()->ilwisType() == itITEMDOMAIN){
+                                        _domains[domainCount] = def.domain();
+                                        rpn[i][2] = "DOMAIN:"+ QString::number(domainCount++) +":" + rpn[i][2];
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
+        if ( found){
+            std::set<QString> domainItems;
+            checkIndexItem(domainCount, rpn, copy_rpn,index,domainItems);
+            if ( domainItems.size() > 0){
+                INamedIdDomain dom;
+                dom.prepare();
+                for(QString item : domainItems){
+                    dom->addItem(new NamedIdentifier(item));
+                }
+                _domains[domainCount++] = dom;
+            }
+        }
+
+    }while(found);
+
+    IDomain dom;
+    dom.prepare("code=domain:value");
+    check(rpn.size() > 0, TR("invalid syntax"));
+    if ( rpn.back()[0] == "iff"){
+        dom = findOutDomain(rpn, rpn.back());
+    }
+
+    return dom;
+}
+
+IDomain CalculatorOperation::findOutDomain(const std::vector<std::vector<QString>>&rpn,const std::vector<QString>& node){
+    auto findDomainperItem = [&](const std::vector<std::vector<QString>>&rpn, const QString& currentItem)->IDomain{
+        if ( currentItem.indexOf("DOMAIN:") == 0)    {
+            check(currentItem.size() >7,TR("invalid syntax"));
+            int index = currentItem.mid(7,1).toInt();
+            return _domains[index];
+        } if (currentItem.indexOf("LINK:") == 0){
+            check(currentItem.size() >5,TR("invalid syntax"));
+            int nextItem = currentItem.mid(5).toInt() ;
+            return findOutDomain(rpn, rpn[nextItem]);
+        }
+        bool ok;
+        currentItem.toDouble(&ok);
+        if ( ok){
+            IDomain dom;
+            dom.prepare("code=domain:value");
+            return dom;
+        }
+        return IDomain();
+    };
+    IDomain dom = findDomainperItem(rpn,node[2]);
+    if (!dom.isValid()){
+        dom = findDomainperItem(rpn, node[3]);
+    }
+    return dom;
+
+}
+
+int CalculatorOperation::checkIndexItem(int domainCount, std::vector<std::vector<QString>>& rpn,std::vector<std::vector<QString>>& copy_rpn, int index, std::set<QString>& domainItems){
+    auto& item = copy_rpn[index];
+    // an token may be a regular item or a link; if is a link we follow it further all string encountered belong to the same domain
+    if ( index >= rpn.size())
+        throw ErrorObject("Corrupt expression; unexpected token found");
+    int nextLink1 = checkItem(domainCount,rpn[index][1], item[1], domainItems);
+    if ( nextLink1 >= 0)
+        checkIndexItem(domainCount, rpn, copy_rpn, nextLink1, domainItems);
+    if ( index >= rpn.size())
+        throw ErrorObject("Corrupt expression; unexpected token found");
+    int nextLink2 =checkItem(domainCount, rpn[index][2], item[2], domainItems);
+    if ( nextLink2 >= 0)
+        checkIndexItem(domainCount, rpn, copy_rpn, nextLink2, domainItems);
+    return 0;
+}
+
+void CalculatorOperation::check(bool ok, const QString &error) const
+{
+    if (!ok){
+        throw ErrorObject(error);
+    }
 }
 
 IDomain CalculatorOperation::linearize(const QStringList &tokens)
@@ -238,16 +382,11 @@ IDomain CalculatorOperation::linearize(const QStringList &tokens)
 
     bool ok;
     for(const QString& token : tokens)    {
+        check(token.length() >0,TR("invalid syntax"));
         if ( token[0] == '@'){
-            if (token.length()<2){
-                kernel()->issues()->log(TR("Illegal construct in expression, expected number after @:") + token);
-                return IDomain();
-            }
+            check(token.length()>=2,TR("Illegal construct in expression, expected number after @:") + token);
             int index = token.mid(1,1).toInt(&ok);
-            if (!ok){
-                kernel()->issues()->log(TR("Illegal construct in expression, expected number after @:") + token);
-                return IDomain();
-            }
+            check(ok, TR("Illegal construct in expression, expected number after @:") + token);
             if (!check(index)){
                 kernel()->issues()->log(TR("Illegal parameter index after @, not enough elements as input:") + token);
                 return IDomain();
@@ -267,10 +406,7 @@ IDomain CalculatorOperation::linearize(const QStringList &tokens)
                 }else {
                     std::vector<QString> evalItem;
                     if ( isOperator(token)){
-                        if ( tokenstack.size() < 2){
-                            kernel()->issues()->log(TR("Invalid token encountered; not enough values to use after this token: '") + token + "'");
-                            return IDomain();
-                        }
+                        check(tokenstack.size() <= 2,TR("Invalid token encountered; not enough values to use after this token: '") + token + "'");
                         QString v1 = tokenstack.top(); tokenstack.pop();
                         QString v2 = tokenstack.top(); tokenstack.pop();
                         evalItem = {token, v1, v2};
@@ -279,6 +415,7 @@ IDomain CalculatorOperation::linearize(const QStringList &tokens)
                         evalItem.push_back(token);
                         int n = _functions[token];
                         for(int i=0; i < n; ++i){
+                            check(tokenstack.size()>= 2, TR("Invalid syntax"));
                             QString v = tokenstack.top(); tokenstack.pop();
                             evalItem.push_back(v);
                         }
@@ -313,12 +450,15 @@ IDomain CalculatorOperation::linearize(const QStringList &tokens)
                     start = false;
                 }else{
                     int pindex = iUNDEF;
+                    check(part.size() > 0, TR("Illegal syntax"));
                     if ( part.indexOf("DOMAIN:") == 0){
                         val._type = CalculatorOperation::DOMAINITEM;
                         // retrieve the domain index in _domains to find the matching domain
+                        check(part.size()>6, TR("Invalid syntax"));
                         int domainIndex = part.mid(7,1).toInt();
                         IItemDomain dom = _domains[domainIndex].as<ItemDomain<DomainItem>>();
                         // get the name from the string to retrieve the corresponding domainitem
+                        check(part.size()>8, TR("Invalid syntax"));
                         QString itemName =part.mid(9);
                         itemName = itemName.mid(1,itemName.size() - 2);
                         SPDomainItem item = dom->item(itemName);
@@ -362,7 +502,7 @@ IDomain CalculatorOperation::linearize(const QStringList &tokens)
 }
 
 double CalculatorOperation::calc() {
-    auto GetValue = [](const ParmValue& parm,const std::vector<double>& result)->double{
+    auto GetValue = [&](const ParmValue& parm,const std::vector<double>& result)->double{
         switch(parm._type){
         case ParmType::LINK:
             return result[parm._link];break;
@@ -371,6 +511,8 @@ double CalculatorOperation::calc() {
         case ParmType::NUMERIC:
         case ParmType::DOMAINITEM:
             return parm._value;break;
+        case ParmType::COLUMN:
+            return parm._columnValues[_record].toDouble();break;
         }
         return rUNDEF;
     };

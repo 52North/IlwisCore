@@ -110,135 +110,17 @@ void MapCalc::fillValues(int pindex,const QString& part, ParmValue& val)  {
     }
 }
 
-int  checkItem(int domainCount, QString& item, QString& copy_item, std::set<QString>& domainItems){
-    if (copy_item.indexOf("LINK:") == -1){
-        if ( copy_item[0] == '\''){
-            // add a prefix to the string to be able to link it to a domain.
-            domainItems.insert(item.mid(1,item.size() - 2));
-            item = "DOMAIN:"+ QString::number(domainCount)+":" + item;
-        }
-        return -1;
-    }else {
-        int nextLink = copy_item.mid(5).toInt();
-        // remove the link as we dont want to encounter when we do a subsequent run through the list of tokens
-        copy_item = sUNDEF;
-        return nextLink;
+DataDefinition MapCalc::datadef(int index)
+{
+    auto iterP = _inputRasters.find(index);
+    if ( iterP != _inputRasters.end()){
+        IRasterCoverage raster = _inputRasters[index].raster();
+        return raster->datadef();
     }
+    return DataDefinition();
 }
 
-int checkIndexItem(int domainCount, std::vector<std::vector<QString>>& rpn,std::vector<std::vector<QString>>& copy_rpn, int index, std::set<QString>& domainItems){
-    auto& item = copy_rpn[index];
-    // an token may be a regular item or a link; if is a link we follow it further all string encountered belong to the same domain
-    if ( index >= rpn.size())
-        throw ErrorObject("Corrupt expression; unexpected token found");
-    int nextLink1 = checkItem(domainCount,rpn[index][1], item[1], domainItems);
-    if ( nextLink1 >= 0)
-        checkIndexItem(domainCount, rpn, copy_rpn, nextLink1, domainItems);
-    if ( index >= rpn.size())
-        throw ErrorObject("Corrupt expression; unexpected token found");
-    int nextLink2 =checkItem(domainCount, rpn[index][2], item[2], domainItems);
-    if ( nextLink2 >= 0)
-        checkIndexItem(domainCount, rpn, copy_rpn, nextLink2, domainItems);
-    return 0;
-}
 
-IDomain MapCalc::collectDomainInfo(std::vector<std::vector<QString>>& rpn){
-    int domainCount = 0;
-    std::vector<std::vector<QString>> copy_rpn = rpn;
-    int maxLink = -1;
-    int index = -1;
-    std::map<int,IDomain> itemdomains;
-    bool found = false;
-    do{
-        found = false;
-        for(int i=0; i < copy_rpn.size(); ++i )    {
-            auto& copy_item = copy_rpn[i];
-            auto& item = rpn[i];
-            if ( copy_item[0] == "iff"){
-                QString cItem = copy_item[1];
-                if (cItem.indexOf("LINK:") == 0){
-                    maxLink = std::max(cItem.mid(5).toInt(), maxLink);
-                    index = i;
-                    found = true;
-                }
-            }else if ( item[0] == "=="){ // @1='sometext' or 'sometext=@1'
-                if ( item[1][0] == '\''){
-                    if ( item[2][0] == '@'){
-                        int index = item[2].mid(1).toInt();
-                        auto iterP = _inputRasters.find(index);
-                        if ( iterP != _inputRasters.end()){
-                            IRasterCoverage raster = _inputRasters[index].raster();
-                            if ( raster->datadef().domain()->ilwisType() == itITEMDOMAIN){
-                                _domains[domainCount] = raster->datadef().domain();
-                                rpn[i][1] = "DOMAIN:"+ QString::number(domainCount++) +":" + rpn[i][1];
-                            }
-                        }
-                    }
-                }else  if ( item[2][0] == '\''){
-                    if ( item[1][0] == '@'){
-                        int index = item[2].mid(1).toInt();
-                        auto iterP = _inputRasters.find(index);
-                        if ( iterP != _inputRasters.end()){
-                            IRasterCoverage raster = _inputRasters[index].raster();
-                            if ( raster->datadef().domain()->ilwisType() == itITEMDOMAIN){
-                                _domains[domainCount] = raster->datadef().domain();
-                                rpn[i][2] = "DOMAIN:"+ QString::number(domainCount++) +":" + rpn[i][2];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if ( found){
-            std::set<QString> domainItems;
-            checkIndexItem(domainCount, rpn, copy_rpn,index,domainItems);
-            if ( domainItems.size() > 0){
-                INamedIdDomain dom;
-                dom.prepare();
-                for(QString item : domainItems){
-                    dom->addItem(new NamedIdentifier(item));
-                }
-                _domains[domainCount++] = dom;
-            }
-        }
-
-    }while(found);
-
-    IDomain dom;
-    dom.prepare("code=domain:value");
-    if ( rpn.back()[0] == "iff"){
-        dom = findOutDomain(rpn, rpn.back());
-    }
-
-    return dom;
-}
-
-IDomain MapCalc::findOutDomain(const std::vector<std::vector<QString>>&rpn,const std::vector<QString>& node){
-    auto findDomainperItem = [&](const std::vector<std::vector<QString>>&rpn, const QString& currentItem)->IDomain{
-        if ( currentItem.indexOf("DOMAIN:") == 0)    {
-            int index = currentItem.mid(7,1).toInt();
-            return _domains[index];
-        } if (currentItem.indexOf("LINK:") == 0){
-            int nextItem = currentItem.mid(5).toInt() ;
-            return findOutDomain(rpn, rpn[nextItem]);
-        }
-        bool ok;
-        currentItem.toDouble(&ok);
-        if ( ok){
-            IDomain dom;
-            dom.prepare("code=domain:value");
-            return dom;
-        }
-        return IDomain();
-    };
-    IDomain dom = findDomainperItem(rpn,node[2]);
-    if (!dom.isValid()){
-        dom = findDomainperItem(rpn, node[3]);
-    }
-    return dom;
-
-}
 
 OperationImplementation::State MapCalc::prepare(ExecutionContext *,const SymbolTable&) {
 
@@ -267,9 +149,14 @@ OperationImplementation::State MapCalc::prepare(ExecutionContext *,const SymbolT
     OperationHelperRaster helper;
     helper.initialize((*_inputRasters.begin()).second.raster(), _outputRaster, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
 
-    IDomain outputDomain = linearize(shuntingYard(expr));
-    if( !outputDomain.isValid())
+    IDomain outputDomain;
+    try {
+        outputDomain = linearize(shuntingYard(expr));
+        if( !outputDomain.isValid())
+            return sPREPAREFAILED;
+    } catch(ErrorObject& err){
         return sPREPAREFAILED;
+    }
 
     _outputRaster->datadefRef().domain(outputDomain);
 

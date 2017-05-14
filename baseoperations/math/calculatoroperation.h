@@ -8,7 +8,7 @@ namespace BaseOperations{
 class CalculatorOperation : public NumericOperation
 {
 public:
-    enum ParmType {NUMERIC, ITERATOR,LINK, STRING, DOMAINITEM};
+    enum ParmType {NUMERIC, ITERATOR,LINK, STRING, DOMAINITEM,COLUMN};
     enum MathAction{maIFF, maSIN, maCOS, maTAN, maASIN, maACOS,maATAN, maLOG10, maLN,
                     maABS,maCEIL, maFLOOR,maSQRT,maMAX,maMIN,maPOW,maADD,maMINUS,maDIVIDE,maMULT,
                     maEQ, maNEQ,maLESSEQ,maGREATEREQ,maLESS,maGREATER,maOR, maAND,
@@ -26,8 +26,9 @@ protected:
         double _value = rUNDEF;
         int  _link = -1;
         PixelIterator *_source; // for mapcalc
-        QString ColumName; // for tabcalc
+        QString _columName; // for tabcalc
         QString _string; // could be a string value or a colum name
+        std::vector<QVariant> _columnValues;
     };
     struct Action{
         std::vector<ParmValue> _values;
@@ -39,6 +40,7 @@ protected:
     std::map<int, double> _inputNumbers;
     std::map<int,IDomain> _domains;
     std::vector<Action> _actions;
+    int _record = 0;
 
     QStringList tokenizer(const QString &expr);
     CalculatorOperation();
@@ -53,9 +55,16 @@ protected:
     CalculatorOperation::MathAction string2action(const QString &action);
     virtual void fillValues(int pindex, const QString &part, ParmValue &val) = 0;
     virtual bool check(int index) const = 0;
-    virtual IDomain collectDomainInfo(std::vector<std::vector<QString>>& rpn) = 0;
+    virtual DataDefinition datadef(int index) = 0;
+    IDomain collectDomainInfo(std::vector<std::vector<QString>>& rpn);
     IDomain linearize(const QStringList &tokens);
     double  calc();
+    int checkItem(int domainCount, QString &item, QString &copy_item, std::set<QString> &domainItems);
+    int checkIndexItem(int domainCount, std::vector<std::vector<QString> > &rpn, std::vector<std::vector<QString> > &copy_rpn, int index, std::set<QString> &domainItems);
+    void check(bool ok, const QString& error) const;
+
+private:
+    IDomain findOutDomain(const std::vector<std::vector<QString> > &rpn, const std::vector<QString> &node);
 };
 }
 }
