@@ -94,12 +94,16 @@ void AssignmentNode::getFormat(QSharedPointer<ASTNode>& node, QString& format, Q
     }
 }
 
-void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& sym, const QString& result) {
+void AssignmentNode::store2Format(QSharedPointer<ASTNode>& node, const Symbol& sym, const QString& result, bool keepFormat) {
     QString format, provider;
     getFormat(node, format, provider);
     if ( format != "" && format != sUNDEF) {
         Ilwis::IIlwisObject object = getObject(sym);
         if ( object.isValid()){
+            if ( keepFormat){
+                format = object->formatCode();
+                provider = object->provider();
+            }
             bool wasAnonymous = object->isAnonymous(); // if object is anonymous it will get a name due this method; this means it will now appear in the mastercatalog
             // as (previous) anonymous objects are not in the mastercatalog ( though they are registered)
             QString name = result;
@@ -192,6 +196,7 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                 Symbol sym = symbols.getSymbol(val.id(i),SymbolTable::gaREMOVEIFANON);
                 IlwisTypes tp = sym.isValid() ? sym._type : itUNKNOWN;
                 QString result = _outParms->id(i);
+                bool keepOriginalFormat = additionalInfo.find("outputisinput") != additionalInfo.end();
                 QSharedPointer<ASTNode> specifier = _outParms->specifier(_outParms->id(i));
                 if (  hasType(tp, itILWISOBJECT)){
                     result = addPossibleExtension(specifier, result, tp);
@@ -216,18 +221,11 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                     } else if ( hasType(tp, itGEOREF)){
                         ok &= copyObject<GeoReference>(sym, result,symbols);
                     } else if (hasType(tp, itTABLE | itCOLUMN)){
-                        ok &= copyObject<Table>(sym, result,symbols, tp==itCOLUMN);
-                        QSharedPointer<Selector> selector = _outParms->selector(result);
-                        if (!selector.isNull()){
-                            QString varName = selector->variable();
-                            ITable source =  sym._var.value<ITable>();
-                            QString oldColName = additionalInfo[val.id()].toString();
-                            QVariant newT= symbols.getValue(result);
-                            ITable newTable = newT.value<ITable>();
-                            ColumnDefinition& coldef = newTable->columndefinitionRef(oldColName);
-                            if ( coldef.isValid()){
-                                coldef.name(varName);
-                            }
+                        if ( keepOriginalFormat) {  // as output is input we must ignore any names given; we just copy the original name
+                            ITable origTable =  sym._var.value<ITable>();
+                            result = origTable->name();
+                        }else {
+                            ok &= copyObject<Table>(sym, result,symbols, tp==itCOLUMN);
                         }
                     }
 
@@ -237,7 +235,7 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                     if ( !specifier.isNull()) {
                         if ( specifier->noOfChilderen()!= 1)
                             return ERROR2(ERR_NO_OBJECT_TYPE_FOR_2, "Output object", "expression");
-                        store2Format(specifier, sym, result);
+                        store2Format(specifier, sym, result, keepOriginalFormat);
 
                     }
 

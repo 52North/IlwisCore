@@ -63,7 +63,7 @@ private:
     }
     IIlwisObject getObject(const Symbol &sym) const;
     void getFormat(QSharedPointer<Ilwis::ASTNode> &node, QString &format, QString &fnamespace) const;
-    void store2Format(QSharedPointer<Ilwis::ASTNode> &node, const Symbol &sym, const QString &result);
+    void store2Format(QSharedPointer<Ilwis::ASTNode> &node, const Symbol &sym, const QString &result, bool keepFormat);
     bool _defintion;
     QSharedPointer<ASTNode> _expression;
     QSharedPointer<OutParametersNode> _outParms;
