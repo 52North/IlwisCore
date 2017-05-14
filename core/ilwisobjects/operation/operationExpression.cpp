@@ -681,6 +681,7 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
             output = parts[0];
             if ( output == ""){
                 output = "output_" + anonId + "_" + QString::number(i);
+                kernel()->issues()->log(TR("Missing output name; output will be generated with the name:" + output),IssueObject::itWarning);
             }
 
             //Check if user didnt put the same output name in another output field
