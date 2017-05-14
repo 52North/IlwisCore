@@ -72,7 +72,9 @@ HEADERS += \
     baseoperations/math/mapcalc.h \
     baseoperations/data/tablevalue.h \
     baseoperations/data/tablevaluebyprimarykey.h \
-    baseoperations/data/setvariable.h
+    baseoperations/data/setvariable.h \
+    baseoperations/math/calculatoroperation.h \
+    baseoperations/math/tabcalc.h
     baseoperations/data/setattributetabel.h
 
 SOURCES += \
@@ -132,7 +134,9 @@ SOURCES += \
     baseoperations/math/mapcalc.cpp \
     baseoperations/data/tablevalue.cpp \
     baseoperations/data/tablevaluebyprimarykey.cpp \
-    baseoperations/data/setvariable.cpp
+    baseoperations/data/setvariable.cpp \
+    baseoperations/math/calculatoroperation.cpp \
+    baseoperations/math/tabcalc.cpp
     baseoperations/data/setattributetabel.cpp
 
 
