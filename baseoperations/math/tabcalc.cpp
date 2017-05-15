@@ -165,7 +165,7 @@ quint64 TabCalc1::createMetadata()
      operation.addInParameter(4,itBOOL, TR("Create new table"), TR("The column is either in a new table or in the original table"));
 
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itRASTER, TR("output table"));
+    operation.addOutParameter(0,itTABLE, TR("output table"));
     operation.setKeywords("table,numeric,math");
 
     mastercatalog()->addItems({operation});
@@ -198,7 +198,7 @@ quint64 TabCalc2::createMetadata()
      operation.addInParameter(5,itBOOL, TR("Create new table"), TR("The column is either in a new table or in the original table"));
 
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itRASTER, TR("output table"));
+    operation.addOutParameter(0,itTABLE, TR("output table"));
     operation.setKeywords("table,numeric,math");
 
     mastercatalog()->addItems({operation});
@@ -232,7 +232,7 @@ quint64 TabCalc3::createMetadata()
      operation.addInParameter(6,itBOOL, TR("Create new table"), TR("The column is either in a new table or in the original table"));
 
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itRASTER, TR("output table"));
+    operation.addOutParameter(0,itTABLE, TR("output table"));
     operation.setKeywords("table,numeric,math");
 
     mastercatalog()->addItems({operation});
@@ -267,7 +267,7 @@ quint64 TabCalc4::createMetadata()
      operation.addInParameter(7,itBOOL, TR("Create new table"), TR("The column is either in a new table or in the original table"));
 
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itRASTER, TR("output table"));
+    operation.addOutParameter(0,itTABLE, TR("output table"));
     operation.setKeywords("table,numeric,math");
 
     mastercatalog()->addItems({operation});
@@ -302,7 +302,7 @@ quint64 TabCalc5::createMetadata()
      operation.addInParameter(8,itBOOL, TR("Create new table"), TR("The column is either in a new table or in the original table"));
 
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itRASTER, TR("output table"));
+    operation.addOutParameter(0,itTABLE, TR("output table"));
     operation.setKeywords("table,numeric,math");
 
     mastercatalog()->addItems({operation});
@@ -338,7 +338,7 @@ quint64 TabCalc6::createMetadata()
      operation.addInParameter(9,itBOOL, TR("Create new table"), TR("The column is either in a new table or in the original table"));
 
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itRASTER, TR("output table"));
+    operation.addOutParameter(0,itTABLE, TR("output table"));
     operation.setKeywords("table,numeric,math");
 
     mastercatalog()->addItems({operation});
