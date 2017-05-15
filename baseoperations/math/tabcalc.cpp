@@ -334,7 +334,7 @@ quint64 TabCalc6::createMetadata()
     operation.addInParameter(5,itSTRING|itNUMBER, TR("input column/number 3"), TR("Name of the third column to be used in teh expression or a number"));
     operation.addInParameter(6,itSTRING|itNUMBER, TR("input column/number 4"), TR("Name of the fourth column to be used in teh expressionor a number"));
     operation.addInParameter(7,itSTRING|itNUMBER, TR("input column/number 5"), TR("Name of the fifth column to be used in teh expressionor a number"));
-    operation.addInParameter(8,itSTRING|itNUMBER, TR("input column/number 6"), TR("Name of the fifth column to be used in teh expressionor a number"));
+    operation.addInParameter(8,itSTRING|itNUMBER, TR("input column/number 6"), TR("Name of the sixth column to be used in teh expressionor a number"));
      operation.addInParameter(9,itBOOL, TR("Create new table"), TR("The column is either in a new table or in the original table"));
 
     operation.setOutParameterCount({1});
