@@ -102,6 +102,7 @@ bool Property::execute(ExecutionContext *ctx, SymbolTable& symTable)
          IRasterCoverage raster = _object.as<RasterCoverage>();
          v =  TypeHelper::type2name(raster->datadef().domain()->valueType());
     }
+    logOperation(_expression);
     ctx->setOutput(symTable, v, sUNDEF, valueType, Resource());
     return true;
 }

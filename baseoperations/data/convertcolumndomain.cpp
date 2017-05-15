@@ -165,7 +165,7 @@ bool ConvertColumnDomain::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
        QVariant value;
        value.setValue<ITable>(outputTable);
-       outputTable->setDescription(_expression.toString());
+       logOperation(outputTable, _expression);
        ctx->setOutput(symTable, value, outputTable->name(),itTABLE,outputTable->resource());
     }
 

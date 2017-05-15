@@ -552,6 +552,7 @@ QString OperationExpression::toString(bool rightsideonly) const
 QString OperationExpression::toPythonExpression() const
 {
     QString expr("ilwis.Engine.do(");
+    expr += "'"  + name() + "',";
     QStringList parts = parm(0).value().split("=");
     if ( parts.size() == 2){
         QString output = parts[0];
@@ -562,19 +563,16 @@ QString OperationExpression::toPythonExpression() const
         expr.remove(index1, index2 - index1 + 1);
 
     }
-    OperationExpression opexpr(parts[parts.size() - 1]);
-    int count = 0;
-    expr += "'" + opexpr.name() + "',";
-    for(int i=0; i < opexpr.parameterCount(); ++i) {
-        Parameter parm = opexpr.parm(i);
-        if ( count++ > 0)
+    for(int i=0; i < parameterCount();++i){
+        Parameter p = parm(i);
+        if ( i > 0)
             expr += ", ";
-        if ( parm.valuetype() == itSTRING){
+        if ( p.valuetype() == itSTRING || hasType(p.valuetype(), itILWISOBJECT)){
             expr += "'";
         }
-        expr += parm.value();
+        expr += p.value();
 
-        if ( parm.valuetype() == itSTRING){
+        if ( p.valuetype() == itSTRING || hasType(p.valuetype(), itILWISOBJECT)){
             expr += "'";
         }
     }

@@ -42,6 +42,7 @@ bool SetAttributeTable::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     QVariant v;
     v.setValue(_outputRaster);
+    logOperation(_outputRaster, _expression);
     ctx->setOutput(symTable, v, _outputRaster->name(),itRASTER, _outputRaster->resource());
 
     return true;

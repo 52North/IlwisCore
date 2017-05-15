@@ -61,6 +61,7 @@ bool AddDrawer::execute(ExecutionContext *ctx, SymbolTable &symTable)
         drawer = Geodrawer::DrawerFactory::create<>(_drawerCode, rootdrawer, rootdrawer, _options /*IOOptions()*/ );
         rootdrawer->addDrawer(drawer,drawer->drawerType(),drawer->defaultOrder());
     }
+    logOperation(_expression);
     rootdrawer->redraw();
     return true;
 }

@@ -127,6 +127,7 @@ bool Script::execute(ExecutionContext *ctx, SymbolTable& symbols )
     ASTNode *scr = psr->script(psr);
 
     bool ok = scr->evaluate(symbols, 1000, ctx);
+   // logOperation(_expression);
     return ok;
     }
     catch(Ilwis::ScriptError& err) {

@@ -44,7 +44,7 @@ bool CreateIdentifierDomain::execute(ExecutionContext *ctx, SymbolTable &symTabl
 
     QVariant value;
     value.setValue<IDomain>(nameiddomain);
-     nameiddomain->addDescription(_expression.toString());
+    logOperation(nameiddomain, _expression);
     ctx->setOutput(symTable,value,nameiddomain->name(),itDOMAIN,nameiddomain->resource());
 
     return true;

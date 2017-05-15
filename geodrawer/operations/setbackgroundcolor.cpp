@@ -34,7 +34,7 @@ bool SetBackgroundColor::execute(ExecutionContext *ctx, SymbolTable &symTable)
     QVariant var= qVariantFromValue(_backgroundColor);
     _rootDrawer->setAttribute("backgroundcolor", var);
     _rootDrawer->redraw();
-
+    logOperation(_expression);
     return true;
 }
 

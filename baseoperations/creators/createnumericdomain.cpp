@@ -43,7 +43,7 @@ bool CreateNumericDomain::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     QVariant value;
     value.setValue<IDomain>(numdom);
-    numdom->addDescription(_expression.toString());
+    logOperation(numdom, _expression);
     ctx->setOutput(symTable,value,numdom->name(),itDOMAIN,numdom->resource());
 
     return true;

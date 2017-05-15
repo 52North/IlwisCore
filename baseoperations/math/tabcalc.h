@@ -78,6 +78,15 @@ public:
 
     NEW_OPERATION(TabCalc5)    ;
 };
+//--------------------------------------
+class TabCalc6 : public TabCalc{
+public:
+    TabCalc6(quint64 metaid, const Ilwis::OperationExpression &expr);
+    static OperationImplementation * create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    static quint64 createMetadata();
+
+    NEW_OPERATION(TabCalc6)    ;
+};
 }
 }
 

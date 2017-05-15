@@ -43,6 +43,7 @@ bool ShowCoverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     QVariant v1;
     v1.setValue(id);
+    logOperation(_expression);
     ctx->setOutput(symTable, QVariant(v1), sUNDEF, itINTEGER, Resource());
 
 

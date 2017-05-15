@@ -75,11 +75,10 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
     }
     iddom->setRange(range);
 
-    if ( res && ctx != 0) {
-        QVariant value;
-        value.setValue<IRasterCoverage>(outputRaster);
-        ctx->setOutput(symTable,value,outputRaster->name(), itRASTER, outputRaster->resource() );
-    }
+    QVariant value;
+    value.setValue<IRasterCoverage>(outputRaster);
+    logOperation(outputRaster,_expression);
+    ctx->setOutput(symTable,value,outputRaster->name(), itRASTER, outputRaster->resource() );
     return res;
 }
 

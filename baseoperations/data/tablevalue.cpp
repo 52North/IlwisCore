@@ -40,6 +40,7 @@ bool TableValue::execute(ExecutionContext *ctx, SymbolTable& symTable)
     }else{
         ctx->setOutput(symTable, QVariant(v.toDouble()), sUNDEF, itDOUBLE, Resource());
     }
+    logOperation(_expression);
     return true;
 }
 

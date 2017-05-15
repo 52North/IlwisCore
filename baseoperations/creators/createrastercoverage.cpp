@@ -55,8 +55,7 @@ bool CreateRasterCoverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     QVariant value;
     value.setValue<IRasterCoverage>(_outputRaster);
-    _outputRaster->setDescription(_expression.toString());
-    _outputRaster->addDescription(_expression.toString());
+    logOperation(_outputRaster, _expression);
     ctx->setOutput(symTable,value,_outputRaster->name(),itRASTER,_outputRaster->resource());
 
     return true;

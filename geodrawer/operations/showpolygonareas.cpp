@@ -47,6 +47,7 @@ bool ShowPolygonAreas::execute(ExecutionContext *ctx, SymbolTable &symTable)
             drawer->setAttribute("polygonareas", _areaVisibility);
         }
         rootdrawer->redraw();
+        logOperation(_expression);
         return true;
     }catch(const VisualizationError& err){
     }

@@ -47,6 +47,7 @@ bool LinearRasterFilter::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( res && ctx != 0) {
         QVariant value;
         value.setValue<IRasterCoverage>(_outputRaster);
+        logOperation(_outputRaster,_expression);
         ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER, _outputRaster->resource() );
     }
     return res;

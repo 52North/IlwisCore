@@ -45,6 +45,7 @@ bool SetPolygonBoundaryColor::execute(ExecutionContext *ctx, SymbolTable &symTab
             UPDrawer& drawer = rootdrawer->drawer(_code, _type)    ;
             drawer->setAttribute("boundarycolor", QVariant(_boundaryColor));
         }
+        logOperation(_expression);
         return true;
     }catch(const VisualizationError& err){
     }

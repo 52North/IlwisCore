@@ -104,6 +104,7 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     outputRaster->setAttributes(_attTable);
     QVariant value;
     value.setValue<IRasterCoverage>(outputRaster);
+    logOperation(outputRaster, _expression);
     ctx->setOutput(symTable, value, outputRaster->name(), itRASTER,outputRaster->resource());
     return true;
 

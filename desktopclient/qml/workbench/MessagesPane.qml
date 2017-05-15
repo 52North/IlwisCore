@@ -25,6 +25,7 @@ WorkBenchShifter {
         height : parent.height - functionBar.height
         anchors.top: functionBar.bottom
         anchors.topMargin: 3
+
         style: Base.TabStyle1{}
         Tab {
             title : qsTr("Log")
@@ -58,6 +59,7 @@ WorkBenchShifter {
                         id : messageTable
                         anchors.fill: parent
                         model : messagehandler.messages
+                        selectionMode : SelectionMode.SingleSelection
 
 
                         TableViewColumn{
@@ -83,19 +85,38 @@ WorkBenchShifter {
                             delegate : Item{
                                 id : messageitem
                                 width : parent.width
-                                Text {
+                                TextInput {
+                                    id : textmessage
                                     anchors.fill: parent
                                     text : styleData.value
                                     font.pointSize: 8
+                                    readOnly: true;
+                                    clip : true
                                     color : model[styleData.row].color
                                     wrapMode: Text.WordWrap
-                                    maximumLineCount : 2
+                                    MouseArea{
+                                        anchors.fill: parent
+                                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                        onClicked: {
+
+                                           messageTable.selection.forEach( function(rowIndex) {messageTable.selection.deselect(rowIndex)} )
+                                           messageTable.selection.select(styleData.row)
+                                           textmessage.selectAll()
+                                           textmessage.copy()
+                                           textmessage.deselect()
+
+                                            if ( mouse.button & Qt.RightButton){
+                                                menu.popup();
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                         rowDelegate: Rectangle {
                             height : 30
-                            color : styleData.selected ? "#B0B0B0" : (styleData.alternate? Global.lightestgreen: "white")
+                            color : styleData.selected ? Global.selectedColor : (styleData.alternate? Global.lightestgreen: "white")
+
                         }
                     }
                 }
@@ -133,4 +154,13 @@ WorkBenchShifter {
             }
         }
     }
+    Menu {
+          id: menu
+          MenuItem {
+              text: "copy"
+              onTriggered: {
+
+              }
+          }
+      }
 }

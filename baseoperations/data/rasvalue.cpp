@@ -25,6 +25,7 @@ bool RasValue::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
     double v = _inputGC->pix2value(_pix);
     if ( ctx) {
+        logOperation(_expression);
         ctx->setOutput(symTable, QVariant(v), sUNDEF, itDOUBLE, Resource());
     }
     return true;

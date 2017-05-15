@@ -76,7 +76,7 @@ bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
 
     QVariant value;
     value.setValue<IRasterCoverage>(_outputRaster);
-    _outputRaster->addDescription(_expression.toString());
+    logOperation(_outputRaster, _expression);
     ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER,_outputRaster->resource() );
 
     return true;
@@ -352,108 +352,108 @@ OperationImplementation *MapCalc6::create(quint64 metaid, const Ilwis::Operation
 MapCalc6::MapCalc6(quint64 metaid,const Ilwis::OperationExpression &expr) : MapCalc(metaid, expr)
 {}
 //---------------------------------------------------------
-REGISTER_OPERATION(MapCalc7)
-quint64 MapCalc7::createMetadata()
-{
-    OperationResource operation({"ilwis://operations/mapcalc"});
-    operation.setLongName("MapCalc 7");
-    operation.setSyntax("mapcalc(expression,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number)");
-    operation.setDescription(TR("Generates a new numerical rastercoverage based on the operation, applied to all the pixels, max 7 parameters"));
-    operation.setInParameterCount({6});
-    operation.addInParameter(0,itSTRING, TR("Expression"), TR("The expression is an abstract expression were the numbers indicate indexes in the parameter list"));
-    operation.parameterNeedsQuotes(0);
-    operation.addInParameter(1,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(2,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(3,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(4,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(5,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(6,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(7,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itRASTER, TR("raster coverage"));
-    operation.setKeywords("raster,numeric,math");
+//REGISTER_OPERATION(MapCalc7)
+//quint64 MapCalc7::createMetadata()
+//{
+//    OperationResource operation({"ilwis://operations/mapcalc"});
+//    operation.setLongName("MapCalc 7");
+//    operation.setSyntax("mapcalc(expression,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number)");
+//    operation.setDescription(TR("Generates a new numerical rastercoverage based on the operation, applied to all the pixels, max 7 parameters"));
+//    operation.setInParameterCount({6});
+//    operation.addInParameter(0,itSTRING, TR("Expression"), TR("The expression is an abstract expression were the numbers indicate indexes in the parameter list"));
+//    operation.parameterNeedsQuotes(0);
+//    operation.addInParameter(1,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(2,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(3,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(4,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(5,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(6,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(7,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.setOutParameterCount({1});
+//    operation.addOutParameter(0,itRASTER, TR("raster coverage"));
+//    operation.setKeywords("raster,numeric,math");
 
-    mastercatalog()->addItems({operation});
-    return operation.id();
+//    mastercatalog()->addItems({operation});
+//    return operation.id();
 
-}
+//}
 
-OperationImplementation *MapCalc7::create(quint64 metaid, const Ilwis::OperationExpression &expr)
-{
-    return new MapCalc7( metaid, expr);
-}
+//OperationImplementation *MapCalc7::create(quint64 metaid, const Ilwis::OperationExpression &expr)
+//{
+//    return new MapCalc7( metaid, expr);
+//}
 
-MapCalc7::MapCalc7(quint64 metaid,const Ilwis::OperationExpression &expr) : MapCalc(metaid, expr)
-{}
-//---------------------------------------------------------
-REGISTER_OPERATION(MapCalc8)
-quint64 MapCalc8::createMetadata()
-{
-    OperationResource operation({"ilwis://operations/mapcalc"});
-    operation.setLongName("MapCalc 8");
-    operation.setSyntax("mapcalc(expression,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number)");
-    operation.setDescription(TR("Generates a new numerical rastercoverage based on the operation, applied to all the pixels, max 8 parameters"));
-    operation.setInParameterCount({6});
-    operation.addInParameter(0,itSTRING, TR("Expression"), TR("The expression is an abstract expression were the numbers indicate indexes in the parameter list"));
-    operation.parameterNeedsQuotes(0);
-    operation.addInParameter(1,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(2,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(3,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(4,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(5,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(6,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(7,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(8,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itRASTER, TR("raster coverage"));
-    operation.setKeywords("raster,numeric,math");
+//MapCalc7::MapCalc7(quint64 metaid,const Ilwis::OperationExpression &expr) : MapCalc(metaid, expr)
+//{}
+////---------------------------------------------------------
+//REGISTER_OPERATION(MapCalc8)
+//quint64 MapCalc8::createMetadata()
+//{
+//    OperationResource operation({"ilwis://operations/mapcalc"});
+//    operation.setLongName("MapCalc 8");
+//    operation.setSyntax("mapcalc(expression,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number)");
+//    operation.setDescription(TR("Generates a new numerical rastercoverage based on the operation, applied to all the pixels, max 8 parameters"));
+//    operation.setInParameterCount({6});
+//    operation.addInParameter(0,itSTRING, TR("Expression"), TR("The expression is an abstract expression were the numbers indicate indexes in the parameter list"));
+//    operation.parameterNeedsQuotes(0);
+//    operation.addInParameter(1,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(2,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(3,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(4,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(5,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(6,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(7,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(8,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.setOutParameterCount({1});
+//    operation.addOutParameter(0,itRASTER, TR("raster coverage"));
+//    operation.setKeywords("raster,numeric,math");
 
-    mastercatalog()->addItems({operation});
-    return operation.id();
+//    mastercatalog()->addItems({operation});
+//    return operation.id();
 
-}
+//}
 
-OperationImplementation *MapCalc8::create(quint64 metaid, const Ilwis::OperationExpression &expr)
-{
-    return new MapCalc8( metaid, expr);
-}
+//OperationImplementation *MapCalc8::create(quint64 metaid, const Ilwis::OperationExpression &expr)
+//{
+//    return new MapCalc8( metaid, expr);
+//}
 
-MapCalc8::MapCalc8(quint64 metaid,const Ilwis::OperationExpression &expr) : MapCalc(metaid, expr)
-{}
+//MapCalc8::MapCalc8(quint64 metaid,const Ilwis::OperationExpression &expr) : MapCalc(metaid, expr)
+//{}
 
-//---------------------------------------------------------
-REGISTER_OPERATION(MapCalc9)
-quint64 MapCalc9::createMetadata()
-{
-    OperationResource operation({"ilwis://operations/mapcalc"});
-    operation.setLongName("MapCalc 9");
-    operation.setSyntax("mapcalc(expression,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number)");
-    operation.setDescription(TR("Generates a new numerical rastercoverage based on the operation, applied to all the pixels, max 9 parameters"));
-    operation.setInParameterCount({6});
-    operation.addInParameter(0,itSTRING, TR("Expression"), TR("The expression is an abstract expression were the numbers indicate indexes in the parameter list"));
-    operation.parameterNeedsQuotes(0);
-    operation.addInParameter(1,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(2,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(3,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(4,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(5,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(6,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(7,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(8,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.addInParameter(9,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
-    operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itRASTER, TR("raster coverage"));
-    operation.setKeywords("raster,numeric,math");
+////---------------------------------------------------------
+//REGISTER_OPERATION(MapCalc9)
+//quint64 MapCalc9::createMetadata()
+//{
+//    OperationResource operation({"ilwis://operations/mapcalc"});
+//    operation.setLongName("MapCalc 9");
+//    operation.setSyntax("mapcalc(expression,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number,gridcoverage|number)");
+//    operation.setDescription(TR("Generates a new numerical rastercoverage based on the operation, applied to all the pixels, max 9 parameters"));
+//    operation.setInParameterCount({6});
+//    operation.addInParameter(0,itSTRING, TR("Expression"), TR("The expression is an abstract expression were the numbers indicate indexes in the parameter list"));
+//    operation.parameterNeedsQuotes(0);
+//    operation.addInParameter(1,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(2,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(3,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(4,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(5,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(6,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(7,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(8,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.addInParameter(9,itRASTER | itNUMBER, TR("raster or number"), TR("Rasters with numerical domain"));
+//    operation.setOutParameterCount({1});
+//    operation.addOutParameter(0,itRASTER, TR("raster coverage"));
+//    operation.setKeywords("raster,numeric,math");
 
-    mastercatalog()->addItems({operation});
-    return operation.id();
+//    mastercatalog()->addItems({operation});
+//    return operation.id();
 
-}
+//}
 
-OperationImplementation *MapCalc9::create(quint64 metaid, const Ilwis::OperationExpression &expr)
-{
-    return new MapCalc9( metaid, expr);
-}
+//OperationImplementation *MapCalc9::create(quint64 metaid, const Ilwis::OperationExpression &expr)
+//{
+//    return new MapCalc9( metaid, expr);
+//}
 
-MapCalc9::MapCalc9(quint64 metaid,const Ilwis::OperationExpression &expr) : MapCalc(metaid, expr)
-{}
+//MapCalc9::MapCalc9(quint64 metaid,const Ilwis::OperationExpression &expr) : MapCalc(metaid, expr)
+//{}

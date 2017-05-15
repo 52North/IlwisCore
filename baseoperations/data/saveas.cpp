@@ -31,7 +31,7 @@ bool SaveAs::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
     _inputObject->connectTo(_outputUrl,_format,_provider,IlwisObject::cmOUTPUT);
     _inputObject->store();
-
+    logOperation( _expression);
     return true;
 }
 

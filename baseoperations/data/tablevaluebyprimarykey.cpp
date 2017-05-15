@@ -49,6 +49,7 @@ bool TableValueByPrimaryKey::execute(ExecutionContext *ctx, SymbolTable& symTabl
     }else{
         ctx->setOutput(symTable, QVariant(v.toDouble()), sUNDEF, itDOUBLE, Resource());
     }
+    logOperation(_expression);
     return true;
 }
 

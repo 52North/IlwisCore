@@ -53,6 +53,7 @@ bool Connect::execute(ExecutionContext *ctx, SymbolTable& symTable)
         setVariant<Domain>(_object,v);
     }
 
+    logOperation(_object, _expression);
     ctx->setOutput(symTable, v, _object->name(),tp, _object->resource());
     return true;
 }

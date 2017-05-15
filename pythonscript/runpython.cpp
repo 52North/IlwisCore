@@ -88,7 +88,7 @@ bool RunPython::execute(ExecutionContext *ctx, SymbolTable &symTable)
         //inputFile.remove();
     }
 
-
+    logOperation(_expression);
 
     return true;
 }

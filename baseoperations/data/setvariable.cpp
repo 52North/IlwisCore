@@ -29,7 +29,7 @@ bool SetVariable::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
     QVariant v(_value);
 
-
+    logOperation( _expression);
     ctx->setOutput(symTable, v, "var",itSTRING, Resource());
     return true;
 }

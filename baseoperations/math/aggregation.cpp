@@ -75,7 +75,7 @@ bool Aggregation::execute(ExecutionContext *ctx, SymbolTable &symTable)
      if ( _outputTable.isValid()) {
             QVariant var;
             var.setValue<ITable>(_outputTable);
-            _outputTable->addDescription(_expression.toString());
+            logOperation(_outputTable, _expression);
             ctx->setOutput(symTable,var, _outputTable->name(),itTABLE,_outputTable->resource(),_outColumn1);
             return true;
     }

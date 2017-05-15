@@ -47,6 +47,7 @@ bool SetLayerVisibility::execute(ExecutionContext *ctx, SymbolTable &symTable)
         UPDrawer& drawer = rootdrawer->drawer(_code, _type)    ;
         drawer->active(_visibility);
     }
+    logOperation(_expression);
     } catch(const VisualizationError& err){
     }
     return false;

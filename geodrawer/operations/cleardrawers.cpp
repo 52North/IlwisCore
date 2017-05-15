@@ -44,6 +44,7 @@ bool ClearDrawers::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     rootdrawer->prepare(DrawerInterface::ptRESET, IOOptions());
     rootdrawer->redraw();
+    logOperation(_expression);
     return true;
 }
 

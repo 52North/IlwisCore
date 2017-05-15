@@ -48,7 +48,7 @@ bool CreatePaletteDomain::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     QVariant value;
     value.setValue<IDomain>(colordomain);
-    colordomain->addDescription(_expression.toString());
+    logOperation(colordomain, _expression);
     ctx->setOutput(symTable,value,colordomain->name(),itDOMAIN,colordomain->resource());
 
     return true;

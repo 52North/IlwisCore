@@ -52,7 +52,7 @@ bool CreateCombinationMatrix::execute(ExecutionContext *ctx, SymbolTable &symTab
     }
     QVariant value;
     value.setValue<>(matrix);
-    matrix->addDescription(_expression.toString());
+    logOperation(matrix, _expression);
     ctx->setOutput(symTable,value,matrix->name(),itCOMBINATIONMATRIX,matrix->resource());
 
     return true;

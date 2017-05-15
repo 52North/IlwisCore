@@ -35,6 +35,21 @@ OperationExpression OperationImplementation::expression() const
     return _expression;
 }
 
+void OperationImplementation::logOperation(const IIlwisObject &obj, const OperationExpression &expr)
+{
+    if (obj.isValid()){
+        obj->addDescription(expr.toString());
+    }
+    QString message = expr.toPythonExpression();
+    kernel()->issues()->log(message, IssueObject::itMessage);
+}
+
+void OperationImplementation::logOperation(const OperationExpression &expr)
+{
+    QString message = expr.toPythonExpression();
+    kernel()->issues()->log(message, IssueObject::itMessage);
+}
+
 void OperationImplementation::initialize(quint64 totalCount)
 {
     if (!_tranquilizer){

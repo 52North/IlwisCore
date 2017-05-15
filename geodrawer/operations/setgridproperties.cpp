@@ -42,6 +42,7 @@ bool SetGridProperties::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if ( _opacity != -1)
             griddrawer->setAttribute("gridlineopacity", qVariantFromValue(_opacity));
         rootdrawer->redraw();
+        logOperation(_expression);
         return true;
 
     } catch(const VisualizationError& err){

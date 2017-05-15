@@ -111,6 +111,7 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
     QVariant value;
     value.setValue<IRasterCoverage>(_outputraster);
+    logOperation(_outputraster,_expression);
     ctx->setOutput(symTable,value,_outputraster->name(), itRASTER, _outputraster->resource() );
 
     return true;

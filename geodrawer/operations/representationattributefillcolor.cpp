@@ -52,6 +52,7 @@ bool Ilwis::Geodrawer::RepresentationAttributeFillColor::execute(ExecutionContex
             drawer->unprepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER);
             drawer->prepare(Ilwis::Geodrawer::DrawerInterface::ptRENDER, IOOptions());
             rootdrawer->redraw();
+            logOperation(_expression);
         }
     }
     return true;

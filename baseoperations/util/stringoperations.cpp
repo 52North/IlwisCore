@@ -226,6 +226,7 @@ bool StringAdd::execute(ExecutionContext *ctx, SymbolTable &symTable)
             return false;
     QString newString = _text1 + _text2;
     QVariant value = newString;
+    logOperation(_expression);
     ctx->setOutput(symTable, value, sUNDEF, itSTRING, Resource());
 
     return true;

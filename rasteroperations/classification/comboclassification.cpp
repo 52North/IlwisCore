@@ -89,6 +89,7 @@ bool ComboClassification::execute(ExecutionContext *ctx,SymbolTable& symTable){
     if (OperationHelperRaster::execute(ctx, binaryMath, _outputRaster)){
         QVariant value;
         value.setValue<IRasterCoverage>(_outputRaster);
+        logOperation(_outputRaster,_expression);
         ctx->setOutput(symTable,value,_outputRaster->name(), itRASTER,_outputRaster->resource() );
         return true;
     }

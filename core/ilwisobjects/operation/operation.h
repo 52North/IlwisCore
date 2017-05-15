@@ -25,7 +25,8 @@ public:
             trq()->update(step);
         }
     }
-
+    void logOperation(const IIlwisObject& obj, const OperationExpression& expr);
+    void logOperation(const OperationExpression &expr);
 
 protected:
     void initialize(quint64 totalCount);

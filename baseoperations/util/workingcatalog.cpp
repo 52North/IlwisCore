@@ -36,6 +36,7 @@ bool WorkingCatalog::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
+   logOperation( _expression);
    context()->setWorkingCatalog(ICatalog(_location.toString()));
    mastercatalog()->addContainer(_location);
 

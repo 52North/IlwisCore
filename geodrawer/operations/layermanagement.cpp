@@ -60,6 +60,7 @@ bool LayerManagement::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( obj){
         obj->setProperty("currentIndex",currentIndex);
     }
+    logOperation(_expression);
     return true;
 
     } catch(const VisualizationError& err){

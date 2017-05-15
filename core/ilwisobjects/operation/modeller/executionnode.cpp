@@ -106,7 +106,7 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
 
     SPOperationNode opNode = std::static_pointer_cast<OperationNode>(_node);
     IOperationMetaData metadata = opNode->operation();
-    QString expr = "script "+ metadata->name()  + "(";
+    QString expr = metadata->name()  + "(";
     QString parms;
     for(int i=0; i < inputCount; ++i){
         bool ok = false;

@@ -61,6 +61,7 @@ bool Compare::execute(ExecutionContext *ctx, SymbolTable& symTable)
         result = compare(_firstValue, _operator, _secondValue);
     }
 
+    logOperation(_expression);
     ctx->setOutput(symTable, QVariant(result), sUNDEF, itBOOL, Resource());
     return true;
 }

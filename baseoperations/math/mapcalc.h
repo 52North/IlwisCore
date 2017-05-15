@@ -76,30 +76,30 @@ public:
 
     NEW_OPERATION(MapCalc6)    ;
 };
-class MapCalc7 : public MapCalc{
-public:
-    MapCalc7(quint64 metaid, const Ilwis::OperationExpression &expr);
-    static OperationImplementation * create(quint64 metaid,const Ilwis::OperationExpression& expr);
-    static quint64 createMetadata();
+//class MapCalc7 : public MapCalc{
+//public:
+//    MapCalc7(quint64 metaid, const Ilwis::OperationExpression &expr);
+//    static OperationImplementation * create(quint64 metaid,const Ilwis::OperationExpression& expr);
+//    static quint64 createMetadata();
 
-    NEW_OPERATION(MapCalc7)    ;
-};
-class MapCalc8 : public MapCalc{
-public:
-    MapCalc8(quint64 metaid, const Ilwis::OperationExpression &expr);
-    static OperationImplementation * create(quint64 metaid,const Ilwis::OperationExpression& expr);
-    static quint64 createMetadata();
+//    NEW_OPERATION(MapCalc7)    ;
+//};
+//class MapCalc8 : public MapCalc{
+//public:
+//    MapCalc8(quint64 metaid, const Ilwis::OperationExpression &expr);
+//    static OperationImplementation * create(quint64 metaid,const Ilwis::OperationExpression& expr);
+//    static quint64 createMetadata();
 
-    NEW_OPERATION(MapCalc8)    ;
-};
-class MapCalc9 : public MapCalc{
-public:
-    MapCalc9(quint64 metaid, const Ilwis::OperationExpression &expr);
-    static OperationImplementation * create(quint64 metaid,const Ilwis::OperationExpression& expr);
-    static quint64 createMetadata();
+//    NEW_OPERATION(MapCalc8)    ;
+//};
+//class MapCalc9 : public MapCalc{
+//public:
+//    MapCalc9(quint64 metaid, const Ilwis::OperationExpression &expr);
+//    static OperationImplementation * create(quint64 metaid,const Ilwis::OperationExpression& expr);
+//    static quint64 createMetadata();
 
-    NEW_OPERATION(MapCalc9)    ;
-};
+//    NEW_OPERATION(MapCalc9)    ;
+//};
 }
 }
 

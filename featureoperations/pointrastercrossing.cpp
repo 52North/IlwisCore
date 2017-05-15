@@ -61,12 +61,10 @@ bool PointRasterCrossing::execute(ExecutionContext *ctx, SymbolTable &symTable)
         ++record;
     }
 
-    if ( ctx != 0) {
-        QVariant value;
-        value.setValue<IFeatureCoverage>(_outputFeatures);
-        _outputFeatures->addDescription(_expression.toString());
-        ctx->setOutput(symTable, value, _outputFeatures->name(), itFEATURE,_outputFeatures->resource());
-    }
+    QVariant value;
+    value.setValue<IFeatureCoverage>(_outputFeatures);
+    logOperation(_outputFeatures, _expression);
+    ctx->setOutput(symTable, value, _outputFeatures->name(), itFEATURE,_outputFeatures->resource());
 
     return true;
 

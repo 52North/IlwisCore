@@ -46,6 +46,7 @@ bool SetLineColor::execute(ExecutionContext *ctx, SymbolTable &symTable)
             drawer->setAttribute("linecolor", QVariant(_lineColor));
         }
         rootdrawer->redraw();
+        logOperation(_expression);
         return true;
     }catch(const VisualizationError& err){
     }

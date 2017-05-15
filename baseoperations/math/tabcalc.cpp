@@ -61,7 +61,7 @@ bool TabCalc::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
    QVariant value;
    value.setValue<ITable>(_outputTable);
-   _outputTable->addDescription(_expression.toString());
+   logOperation(_outputTable, _expression);
    ctx->setOutput(symTable,value,_outputTable->name(), itTABLE,_outputTable->resource() );
 
    return true;
@@ -315,4 +315,40 @@ OperationImplementation *TabCalc5::create(quint64 metaid, const Ilwis::Operation
 }
 
 TabCalc5::TabCalc5(quint64 metaid,const Ilwis::OperationExpression &expr) : TabCalc(metaid, expr)
+{}
+//--------------------------------------------------------------------------
+REGISTER_OPERATION(TabCalc6)
+quint64 TabCalc6::createMetadata()
+{
+    OperationResource operation({"ilwis://operations/tabcalc"});
+    operation.setLongName("TabCalc 6");
+    operation.setSyntax("tabcalc(expression,inputtable,outputcolumn,true|!false, inputcolumn, inputcolumn, inputcolumn, inputcolumn, inputcolumn, inputcolumn)");
+    operation.setDescription(TR("Generates a table with a new column based on the expression. The column is either in a new table or in the original table"));
+    operation.setInParameterCount({10});
+    operation.addInParameter(0,itSTRING, TR("Expression"), TR("The expression is an abstract expression were the numbers indicate indexes in the parameter list"));
+    operation.parameterNeedsQuotes(0);
+    operation.addInParameter(1,itTABLE, TR("input table"), TR("The table that contains the input column(s)"));
+    operation.addInParameter(2,itSTRING, TR("output column"), TR("Name of the new column"));
+    operation.addInParameter(3,itSTRING|itNUMBER, TR("input column/number 1"), TR("Name of the first column to be used in teh expression or a number"));
+    operation.addInParameter(4,itSTRING|itNUMBER, TR("input column/number 2"), TR("Name of the second column to be used in teh expressionor a number"));
+    operation.addInParameter(5,itSTRING|itNUMBER, TR("input column/number 3"), TR("Name of the third column to be used in teh expression or a number"));
+    operation.addInParameter(6,itSTRING|itNUMBER, TR("input column/number 4"), TR("Name of the fourth column to be used in teh expressionor a number"));
+    operation.addInParameter(7,itSTRING|itNUMBER, TR("input column/number 5"), TR("Name of the fifth column to be used in teh expressionor a number"));
+    operation.addInParameter(8,itSTRING|itNUMBER, TR("input column/number 6"), TR("Name of the fifth column to be used in teh expressionor a number"));
+     operation.addInParameter(9,itBOOL, TR("Create new table"), TR("The column is either in a new table or in the original table"));
+
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itRASTER, TR("output table"));
+    operation.setKeywords("table,numeric,math");
+
+    mastercatalog()->addItems({operation});
+    return operation.id();
+}
+
+OperationImplementation *TabCalc6::create(quint64 metaid, const Ilwis::OperationExpression &expr)
+{
+    return new TabCalc6( metaid, expr);
+}
+
+TabCalc6::TabCalc6(quint64 metaid,const Ilwis::OperationExpression &expr) : TabCalc(metaid, expr)
 {}
