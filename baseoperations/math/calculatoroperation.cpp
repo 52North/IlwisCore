@@ -338,14 +338,32 @@ IDomain CalculatorOperation::findOutDomain(const std::vector<std::vector<QString
             IDomain dom;
             dom.prepare("code=domain:value");
             return dom;
+        }else {
+            if ( currentItem.size() > 0 && currentItem[0] == '@'){
+                bool ok;
+                int n = currentItem.mid(1).toInt(&ok);
+                if ( ok){
+                     DataDefinition def = datadef(n);
+                     if ( def.isValid())
+                         return def.domain();
+                }
+            }
         }
         return IDomain();
     };
-    IDomain dom = findDomainperItem(rpn,node[2]);
-    if (!dom.isValid()){
-        dom = findDomainperItem(rpn, node[3]);
-    }
-    return dom;
+    IDomain dom1= findDomainperItem(rpn,node[1]);
+    IDomain dom2 = findDomainperItem(rpn,node[2]);
+
+    if ( dom1.isValid() && !dom2.isValid())
+        return dom1;
+    if ( dom2.isValid() && !dom1.isValid())
+        return dom2;
+    if ( dom1.isValid() && dom2.isValid()){
+        if ( dom1->isCompatibleWith(dom2.ptr()))
+            return dom1;
+    }else
+        throw ErrorObject(TR("Incomaptible or invalid domain used in the expression"));
+    return IDomain();
 
 }
 
@@ -406,7 +424,7 @@ IDomain CalculatorOperation::linearize(const QStringList &tokens)
                 }else {
                     std::vector<QString> evalItem;
                     if ( isOperator(token)){
-                        check(tokenstack.size() <= 2,TR("Invalid token encountered; not enough values to use after this token: '") + token + "'");
+                        check(tokenstack.size() >= 2,TR("Invalid token encountered; not enough values to use after this token: '") + token + "'");
                         QString v1 = tokenstack.top(); tokenstack.pop();
                         QString v2 = tokenstack.top(); tokenstack.pop();
                         evalItem = {token, v1, v2};
@@ -415,7 +433,7 @@ IDomain CalculatorOperation::linearize(const QStringList &tokens)
                         evalItem.push_back(token);
                         int n = _functions[token];
                         for(int i=0; i < n; ++i){
-                            check(tokenstack.size()>= 2, TR("Invalid syntax"));
+                            check(tokenstack.size()>= 1, TR("Invalid syntax"));
                             QString v = tokenstack.top(); tokenstack.pop();
                             evalItem.push_back(v);
                         }
@@ -502,13 +520,16 @@ IDomain CalculatorOperation::linearize(const QStringList &tokens)
 }
 
 double CalculatorOperation::calc() {
-    auto GetValue = [&](const ParmValue& parm,const std::vector<double>& result)->double{
+    auto GetValue = [&](const ParmValue& parm,const std::vector<double>& result, bool *isNumeric=0)->double{
         switch(parm._type){
         case ParmType::LINK:
             return result[parm._link];break;
         case ParmType::ITERATOR:
             return *(*(parm._source));break;
-        case ParmType::NUMERIC:
+        case ParmType::NUMERIC:{
+            if ( isNumeric ) *isNumeric=true;
+            return parm._value;break;
+        }
         case ParmType::DOMAINITEM:
             return parm._value;break;
         case ParmType::COLUMN:
@@ -635,16 +656,18 @@ double CalculatorOperation::calc() {
         }
         case maEQ:
         {
-            double v1 = GetValue(action._values[0],result);
-            double v2 = GetValue(action._values[1],result);
-            calcResult =  v1 == v2;
+            bool isNumeric=false;
+            double v1 = GetValue(action._values[0],result,&isNumeric);
+            double v2 = GetValue(action._values[1],result,&isNumeric);
+            calcResult = ( !isNumeric && (isNumericalUndef(v1) || isNumericalUndef(v2))) ? rUNDEF : v1 == v2;
             break;
         }
         case maNEQ:
         {
-            double v1 = GetValue(action._values[0],result);
-            double v2 = GetValue(action._values[1],result);
-            calcResult =  v1 != v2;
+            bool isNumeric=false;
+            double v1 = GetValue(action._values[0],result,&isNumeric);
+            double v2 = GetValue(action._values[1],result,&isNumeric);
+            calcResult = ( !isNumeric && (isNumericalUndef(v1) || isNumericalUndef(v2))) ? rUNDEF : v1 != v2;
             break;
         }
         case maLESSEQ:
@@ -691,10 +714,13 @@ double CalculatorOperation::calc() {
         }
         case maIFF:
         {
-            double v1 = GetValue(action._values[0],result);
+            // if the action is a iterator we can directly get its value from the iterator else if it is a
+            // comparisson it will be calculated previously and its result will be in calcresult
+            if ( action._values[0]._type == CalculatorOperation::ITERATOR)
+                calcResult = GetValue(action._values[0],result);
             double v2 = GetValue(action._values[1],result);
             double v3 = GetValue(action._values[2],result);
-            calcResult =( isNumericalUndef(v1) || isNumericalUndef(v2)) ? rUNDEF : (bool)v1 ? v2 : v3;
+            calcResult = calcResult == rUNDEF ? rUNDEF : ((bool)calcResult ? v2 : v3);
             break;
         }
 
