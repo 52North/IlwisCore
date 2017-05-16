@@ -423,9 +423,8 @@ bool Grid::update(quint32 block, bool loadDiskData) {
 }
 
 void Grid::unloadInternal() {
-    for (auto block : _cache){
-        if ( block._grid == this)
-        _blocks[block._blocknr]->save2Cache();
+    for (auto b : _blocks){
+        b->save2Cache();
     }
 }
 
