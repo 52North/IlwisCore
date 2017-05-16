@@ -45,6 +45,7 @@ bool MapCalc::execute(ExecutionContext *ctx, SymbolTable& symTable)
         for(auto& item : _inputRasters){
             ++(item.second);
         }
+        updateTranquilizer(iterOut.linearPosition(), 1000);
     }
 
     if ( _outputRaster->datadef().domain()->ilwisType() == itNUMERICDOMAIN){
@@ -164,6 +165,7 @@ OperationImplementation::State MapCalc::prepare(ExecutionContext *,const SymbolT
         QString index = _outputRaster->stackDefinition().index(i);
         _outputRaster->setBandDefinition(index,DataDefinition(outputDomain));
     }
+    initialize(_outputRaster->size().linearSize());
 
     return sPREPARED;
 }
