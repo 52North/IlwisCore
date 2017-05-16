@@ -54,18 +54,13 @@ bool ExecutionNode::execute(ExecutionContext *ctx, SymbolTable &symTable, Workfl
     return ok;
 }
 
-void ExecutionNode::unloadInputs(ExecutionContext *ctx, SymbolTable &symTable){
-    for(int i=0; i < ctx->_results.size(); ++i)    {
-       QString result = ctx->_results[i]    ;
-       Symbol sym = symTable.getSymbol(result);
-       if ( sym.isValid()){
-           if ( hasType(sym._type, itILWISOBJECT)){
-               IIlwisObject obj = OperationHelper::variant2ilwisobject(sym._var, sym._type);
-               if ( obj.isValid()){
-                   obj->unload();
-               }
-           }
-       }
+void ExecutionNode::unloadInputs(const std::vector<QString>& objects){
+    for(const QString& input : objects)    {
+        IIlwisObject obj;
+        obj.prepare(input);
+        if ( obj.isValid()){
+            obj->unload();
+        }
     }
 }
 
@@ -83,7 +78,6 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
                 ExecutionNode& exNode = workflowImpl->executionNode(parameter.inputLink(), mapping);
                 ExecutionContext ctx2;
                 if ( exNode.execute(&ctx2, symTable2, workflowImpl, mapping)) {
-                    unloadInputs(ctx, symTable);
                     QString outputName = ctx2._results[parameter.outputParameterIndex()];
                     Symbol sym =  symTable2.getSymbol(outputName);
                     QVariant val = symTable2.getValue(outputName);
@@ -108,13 +102,16 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
     IOperationMetaData metadata = opNode->operation();
     QString expr = metadata->name()  + "(";
     QString parms;
+    std::vector<QString> unloadableObject;
     for(int i=0; i < inputCount; ++i){
         bool ok = false;
         WorkFlowParameter& inParam = _node->inputRef(i);
         if ( parms != "")
             parms += ",";
         if ( hasType(inParam.valueType(),itILWISOBJECT)){
-            parms += mapping.getValue(inParam, *this).toString();
+            QString objectname = mapping.getValue(inParam, *this).toString();
+            parms += objectname;
+            unloadableObject.push_back(objectname);
         }else {
             if (hasType(inParam.valueType(),itDOUBLE | itFLOAT)) {
                 double v = mapping.getValue(inParam,*this).toDouble(&ok);
@@ -139,6 +136,7 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
     workflowImpl->wait(_node);
 
     bool ok = commandhandler()->execute(expr,ctx,symTable2);
+    unloadInputs(unloadableObject);
 
     workflowImpl->sendData(_node->id(), ctx, symTable2);
     workflowImpl->wakeup();
