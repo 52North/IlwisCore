@@ -21,6 +21,7 @@ public:
 
     static void add2lookup(const QString &name, const QString &proj4def, const QString epsg);
     static Proj4Def lookupDefintion(const QString &proj4Def);
+    static Proj4Def lookupByName(const QString &name);
 private:
     static quint32 hash(QString code);
     void parseShifts(const QString &shifts);
@@ -29,6 +30,8 @@ private:
     bool _hasDatum;
 
     static std::multimap<quint32, Proj4Def> _lookup;
+    static std::map<QString, QString> _lookupByName; // to proj4defr
+    static QString simplifyName(QString name);
 };
 
 #endif // PROJ4PARAMETERS_H

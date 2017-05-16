@@ -7,6 +7,7 @@
 #include "proj4parameters.h"
 
 std::multimap<quint32, Proj4Def> Proj4Parameters::_lookup;
+std::map<QString, QString> Proj4Parameters::_lookupByName;
 
 Proj4Parameters::Proj4Parameters( const QString& p) : _hasDatum(false)
 {
@@ -99,6 +100,15 @@ bool Proj4Parameters::operator==(const Proj4Parameters &parms) const
     return true;
 }
 
+Proj4Def Proj4Parameters::lookupByName(const QString& name){
+    QString simpelName = simplifyName(name);
+    auto iter = _lookupByName.find(simpelName);
+    if ( iter != _lookupByName.end()){
+        return lookupDefintion((*iter).second);
+    }
+    return Proj4Def();
+}
+
 Proj4Def Proj4Parameters::lookupDefintion(const QString& proj4Def) {
     quint32 hasv = Proj4Parameters::hash(proj4Def);
     auto iter = _lookup.find(hasv);
@@ -117,6 +127,18 @@ Proj4Def Proj4Parameters::lookupDefintion(const QString& proj4Def) {
 void Proj4Parameters::add2lookup(const QString& name, const QString& proj4def, const QString epsg){
     quint32 hnum = hash(proj4def);
     _lookup.insert(std::pair<quint32, Proj4Def>(hnum,{name, proj4def, epsg}));
+    _lookupByName[simplifyName(name)] = proj4def;
+}
+
+QString Proj4Parameters::simplifyName(QString name){
+    //name.remove(" ");
+   // name.remove("-");
+   // name.remove("/");
+   // name.remove("\\");
+    name.remove(QRegExp("[ -/\\\"]"));
+    name = name.toLower();
+
+    return name;
 }
 
 quint32 Proj4Parameters::hash(QString code){
