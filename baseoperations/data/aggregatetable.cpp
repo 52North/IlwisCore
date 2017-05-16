@@ -88,10 +88,10 @@ QVariant AggregateTable::numericCase(const std::vector<int>& records, int c)
         } else if ( _aggregationMehtod == "last"){
             num = v;
         } else if ( _aggregationMehtod == "minimum"){
-            if ( num == rUNDEF)
+            if ( num != rUNDEF)
                 num = std::min(v, num);
         } else if ( _aggregationMehtod == "maximum"){
-            if ( num == rUNDEF)
+            if ( num != rUNDEF)
                 num = std::max(v, num);
         }
         ++recordsDone;
