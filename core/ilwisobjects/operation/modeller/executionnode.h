@@ -27,7 +27,7 @@ private:
     bool executeLoop(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation *workflowImpl, WorkflowIdMapping &mapping);
     bool next();
 
-    void unloadInputs(Ilwis::ExecutionContext *ctx, Ilwis::SymbolTable &symTable);
+    void unloadInputs(const std::vector<QString>& objects);
 };
 }
 
