@@ -176,7 +176,7 @@ Modeller.ModellerWorkArea {
         }
 
         parm = node.linkedfalseoperation
-        flowPoints = { "fromParameterIndex" :  parm.outputIndex, "toParameterIndex" :2};
+        flowPoints = { "fromParameterIndex" :  parm.outputIndex, "toParameterIndex" : 2};
         sourceItem = kvp[parm.outputNodeId]
         if ( sourceItem){ // need not to exist in case incomplete flows are saved
             sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
@@ -206,7 +206,8 @@ Modeller.ModellerWorkArea {
 
     function recreateFlow(parm,kvp,item, index){
         if ( parm && item && parm.outputIndex !== -1){
-            var flowPoints = { "fromParameterIndex" :  index, "toParameterIndex" : parm.outputIndex};
+            //console.debug("from", index, "to", parm.outputIndex)
+            var flowPoints = { "fromParameterIndex" :  parm.outputIndex, "toParameterIndex" : index};
             var sourceItem = kvp[parm.outputNodeId]
             var sourceRect = sourceItem.attachementRectangles[parm.sourceRect]
             var targetRect = parm.targetRect
