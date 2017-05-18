@@ -780,4 +780,10 @@ quint32 MasterCatalog::usecount(quint64 id)
     return 0;
 }
 
+void MasterCatalog::ilwisDataDebug(const ESPIlwisObject &obj) const
+{
+ //   if ( obj->resource().ilwisType() == itRASTER)
+//        qDebug() << obj->resource().url().toString() << obj.use_count() << TypeHelper::type2name(obj->resource().ilwisType());
+}
+
 #endif

@@ -200,6 +200,7 @@ public:
     quint32 lookupSize() const { return _lookup.size(); }
     const QHash<quint64, ESPIlwisObject>& dumpLookup() const;
     quint32 usecount(quint64 id);
+    void ilwisDataDebug(const ESPIlwisObject& obj) const;
 
 #endif
     static const QString MASTERCATALOG;
