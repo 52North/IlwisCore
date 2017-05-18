@@ -146,7 +146,7 @@ bool OperationHelperRaster::resample(IRasterCoverage& raster1, IRasterCoverage& 
     if (raster1->georeference()!= commonGeoref ){
         Resource res;
         res.prepare();
-        QString expr = QString("%3=resample(%1,%2,bicubic)").arg(raster1->resource().url().toString()).arg(commonGeoref->resource().url().toString()).arg(res.name());
+        QString expr = QString("%3=resample(%1,%2,nearestneighbour)").arg(raster1->resource().url().toString()).arg(commonGeoref->resource().url().toString()).arg(res.name());
         ExecutionContext ctxLocal;
         SymbolTable symtabLocal;
         if(!commandhandler()->execute(expr,&ctxLocal,symtabLocal))
@@ -157,7 +157,7 @@ bool OperationHelperRaster::resample(IRasterCoverage& raster1, IRasterCoverage& 
     if ( raster2.isValid() && raster2->georeference()!= commonGeoref ){
         Resource res;
         res.prepare();
-        QString expr = QString("%3=resample(%1,%2,bicubic)").arg(raster2->resource().url().toString()).arg(commonGeoref->resource().url().toString()).arg(res.name());
+        QString expr = QString("%3=resample(%1,%2,nearestneighbour)").arg(raster2->resource().url().toString()).arg(commonGeoref->resource().url().toString()).arg(res.name());
         ExecutionContext ctxLocal;
         SymbolTable symtabLocal;
         if(!commandhandler()->execute(expr,&ctxLocal,symtabLocal))

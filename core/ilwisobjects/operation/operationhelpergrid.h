@@ -34,14 +34,30 @@ public:
         }
 
         double minv=1e307,maxv = -1e307;
+        double minBand = minv, maxBand = maxv;
         if ( res && outputRaster.isValid()) {
             if ( outputRaster->datadef().domain<>()->valueType() & itNUMBER) {
-                for(double v : outputRaster){
+                PixelIterator iter(outputRaster);
+                auto end = iter.end();
+                while(iter != end){
+                    double v = *iter;
                     minv = Ilwis::min(v,minv);
                     maxv = Ilwis::max(v,maxv);
+                    minBand = Ilwis::min(v,minv);
+                    maxBand = Ilwis::max(v,maxv);
+                    ++iter;
+                    if ( iter.zchanged()){
+                        outputRaster->datadefRef(iter.z()).range<NumericRange>()->max(maxBand);
+                        outputRaster->datadefRef(iter.z()).range<NumericRange>()->min(minBand);
+                        minBand=1e307;
+                        maxBand = -1e307;
+                    }
                 }
-                double resolution = outputRaster->datadefRef().domain()->range<NumericRange>()->resolution();
+                double resolution = outputRaster->datadefRef().range<NumericRange>()->resolution();
                 NumericRange *rng = new NumericRange(minv, maxv, resolution);
+                for(int i=0; i < outputRaster->size().zsize(); ++i){
+                    outputRaster->datadefRef(i).range<NumericRange>()->resolution(resolution)    ;
+                }
                 outputRaster->datadefRef().range(rng);
             }
         }
