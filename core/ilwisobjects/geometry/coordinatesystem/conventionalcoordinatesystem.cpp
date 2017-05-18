@@ -156,7 +156,7 @@ void ConventionalCoordinateSystem::unit(const QString& unit)
     _unit = unit;
 }
 
-bool ConventionalCoordinateSystem::isCompatibleWith(const IlwisObject *obj) const
+bool ConventionalCoordinateSystem::isCompatibleWith(const IlwisObject *obj, bool strict) const
 {
     if ( projection().isValid() && obj->isValid())
         return projection()->code() == obj->code();

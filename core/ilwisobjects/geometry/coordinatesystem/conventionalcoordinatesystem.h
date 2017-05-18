@@ -45,7 +45,7 @@ public:
     QString toProj4() const;
     QString unit() const;
     void unit(const QString &unit);
-    bool isCompatibleWith(const IlwisObject *obj) const;
+    bool isCompatibleWith(const IlwisObject *obj, bool strict=false) const;
     IlwisObject *clone();
 private:
     void copyTo(IlwisObject *obj);
