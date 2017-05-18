@@ -719,9 +719,7 @@ void WorkflowModel::setFixedValues(qint32 nodeid, const QString &formValues)
     for (int i = 0; i < inputParameters.length(); ++i) {
         QString value = inputParameters[i].trimmed();
         WorkFlowParameter& parm = node->inputRef(i);
-        parm.value(value, op->getInputParameters()[i]->type());
-        
-
+        parm.value(value, op->getInputParameters()[i]->type(), WorkFlowParameter::pkFIXED);
     }
 
 }
