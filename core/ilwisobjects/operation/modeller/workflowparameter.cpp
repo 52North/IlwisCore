@@ -73,17 +73,22 @@ QString WorkFlowParameter::value() const
     return _value;
 }
 
-void WorkFlowParameter::value(const QString &v, IlwisTypes type)
+void WorkFlowParameter::value(const QString &v, IlwisTypes type,ParameterKind kind )
 {
     if ( v == "" && _state == pkCALCULATED)
         return;
 
     _value = v;
     _valueType = type;
-    if ( _value != sUNDEF && _state !=  pkCALCULATED)
-        _state = pkFIXED;
+    if ( kind == pkDONTCARE){
+        if ( _value != sUNDEF && _state !=  pkCALCULATED)
+            _state = pkFIXED;
+    }else
+        _state = kind;
+
     if ( _value == "")
         _state = pkFREE;
+
 }
 
 IlwisTypes WorkFlowParameter::valueType() const

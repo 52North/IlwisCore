@@ -9,7 +9,7 @@ class WorkFlowNode;
 class KERNELSHARED_EXPORT WorkFlowParameter : public Identity
 {
 public:
-    enum ParameterKind { pkFIXED, pkCALCULATED, pkFREE};
+    enum ParameterKind { pkFIXED, pkCALCULATED, pkFREE, pkDONTCARE};
 
     WorkFlowParameter();
     WorkFlowParameter(int order, int nodeid, const QString& name, const QString& description="");
@@ -22,7 +22,7 @@ public:
     const std::shared_ptr<WorkFlowNode> inputLink() const;
     qint32 outputParameterIndex() const;
     QString value() const;
-    void value(const QString& v, IlwisTypes type);
+    void value(const QString& v, IlwisTypes type, ParameterKind kind= pkDONTCARE);
     IlwisTypes valueType() const;
     ParameterKind state() const;
     QString syntax() const;
