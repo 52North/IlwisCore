@@ -54,10 +54,13 @@ private:
 
         QVariant var;
         var.setValue<IlwisData<T1>>(target);
+        sym = Symbol();
         sym = Symbol(1000,target->ilwisType(), var);
         symbols.setSymbol(ident, sym);
-        if ( wasAnonymous)
+        if ( wasAnonymous){
             mastercatalog()->addItems({target->resource(IlwisObject::cmINPUT | IlwisObject::cmEXTENDED)});
+            source->unload();
+        }
 
         return true;
     }
