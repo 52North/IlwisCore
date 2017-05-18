@@ -28,7 +28,7 @@ public:
     virtual ~SymbolTable();
 
     void addSymbol(const QString& name, int scope, quint64 tp, const QVariant &v=QVariant());
-    void setSymbol(const QString &name, const Symbol sym);
+    void setSymbol(const QString &name, const Symbol &sym);
     QVariant getValue(const QString& name, int scope=1000) const;
     Symbol getSymbol(const QString& name, GetAction act=gaKEEP, int scope=1000);
     Symbol getSymbol(const QString& name, int scope=1000) const;

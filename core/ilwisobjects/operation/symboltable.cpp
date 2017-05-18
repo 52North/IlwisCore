@@ -50,7 +50,7 @@ void SymbolTable::addSymbol(const QString &name, int scope, quint64 tp, const QV
     _symbols[name] = sym;
 }
 
-void SymbolTable::setSymbol(const QString &name, const Symbol sym)
+void SymbolTable::setSymbol(const QString &name, const Symbol& sym)
 {
     _symbols[name] = sym;
 }
