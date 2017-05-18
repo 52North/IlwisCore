@@ -180,6 +180,7 @@ Grid::Grid(int maxlines) : _maxCacheBlocks(1), _memUsed(0),_blocksPerBand(0), _m
              _maxLines = max(1, 1e7 / (size().xsize() * 8));
          }
     }
+    qDebug() << "grid created:" << this;
 }
 
 quint32 Grid::blockSize(quint32 index) const {
@@ -191,6 +192,7 @@ quint32 Grid::blockSize(quint32 index) const {
 Grid::~Grid() {
     clear();
     context()->changeMemoryLeft(_memUsed);
+    qDebug() << "grid deleted:" << this;
 }
 
 Size<> Grid::size() const {
@@ -426,6 +428,7 @@ void Grid::unloadInternal() {
     for (auto b : _blocks){
         b->save2Cache();
     }
+    qDebug() << "grid unloaded:" << this;
 }
 
 void Grid::setBlock(int index, GridBlockInternal *block)
