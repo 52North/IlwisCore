@@ -27,7 +27,9 @@ const IOperationMetaData &OperationImplementation::metadata() const
 
 UPTranquilizer &OperationImplementation::trq()
 {
-    return _tranquilizer;
+    if ( _tranquilizer)
+        return _tranquilizer;
+    throw ErrorObject(TR("Tranquilizer not properly initialized"));
 }
 
 OperationExpression OperationImplementation::expression() const
