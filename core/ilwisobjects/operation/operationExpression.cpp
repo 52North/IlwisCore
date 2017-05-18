@@ -94,6 +94,11 @@ IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &sym
     if ( (value.startsWith("\"") || value.startsWith("'")) &&
          (value.endsWith("'") || value.endsWith("\"")))
         return itSTRING;
+    bool ok;
+    value.toDouble(&ok);
+    if ( ok)
+        return itNUMBER;
+
     IlwisTypes tp = IlwisObject::findType(value);
     if ( value == "\"?\"" || value == "?")
         tp = itANY;
