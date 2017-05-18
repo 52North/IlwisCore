@@ -17,8 +17,8 @@ public:
     static quint64 createMetadata();
 private:
     IRasterCoverage _raster;
-    ITable _table;
-    QString _columnName;
+    IRasterCoverage _outputRaster;
+    BoundingBox _box;
     double _min = rUNDEF;
     double _max = rUNDEF;
     double _step = rUNDEF;
