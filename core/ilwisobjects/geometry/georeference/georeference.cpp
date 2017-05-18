@@ -135,7 +135,7 @@ bool GeoReference::isCompatible(const IGeoReference &georefOther) const
     if (georefOther->id() == id())
         return true;
 
-    if ( coordinateSystem() != georefOther->coordinateSystem())
+    if ( !coordinateSystem()->isCompatibleWith(georefOther->coordinateSystem().ptr()))
         return false;
 
     if ( isValid())
