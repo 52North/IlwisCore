@@ -59,6 +59,9 @@ public:
 
     ~IlwisData() {
         if (_implementation.get()!= 0  ) // there is always one extra reference in the registerd objects, so 2 means last object will disappear
+#ifdef QT_DEBUG
+            mastercatalog()->ilwisDataDebug(_implementation);
+#endif
             if ( _implementation.use_count() == 2)
                 mastercatalog()->unregister(_implementation.get()->id());
     }
