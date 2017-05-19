@@ -223,11 +223,11 @@ bool CrossRasters::execute(ExecutionContext *ctx, SymbolTable &symTable)
     if ( ok && ctx != 0) {
         QVariant value;
         value.setValue<ITable>(_outputTable);
+        logOperation(_outputTable,_expression);
         ctx->setOutput(symTable,value,_outputTable->name(), itTABLE, _outputTable->resource() );
         if ( _outputRaster.isValid()) {
             QVariant outraster;
             outraster.setValue<IRasterCoverage>(_outputRaster);
-            logOperation(_outputRaster,_expression);
             ctx->addOutput(symTable,outraster,_outputRaster->name(), itRASTER, _outputRaster->resource() );
         }
     }
