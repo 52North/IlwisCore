@@ -193,6 +193,9 @@ void WorkflowImplementation::acceptMessage(const QString &type, const QString &s
                 _stepMode = false;
                 _stopExecution = true;
                 clearCalculatedValues();
+            }else if ( subtype == "stopexecution"){
+                _stopExecution = true;
+                clearCalculatedValues();
             }
         }
     }

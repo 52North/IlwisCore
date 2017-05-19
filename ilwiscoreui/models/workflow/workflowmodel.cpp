@@ -677,7 +677,25 @@ void WorkflowModel::stopStepMode(){
     parms["id"] = _workflow->id();
     parms["runid"] = _runid;
     _stepMode = false;
+    _lastOperationNode = -1;
     emit sendMessage("workflow","stopstepmode", parms);
+    emit operationNodeChanged();
+}
+
+void WorkflowModel::stopExecution()
+{
+    if ( _stepMode)
+        stopStepMode();
+    else{
+        QVariantMap parms;
+        parms["id"] = _workflow->id();
+        parms["runid"] = _runid;
+        _stepMode = false;
+        _lastOperationNode;
+        emit sendMessage("workflow","stopexecution", parms);
+        emit operationNodeChanged();
+    }
+
 }
 
 void WorkflowModel::store(const QString& container, const QString& name)

@@ -87,6 +87,7 @@ public:
     Q_INVOKABLE void collapsed(int nodeid, bool yesno);
     Q_INVOKABLE void setNodeProperty(int nodeid, int paramindex, const QString& property, const QString &value);
     Q_INVOKABLE void stopStepMode();
+    Q_INVOKABLE void stopExecution();
 
     QString modelType() const;
 
