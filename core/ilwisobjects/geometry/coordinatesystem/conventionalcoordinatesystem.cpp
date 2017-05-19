@@ -158,8 +158,11 @@ void ConventionalCoordinateSystem::unit(const QString& unit)
 
 bool ConventionalCoordinateSystem::isCompatibleWith(const IlwisObject *obj, bool strict) const
 {
-    if ( projection().isValid() && obj->isValid())
-        return projection()->code() == obj->code();
+    if ( projection().isValid() && obj->isValid()){
+        const ConventionalCoordinateSystem *ccsy = dynamic_cast<const ConventionalCoordinateSystem *>(obj);
+        if ( ccsy)
+            return projection()->code() == ccsy->projection()->code();
+    }
     return false;
 }
 
