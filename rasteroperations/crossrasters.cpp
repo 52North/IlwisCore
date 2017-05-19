@@ -157,7 +157,7 @@ bool CrossRasters::crossNoRaster( const BoundingBox& box){
     quint32 count = 0;
     double pixarea = _inputRaster1->georeference()->pixelSize();
     pixarea *= pixarea;
-   // initialize(_inputRaster1->size().linearSize());
+
     auto end = iterIn1.end();
     while(iterIn1 != end){
         double v1 = *iterIn1;
@@ -174,7 +174,7 @@ bool CrossRasters::crossNoRaster( const BoundingBox& box){
         ++iterIn2;
         ++iterIn1;
 
-        // updateTranquilizer(count++,100);
+        updateTranquilizer(count++,1000);
     }
     quint32 record = 0;
     NamedIdentifierRange *idrange = new NamedIdentifierRange();
@@ -208,11 +208,11 @@ bool CrossRasters::execute(ExecutionContext *ctx, SymbolTable &symTable)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
             return false;
 
-//    if ( !_inputRaster1->georeference()->isCompatible(_inputRaster2->georeference())) {
-//        if (!OperationHelperRaster::resample(_inputRaster1, _inputRaster2, ctx)) {
-//            return ERROR2(ERR_COULD_NOT_CONVERT_2, TR("georeferences"), TR("common base"));
-//        }
-//    }
+    if ( !_inputRaster1->georeference()->isCompatible(_inputRaster2->georeference())) {
+        if (!OperationHelperRaster::resample(_inputRaster1, _inputRaster2, ctx)) {
+            return ERROR2(ERR_COULD_NOT_CONVERT_2, TR("georeferences"), TR("common base"));
+        }
+    }
 
     bool ok;
     if ( _outputRaster.isValid())
@@ -292,16 +292,18 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
         _undefhandling = uhIgnoreUndef;
 
 
-    newTable->addColumn(crossName, _crossDomain);
-    newTable->addColumn(_inputRaster1->name(), _inputRaster1->datadef().domain<>());
-    newTable->addColumn(_inputRaster2->name(), _inputRaster2->datadef().domain<>());
-    newTable->addColumn("NPix", IlwisObject::create<IDomain>("count"));
-    newTable->addColumn("Area", IlwisObject::create<IDomain>("value"));
+    newTable->addColumn("cross_combinations", _crossDomain);
+    newTable->addColumn("first_raster", _inputRaster1->datadef().domain<>());
+    newTable->addColumn("second_raster", _inputRaster2->datadef().domain<>());
+    newTable->addColumn("npix", IlwisObject::create<IDomain>("count"));
+    newTable->addColumn("area", IlwisObject::create<IDomain>("value"));
     _outputTable = newTable;
     if ( _outputRaster.isValid()){
         _outputTable->addColumn(_outputRaster->primaryKey(), _crossDomain);
         _outputRaster->setAttributes(_outputTable);
     }
+
+    initialize(_inputRaster1->size().linearSize());
 
     return sPREPARED;
 }
@@ -310,7 +312,7 @@ quint64 CrossRasters::createMetadata()
 {
 
     OperationResource operation({"ilwis://operations/cross"});
-    operation.setSyntax("cross(raster1, raster2, undefhandling=!ignoreundef|ignoreundef1 | ignoreundef2 | dontcare,createraster)");
+    operation.setSyntax("cross(raster1, raster2, undefhandling=!ignoreundef|ignoreundef1 | ignoreundef2 | dontcare,true|!false)");
     operation.setDescription(TR("generates a new boolean map based on the logical condition used"));
     operation.setInParameterCount({4});
     operation.addInParameter(0,itRASTER , TR("first rastercoverage"),TR("input rastercoverage with domain item or integer"));
