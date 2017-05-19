@@ -278,13 +278,18 @@ std::vector<WorkFlowParameter> Workflow::freeInputParameters() const
 
 std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
 {
-    auto CheckLinks =[](WorkFlowParameter& p,std::map<NodeId, std::vector<SPOperationParameter>>& outparams)->void {
+    auto CheckLinks =[&](WorkFlowParameter& p,std::map<NodeId, std::vector<SPOperationParameter>>& outparams)->void {
         // if an outputParameterIndex is defined it can be scrapped from the list of potential free parameters
         if ( p.outputParameterIndex() != iUNDEF){
             // junctionnodes are not regular operations and can be skipped; they are always intermediaries
             if ( p.inputLink()->type() != WorkFlowNode::ntJUNCTION)
-                if ( outparams.find(p.inputLink()->id()) != outparams.end())
-                    outparams[p.inputLink()->id()][p.outputParameterIndex()] = SPOperationParameter();
+                if ( outparams.find(p.inputLink()->id()) != outparams.end()){
+                    std::vector<SPOperationParameter>& parms = outparams[p.inputLink()->id()];
+                    if (p.outputParameterIndex() <  parms.size())
+                        outparams[p.inputLink()->id()][p.outputParameterIndex()] = SPOperationParameter();
+                    else
+                        throw ErrorObject(TR("Corrupt workflow:") + name());
+                }
         }
     };
     std::vector<SPOperationParameter> result;
@@ -452,39 +457,44 @@ std::map<quint64, int> Workflow::parmid2order() const {
 }
 
 quint64 Workflow::createMetadata(int offset){
-    QString opname = name();
-    OperationResource operation = resource();
-    operation.addProperty("namespace","ilwis");
-    opname.remove(".ilwis");
-    if (!operation.isValid())
-        operation = OperationResource(QUrl("ilwis://operations/" + opname));
-    std::vector<WorkFlowParameter> inputparams = freeInputParameters();
-    std::vector<SPOperationParameter> outparams = freeOutputParameters();
-    int count = 0;
-    _parmid2order.clear();
-    QString syntax = opname + "(";
-    operation.setInParameterCount({inputparams.size()});
-    for(WorkFlowParameter parm : inputparams){
-        _parmid2order[parm.id()] = count + offset;
-        QString label = QString("%1 %2").arg(parm.nodeId()).arg(parm.label());
-        operation.addInParameter(count,parm.valueType(), label,parm.description());
-        if ( count != 0 )
-            syntax += ",";
-        syntax += parm.syntax();
-        ++count;
-    }
-    syntax += ")";
-    operation.setSyntax(syntax);
+    try{
+        QString opname = name();
+        OperationResource operation = resource();
+        operation.addProperty("namespace","ilwis");
+        opname.remove(".ilwis");
+        if (!operation.isValid())
+            operation = OperationResource(QUrl("ilwis://operations/" + opname));
+        std::vector<WorkFlowParameter> inputparams = freeInputParameters();
+        std::vector<SPOperationParameter> outparams = freeOutputParameters();
+        int count = 0;
+        _parmid2order.clear();
+        QString syntax = opname + "(";
+        operation.setInParameterCount({inputparams.size()});
+        for(WorkFlowParameter parm : inputparams){
+            _parmid2order[parm.id()] = count + offset;
+            QString label = QString("%1 %2").arg(parm.nodeId()).arg(parm.label());
+            operation.addInParameter(count,parm.valueType(), label,parm.description());
+            if ( count != 0 )
+                syntax += ",";
+            syntax += parm.syntax();
+            ++count;
+        }
+        syntax += ")";
+        operation.setSyntax(syntax);
 
-    count = 0;
-    operation.setOutParameterCount({outparams.size()});
-    for(SPOperationParameter parm : outparams){
+        count = 0;
+        operation.setOutParameterCount({outparams.size()});
+        for(SPOperationParameter parm : outparams){
         operation.addOutParameter(count++,parm->type(), parm->name(),parm->description());
     }
     resourceRef() = operation;
     mastercatalog()->addItems({operation});
     Operation::registerOperation(operation.id(),WorkflowImplementation::create);
     return operation.id();
+    }catch(const ErrorObject& err){
+
+    }
+    return i64UNDEF;
 }
 
 quint64 Workflow::createMetadata()
