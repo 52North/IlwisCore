@@ -8,6 +8,8 @@
 #include "operation.h"
 #include "tranquilizer.h"
 #include "dataformat.h"
+#include "catalog.h"
+#include "ilwiscontext.h"
 #include "saveas.h"
 
 using namespace Ilwis;
@@ -49,7 +51,11 @@ Ilwis::OperationImplementation::State SaveAs::prepare(ExecutionContext *, const 
         ERROR2(ERR_COULD_NOT_LOAD_2,objectname,"");
         return sPREPAREFAILED;
     }
-    _outputUrl = QUrl(_expression.input<QString>(1));
+    QString  path = _expression.input<QString>(1);
+    if ( path.indexOf("://") == -1){
+        path = context()->workingCatalog()->resource().url().toString() + "/" + path;
+    }
+    _outputUrl = QUrl(path);
     _format = _expression.input<QString>(2);
     _provider = _expression.input<QString>(3);
     return sPREPARED;
