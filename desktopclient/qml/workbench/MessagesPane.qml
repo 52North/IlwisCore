@@ -122,6 +122,78 @@ WorkBenchShifter {
                 }
             }
         }
+
+        Tab {
+            title : qsTr("Commands")
+            Item {
+                id : commands
+                width : parent.width
+                height : parent.height
+                TableView {
+                    id : commandsTable
+                    anchors.fill: parent
+                    model : messagehandler.commands
+                    selectionMode : SelectionMode.SingleSelection
+
+
+                    TableViewColumn{
+                        id : timeColumn
+                        role : "shorttime"
+                        title : "Time"
+                        width : 60
+                        delegate : Item{
+                            id : shorttimeitemcommand
+                            width : parent.width
+                            Text {
+                                text : styleData.value
+                                font.pointSize: 8
+                                color : model[styleData.row].color
+                            }
+                        }
+                    }
+                    TableViewColumn{
+                        id : commandColumn
+                        role : "message"
+                        title : "Commands"
+                        width : commandsTable.width - 60
+                        delegate : Item{
+                            id : commandItem
+                            width : parent.width
+                            TextInput {
+                                id :commandmessage
+                                anchors.fill: parent
+                                text : styleData.value
+                                font.pointSize: 8
+                                readOnly: true;
+                                clip : true
+                                color : model[styleData.row].color
+                                wrapMode: Text.WordWrap
+                                MouseArea{
+                                    anchors.fill: parent
+                                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                    onClicked: {
+                                        commandsTable.selection.forEach( function(rowIndex) {commandsTable.selection.deselect(rowIndex)} )
+                                        commandsTable.selection.select(styleData.row)
+                                        commandmessage.selectAll()
+                                        commandmessage.copy()
+                                        commandmessage.deselect()
+                                        if ( mouse.button & Qt.RightButton){
+                                            menu.popup();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    rowDelegate: Rectangle {
+                        height : 30
+                        color : styleData.selected ? Global.selectedColor : (styleData.alternate? Global.lightestgreen: "white")
+
+                    }
+                }
+            }
+        }
+
         Tab {
             title : qsTr("results")
             Item {

@@ -42,14 +42,13 @@ void OperationImplementation::logOperation(const IIlwisObject &obj, const Operat
     if (obj.isValid()){
         obj->addDescription(expr.toString());
     }
-    QString message = expr.toPythonExpression();
-    kernel()->issues()->log(message, IssueObject::itMessage);
+    logOperation(expr);
 }
 
 void OperationImplementation::logOperation(const OperationExpression &expr)
 {
     QString message = expr.toPythonExpression();
-    kernel()->issues()->log(message, IssueObject::itMessage);
+    kernel()->issues()->log(message, IssueObject::itExpression);
 }
 
 void OperationImplementation::initialize(quint64 totalCount)

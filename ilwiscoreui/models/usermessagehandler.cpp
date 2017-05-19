@@ -9,15 +9,22 @@ UserMessageHandler::UserMessageHandler(QObject *parent) :
     QList<IssueObject> issues;
     kernel()->issues()->copy(issues);
     for(auto issue : issues)
-        if ( issue.type() != IssueObject::itRESULT)
-            _messages.insert(0, new MessageModel(issue, this));
-        else
+        if ( issue.type() == IssueObject::itRESULT)
             _results.insert(0, new MessageModel(issue, this));
+        else if (issue.type() == IssueObject::itExpression ){
+            _commands.insert(0, new MessageModel(issue, this));
+        }else
+            _messages.insert(0, new MessageModel(issue, this));
 }
 
 QMLMessageList UserMessageHandler::messages()
 {
     return  QQmlListProperty<MessageModel>(this, _messages);
+}
+
+QMLMessageList UserMessageHandler::commands()
+{
+    return QQmlListProperty<MessageModel>(this, _commands);
 }
 
 QString UserMessageHandler::results()
@@ -33,13 +40,16 @@ QString UserMessageHandler::results()
 
 void UserMessageHandler::addMessage(const IssueObject& issue)
 {
-    if ( issue.type() != IssueObject::itRESULT){
-        _messages.insert(0, new MessageModel(issue, this));
-        emit messageChanged();
-    }
-    else {
+    if ( issue.type() == IssueObject::itRESULT){
         _results.insert(0, new MessageModel(issue, this));
         emit resultsChanged();
+    }
+    else  if (issue.type() == IssueObject::itExpression ){
+        _commands.insert(0, new MessageModel(issue, this));
+        emit commandsChanged();
+    }else {
+        _messages.insert(0, new MessageModel(issue, this));
+        emit messageChanged();
     }
 
     emit messageIconChanged();
@@ -107,6 +117,8 @@ QString MessageModel::type() const
         return "notification";
     case IssueObject::itDebug:
         return "trace";
+    case IssueObject::itExpression:
+        return "command";
     default:
         return "";
     }
@@ -139,6 +151,8 @@ QColor MessageModel::color() const
     case IssueObject::itDebug:
         return "blue";
     case IssueObject::itRESULT:
+        return "black";
+    case IssueObject::itExpression:
         return "black";
     default:
         return "";
