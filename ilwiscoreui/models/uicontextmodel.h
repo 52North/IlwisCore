@@ -52,6 +52,18 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
     Q_PROPERTY(QString ilwisFolder READ ilwisFolder CONSTANT)
     Q_PROPERTY(bool debugMode READ debugMode CONSTANT)
 
+    Q_PROPERTY(QString paleColor READ paleColor WRITE paleColor NOTIFY paleColorChanged)
+    Q_PROPERTY(QString middleColor READ middleColor WRITE middleColor NOTIFY middleColorChanged)
+    Q_PROPERTY(QString darkColor READ darkColor WRITE darkColor NOTIFY darkColorChanged)
+    Q_PROPERTY(QString darkestColor READ darkestColor WRITE darkestColor NOTIFY darkestColorChanged)
+    Q_PROPERTY(QString lightColor READ lightColor WRITE lightColor NOTIFY lightColorChanged)
+    Q_PROPERTY(QString lighterColor READ lighterColor WRITE lightColor NOTIFY lighterColorChanged)
+    Q_PROPERTY(QString lightestColor READ lightestColor WRITE lightestColor NOTIFY lightestColorChanged)
+    Q_PROPERTY(QString workbenchBGColor READ workbenchBGColor WRITE workbenchBGColor NOTIFY workbenchBGColorChanged)
+    Q_PROPERTY(QString catalogBGColor READ catalogBGColor WRITE catalogBGColor NOTIFY catalogBGColorChanged)
+    Q_PROPERTY(QString genericBGColor READ genericBGColor WRITE genericBGColor NOTIFY genericBGColorChanged)
+
+
 
 public:
     explicit UIContextModel(QObject *parent = 0);
@@ -106,6 +118,16 @@ public:
 signals:
     void activeSplitChanged();
     void currentWorkSpaceChanged();
+    void paleColorChanged();
+    void middleColorChanged();
+    void darkColorChanged();
+    void darkestColorChanged();
+    void lightColorChanged();
+    void lighterColorChanged();
+    void lightestColorChanged();
+    void workbenchBGColorChanged();
+    void catalogBGColorChanged();
+    void genericBGColorChanged();
 
 
 public slots:
@@ -133,6 +155,28 @@ private:
     QWaitCondition _wait4ViewCreate;
 
     static std::unique_ptr<UIContextModel>_uicontext;
+
+    QString paleColor() const;
+    void paleColor(const QString& clr);
+    QString middleColor() const;
+    void middleColor(const QString& clr);
+    QString darkColor() const;
+    void darkColor(const QString& clr);
+    QString darkestColor() const;
+    void darkestColor(const QString& clr);
+    QString lightColor() const;
+    void lightColor(const QString& clr);
+    QString lighterColor() const;
+    void lighterColor(const QString& clr);
+    QString lightestColor() const;
+    void lightestColor(const QString& clr);
+    QString workbenchBGColor() const;
+    void workbenchBGColor(const QString& clr);
+    QString catalogBGColor() const;
+    void catalogBGColor(const QString& clr);
+    QString genericBGColor() const;
+    void genericBGColor(const QString& clr);
+
 
     bool debugMode() const;
 

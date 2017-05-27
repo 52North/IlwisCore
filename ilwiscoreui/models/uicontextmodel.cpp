@@ -424,6 +424,167 @@ QString UIContextModel::ilwisFolder() const
     return url.toString();
 }
 
+QString UIContextModel::paleColor() const
+{
+    QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/palecolor",QString("#B9CEBD"));
+
+    return sc;
+}
+
+void UIContextModel::paleColor(const QString &clr)
+{
+    QColor c(clr);
+    if ( c.isValid()){
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/palecolor",clr);
+        emit paleColorChanged();
+    }
+}
+
+QString UIContextModel::middleColor() const
+{
+    QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/middlecolor",QString("#6CBFA1"));
+
+    return sc;
+}
+
+void UIContextModel::middleColor(const QString &clr)
+{
+    QColor c(clr);
+    if ( c.isValid()){
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/middlecolor",clr);
+        emit middleColorChanged();
+    }
+}
+
+QString UIContextModel::darkColor() const
+{
+    QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/darkcolor",QString("#2E8D63"));
+
+    return sc;
+}
+
+void UIContextModel::darkColor(const QString &clr)
+{
+    QColor c(clr);
+    if ( c.isValid()){
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/darkcolor",clr);
+        emit darkColorChanged();
+    }
+}
+
+QString UIContextModel::darkestColor() const
+{
+    QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/darkestcolor",QString("#256E4D"));
+
+    return sc;
+}
+
+void UIContextModel::darkestColor(const QString &clr)
+{
+    QColor c(clr);
+    if ( c.isValid()){
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/darkestcolor",clr);
+        emit darkestColorChanged();
+    }
+}
+
+QString UIContextModel::lightestColor() const
+{
+    QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/lightestcolor",QString("#EBF0EC"));
+
+    return sc;
+}
+
+void UIContextModel::lightestColor(const QString &clr)
+{
+    QColor c(clr);
+    if ( c.isValid()){
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/lightestcolor",clr);
+        emit lightestColorChanged();
+    }
+}
+
+QString UIContextModel::lightColor() const
+{
+    QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/lightcolor",QString("#DDE6DE"));
+
+    return sc;
+}
+
+void UIContextModel::lightColor(const QString &clr)
+{
+    QColor c(clr);
+    if ( c.isValid()){
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/lightcolor",clr);
+        emit lightColorChanged();
+    }
+}
+
+QString UIContextModel::lighterColor() const
+{
+    QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/lightercolor",QString("#E4EBE5"));
+
+    return sc;
+}
+
+void UIContextModel::lighterColor(const QString &clr)
+{
+    QColor c(clr);
+    if ( c.isValid()){
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/lightercolor",clr);
+        emit lighterColorChanged();
+    }
+}
+
+QString UIContextModel::workbenchBGColor() const
+{
+    QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/workbenchbgcolor",QString("white"));
+
+    return sc;
+}
+
+void UIContextModel::workbenchBGColor(const QString &clr)
+{
+    QColor c(clr);
+    if ( c.isValid()){
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/workbenchbgcolor",clr);
+        emit workbenchBGColorChanged();
+    }
+}
+
+QString UIContextModel::catalogBGColor() const
+{
+    QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/catalogbgcolor",QString("white"));
+
+    return sc;
+}
+
+void UIContextModel::catalogBGColor(const QString &clr)
+{
+    QColor c(clr);
+    if ( c.isValid()){
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/catalogbgcolor",clr);
+        emit catalogBGColorChanged();
+    }
+}
+
+QString UIContextModel::genericBGColor() const
+{
+    QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/genericbgcolor",QString("white"));
+
+    return sc;
+}
+
+void UIContextModel::genericBGColor(const QString &clr)
+{
+    QColor c(clr);
+    if ( c.isValid()){
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/genericbgcolor",clr);
+        emit genericBGColorChanged();
+    }
+}
+
+
 bool UIContextModel::debugMode() const
 {
 #ifdef QT_DEBUG
