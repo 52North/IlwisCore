@@ -34,7 +34,7 @@ Item {
         id : title
         width : parent.width - 2
         height : 18
-        color : Global.palegreen
+        color : uicontext.paleColor
         Text {
             text : qsTr("Operations")
             width : parent.width
