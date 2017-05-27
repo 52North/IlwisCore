@@ -98,5 +98,23 @@ void PreferencesModel::setInternalCatalog(const QString &loc)
     }
 }
 
+double PreferencesModel::uiScale() const
+{
+    double sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/displayscale",rUNDEF);
+    if ( sc == rUNDEF || sc <= 0.1 || sc >= 5)
+        return 1.0;
+    return sc;
+
+}
+
+void PreferencesModel::uiScale(double sc)
+{
+    if ( sc > 0.1 && sc <= 5){
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/displayscale",QString::number(sc));
+        emit uiScaleChanged();
+    }
+
+}
+
 
 
