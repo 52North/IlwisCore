@@ -28,6 +28,7 @@
 #include "ilwiscontext.h"
 #include "operationworker.h"
 #include "dataformat.h"
+#include "catalogviewmanager.h"
 #include "modeller/workflownode.h"
 #include "operationcatalogmodel.h"
 #include "workflow/workflowmodel.h"
@@ -38,8 +39,9 @@ OperationCatalogModel::OperationCatalogModel(QObject *p) : CatalogModel()
 {
 }
 
-OperationCatalogModel::OperationCatalogModel(const Resource &res,QObject *p) : CatalogModel(res,CatalogModel::ctOPERATION|CatalogModel::ctFIXED|CatalogModel::ctINTERNAL, p)
+OperationCatalogModel::OperationCatalogModel(const Resource &res,QObject *p) : CatalogModel(res,CatalogModel::ctOPERATION|CatalogModel::ctINTERNAL, p)
 {
+
 }
 
 OperationCatalogModel::~OperationCatalogModel()
@@ -63,6 +65,13 @@ void OperationCatalogModel::refresh()
 
     emit operationsChanged();
     emit operationsByKeyChanged();
+}
+
+void OperationCatalogModel::refreshAllOperationCatalogs()
+{
+    catalogViewManager()->updateCatalogViews({QUrl("ilwis://operations")});
+
+   refresh();
 }
 
 void tableCase(const IIlwisObject &obj, const QString& condition, int parmIndex, QVariantList& result)
@@ -326,10 +335,11 @@ void OperationCatalogModel::prepare(const IOOptions& opt){
     if ( opt.contains("globaloperationscatalog")){
         _isGlobalOperationsCatalog = opt["globaloperationscatalog"].toBool();
         QString filter = "(type=" + QString::number(itSINGLEOPERATION) + " or type=" + QString::number(itWORKFLOW) + ")";
-        //filter += " and not (catalogitemproperties.propertyname='keyword' and catalogitemproperties.propertyvalue like '%internal%'))";
         _view.filter("basefilter", filter);
     }
     _refresh  = true;
+    catalogType(CatalogModel::ctOPERATION|CatalogModel::ctINTERNAL);
+    catalogViewManager()->registerCatalogModel(this);
     gatherItems();
 }
 
