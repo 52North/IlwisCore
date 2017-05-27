@@ -12,29 +12,33 @@ typedef std::map<QThread *, int> LockInfo;
 
 KERNELSHARED_EXPORT void printlockmessage(const QString& prefix, const QString& message, const LockInfo& counts) ;
 namespace Ilwis {
-template<typename MutexType=std::recursive_mutex> class KERNELSHARED_EXPORT Locker : public std::lock_guard<MutexType>
+template<typename MutexType=std::recursive_mutex> class KERNELSHARED_EXPORT Locker
 {
 public:
-    Locker(MutexType &mut) : std::lock_guard<MutexType>(mut){
-
+    Locker(MutexType &mut) : _mutex(mut){
+        _mutex.lock();
     }
 
 #ifdef QT_DEBUG
-    Locker(MutexType &mut, const QString& debugMessage) : std::lock_guard<MutexType>(mut),_message(debugMessage){
+    Locker(MutexType &mut, const QString& debugMessage) : _mutex(mut),_message(debugMessage){
         _lockcount[QThread::currentThread()]++;
         printlockmessage("entering", _message, _lockcount);
+        _mutex.lock();
     }
     virtual ~Locker() {
         if (_message != ""){
             _lockcount[QThread::currentThread()]--;
             printlockmessage("leaving", _message, _lockcount);
         }
+        _mutex.unlock();
     }
 
 
 private:
+    MutexType& _mutex;
     QString _message;
     static LockInfo _lockcount;
+
 #endif
 };
 #ifdef QT_DEBUG
