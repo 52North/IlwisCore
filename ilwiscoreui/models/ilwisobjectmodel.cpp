@@ -919,14 +919,27 @@ QString IlwisObjectModel::copy(const QString &newUrl, const QString &format, con
                 QString newUrl = _ilwisobject->resource(IlwisObject::cmOUTPUT).url(true).toString();
                 QUrl oldUrl = _ilwisobject->resource().url();
                 QUrl oldUrlraw = _ilwisobject->resource().url(true);
+                QString syntax = _ilwisobject->resource()["syntax"].toString();
                 _ilwisobject->loadData(); // before changing urls the object must be completely loaded
                 _ilwisobject->resourceRef().setUrl(newUrl,false,false);
                 _ilwisobject->resourceRef().setUrl(newUrl,true,false);
+                if ( _ilwisobject->ilwisType() == itWORKFLOW){
+                    int index = syntax.indexOf("(");
+                    int index2 = _ilwisobject->name().indexOf(".");
+                    QString newname = _ilwisobject->name().left(index2);
+                    QString newsyntax = newname + syntax.mid(index);
+                    _ilwisobject->resourceRef()["syntax"] = newsyntax;
+                }
                 _ilwisobject->store();
+                Resource newResource = _ilwisobject->resource();
+                newResource.newId();
+                mastercatalog()->addItems({newResource});
                 // original object must forget about its copy
                 _ilwisobject->resetOutputConnector();
-                _ilwisobject->resourceRef().setUrl(oldUrl,false,false);
-                _ilwisobject->resourceRef().setUrl(oldUrlraw,true,false);
+                _ilwisobject->resourceRef().setUrl(oldUrl,false,true);
+                _ilwisobject->resourceRef().setUrl(oldUrlraw,true,true);
+                if ( syntax != sUNDEF)
+                    _ilwisobject->resourceRef()["syntax"] = syntax;
             }else{
                 return "exists";
             }
