@@ -29,7 +29,6 @@ public:
     QFileInfo ilwisFolder() const;
     ICatalog workingCatalog() const;
     const ICatalog& systemCatalog() const;
-    const ICatalog& lastUsedLocalFolder() const;
     void setWorkingCatalog(const Ilwis::ICatalog &cat);
     QUrl cacheLocation() const;
     QUrl persistentInternalCatalog() const;

@@ -183,11 +183,6 @@ const ICatalog &IlwisContext::systemCatalog() const
     return _systemCatalog;
 }
 
-const ICatalog &IlwisContext::lastUsedLocalFolder() const
-{
-    return _lastUsedLocalFolder;
-}
-
 void IlwisContext::setWorkingCatalog(const ICatalog &cat)
 {
     // the ilwis default workspace is just is a placeholder for everything goes; so we don't assign it
@@ -200,9 +195,6 @@ void IlwisContext::setWorkingCatalog(const ICatalog &cat)
     kernel()->setTLS("workingcatalog", var);
     context()->configurationRef().putValue("users/" + currentUser() + "/workingcatalog",cat->resource().url().toString());
     QFileInfo inf(cat->resource().url().toLocalFile());
-    if ( inf.isDir()){
-        _lastUsedLocalFolder = cat;
-    }
 }
 
 QUrl IlwisContext::cacheLocation() const
