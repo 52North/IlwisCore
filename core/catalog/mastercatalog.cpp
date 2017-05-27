@@ -732,8 +732,10 @@ void calcLatLon(const ICoordinateSystem& csyWgs84,Ilwis::Resource& resource, std
 
 void CalcLatLon::calculatelatLonEnvelopes(std::vector<Resource>& items, const QString& name){
     try{
+        if ( name.indexOf("ilwis://") == 0)
+            return;
+        kernel()->issues()->log(TR("Calculating latlon envelopes ") + name, IssueObject::itMessage);
         kernel()->issues()->silent(true);
-
 
         UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
         QString message = QString("calculating latlon envelopes in %1").arg(name);
