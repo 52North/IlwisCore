@@ -182,7 +182,7 @@ bool DataFormat::setFormatInfo(const QString& path, const QString connector) {
                         for(QString tp : parts)
                             exttypes |= IlwisObject::name2Type(tp);
 
-                        QString parms = QString("'%1','%2','%3','%4','%5',%6,'%7','%8',%9,'%10'").arg(code,name,desc, ext,type).arg(ilwtype).arg(connector).arg(rw).arg(exttypes).arg(fileparts);
+                        QString parms = QString("'%1','%2','%3','%4','%5',%6,'%7','%8',%9,'%10'").arg(code.toLower(),name,desc, ext,type).arg(ilwtype).arg(connector).arg(rw).arg(exttypes).arg(fileparts);
                         QString stmt = QString("INSERT INTO dataformats VALUES(%1)").arg(parms);
                         bool ok = sqlPublic.exec(stmt);
                         if (!ok) {
