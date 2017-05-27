@@ -215,6 +215,8 @@ bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &optio
     std::vector<Resource> updateableItems;
     for(auto& item : items){
         IWorkflow wf;
+        //workflows can now be initialized as they may depend on workflows/objects found by different
+        // explorers. They are already in the mastercatalog but not yet fully initialized
         if(item.ilwisType() == itWORKFLOW ){
             if ( wf.prepare(item)){
                 wf->createMetadata();
@@ -228,15 +230,15 @@ bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &optio
     if ( updateableItems.size() > 0)
         mastercatalog()->updateItems(updateableItems);
 
-    if ( items.size() > 0){
+  //  if ( items.size() > 0){
         auto addedItems = mastercatalog()->addContainerContent(source().url().toString(), items);
         if ( addedItems.size() > 0){
-            CalcLatLon::calculatelatLonEnvelopes(addedItems, addedItems[0].container().url());
+            CalcLatLon::calculatelatLonEnvelopes(addedItems, addedItems[0].container(true).url());
             mastercatalog()->updateItems(addedItems);
         }
 
 
-    }
+  //  }
     return true;
 }
 
