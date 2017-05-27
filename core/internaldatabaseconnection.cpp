@@ -79,6 +79,6 @@ void InternalDatabaseConnection::bindValue(const QString &placeholder, const QVa
 
 bool InternalDatabaseConnection::isValid() const
 {
-       Locker<std::recursive_mutex> lock(_guard);
+     //  Locker<std::recursive_mutex> lock(_guard);
     return _connection.isValid();
 }
