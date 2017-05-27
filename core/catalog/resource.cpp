@@ -235,6 +235,8 @@ QString Resource::code() const
 
 void Resource::code(const QString &cde)
 {
+    if ( cde == code())
+        return;
     if ( cde.indexOf("code=") == 0){
         int index = cde.indexOf(":");
         if ( index > 0) {
@@ -249,6 +251,9 @@ void Resource::code(const QString &cde)
 
 void Resource::setDescription(const QString &desc)
 {
+    if ( _description == desc)
+        return;
+
     _description = desc;
     changed(true);
 }
@@ -319,12 +324,17 @@ bool Resource::hasProperty(const QString &prop) const
 
 void Resource::addProperty(const QString &key, const QVariant &value)
 {
+    if ( _properties[key.toLower()] == value)
+        return;
     changed(true);
     _properties[key.toLower()] = value;
 }
 
 void Resource::removeProperty(const QString &key)
 {
+    if ( _properties.find(key) == _properties.end())
+        return;
+
     changed(true);
     _properties.remove(key);
 }
@@ -338,6 +348,11 @@ QUrl Resource::url(bool asRaw) const
 
 void Resource::setUrl(const QUrl &url, bool asRaw, bool updateDatabase)
 {
+    if ( url == _normalizedUrl && asRaw == false)
+        return;
+    if ( url == _rawUrl && asRaw)
+        return;
+
     changed(true);
     if ( asRaw) {
         if ( url.scheme() == "ilwis"){
@@ -377,43 +392,53 @@ void Resource::setUrl(const QUrl &url, bool asRaw, bool updateDatabase)
         addContainer(QUrl("ilwis://operations"));
         return;
     }
-    QFileInfo inf(_normalizedUrl.toLocalFile());
-    if ( urlTxt != "file://" && urlTxt != "file:///") {
-        if ( !url.hasFragment()) {
-            if ( url.scheme() == "file" && inf.isAbsolute()){
-                if ( !isRoot(inf.absolutePath())){
-                    name(inf.fileName(), false, updateDatabase);
-                    if ( !inf.isRoot())
-                        addContainer(QUrl::fromLocalFile(inf.absolutePath()),asRaw);
-                    else
-                        addContainer(QUrl("file:///"),asRaw);
+    if ( hasType(ilwisType(), itWORKFLOW) && !asRaw && url.scheme() == "file"){ // case of setting the path of a workflow; must ofc be normalized to operations catalog
+        int index = url.toString().lastIndexOf("/");
+        QString sname = url.toString().mid(index + 1);
+        name(sname, false, updateDatabase);
+        QString scode = sname + "_" + QString::number(id());
+        code(scode);
+        addContainer(QUrl("ilwis://operations"));
+        _normalizedUrl = "ilwis://operations/" + sname;
+    }else {
+        QFileInfo inf(_normalizedUrl.toLocalFile());
+        if ( urlTxt != "file://" && urlTxt != "file:///") {
+            if ( !url.hasFragment()) {
+                if ( url.scheme() == "file" && inf.isAbsolute()){
+                    if ( !isRoot(inf.absolutePath())){
+                        name(inf.fileName(), false, updateDatabase);
+                        if ( !inf.isRoot())
+                            addContainer(QUrl::fromLocalFile(inf.absolutePath()),asRaw);
+                        else
+                            addContainer(QUrl("file:///"),asRaw);
+                    }
+                } else {
+                    QString path = url.toString(QUrl::RemoveQuery | QUrl::RemoveFragment);
+                    int index = -1;
+                    if ( asRaw && url.scheme() == "http"){
+                        index = path.indexOf("?");
+                    }else
+                        index = path.lastIndexOf("/");
+                    addContainer(path.left(index),asRaw);
+                    name(path.mid(index + 1),false, updateDatabase);
                 }
             } else {
-                QString path = url.toString(QUrl::RemoveQuery | QUrl::RemoveFragment);
-                int index = -1;
-                if ( asRaw && url.scheme() == "http"){
-                    index = path.indexOf("?");
-                }else
-                    index = path.lastIndexOf("/");
-                addContainer(path.left(index),asRaw);
-                name(path.mid(index + 1),false, updateDatabase);
-            }
-        } else {
-            QString fragment = url.fragment();
-            QString fpath = fragment.split("=").back();
-            bool ok;
-            int index = fpath.toInt(&ok);
-            if ( ok) { //TODO: other cases than indexes; no example yet so postponed till there is one
-                QString rname = QString("%1_%2").arg(inf.fileName()).arg(index);
-                name(rname, false, updateDatabase);
-                addContainer(QUrl(url.toString(QUrl::RemoveFragment)), asRaw);
+                QString fragment = url.fragment();
+                QString fpath = fragment.split("=").back();
+                bool ok;
+                int index = fpath.toInt(&ok);
+                if ( ok) { //TODO: other cases than indexes; no example yet so postponed till there is one
+                    QString rname = QString("%1_%2").arg(inf.fileName()).arg(index);
+                    name(rname, false, updateDatabase);
+                    addContainer(QUrl(url.toString(QUrl::RemoveFragment)), asRaw);
+                }
+
             }
 
         }
-
+        else
+            name("root", false,updateDatabase);
     }
-    else
-        name("root", false,updateDatabase);
 }
 
 QUrlQuery Resource::urlQuery() const
@@ -441,6 +466,9 @@ quint64 Resource::size() const
 
 void Resource::size(quint64 objectsz)
 {
+    if ( _size == objectsz)
+        return;
+
     changed(true);
     _size = objectsz;
 }
@@ -452,12 +480,19 @@ QString Resource::dimensions() const
 
 void Resource::dimensions(const QString &dim)
 {
+    if ( dim == _dimensions)
+        return;
    changed(true);
     _dimensions = dim;
 }
 
 void Resource::addContainer(const QUrl& url, bool asRaw) {
-    changed(true);
+
+    if ( url == _container && asRaw == false)
+        return;
+    if ( url == _rawContainer && asRaw)
+        return;
+
     if ( asRaw ){
         if ( url != INTERNAL_CATALOG_URL)
             _rawContainer = url;
@@ -504,6 +539,8 @@ IlwisTypes Resource::extendedType() const
 
 void Resource::setIlwisType(IlwisTypes tp)
 {
+    if ( tp == _ilwtype)
+        return;
     changed(true);
     if ( (tp & itILWISOBJECT) != 0 || tp == itCATALOG)
         _ilwtype = tp;
@@ -513,6 +550,9 @@ void Resource::setIlwisType(IlwisTypes tp)
 
 void Resource::setExtendedType(IlwisTypes tp)
 {
+    if ( _extendedType == tp)
+        return;
+
     changed(true);
     _extendedType = tp;
 }
@@ -832,9 +872,10 @@ double Resource::modifiedTime() const
 void Resource::modifiedTime(const double &tme, bool force)
 {
     if(context()->initializationFinished() || force){
-        _changed = true;
+        if (!force) // if we force the modified time we get it from probably the disk info; this doesnt make the object changed as its part of its data on disk
+            _changed = true;
         if ( _modifiedTime != rUNDEF ){
-            return; // hmpff. we can only solve this in other debugger; current debugger mingw crashes if I start in debug mode
+            return;
             //qDebug() << "modifying" << url().toString() << ilwisType();
         }
         _modifiedTime = tme;
@@ -848,6 +889,9 @@ double Resource::createTime() const
 
 void Resource::createTime(const double &time)
 {
+    if ( _createTime == time)
+        return;
+
     changed(true);
     _createTime = time;
 }
