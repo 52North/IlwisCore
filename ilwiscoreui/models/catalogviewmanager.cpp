@@ -29,7 +29,7 @@ CatalogViewManager::CatalogViewManager(QObject *parent) : QObject(parent)
 
 void CatalogViewManager::updateCatalogViews(const UrlSet &containers)
 {
-
+    Locker<std::mutex> lock(_lock);
     int typesNeeded = 0;
     for(auto url : containers){
         QString location = url.toString();
@@ -41,7 +41,6 @@ void CatalogViewManager::updateCatalogViews(const UrlSet &containers)
             typesNeeded |= CatalogModel::ctDATA;
         }
     }
-    Locker<std::mutex> lock(_lock);
     for(auto& catalogViewItem : _catalogViews){
         int types = catalogViewItem.first->catalogType();
         int select = CatalogModel::ctBOOKMARK|CatalogModel::ctFIXED;
@@ -83,3 +82,5 @@ void CatalogViewManager::unRegisterCatalogModel(CatalogModel *model)
     if ( iter != _catalogViews.end())
         _catalogViews.erase(iter);
 }
+
+
