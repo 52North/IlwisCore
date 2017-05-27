@@ -10,7 +10,7 @@ import "../../../../qml/Global.js" as Global
 Rectangle {
     width : defaultWidth(styleData.column)
     height : 20
-    color : styleData.selected ? Global.selectedColor :  (((styleData.row % 10) > 4)? Global.darkgreen: Global.middlegreen )
+    color : styleData.selected ? Global.selectedColor :  (((styleData.row % 10) > 4)? uicontext.darkColor: uicontext.middleColor )
     Text {
         text: styleData.value
         anchors.verticalCenter: parent.verticalCenter
