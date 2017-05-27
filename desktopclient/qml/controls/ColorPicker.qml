@@ -80,7 +80,7 @@ Rectangle {
         radius:4;
         anchors.top: chosenItem.bottom;
         anchors.margins: 1;
-        color: Global.alternatecolor2
+        color: uicontext.workbenchBGColor
         border.width: 1
         border.color: "#B0B0B0"
 

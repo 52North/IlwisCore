@@ -16,7 +16,7 @@ Rectangle {
 
     id : container
     anchors.fill : parent
-         color : Global.formBackGround
+         color : uicontext.lightestColor
     Loader {
         id : dataTab
         anchors.fill: parent

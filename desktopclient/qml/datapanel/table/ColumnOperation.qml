@@ -34,7 +34,7 @@ Item {
         id : operationLabel
         width : parent.width - 2
         height : 18
-        color : Global.palegreen
+        color : uicontext.paleColor
         Text {
             text : qsTr("Operation")
             width : parent.width
@@ -50,7 +50,7 @@ Item {
 
     Rectangle {
         id : operationColumn1
-        color : Global.alternatecolor2
+        color : uicontext.workbenchBGColor
         border.color: "lightgrey"
         border.width: 1
         anchors.right: parent.right
@@ -90,7 +90,7 @@ Item {
 
     Rectangle {
         id : operationColumn2
-        color : Global.alternatecolor2
+        color : uicontext.workbenchBGColor
         border.color: "lightgrey"
         border.width: 1
         anchors.right: parent.right

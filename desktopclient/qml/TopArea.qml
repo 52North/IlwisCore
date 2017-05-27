@@ -27,7 +27,7 @@ Item {
             id : aArea
             width : parent.width
             height : parent.height - 6
-            color : Global.darkestgreen
+            color : uicontext.darkestColor
             Image {
                 width : 54
                 anchors.verticalCenter: parent.verticalCenter
@@ -42,7 +42,7 @@ Item {
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right : parent.right
-                anchors.rightMargin: 6 * Global.uiScale
+                anchors.rightMargin: 6
                 spacing: 4
                 opacity : 0.26
                 Controls.FlatButton{
@@ -144,7 +144,7 @@ Item {
                 height : parent.height
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right : parent.right
-                anchors.rightMargin: 6 * Global.uiScale
+                anchors.rightMargin: 6
                 anchors.fill: parent
                 hoverEnabled: true
                 onEntered: {

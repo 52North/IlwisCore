@@ -6,9 +6,9 @@ import "../Global.js" as Global
 import "../controls" as Controls
 
 TabViewStyle {
-    property string selectColor : Global.palegreen
+    property string selectColor : uicontext.paleColor
     property string nonselectColor : "#e6e6e6"
-    property int tabHeight : 54 * Global.uiScale
+    property int tabHeight : 54
 
 
     frameOverlap: 1
@@ -41,8 +41,8 @@ TabViewStyle {
             horizontalAlignment:Text.AlignHCenter
 
             text: styleData.title
-            color: styleData.selected ? Global.darkestgreen : "grey"
-            font.pointSize: 9 * Global.uiScale
+            color: styleData.selected ? uicontext.darkestColor : "grey"
+            font.pointSize: 9
             font.weight: Font.DemiBold
         }
 

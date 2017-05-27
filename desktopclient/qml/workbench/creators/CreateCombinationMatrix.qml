@@ -372,7 +372,7 @@ Controls.DropableItem{
                 height : 20
                 border.width: 1
                 border.color: Global.edgecolor
-                color : index < xvalues.length + 1 ? Global.lightgreen :( index % (xvalues.length + 1) == 0 ? Global.palegreen :  "white")
+                color : index < xvalues.length + 1 ? uicontext.lightColor :( index % (xvalues.length + 1) == 0 ? uicontext.paleColor :  "white")
                 Text{
                     x: 2
                     y : 2

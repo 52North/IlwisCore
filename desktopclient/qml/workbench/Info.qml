@@ -30,7 +30,7 @@ WorkBenchShifter {
             title : qsTr("About")
             Rectangle {
                 anchors.fill: parent
-                color :  Global.lightestgreen
+                color :  uicontext.lightestColor
 
                 Column {
                     anchors.fill: parent

@@ -12,7 +12,7 @@ Rectangle {
     id : catalogProps
     property CatalogModel catalogmd
     anchors.fill: parent
-    color : Global.formBackGround
+    color : uicontext.lightestColor
 
     Button{
         id : scanButton

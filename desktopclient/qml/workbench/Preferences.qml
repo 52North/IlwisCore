@@ -37,6 +37,23 @@ WorkBenchShifter {
                 id : locs
             }
         }
+
+
+        Column{
+            width : parent.width
+            height : childrenRect.height
+
+            Preferences.PreferencesButton{
+                imageSource : "../images/visualizationCS1.png"
+                labelText : qsTr("User Interface")
+                connectedItem: displayOptions
+
+
+            }
+            Preferences.DisplayOptions{
+                id : displayOptions
+            }
+        }
         Preferences.PreferencesButton{
             imageSource : "../images/mapview.png"
             labelText : qsTr("Map view")

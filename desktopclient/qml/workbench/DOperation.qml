@@ -15,7 +15,7 @@ Item{
 
     Rectangle {
         anchors.fill: parent
-        color: operationsList.currentIndex === index ? Global.selectedColor : index  % 2 == 0 ? Global.lightestgreen: "white"
+        color: operationsList.currentIndex === index ? Global.selectedColor : index  % 2 == 0 ? uicontext.lightestColor: "white"
         Column {
             id : operationName
             height : parent.height

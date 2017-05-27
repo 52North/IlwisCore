@@ -10,7 +10,7 @@ Rectangle {
             csyProps.storeData()
         }
     }
-    color : Global.formBackGround
+    color : uicontext.lightestColor
     CoordinateSystemProperties{
         id : csyProps
     }

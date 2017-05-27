@@ -19,7 +19,7 @@ Rectangle {
         var iconP = "../../images/" + name
         return iconP
     }
-    color : propertyForm.editable ? "#DCDCDC" : Global.altFormBackGround
+    color : propertyForm.editable ? "#DCDCDC" : uicontext.lightestColor
 
     function storeData() {
         if ( editable){
@@ -70,7 +70,7 @@ Rectangle {
         id : header
         width : parent.width
         height : 24
-        color : Global.darkgreen
+        color : uicontext.darkColor
         Image {
             id : typeico
             source : iconsource(iconPath)

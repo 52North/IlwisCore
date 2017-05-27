@@ -65,7 +65,7 @@ WorkBenchShifter {
     
     NavigatorTopButtonBar{
         id : buttonBar
-        height : 50 * Global.uiScale
+        height : 50
         anchors.top : functionBarHeader.bottom
         anchors.topMargin: 3
         width : functionBarHeader.width

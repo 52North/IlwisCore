@@ -89,7 +89,7 @@ Rectangle {
         id : drivelist
         anchors.top :folderlist.top
         width: parent.width
-        height : 20 * Global.uiScale
+        height : 20
         model: mastercatalog.driveList()
         Layout.fillWidth: true
         onActivated: {
@@ -104,14 +104,14 @@ Rectangle {
     Rectangle {
         id : pathView
         width: parent.width
-        height : 20 * Global.uiScale
+        height : 20
         anchors.top : drivelist.bottom
         anchors.topMargin: 1
         color : Global.mainbackgroundcolor
         ComboBox {
             id : pathText
             width : parent.width - 26
-            height : 18 * Global.uiScale
+            height : 18
             editable: true
             model: pathModel
             anchors.verticalCenter: parent.verticalCenter
@@ -131,8 +131,8 @@ Rectangle {
             }
         }
         Button {
-            width : 20 * Global.uiScale
-            height : 18 * Global.uiScale
+            width : 20
+            height : 18
             anchors.right: parent.right
             anchors.rightMargin: 4
             anchors.verticalCenter: parent.verticalCenter
@@ -186,7 +186,7 @@ Rectangle {
 
                 Rectangle{
                     anchors.fill: parent
-                    color :  fileFolders.currentIndex == index ? Global.alternatecolor1 : Global.alternatecolor2
+                    color :  fileFolders.currentIndex == index ? Global.alternatecolor1 : uicontext.workbenchBGColor
                     Image{ x : 2;y:3; id : folderico; source : "../images/data_folder.png"}
                     Text { id: filename; text: fileName; anchors.left : folderico.right; anchors.leftMargin: 5;anchors.verticalCenter: parent.verticalCenter }
                 }

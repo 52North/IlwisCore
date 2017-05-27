@@ -7,12 +7,12 @@ import "controls" as Controls
 
 TabViewStyle {
     property color backgroundColor: "white"
-    property int tabHeight : 22 * Global.uiScale
+    property int tabHeight : 22
 
     frameOverlap: 1
     tab: Rectangle {
         id : labelArea
-        implicitWidth: Global.uiScale *control.width / control.count
+        implicitWidth: control.width / control.count
         implicitHeight: tabHeight
         BorderImage {
             id: name
@@ -27,7 +27,7 @@ TabViewStyle {
                 anchors.centerIn: parent
                 text: styleData.title
                 color: styleData.selected ? "#003366" : "#a3a3c2"
-                font.pointSize: 10 * Global.uiScale
+                font.pointSize: 10
                 font.weight: Font.DemiBold
             }
 

@@ -11,7 +11,7 @@ import "../../Global.js" as Global
 Rectangle {
     id : operationProps
     property OperationModel operationmd
-    color : Global.formBackGround
+    color : uicontext.lightestColor
     Column {
         id : simpleProps
         width : parent.width

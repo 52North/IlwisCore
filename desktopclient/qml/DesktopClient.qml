@@ -11,6 +11,7 @@ import MessageModel 1.0
 import ResourceModel 1.0
 import MasterCatalogModel 1.0
 import QtGraphicalEffects 1.0
+import PreferencesModel 1.0
 import "Global.js" as Global
 import "controls" as Controls
 
@@ -18,7 +19,7 @@ ApplicationWindow {
     id : bigthing
     width: Screen.width * 0.8
     height : Screen.height * 0.9
-    color : Global.lightgreen
+    color : uicontext.lightColor
     objectName: "mainwindow__mainui"
 
     onClosing: {
@@ -26,9 +27,10 @@ ApplicationWindow {
         rootwindow.close()
     }
 
-    property int maxPull : 500* Global.uiScale
-    property int defaultFunctionBarWidth : Math.min(bigthing.width * 0.25 * Global.uiScale,390 * Global.uiScale)
+    property int maxPull : 500
+    property int defaultFunctionBarWidth : Math.min(bigthing.width * 0.25,390)
     property int activeCatalog: 0
+    property double uiScale : preferences.uiScale
 
     function newCatalog(filter, outputtype, url, side){
 
@@ -52,9 +54,12 @@ ApplicationWindow {
 
     Column {
         id : root
-        height : parent.height
-        width : parent.width
+        height : parent.height/uiScale
+        width : parent.width/uiScale
         property int defaultCommLineHeight : 60
+
+        scale : uiScale
+        transformOrigin:Item.TopLeft
 
         Item {
             id : topArea
@@ -68,7 +73,7 @@ ApplicationWindow {
                 anchors.top : parent.top
                 width : xu1.width + 1
                 height : 100
-                color : Global.palegreen
+                color : uicontext.paleColor
                 border.width: 1
                 border.color : "#b3b3b3"
             }
@@ -83,10 +88,10 @@ ApplicationWindow {
                 Rectangle{
                     id : dummy
                     height : 100
-                    width : 70 * Global.uiScale
+                    width : 70
                     anchors.left: parent.left
                     anchors.top : parent.top
-                    color : Global.middlegreen
+                    color : uicontext.middleColor
                 }
             }
             DropShadow {

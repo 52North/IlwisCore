@@ -85,14 +85,14 @@ Item {
             id : layerContainer
             width : 180
             height : parent.height
-            color : Global.alternatecolor2
+            color : uicontext.workbenchBGColor
             border.color: "lightgrey"
             border.width: 1
             Rectangle {
                 id : layersLabel
                 width : 180
                 height : 18
-                color : Global.palegreen
+                color : uicontext.paleColor
                 Text{
                     text : qsTr("Layers")
                     font.bold : true
@@ -127,7 +127,7 @@ Item {
                 height : 18
                 anchors.left: mdspatialinfo.right
                 anchors.top : parent.top
-                color : Global.palegreen
+                color : uicontext.paleColor
                 Text{
                     text : qsTr("Overview")
                     font.bold : true

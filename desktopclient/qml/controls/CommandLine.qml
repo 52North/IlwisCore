@@ -8,7 +8,7 @@ import UIContextModel 1.0
 
 Rectangle {
     id : commLine;
-    color : Global.darkgreen
+    color : uicontext.darkColor
     objectName : "mainwindow__commandline"
     z : 3
     property string arrowtype : "arrowdown.png"
@@ -24,7 +24,7 @@ Rectangle {
         anchors.leftMargin: 5
         width : parent.width - titleArrow.height - 10
         height : parent.height
-        color : Global.darkestgreen
+        color : uicontext.darkestColor
 
         SplitView {
             id : editparts
@@ -43,7 +43,7 @@ Rectangle {
                     width : parent.width
                     readOnly: true
                     style: TextAreaStyle {
-                         backgroundColor: Global.lightestgreen
+                         backgroundColor: uicontext.lightestColor
                      }
                 }
                 TextArea {
@@ -82,7 +82,7 @@ Rectangle {
                 readOnly: true
                 font.pointSize:11
                 style: TextAreaStyle {
-                     backgroundColor: Global.lightestgreen
+                     backgroundColor: uicontext.lightestColor
                  }
 
             }

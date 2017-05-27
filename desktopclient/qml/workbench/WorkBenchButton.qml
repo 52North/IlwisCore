@@ -45,7 +45,7 @@ ToolButton{
         horizontalAlignment: Text.AlignHCenter
         visible : true
         font.weight: Font.DemiBold
-        font.pointSize: 9 * Global.uiScale
+        font.pointSize: 9
         color : "white"
         opacity : button.height > 70 ? 1 : 0
    }
@@ -53,7 +53,7 @@ ToolButton{
     style : ButtonStyle{
         background: Rectangle {
             anchors.fill: parent
-            color : ((control.pressed || (checked & checkable)) ? Global.darkgreen : Global.middlegreen)
+            color : ((control.pressed || (checked & checkable)) ? uicontext.darkColor : uicontext.middleColor)
         }
     }
     states: [

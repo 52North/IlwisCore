@@ -20,9 +20,9 @@ Rectangle {
     width : 39
     height : 39
     radius : 30
-    color : workflow.isValidNode(itemid,"") ? Global.lightgreen : Global.errorColor
+    color : workflow.isValidNode(itemid,"") ? uicontext.lightColor : Global.errorColor
     border.width: 1
-    border.color: Global.darkgreen
+    border.color: uicontext.darkColor
 
 
     onXChanged: {
@@ -90,7 +90,7 @@ Rectangle {
     }
 
     function resetColors(){
-        color = workflow.isValidNode(itemid,"") ? Global.lightgreen : Global.errorColor
+        color = workflow.isValidNode(itemid,"") ? uicontext.lightColor : Global.errorColor
     }
 
     function resetInputModel() {

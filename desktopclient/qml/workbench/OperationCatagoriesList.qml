@@ -26,7 +26,7 @@ Item {
             headerHeight: 20
             panelHeight: 35 * operationCount
             state : "collapsed"
-            headerColor: Math.floor(index/5) % 2 == 0 ? Global.lightestgreen: "white"
+            headerColor: Math.floor(index/5) % 2 == 0 ? uicontext.lightestColor: "white"
 
 
             OperationList{

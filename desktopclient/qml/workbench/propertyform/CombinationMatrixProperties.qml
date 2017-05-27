@@ -12,7 +12,7 @@ Rectangle {
 
         }
     }
-    color : Global.formBackGround
+    color : uicontext.lightestColor
 
     Column {
         id : texts
@@ -42,7 +42,7 @@ Rectangle {
             height : 20
             border.width: 1
             border.color: Global.edgecolor
-            color : index == 0 ? Global.lightgreen :  "white"
+            color : index == 0 ? uicontext.lightColor :  "white"
             Text{
                 x: 2
                 y : 2

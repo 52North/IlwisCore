@@ -115,7 +115,7 @@ WorkBenchShifter {
                         }
                         rowDelegate: Rectangle {
                             height : 30
-                            color : styleData.selected ? Global.selectedColor : (styleData.alternate? Global.lightestgreen: "white")
+                            color : styleData.selected ? Global.selectedColor : (styleData.alternate? uicontext.lightestColor: "white")
 
                         }
                     }
@@ -187,7 +187,7 @@ WorkBenchShifter {
                     }
                     rowDelegate: Rectangle {
                         height : 30
-                        color : styleData.selected ? Global.selectedColor : (styleData.alternate? Global.lightestgreen: "white")
+                        color : styleData.selected ? Global.selectedColor : (styleData.alternate? uicontext.lightestColor: "white")
 
                     }
                 }

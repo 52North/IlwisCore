@@ -39,7 +39,7 @@ Rectangle {
         id : header
         width : leftContainer.width
         height : 18
-        color : Global.palegreen
+        color : uicontext.paleColor
         Text{
             text : qsTr("Actions on Selected objects")
             font.bold: true
@@ -50,30 +50,30 @@ Rectangle {
 
     Rectangle {
         id : leftContainer
-        width : 260 * Global.uiScale
+        width : 260
         height : parent.height - header.height
         anchors.top : header.bottom
-        y : 4 * Global.uiScale
+        y : 4
         border.width: 1
         border.color : Global.edgecolor
-        color :   Global.formBackGround
+        color :   uicontext.lightestColor
 
 
         Column {
-            y: 5 * Global.uiScale
-            x : 5 * Global.uiScale
+            y: 5
+            x : 5
             id : buttonRow
             width : parent.width
-            height : parent.height - 5 * Global.uiScale
+            height : parent.height - 5
             spacing : 4
 
-            property int buttonWidth : 220 * Global.uiScale
+            property int buttonWidth : 220
 
             Controls.WideButton{
                 image : "../images/openmult20.png"
                 label : qsTr("Open selected coverages\nin seperate panels")
                 width : buttonRow.buttonWidth
-                height : 40* Global.uiScale
+                height : 40
                 onClicked: {
                     var ids = mastercatalog.selectedIds()
                     var idlist = ids.split("|")
@@ -87,7 +87,7 @@ Rectangle {
                 image : "../images/opensingle20.png"
                 label : qsTr("Open selected coverages\nin new panel")
                 width : buttonRow.buttonWidth
-                height : 40 * Global.uiScale
+                height : 40
                 onClicked: {
                     var ids = mastercatalog.selectedIds()
                     showObject(ids);
@@ -97,7 +97,7 @@ Rectangle {
                 image : "../images/openfloat20.png"
                 label : qsTr("Open selected coverages\nin floating panels")
                 width : buttonRow.buttonWidth
-                height : 40* Global.uiScale
+                height : 40
                 onClicked: {
                     var objectids = mastercatalog.selectedIds()
                     var qml = "import QtQuick 2.1; import QtQuick.Window 2.1;import \"..\" as FW;"
@@ -129,7 +129,7 @@ Rectangle {
                 id : keyChanges
                 title : qsTr("Keywords Selected Objects")
                 height : Global.rowHeight * 4
-                width : 220* Global.uiScale
+                width : 220
                 function changeKeywords(text){
                     if (text !== "")     {
                         var list = mastercatalog.selectedData
@@ -144,14 +144,14 @@ Rectangle {
 
                 Column {
                     anchors.fill: parent
-                    anchors.margins: 3* Global.uiScale
-                    spacing : 2* Global.uiScale
+                    anchors.margins: 3
+                    spacing : 2
                     Row {
                         height : Global.rowHeight
-                        width : buttonRow.buttonWidth - 20* Global.uiScale
+                        width : buttonRow.buttonWidth - 20
                         TextField{
                             id : keywords
-                            width :parent.width - 50* Global.uiScale
+                            width :parent.width - 50
                             height : parent.height
 
                             Controls.ToolTip{
@@ -161,7 +161,7 @@ Rectangle {
                         }
                         Button {
                             height : parent.height
-                            width : 50* Global.uiScale
+                            width : 50
                             text : qsTr("Add")
                             onClicked:{
                                 keyChanges.changeKeywords(keywords.text)
@@ -170,10 +170,10 @@ Rectangle {
                     }
                     Row {
                         height : Global.rowHeight
-                        width : buttonRow.buttonWidth - 20* Global.uiScale
+                        width : buttonRow.buttonWidth - 20
                         TextField{
                             id : rem
-                            width :parent.width - 50* Global.uiScale
+                            width :parent.width - 50
                             height : parent.height
 
                             Controls.ToolTip{
@@ -183,7 +183,7 @@ Rectangle {
                         }
                         Button {
                             height : parent.height
-                            width : 50* Global.uiScale
+                            width : 50
                             text : qsTr("Remove")
                             onClicked:{
                                 if (rem.text == "")
@@ -224,16 +224,16 @@ Rectangle {
     }
     Column {
         id : previews
-        width : 240* Global.uiScale
+        width : 240
         anchors.left: leftContainer.right
         anchors.leftMargin: 3
         height : parent.height - 5
-        spacing : 6* Global.uiScale
+        spacing : 6
         Rectangle {
             id : header2
             width : previews.width
             height : 18
-            color : Global.palegreen
+            color : uicontext.paleColor
             Text{
                 text : qsTr("Previews")
                 font.bold: true
@@ -246,8 +246,8 @@ Rectangle {
             image : "../images/mapview.png"
             label : qsTr("Generate thumbs\nof selected coverages")
             width : parent.width - 3
-            height : 40* Global.uiScale
-            x : 8* Global.uiScale
+            height : 40
+            x : 8
             onClicked: {
 
                 frame.makeResourceList()
@@ -299,7 +299,7 @@ Rectangle {
             anchors.leftMargin: 10
             anchors.right: parent.right
             anchors.rightMargin: 10
-            height : 150* Global.uiScale
+            height : 150
             border .width: 1
             border.color: "lightgrey"
 
@@ -310,7 +310,7 @@ Rectangle {
             ProgressBar{
                 id : progress
                 height : frame.height
-                width : 15* Global.uiScale
+                width : 15
                 anchors.left: frame.right
                 anchors.top : frame.top
                 orientation: Qt.Vertical

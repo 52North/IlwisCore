@@ -136,7 +136,7 @@ Item {
         id : infobar
         width : parent.width
         height : 20
-        color : "white"
+        color : uicontext.genericBGColor
         Text {
             width : parent.width
             height : 16
@@ -154,7 +154,7 @@ Item {
         anchors.top : infobar.bottom
         id : catalogSplit
 
-        property color backgroundCatalogColor : (tabmodel && tabmodel.side == "right" ? "#F5FAFF" : "white")
+        property color backgroundCatalogColor : (tabmodel && tabmodel.side == "right" ? uicontext.workbenchBGColor : uicontext.genericBGColor)
 
         CatalogViews {
             id : catalogView

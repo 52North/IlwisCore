@@ -14,8 +14,8 @@ TabViewStyle {
     signal fullSize()
 
     property string selectColor : "white"
-    property string nonselectColor : Global.palegreen
-    property int tabHeight : 35 * Global.uiScale
+    property string nonselectColor : uicontext.paleColor
+    property int tabHeight : 35
 
     tab: BorderImage {
         id: name
@@ -37,11 +37,11 @@ TabViewStyle {
                 width : parent.width - 10
                 anchors.bottom: parent.bottom
                 x : 8
-                height : 35 * Global.uiScale
+                height : 35
 
                 Text {
                     width : parent.width - 25
-                    height : 20 * Global.uiScale
+                    height : 20
                     text: tabmodel ? tabmodel.displayName : "?"
                     color: tabmodel && tabmodel.selected ? "black" : "#403F3F"
                     elide: Text.ElideMiddle
@@ -53,10 +53,10 @@ TabViewStyle {
 
                 Text {
                     width : 20
-                    height : 14 * Global.uiScale
+                    height : 14
                     text: tabmodel ? "[" + tabmodel.id + "]": "?"
                     color: tabmodel && tabmodel.selected ? "black" : "#403F3F"
-                    font.pointSize: 8 * Global.uiScale
+                    font.pointSize: 8
                     anchors.bottom: parent.bottom
                     anchors.bottomMargin: 8
                 }
@@ -131,7 +131,7 @@ TabViewStyle {
             y : 6
             anchors.right : parent.right
             anchors.rightMargin: 6
-            width : 18 * Global.uiScale
+            width : 18
             height : width
             opacity : datapanesplit.totalTabCount() > 1 ? 0.5 : 0
             onClicked: {
@@ -154,7 +154,7 @@ TabViewStyle {
             y : 6
             anchors.right : closeButton.left
             anchors.rightMargin: 4
-            width : 18 * Global.uiScale
+            width : 18
             height : width
             opacity : canSeparate(index) ? 0.7 : 0;
             enabled : canSeparate(index)

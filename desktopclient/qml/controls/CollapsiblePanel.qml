@@ -6,7 +6,7 @@ Rectangle {
     id: contextPanel
     property int panelHeight
     property color backgroundColor : Global.mainbackgroundcolor
-    property color headerColor : Global.alternatecolor2
+    property color headerColor : uicontext.workbenchBGColor
     property int headerHeight : 24
     property alias titleText: titleTxt.text
     property var expandableArea : internealArea

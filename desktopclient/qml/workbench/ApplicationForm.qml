@@ -62,7 +62,7 @@ Rectangle {
             width: parent.width
             height : formTitle != "" && showTitle ? 25 : 0
             opacity : formTitle != "" && showTitle ? 1 : 0
-            color : Global.palegreen
+            color : uicontext.paleColor
             smooth : true
             Text  {
                 text : formTitle

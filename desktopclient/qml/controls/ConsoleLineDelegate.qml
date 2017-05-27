@@ -9,7 +9,7 @@ Rectangle {
     id : lineDelegate
     width: parent.width
     height: 25
-    color : Global.darkestgreen
+    color : uicontext.darkestColor
     property string consoletext : content
     property string line : lineNumber
     property int listindex : index
@@ -29,7 +29,7 @@ Rectangle {
         spacing : 5
         Rectangle{
             id : linenum
-            color : Global.darkestgreen
+            color : uicontext.darkestColor
             height : parent.height
             width : 30
             Text {
@@ -54,7 +54,7 @@ Rectangle {
                  background: Rectangle {
                     width : inputField.width
                     height : inputField.height
-                    color : Global.alternatecolor2
+                    color : uicontext.workbenchBGColor
                     border.width: 1
                     border.color: asMainEdit ? "grey" : "#eeeeee"
                  }

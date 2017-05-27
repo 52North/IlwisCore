@@ -24,9 +24,9 @@ Item {
         height: parent.height
         Rectangle {
             id : aArea
-            width : 80 * Global.uiScale
+            width : 80
             height : textArea.height
-            color : Global.darkestgreen
+            color : uicontext.darkestColor
             Image {
                 x : 4
                 y : 4

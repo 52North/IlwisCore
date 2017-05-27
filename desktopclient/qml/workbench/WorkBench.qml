@@ -59,7 +59,7 @@ Rectangle {
     }
 
     width : defaultFunctionBarWidth
-    color :  Global.alternatecolor2
+    color :  uicontext.workbenchBGColor
 
     Navigator{ id : navigator}
     Tranquilizers{ id : tranquilizers}

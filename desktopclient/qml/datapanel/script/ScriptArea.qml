@@ -109,7 +109,7 @@ Item {
                 width : parent.width - tabheader2.width
                 readOnly: true
                 style: TextAreaStyle {
-                    backgroundColor: Global.lightestgreen
+                    backgroundColor: uicontext.lightestColor
                 }
             }
         }
@@ -129,7 +129,7 @@ Item {
                 width : parent.width - tabheader2.width
                 font.pointSize:11
                 style: TextAreaStyle {
-                    backgroundColor: Global.lightestgreen
+                    backgroundColor: uicontext.lightestColor
                 }
             }
         }

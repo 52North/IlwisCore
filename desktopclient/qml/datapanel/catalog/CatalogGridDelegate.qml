@@ -13,8 +13,8 @@ import "../../controls" as Controls
 
 Item {
     id: iconDelegate
-    x: 2 * Global.uiScale
-    y : 3 * Global.uiScale
+    x: 2
+    y : 3
     width :  GridView.view.cellWidth
     height :  GridView.view.cellHeight
 
@@ -33,19 +33,19 @@ Item {
 
     Row {
         anchors.fill: parent
-        spacing : 6 * Global.uiScale
+        spacing : 6
         Image{
             id : imageBase
             x : 0
             y : 0
-            width : 21 * Global.uiScale; height : 21 * Global.uiScale
+            width : 21; height : 21
             source : iconSource(iconPath)
             fillMode: Image.PreserveAspectFit
         }
 
         Rectangle{
 
-            width : 130 * Global.uiScale
+            width : 130
             height : iconDelegate.height
             color : isSelected ? Global.selectedColor : "transparent"
             anchors.verticalCenter: imageBase.verticalCenter
@@ -64,12 +64,12 @@ Item {
                 elide: Text.ElideMiddle
                 color: itemgrid.currentIndex === index ? "blue": "black"
                 width : parent.width
-                height : parent.height * Global.uiScale * 8.5/9.0
+                height : parent.height * 8.5/9.0
 
                 anchors.verticalCenter: parent.verticalCenter
                 verticalAlignment: Text.AlignVCenter
 
-                font.pointSize: 8 * Global.uiScale
+                font.pointSize: 8
                // verticalAlignment: Text.AlignVCenter
 
             }

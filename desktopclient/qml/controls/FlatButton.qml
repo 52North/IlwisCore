@@ -37,7 +37,7 @@ Button {
     style : ButtonStyle{
         background: Rectangle {
             anchors.fill: parent
-            color : control.pressed ? Global.palegreen : Global.darkgreen
+            color : control.pressed ? uicontext.paleColor : uicontext.darkColor
         }
     }
 }

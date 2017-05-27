@@ -10,16 +10,16 @@ Button {
     property string label
     Image {
         id : icon
-        x : 4 + 4* Global.uiScale
-        height : 20 * Global.uiScale
+        x : 4 + 4
+        height : 20
         source : image
         anchors.verticalCenter: parent.verticalCenter
     }
     Text {
         anchors.left : icon.right
-        anchors.leftMargin: 6 * Global.uiScale
+        anchors.leftMargin: 6
         text : label
-        font.pointSize: 8 * Global.uiScale
+        font.pointSize: 8
         anchors.verticalCenter: parent.verticalCenter
     }
 

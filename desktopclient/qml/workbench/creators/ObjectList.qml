@@ -51,7 +51,7 @@ Item {
         anchors.topMargin: 3
         height : parent.height - label.height - 3
         width : parent.width
-        color : Global.alternatecolor2
+        color : uicontext.workbenchBGColor
         border.width: 1
         border.color: Global.edgecolor
         radius : 5

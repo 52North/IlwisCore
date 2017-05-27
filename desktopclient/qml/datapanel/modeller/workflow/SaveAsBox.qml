@@ -56,6 +56,7 @@ Controls.DropableItem {
                         }
                         var obj = mastercatalog.id2object(workflow.id,0)
                         obj.copy(url + "/" + newname.content,"workflow", "stream")
+                        operations.refreshAllOperationCatalogs()
                         obj.suicide()
                         dropContainer.state = "invisible"
                     }

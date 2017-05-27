@@ -89,7 +89,7 @@ Column {
                 id : catalogentry
                  height : 40 + catalogProperties.height
                 width : parent.width - 5
-                color: currentFolders.currentIndex === index ? "#99CCFF" : index  % 2 == 0 ? Global.lightestgreen: "white"
+                color: currentFolders.currentIndex === index ? "#99CCFF" : index  % 2 == 0 ? uicontext.lightestColor: "white"
                 focus : true
 
                 Controls.ToolTip{

@@ -9,7 +9,7 @@ import "../../controls" as Controls
 Rectangle {
     id : container
     anchors.fill : parent
-    color : Global.formBackGround
+    color : uicontext.lightestColor
 
     function storeData() {
         if ( propertyForm.editable){

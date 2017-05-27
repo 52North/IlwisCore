@@ -14,7 +14,7 @@ Column {
     Rectangle {
         width : parent.width
         height : parent.height - 20
-        color : Global.alternatecolor2
+        color : uicontext.workbenchBGColor
         border.width : 1
         border.color : Global.alternatecolor1
         DropArea {

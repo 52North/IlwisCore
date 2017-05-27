@@ -15,9 +15,9 @@ Item {
 
     Rectangle {
         id : header
-        width : 620 * Global.uiScale  -2
+        width : 620  -2
         height : 18
-        color : Global.palegreen
+        color : uicontext.paleColor
         x : 2
         Text{
             id :lbl1
@@ -47,19 +47,19 @@ Item {
 
     }
     Column {
-        width : 200 * Global.uiScale
+        width : 200
         height : parent.height - header.height
         anchors.top : header.bottom
         anchors.topMargin: 4
-        y: 5 * Global.uiScale
-        x : 5 * Global.uiScale
+        y: 5
+        x : 5
         id : buttonRow
         spacing : 8
         Controls.WideButton{
             image : "../images/rundelete.png"
             label : qsTr("Run")
             width : buttonRow.width
-            height : 40 * Global.uiScale
+            height : 40
 
             onClicked: {
                 scriptArea.runDelete()
@@ -73,7 +73,7 @@ Item {
             image : "../images/runkeep.png"
             label : qsTr("Run & Keep")
             width : buttonRow.width
-            height : 40 * Global.uiScale
+            height : 40
 
             onClicked: {
                 scriptArea.runKeep()
@@ -87,7 +87,7 @@ Item {
             image : "../images/runselected.png"
             label : qsTr("Run Selected")
             width : buttonRow.width
-            height : 40 * Global.uiScale
+            height : 40
 
             onClicked: {
                 scriptArea.runSelected()
@@ -99,14 +99,14 @@ Item {
         }
     }
     Column {
-        width : 200 * Global.uiScale
+        width : 200
         height : parent.height - header.height
         anchors.top : header.bottom
         anchors.topMargin: 4
         anchors.left: buttonRow.right
         anchors.leftMargin: 8
-        y: 5 * Global.uiScale
-        x : 5 * Global.uiScale
+        y: 5
+        x : 5
         id : buttonRow2
         spacing : 8
 
@@ -114,7 +114,7 @@ Item {
             image : "../images/deleteC.png"
             label : qsTr("Clear Console")
             width : buttonRow.width
-            height : 40 * Global.uiScale
+            height : 40
 
             onClicked: {
                 scriptArea.clear('c')
@@ -128,7 +128,7 @@ Item {
             image : "../images/deleteH.png"
             label : qsTr("Clear History")
             width : buttonRow.width
-            height : 40 * Global.uiScale
+            height : 40
 
             onClicked: {
                   scriptArea.clear('h')
@@ -142,7 +142,7 @@ Item {
             image : "../images/deleteO.png"
             label : qsTr("Clear Output")
             width : buttonRow.width
-            height : 40 * Global.uiScale
+            height : 40
 
             onClicked: {
                   scriptArea.clear('o')
@@ -154,14 +154,14 @@ Item {
         }
     }
     Column {
-        width : 200 * Global.uiScale
+        width : 200
         height : parent.height - header.height
         anchors.top : header.bottom
         anchors.topMargin: 4
         anchors.left: buttonRow2.right
         anchors.leftMargin: 8
-        y: 5 * Global.uiScale
-        x : 5 * Global.uiScale
+        y: 5
+        x : 5
         id : buttonRow3
         spacing : 8
 
@@ -169,7 +169,7 @@ Item {
             image : "../images/save.png"
             label : qsTr("Save")
             width : buttonRow.width
-            height : 40 * Global.uiScale
+            height : 40
             enabled : script && script.isDefaultConsole ? false : true
             opacity : enabled ? 1.0 : 0.5
 
@@ -188,7 +188,7 @@ Item {
             image : "../images/saveas.png"
             label : qsTr("Save as...")
             width : buttonRow.width
-            height : 40 * Global.uiScale
+            height : 40
 
             onClicked: {
                 var sname = newName.content

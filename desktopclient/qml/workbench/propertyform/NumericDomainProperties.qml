@@ -5,7 +5,7 @@ import QtQuick.Controls.Styles 1.0
 import "../../Global.js" as Global
 
 Rectangle {
-      color : Global.formBackGround
+      color : uicontext.lightestColor
     function storeData() {
         if ( propertyForm.editable){
         }

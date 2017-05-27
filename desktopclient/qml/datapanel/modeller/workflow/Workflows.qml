@@ -14,7 +14,7 @@ DropArea {
         id : label
         width : parent.width - 2
         height : 22
-        color : Global.palegreen
+        color : uicontext.paleColor
         Text{
             text : qsTr("Available workflows")
             font.bold: true
@@ -31,7 +31,7 @@ DropArea {
         anchors.top : label.bottom
         anchors.bottom : parent.bottom
         width : parent.width
-        color : Global.lightestgreen
+        color : uicontext.lightestColor
         Rectangle {
             width : parent.width - 2
             height : parent.height - buttons.height - 5

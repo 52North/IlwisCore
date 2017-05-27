@@ -9,7 +9,7 @@ Rectangle {
     id : catalogProperties
     width : parent.width
     anchors.margins: 6
-    color : currentFolders.currentIndex === index ? "#99CCFF" : index  % 2 == 0 ? Global.lightestgreen: "white"
+    color : currentFolders.currentIndex === index ? "#99CCFF" : index  % 2 == 0 ? uicontext.lightestColor: "white"
     border.width: 1
     border.color: "#E6E6E6"
     property alias humannametext : displayString.text

@@ -20,7 +20,7 @@ Rectangle {
             mastercatalog.currentCatalog.refresh()
         }
     }
-    color : Global.formBackGround
+    color : uicontext.lightestColor
 
     Column{
         id : grid

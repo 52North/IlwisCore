@@ -15,7 +15,7 @@ Rectangle {
         if ( propertyForm.editable){
         }
     }
-    color : Global.formBackGround
+    color : uicontext.lightestColor
 
     width : parent.width
     height : 200

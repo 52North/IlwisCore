@@ -17,7 +17,7 @@ import "../controls" as Controls
 Rectangle {
 
     id: centerItem
-    color: Global.lightgreen
+    color: uicontext.lightColor
     objectName : "datapane_container_mainui"
     height : parent.height
     property int activeSplit : 2

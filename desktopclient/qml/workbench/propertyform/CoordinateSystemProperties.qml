@@ -11,7 +11,7 @@ Rectangle {
     width: parent.width
     height: childrenRect.height
     property int lineheight : 19
-     color : Global.formBackGround
+     color : uicontext.lightestColor
 
     function storeData() {
         if ( propertyForm.editable){

@@ -33,8 +33,10 @@ Button{
         }
     }
     onClicked: {
-        if ( connectedItem)
+        if ( connectedItem){
+            console.debug("cl")
             connectedItem.state = connectedItem.state === "minimized" ? "maximized" : "minimized"
+        }
     }
 }
 

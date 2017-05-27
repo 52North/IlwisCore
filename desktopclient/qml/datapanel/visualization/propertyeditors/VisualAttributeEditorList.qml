@@ -11,7 +11,7 @@ Item {
         id : propertiesLabel
         width : 160
         height : 18
-        color : Global.palegreen
+        color : uicontext.paleColor
         Text{
             text : qsTr("Visual properties")
             font.bold: true
@@ -25,7 +25,7 @@ Item {
     }
     Rectangle {
         id : displayEditors
-        color : Global.formBackGround
+        color : uicontext.lightestColor
         width : parent.width
         anchors.top: propertiesLabel.bottom
         anchors.topMargin: 2

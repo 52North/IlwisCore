@@ -6,8 +6,8 @@ import "Global.js" as Global
 import "controls" as Controls
 
 TabViewStyle {
-    property color backgroundColor: "white"
-    property int tabHeight : 50 * Global.uiScale
+    property color backgroundColor: "red"
+    property int tabHeight : 50
     property int minimumWidth : 100
 
     frameOverlap: 1
@@ -17,7 +17,7 @@ TabViewStyle {
         border.right: 10;
         id : labelArea
 
-        width: Global.uiScale * Math.max(text.width + 4, minimumWidth)
+        width: Math.max(text.width + 4, minimumWidth)
         height: tabHeight
 
         Text {
@@ -29,7 +29,7 @@ TabViewStyle {
 
             text: styleData.title
             color: styleData.selected ? "#003366" : "#a3a3c2"
-            font.pointSize: 10 * Global.uiScale
+            font.pixelSize: 11
             font.weight: Font.DemiBold
         }
 

@@ -20,13 +20,13 @@ Button{
         anchors.bottomMargin: 2
         anchors.horizontalCenter: parent.horizontalCenter
         text : buttontext
-        font.pointSize: 9 * Global.uiScale
+        font.pointSize: 9
     }
 
     style : ButtonStyle{
         background: Rectangle {
             anchors.fill: parent
-            color : control.pressed ? Global.palegreen : backColor
+            color : control.pressed ? uicontext.paleColor : backColor
         }
     }
 

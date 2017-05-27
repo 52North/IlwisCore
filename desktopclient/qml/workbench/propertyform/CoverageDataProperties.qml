@@ -8,7 +8,7 @@ import "../../Global.js" as Global
 Rectangle {
     id : container
     anchors.fill : parent
-    color : Global.formBackGround
+    color : uicontext.lightestColor
     anchors.margins: 2
 
     function rangeFieldType(rdef) {

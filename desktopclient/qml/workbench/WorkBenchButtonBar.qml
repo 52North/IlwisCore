@@ -14,12 +14,7 @@ Rectangle {
     y : 0
     height : parent.height
     width :colContainer.width
-    color : Global.palegreen
-
-
-
-    //signal transitionInfoPane(string pagename)
-
+    color : uicontext.paleColor
 
     function setButtonStatus(buttonname, status) {
         if ( status === "toggle"){
@@ -74,7 +69,7 @@ Rectangle {
         height : parent.height
         Column {
             id : butColumn
-            width : 70 * Global.uiScale
+            width : 70
             height : Math.min(1100,parent.height)
             property bool initial : true
             z: buttonB.z + 1
@@ -196,8 +191,8 @@ Rectangle {
                             border.width: 1
                         }
                         progress: Rectangle {
-                            color: Global.lightgreen
-                            border.color: Global.darkestgreen
+                            color: uicontext.lightColor
+                            border.color: uicontext.darkestColor
                         }
                     }
 
@@ -254,7 +249,7 @@ Rectangle {
             anchors.top : butColumn.bottom
             anchors.bottom: colContainer.bottom
             width : parent.width - 7
-            color : Global.middlegreen
+            color : uicontext.middleColor
         }
     }
 
@@ -263,7 +258,7 @@ Rectangle {
 
             PropertyChanges {
                 target: buttonB
-                width : 70 * Global.uiScale
+                width : 70
             }
         },
         State {

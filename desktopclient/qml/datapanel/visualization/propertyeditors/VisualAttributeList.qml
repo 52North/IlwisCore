@@ -25,7 +25,7 @@ Rectangle {
         id : attributesLabel
         width : parent.width + 10
         height : 18
-        color : Global.palegreen
+        color : uicontext.paleColor
         Text{
             text : qsTr("Data Attributes")
             font.bold: true

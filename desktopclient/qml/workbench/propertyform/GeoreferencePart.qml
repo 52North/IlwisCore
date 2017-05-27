@@ -5,7 +5,7 @@ Rectangle {
     width: parent.width
     height: 150
     property int lineheight : 19
-    color : Global.formBackGround
+    color : uicontext.lightestColor
 
 
     Text { y : 5; id : line1; text : qsTr("Georeference"); width: 120; font.bold: true;height : lineheight }

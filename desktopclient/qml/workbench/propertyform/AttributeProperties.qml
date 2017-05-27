@@ -18,7 +18,7 @@ Rectangle {
     property string domainTypeUsed
     property string columnName
     //color : index  % 2 == 0 ? "#F7F9FC" : "#DCDCDC"
-    color : Global.formBackGround
+    color : uicontext.lightestColor
 
     function rangeFieldType(rdef) {
         var index = rdef.indexOf(":")

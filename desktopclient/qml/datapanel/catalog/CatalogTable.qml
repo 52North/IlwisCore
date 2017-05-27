@@ -211,7 +211,7 @@ Rectangle {
         rowDelegate: Rectangle {
             id : rowdelegate
             height : 23
-            color : styleData.selected ? Global.selectedColor : (styleData.alternate? Global.lightestgreen: "white")
+            color : styleData.selected ? Global.selectedColor : (styleData.alternate? uicontext.lightestColor: "white")
         }
 
         onClicked: {

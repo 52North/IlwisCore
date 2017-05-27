@@ -34,7 +34,7 @@ Column {
         id : layersLabel
         width : parent.width -2
         height : 18
-        color : Global.palegreen
+        color : uicontext.paleColor
         Text{
             text : qsTr("Spatial metadata")
             font.bold : true

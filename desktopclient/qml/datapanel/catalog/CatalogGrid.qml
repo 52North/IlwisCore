@@ -12,10 +12,10 @@ import "../../Global.js" as Global
 
 FocusScope {
     anchors.fill: parent
-    property color backgroundColor: "white"
+    property color backgroundColor: uicontext.genericBGColor
     Rectangle {
         anchors.fill :parent
-        color : "white"
+        color : uicontext.catalogBGColor
 
         ScrollView {
             id : catalogGrid
@@ -33,12 +33,12 @@ FocusScope {
                 }
 
                 model : setResources()
-                width : parent.width * Global.uiScale
-                height : parent.height * Global.uiScale
+                width : parent.width
+                height : parent.height
 
                 delegate: CatalogGridDelegate{}
-                cellWidth: 170 * Global.uiScale
-                cellHeight: 22 * Global.uiScale
+                cellWidth: 170
+                cellHeight: 22
                 clip : true
                 cacheBuffer: 1000
                 flow: GridView.FlowTopToBottom

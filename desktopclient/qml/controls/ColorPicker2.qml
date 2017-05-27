@@ -7,7 +7,7 @@ import "../Global.js" as Global
 
 Rectangle {
     id:comboBox
-    property alias selectedColor : lastSelected.color
+    property alias selectedColor : colorPicker.lastSelectedColor
     width : 235
     height : Global.rowHeight
     z: 100;
@@ -70,7 +70,7 @@ Rectangle {
         radius:4;
         anchors.top: chosenItem.bottom;
         anchors.margins: 1;
-        color: Global.alternatecolor2
+        color: uicontext.workbenchBGColor
         border.width: 1
         border.color: "#B0B0B0"
 

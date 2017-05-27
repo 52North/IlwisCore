@@ -6,7 +6,7 @@ import "../../Global.js" as Global
 
 Rectangle {
     anchors.fill : parent
-      color : Global.formBackGround
+      color : uicontext.lightestColor
 
     function storeData() {
         if ( propertyForm.editable){

@@ -31,7 +31,7 @@ Item {
         id : title
         width : parent.width - 2
         height : 18
-        color : Global.palegreen
+        color : uicontext.paleColor
         Text {
             text : qsTr("Columns")
             width : parent.width

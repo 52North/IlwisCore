@@ -16,11 +16,11 @@ Rectangle {
     }
 
     Rectangle {
-        width: 320 * Global.uiScale
+        width: 320
         height: parent.height - 3
         border.width: 1
         border.color: Global.edgecolor
-        color :  Global.formBackGround
+        color :  uicontext.lightestColor
         enabled: currentCatalog ? (currentCatalog.url != "ilwis://internalcatalog" && currentCatalog.url.indexOf("ilwis://system") == -1) : false
 
         Column {
@@ -30,14 +30,12 @@ Rectangle {
 
             CheckBox{
                 id : convert
-                scale : Global.uiScale
                 height : Global.rowHeight
                 width : 120
                 text: qsTr("Convert on drop")
             }
 
             Text {
-                scale : Global.uiScale
                 height : 25
                 width : 120
                 text : qsTr("Drop conversion formats")

@@ -6,7 +6,7 @@ Rectangle {
         if ( propertyForm.editable){
         }
     }
-      color : Global.formBackGround
+      color : uicontext.lightestColor
 
     Text { id : line1; text : qsTr("Record count"); width: 100; font.italic: true }
     Text { text : getProperty("recordcount");  height : 20;width: parent.width - line1.width - 2; anchors.left: line1.right}

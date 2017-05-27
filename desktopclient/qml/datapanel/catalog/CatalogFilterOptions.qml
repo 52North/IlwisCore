@@ -15,22 +15,22 @@ Rectangle {
     Rectangle {
         id : choices
         anchors.bottom : parent.bottom
-        width : 350 * Global.uiScale
+        width : 350
         height : parent.height
         border.width: 1
         border.color: Global.edgecolor
-        color :  Global.formBackGround
+        color :  uicontext.lightestColor
 
         Column {
             height : parent.height
-            width : parent.width  - 5 * Global.uiScale
-            spacing : 4 * Global.uiScale
-            x : 5 * Global.uiScale
+            width : parent.width  - 5
+            spacing : 4
+            x : 5
             Rectangle {
                 id : header
                 width : parent.width
                 height : 18
-                color : Global.palegreen
+                color : uicontext.paleColor
                 Text{
                     text : qsTr("Filters")
                     font.bold: true
@@ -43,17 +43,17 @@ Rectangle {
             }
             Row {
                 width : parent.width
-                height : 22* Global.uiScale
+                height : 22
                 Text {
                     y : 3
-                    width : 100* Global.uiScale
+                    width : 100
                     font.bold: true
                     text : qsTr("Standard queries")
                 }
 
                 CatalogFilterComboBox{
                     id : catalogfilters
-                    width : parent.width - 105* Global.uiScale
+                    width : parent.width - 105
 
                     Controls.ToolTip{
                         target: catalogfilters
@@ -64,11 +64,11 @@ Rectangle {
             Controls.ComboxLabelPair{
                 id : countryselect
                 labelText: qsTr("Country select")
-                labelWidth: 100* Global.uiScale
-                width : parent.width - 5* Global.uiScale
+                labelWidth: 100
+                width : parent.width - 5
                 itemModel: internaldatabase.query("Select * from teritories where type='country' order by name")
                 role : "name"
-                fontSize: 8 * Global.uiScale
+                fontSize: 8
 
                 Controls.ToolTip{
                     target: countryselect
@@ -99,11 +99,11 @@ Rectangle {
             Controls.ComboxLabelPair{
                 id : regionselect
                 labelText: qsTr("Region select")
-                labelWidth: 100* Global.uiScale
-                width : parent.width - 5* Global.uiScale
+                labelWidth: 100
+                width : parent.width - 5
                 itemModel: internaldatabase.query("Select * from teritories where type='region' order by name")
                 role : "name"
-                fontSize: 8 * Global.uiScale
+                fontSize: 8
 
                 Controls.ToolTip{
                     target: regionselect
@@ -133,10 +133,10 @@ Rectangle {
             Controls.TextEditLabelPair{
                 id : keyselect
                 labelText: qsTr("Keyword filters")
-                labelWidth: 100* Global.uiScale
+                labelWidth: 100
                 width : parent.width - 5
                 transparentBackgrond : false
-                fontSize: 8 * Global.uiScale
+                fontSize: 8
                 onContentChanged: {
                     currentCatalog.filter("keyword", content)
                 }
@@ -147,15 +147,15 @@ Rectangle {
             }
 
             Item { 
-                height : 20* Global.uiScale
+                height : 20
                 width : parent.width
                 Controls.TextEditLabelPair{
                     id : label1
                     labelText: qsTr("Name filter")
-                    labelWidth: 100* Global.uiScale
-                    width : parent.width -5* Global.uiScale
+                    labelWidth: 100
+                    width : parent.width -5
                     transparentBackgrond : false
-                    fontSize: 8 * Global.uiScale
+                    fontSize: 8
                     Controls.ToolTip{
                         target: label1
                         text : qsTr("Selects objects with the string in de edit field in the name")
@@ -166,18 +166,17 @@ Rectangle {
                 }
             }
             Item {
-                height : 20* Global.uiScale
+                height : 20
                 width : parent.width
                 Controls.TextEditLabelPair{
                     id : label2
                     labelText: qsTr("Time filter")
-                    labelWidth: 100* Global.uiScale
-                    width : parent.width - 47* Global.uiScale
-                    fontSize: 8 * Global.uiScale
+                    labelWidth: 100
+                    width : parent.width - 47
+                    fontSize: 8
                     transparentBackgrond : false
                 }
                 Button{
-                    scale : Global.uiScale
                     anchors.left: label2.right
                     anchors.leftMargin: 2
                     width : 40
@@ -190,9 +189,9 @@ Rectangle {
     }
     Rectangle {
         id : mapLabel
-        width : 370* Global.uiScale
+        width : 370
         height : 18
-        color : Global.palegreen
+        color : uicontext.paleColor
         anchors.left: choices.right
         anchors.leftMargin: 2
         Text{
@@ -205,11 +204,11 @@ Rectangle {
     Controls.SpatialSelection{
         id : spatselect
         anchors.left: choices.right
-        anchors.leftMargin: 6* Global.uiScale
+        anchors.leftMargin: 6
         anchors.top : mapLabel.bottom
         z : 1
         height : parent.height
-        width : 370* Global.uiScale
+        width : 370
         filterTarget: currentCatalog
     }
 }
