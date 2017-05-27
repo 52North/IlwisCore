@@ -31,7 +31,7 @@ bool BinaryMathRaster::setOutput(ExecutionContext *ctx, SymbolTable& symTable) {
     if ( ctx) {
         QVariant value;
         value.setValue<IRasterCoverage>(_outputGC);
-        _outputGC->addDescription(_expression.toString());
+        logOperation(_outputGC, _expression);
         ctx->setOutput(symTable,value,_outputGC->name(), itRASTER,_outputGC->resource() );
     }
     return _outputGC.isValid();
