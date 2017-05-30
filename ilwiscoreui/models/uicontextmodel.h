@@ -62,6 +62,8 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
     Q_PROPERTY(QString workbenchBGColor READ workbenchBGColor WRITE workbenchBGColor NOTIFY workbenchBGColorChanged)
     Q_PROPERTY(QString catalogBGColor READ catalogBGColor WRITE catalogBGColor NOTIFY catalogBGColorChanged)
     Q_PROPERTY(QString genericBGColor READ genericBGColor WRITE genericBGColor NOTIFY genericBGColorChanged)
+    Q_PROPERTY(QString actionColor READ actionColor WRITE actionColor NOTIFY actionColorChanged)
+    Q_PROPERTY(QString actionHeaderColor READ actionHeaderColor WRITE actionHeaderColor NOTIFY actionHeaderColorChanged)
 
 
 
@@ -128,6 +130,8 @@ signals:
     void workbenchBGColorChanged();
     void catalogBGColorChanged();
     void genericBGColorChanged();
+    void actionColorChanged();
+    void actionHeaderColorChanged();
 
 
 public slots:
@@ -176,6 +180,10 @@ private:
     void catalogBGColor(const QString& clr);
     QString genericBGColor() const;
     void genericBGColor(const QString& clr);
+    QString actionColor() const;
+    void actionColor(const QString& clr);
+    QString actionHeaderColor() const;
+    void actionHeaderColor(const QString& clr);
 
 
     bool debugMode() const;

@@ -94,8 +94,6 @@ WorkBenchShifter {
             anchors.top: createCatalogForm.bottom
             anchors.margins: 2
             opacity : 1
-            background: Global.mainbackgroundcolor
-            listbackground: "#FFFEF8"
             listalternate: "#FFFEF8"
 
         }

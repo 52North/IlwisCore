@@ -584,6 +584,39 @@ void UIContextModel::genericBGColor(const QString &clr)
     }
 }
 
+QString UIContextModel::actionHeaderColor() const
+{
+    QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/actionheadercolor",QString("#B9CEBD"));
+
+    return sc;
+}
+
+void UIContextModel::actionHeaderColor(const QString &clr)
+{
+    QColor c(clr);
+    if ( c.isValid()){
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/actionheadercolor",clr);
+        emit actionHeaderColorChanged();
+    }
+}
+
+QString UIContextModel::actionColor() const
+{
+    QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/actioncolor",QString("#eeeeee"));
+
+    return sc;
+}
+
+void UIContextModel::actionColor(const QString &clr)
+{
+    QColor c(clr);
+    if ( c.isValid()){
+        context()->configurationRef().putValue("users/" + Ilwis::context()->currentUser() + "/actioncolor",clr);
+        emit actionColorChanged();
+    }
+}
+
+
 
 bool UIContextModel::debugMode() const
 {

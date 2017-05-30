@@ -6,8 +6,8 @@ import "../Global.js" as Global
 import "../controls" as Controls
 
 TabViewStyle {
-    property string selectColor : uicontext.paleColor
-    property string nonselectColor : "#e6e6e6"
+    property string selectColor : uicontext.actionHeaderColor
+    property string nonselectColor : uicontext.actionColor
     property int tabHeight : 54
 
 
@@ -59,6 +59,6 @@ TabViewStyle {
             }
         }
     }
-    frame: Rectangle { color: Global.alternatecolor3; border.width: 1 ; border.color: "lightgrey" }
+    frame: Rectangle { color: uicontext.lightestColor; border.width: 1 ; border.color: "lightgrey" }
 }
 

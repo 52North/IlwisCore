@@ -48,7 +48,8 @@ Column {
             id : colors
             width : 140
             height : 20
-            model : ["Selected Headers", "Workbench buttons" , "Selected buttons","Top Header", "App Backgrounds" , "Color 6","Form background","Workbench Background","Catalog background","Generic background"]
+            model : ["Selected Headers", "Workbench buttons" , "Selected buttons","Top Header", "App Backgrounds" , "Color 6","Form background","Workbench Background","Catalog background","Generic background",
+                "Action Buttons","Action Header" ]
         }
 
 
@@ -103,6 +104,16 @@ Column {
             case 9:
                 if ( uicontext.genericBGColor !== color){
                     uicontext.genericBGColor = color
+                }
+                break;
+            case 10:
+                if ( uicontext.actionColor !== color){
+                    uicontext.actionColor = color
+                }
+                break;
+            case 11:
+                if ( uicontext.actionHeaderColor !== color){
+                    uicontext.actionHeaderColor = color
                 }
                 break;
             }

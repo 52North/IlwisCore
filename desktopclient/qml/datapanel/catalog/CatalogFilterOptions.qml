@@ -30,7 +30,7 @@ Rectangle {
                 id : header
                 width : parent.width
                 height : 18
-                color : uicontext.paleColor
+                color : uicontext.actionHeaderColor
                 Text{
                     text : qsTr("Filters")
                     font.bold: true
@@ -191,7 +191,7 @@ Rectangle {
         id : mapLabel
         width : 370
         height : 18
-        color : uicontext.paleColor
+        color : uicontext.actionHeaderColor
         anchors.left: choices.right
         anchors.leftMargin: 2
         Text{

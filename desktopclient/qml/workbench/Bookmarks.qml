@@ -10,8 +10,8 @@ import "../controls" as Controls
 
 Column {
     id : navigationFoldercreate
-    property color background : "white"
-    property color listbackground : "white"
+    property color background : uicontext.workbenchBGColor
+    property color listbackground : uicontext.workbenchBGColor
     property color listalternate : "#9B9B9E"
     property int defaultHeight : 0
     property var bookmarkModel: mastercatalog.bookmarked

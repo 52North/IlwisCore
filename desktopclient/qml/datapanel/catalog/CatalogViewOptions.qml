@@ -39,7 +39,7 @@ Rectangle {
         id : header
         width : leftContainer.width
         height : 18
-        color : uicontext.paleColor
+        color :  uicontext.actionHeaderColor
         Text{
             text : qsTr("Actions on Selected objects")
             font.bold: true
@@ -233,7 +233,7 @@ Rectangle {
             id : header2
             width : previews.width
             height : 18
-            color : uicontext.paleColor
+            color : uicontext.actionHeaderColor
             Text{
                 text : qsTr("Previews")
                 font.bold: true
