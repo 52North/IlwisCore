@@ -462,6 +462,12 @@ Resource MasterCatalog::name2Resource(const QString &nm, IlwisTypes tp) const
 
         return Resource();
     }
+     quint64 id = IlwisObject::internalname2id(name);
+     if ( id != i64UNDEF){
+         Resource res = id2Resource(id);
+         if ( res.isValid())
+             return res;
+     }
     auto resolvedName = name2url(name, tp);
     if (!resolvedName.isValid())
         return Resource();
