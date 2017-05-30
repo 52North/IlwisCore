@@ -40,7 +40,7 @@ bool RasterItemImage::prepare(int prepareType)
         _colorTable[0] = 0;
         ITable attTable = _raster->attributeTable();
         for(int i = 1; i < _colorTable.size(); ++i)
-            _colorTable[i] = _visualAttribute.value2color(attTable->cell(_visualAttribute.columnIndex(),i)).rgba();
+            _colorTable[i] = _visualAttribute.value2color(attTable->cell(_visualAttribute.columnIndex(),i - 1)).rgba();
         for (Texture * tex : _textures) {
             ((ItemTexture*)tex)->setColorTable(_colorTable);
         }
