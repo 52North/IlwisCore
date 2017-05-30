@@ -17,12 +17,7 @@ int main(int argc, char *argv[])
 
 #ifdef QT_DEBUG
         //QString expr = "aaas{format(map,'ilwis3')}=linearrasterfilter(file:///d:/projects/ilwis/ilwis4/testdata/small21.mpr,\"code=0.5 0 0.5 0 1 0 0.5 0 0.5\");";
-//        QString expr = "runpython(\"import ilwis\")";
-
-//        QString expr = "r1_true.mpl{format(ilwis3,\"map\")}=timesat(r1sb.mpl,4,true,true,true)";
-//        QString expr = "reldem3.mpr{format(ilwis3,\"map\")}=relativedem(dem.mpr,dem_sd.mpr,dem_sda1000.mpr)";
-        QString expr = "nh12.mpr{format(ilwis3,\"map\")}=normalizerelativedem(reldem3.mpr,cat12.mpa)";
-//        QString expr = "normh_tot.mpr{format(ilwis3,\"map\")},norm2.mpr{...}=normalizerelativedem(reldem3.mpr,caycment.mpa)";
+        QString expr = "runpython(\"import ilwis\")";
 #else
         QString expr;
         // expected:

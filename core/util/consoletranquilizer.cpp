@@ -57,7 +57,7 @@ bool ConsoleTranquilizer::update(double howfar)
 
     if (_current >= _next) {
         if (_count % 3 == 0) {
-            if (vp1 != vp2) // 10 percent boundary: print percentage
+            if (vp1 != vp2) // 10 percent boundar: print percentage
               std::cout << 100 * int((_current + 1) / _end);
         }
         else
