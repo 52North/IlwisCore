@@ -27,6 +27,7 @@ Item {
 
      }
     Controls.ToolTip{
+        id : tooltip
         target : iconDelegate
         text : typeName + (description !== "" ? "\n"+ description : "")
     }
@@ -84,6 +85,7 @@ Item {
         hoverEnabled: true
 
         onPositionChanged: {
+            tooltip.stopTimer()
             if ( floatingProps.item){
                 floatingProps.item.setObject(id)
                 var point = floatingProps.mapFromItem(mouseArea, mouseX, mouseY)
