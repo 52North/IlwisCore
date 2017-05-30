@@ -645,7 +645,8 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
             if ( expression.size() != 0)
                 expression += ",";
             QString parm = parms[i];
-            bool needsquotes = operationresource.hasProperty(QString("pin_%1_needsquotes").arg(i+1));
+            QString p  = QString("pin_%1_needsquotes").arg(i+1);
+            bool needsquotes = operationresource.hasProperty(p) ? operationresource[p].toBool() : false;
             auto iter = std::find(reserved.begin(), reserved.end(), parm);
             if ( iter != reserved.end() || needsquotes){
                 if ( parm.size() > 1){ // do not quote already quoted strings
