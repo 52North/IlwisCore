@@ -16,7 +16,7 @@ template<typename MutexType=std::recursive_mutex> class KERNELSHARED_EXPORT Lock
 {
 public:
     Locker(MutexType &mut) : _mutex(mut){
-        _mutex.lock();
+        mut.lock();
     }
 
 #ifdef QT_DEBUG
@@ -34,12 +34,11 @@ public:
     }
 
 
+#endif
 private:
     MutexType& _mutex;
     QString _message;
     static LockInfo _lockcount;
-
-#endif
 };
 #ifdef QT_DEBUG
 template<class T> LockInfo Locker<T>::_lockcount;
