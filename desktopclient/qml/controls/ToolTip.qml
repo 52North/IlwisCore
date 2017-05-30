@@ -20,6 +20,12 @@ MouseArea {
     property bool active : false
     property bool up : false
 
+    function stopTimer(){
+        active = false;
+        showTimer.running = false
+        hideTimer.running = false;
+
+    }
 
     onEntered: {
         onVisibleStatus(true)
