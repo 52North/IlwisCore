@@ -201,12 +201,13 @@ bool CalculatorOperation::isNumber(const QString &token) const
 bool CalculatorOperation::isOperator(const QString& token)
 {
     auto iter = _operators.find(token);
-    return iter != _operators.end();
+    bool ok = iter != _operators.end();
+    return ok;
 }
 
 bool CalculatorOperation::isAssociative(const QString& token, int type)
 {
-    check(!isOperator(token),TR("Illegal construct in expression; Invalid token: " + token));
+    check(isOperator(token),TR("Illegal construct in expression; Invalid token: " + token));
     if (_operators[token][1] == type) {
         return true;
     }
@@ -215,8 +216,8 @@ bool CalculatorOperation::isAssociative(const QString& token, int type)
 
 int CalculatorOperation::cmpPrecedence(const QString& token1, const QString& token2)
 {
-    check(!isOperator(token1),TR("Illegal construct in expression; Invalid token: " + token1));
-    check(!isOperator(token2),TR("Illegal construct in expression; Invalid token: " + token2));
+    check(isOperator(token1),TR("Illegal construct in expression; Invalid token: " + token1));
+    check(isOperator(token2),TR("Illegal construct in expression; Invalid token: " + token2));
 
     return _operators[token1][0] - _operators[token2][0];
 }
@@ -674,42 +675,42 @@ double CalculatorOperation::calc() {
         {
             double v1 = GetValue(action._values[0],result);
             double v2 = GetValue(action._values[1],result);
-            calcResult =  isNumericalUndef(v1) || isNumericalUndef(v2) ? 0 : ( v1 <= v2);
+            calcResult =  isNumericalUndef(v1) || isNumericalUndef(v2) ? rUNDEF : ( v1 <= v2);
             break;
         }
         case maLESS:
         {
             double v1 = GetValue(action._values[0],result);
             double v2 = GetValue(action._values[1],result);
-            calcResult = isNumericalUndef(v1) || isNumericalUndef(v2) ? 0 : ( v1 < v2);
+            calcResult = isNumericalUndef(v1) || isNumericalUndef(v2) ? rUNDEF : ( v1 < v2);
             break;
         }
         case maGREATEREQ:
         {
             double v1 = GetValue(action._values[0],result);
             double v2 = GetValue(action._values[1],result);
-            calcResult =  isNumericalUndef(v1) ||isNumericalUndef(v2) ? 0 : ( v1 >= v2);
+            calcResult =  isNumericalUndef(v1) ||isNumericalUndef(v2) ? rUNDEF : ( v1 >= v2);
             break;
         }
         case maGREATER:
         {
             double v1 = GetValue(action._values[0],result);
             double v2 = GetValue(action._values[1],result);
-            calcResult =  isNumericalUndef(v1) || isNumericalUndef(v2) ? 0 : ( v1 > v2);
+            calcResult =  isNumericalUndef(v1) || isNumericalUndef(v2) ? rUNDEF : ( v1 > v2);
             break;
         }
         case maAND:
         {
             double v1 = GetValue(action._values[0],result);
             double v2 = GetValue(action._values[1],result);
-            calcResult = isNumericalUndef(v1) || isNumericalUndef(v2) ? 0 : ( (bool)v1 && (bool)v2);
+            calcResult = isNumericalUndef(v1) || isNumericalUndef(v2) ? rUNDEF : ( (bool)v1 && (bool)v2);
             break;
         }
         case maOR:
         {
             double v1 = GetValue(action._values[0],result);
             double v2 = GetValue(action._values[1],result);
-            calcResult =  isNumericalUndef(v1) || isNumericalUndef(v2) ? 0 : ( (bool)v1 || (bool)v2);
+            calcResult =  isNumericalUndef(v1) || isNumericalUndef(v2) ? rUNDEF : ( (bool)v1 || (bool)v2);
             break;
         }
         case maIFF:
