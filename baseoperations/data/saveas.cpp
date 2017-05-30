@@ -63,7 +63,6 @@ Ilwis::OperationImplementation::State SaveAs::prepare(ExecutionContext *, const 
 
 quint64 SaveAs::createMetadata()
 {
-
     OperationResource operation({"ilwis://operations/saveas"});
     operation.setSyntax("saveas(inputobject,url,outputformat, outputprovider)");
     operation.setDescription(TR("saves the object in a certain format"));
