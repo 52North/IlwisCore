@@ -65,6 +65,7 @@ void OperationMetaData::parmfromResource(int n, const QString& base)
             QString domainName = resource()[parmBase + "domain"].toString();
             QString description = resource()[parmBase + "desc"].toString();
             bool optional = resource()[parmBase + "optional"].toBool();
+            bool needsQuotes = resource()[parmBase + "needsquotes"].toBool();
 
             QString term;
             OperationParameter::ParameterKind kind = OperationParameter::ptOUTPUT;
@@ -76,7 +77,7 @@ void OperationMetaData::parmfromResource(int n, const QString& base)
                 term = ""; // formal output term not part of syntax
             }
 
-            addParameter(newParameter(kind,term,name,tp,domainName,description,optional));
+            addParameter(newParameter(kind,term,name,tp,domainName,description,optional,needsQuotes));
         }
     }
 }
@@ -202,9 +203,9 @@ void OperationMetaData::removeParameterProperties(const QString &base, quint16 s
     }
 }
 
-SPOperationParameter OperationMetaData::newParameter(OperationParameter::ParameterKind kind, const QString &term, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional)
+SPOperationParameter OperationMetaData::newParameter(OperationParameter::ParameterKind kind, const QString &term, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional, bool needsQuotes)
 {
-    return SPOperationParameter(new OperationParameter(kind, term, name, type, domain, description, optional));
+    return SPOperationParameter(new OperationParameter(kind, term, name, type, domain, description, optional,needsQuotes));
 }
 
 SPOperationParameter OperationMetaData::addParameter(SPOperationParameter parameter)
@@ -247,7 +248,8 @@ OperationParameter::OperationParameter(const OperationParameter &operationParame
     _kind(operationParameter._kind),
     _type(operationParameter._type),
     _domainName(operationParameter._domainName),
-    _optional(operationParameter._optional)
+    _optional(operationParameter._optional),
+   _needsQuotes(operationParameter._needsQuotes)
 {
     setDescription(operationParameter.description());
 }
@@ -270,6 +272,11 @@ QString OperationParameter::term() const
 QString OperationParameter::domainName() const
 {
     return _domainName;
+}
+
+bool OperationParameter::needsQuotes() const
+{
+    return _needsQuotes;
 }
 
 bool OperationParameter::isOptional() const
@@ -296,6 +303,7 @@ void OperationParameter::copyMetaToResourceOf(QScopedPointer<ConnectorInterface>
     otherconnector->addProperty(prefix + "name", name());
     otherconnector->addProperty(prefix + "desc", description());
     otherconnector->addProperty(prefix + "optional", _optional);
+    otherconnector->addProperty(prefix + "needsquotes", needsQuotes());
 }
 
 void OperationParameter::prepare(quint64 base)
@@ -303,13 +311,14 @@ void OperationParameter::prepare(quint64 base)
     Identity::prepare(0);
 }
 
-OperationParameter::OperationParameter(OperationParameter::ParameterKind kind, const QString &term, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional) :
+OperationParameter::OperationParameter(OperationParameter::ParameterKind kind, const QString &term, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional,bool needsQuotes) :
     Identity(name),
     _kind(kind),
     _term(term),
     _type(type),
     _domainName(domain),
-    _optional(optional)
+    _optional(optional),
+    _needsQuotes(needsQuotes)
 {
     setDescription(description);
 }
@@ -419,13 +428,14 @@ void OperationResource::setOutParameterCount(const std::vector<quint32> &counts)
     addProperty("outparameters",lst);
 }
 
-void OperationResource::addInParameter(quint32 order, IlwisTypes type, const QString &nme, const QString &description, UIElement altUIType)
+void OperationResource::addInParameter(quint32 order, IlwisTypes type, const QString &nme, const QString &description, UIElement altUIType, bool needsQuotes)
 {
     QString prefix = "pin_" + QString::number(order + 1) + "_";
     addProperty(prefix + "type", type);
     addProperty(prefix + "name", nme);
     addProperty(prefix + "desc", description);
     addProperty(prefix + "optional", false);
+    addProperty(prefix + "needsquotes", needsQuotes);
     if ( altUIType != ueNONE)
         addProperty(prefix + "altUIType", altUIType);
 }

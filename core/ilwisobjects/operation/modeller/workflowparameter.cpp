@@ -146,6 +146,16 @@ void WorkFlowParameter::line(const std::vector<XY> &l)
     _line = l;
 }
 
+bool WorkFlowParameter::needsQuotes() const
+{
+    return _needsQuotes;
+}
+
+void WorkFlowParameter::needsQuotes(bool yesno)
+{
+    _needsQuotes = yesno;
+}
+
 void WorkFlowParameter::attachement(int rectIndex, bool source)
 {
     if ( source)

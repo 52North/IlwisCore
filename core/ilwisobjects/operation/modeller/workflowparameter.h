@@ -35,6 +35,8 @@ public:
     bool isValid() const;
     std::vector<XY> line() const;
     void line(const std::vector<XY>& l);
+    bool needsQuotes() const;
+    void needsQuotes(bool yesno);
 
 private:
     QString _value = sUNDEF; // value(possible url) of the link or fixed value
@@ -50,6 +52,7 @@ private:
     int _nodeid = iUNDEF;
     std::pair<int, int> _attachements;
     static quint64 _baseParmId;
+    bool _needsQuotes = false;
 };
 
 

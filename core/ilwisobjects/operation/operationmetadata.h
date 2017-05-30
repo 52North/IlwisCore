@@ -20,7 +20,7 @@ public:
     void setInParameterNameFromSyntax(const QString& syntax);
     void setInParameterCount(const std::vector<quint32>& counts);
     void setOutParameterCount(const std::vector<quint32>& counts);
-    void addInParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF, UIElement altUIType=ueNONE);
+    void addInParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF, UIElement altUIType=ueNONE, bool needsQuotes=false);
     void addOptionalInParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF, UIElement altUIType=ueNONE);
     void addOutParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF);
     void addOptionalOutParameter(quint32 order, IlwisTypes type, const QString& name=sUNDEF, const QString& description=sUNDEF);
@@ -40,18 +40,20 @@ public:
     OperationParameter::ParameterKind kind() const;
     QString term() const;
     QString domainName() const;
+    bool needsQuotes() const;
     bool isOptional() const;
     void copyMetaToResourceOf(QScopedPointer<Ilwis::ConnectorInterface> &otherconnector, quint16 index) const;
     void prepare(quint64 base=0);
 
 private:
-    OperationParameter(ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString &description=sUNDEF,bool optional=false);
+    OperationParameter(ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString &description=sUNDEF,bool optional=false,bool needsQuotes=false);
 
     QString _term;
     ParameterKind _kind;
     IlwisTypes _type;
     QString _domainName;
     bool _optional;
+    bool _needsQuotes = false;
 
     void optional(bool optional);
 };
@@ -66,7 +68,7 @@ public:
     ~OperationMetaData();
     IlwisTypes ilwisType() const;
 
-    SPOperationParameter newParameter(OperationParameter::ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString& description=sUNDEF, bool optional=false);
+    SPOperationParameter newParameter(OperationParameter::ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString& description=sUNDEF, bool optional=false, bool needsQuotes=false);
     SPOperationParameter addParameter(SPOperationParameter parameter);
     std::vector<SPOperationParameter> getInputParameters() const;
     std::vector<SPOperationParameter> getOutputParameters() const;

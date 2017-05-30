@@ -32,6 +32,7 @@ OperationNode::OperationNode(quint64 operationid) : WorkFlowNode("")
      _operation->parametersFromSyntax(required, optional);
      for(int i=0; i < parms.size(); ++i){
          WorkFlowParameter wfp(i, this->id(), parms[i]->name(), parms[i]->description());
+         wfp.needsQuotes(parms[i]->needsQuotes());
          wfp.value(sUNDEF, parms[i]->type()); // empty value be we know its type
          if ( i < required.size())
              wfp.addSyntax(required[i]);

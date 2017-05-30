@@ -269,6 +269,7 @@ std::vector<WorkFlowParameter> Workflow::freeInputParameters() const
         for(int i=0; i < item->inputCount(); ++i){
             WorkFlowParameter& p = item->inputRef(i);
             if ( p.state() == WorkFlowParameter::pkFREE){
+
                 result.push_back(p);
             }
         }
@@ -473,7 +474,7 @@ quint64 Workflow::createMetadata(int offset){
         for(WorkFlowParameter parm : inputparams){
             _parmid2order[parm.id()] = count + offset;
             QString label = QString("%1 %2").arg(parm.nodeId()).arg(parm.label());
-            operation.addInParameter(count,parm.valueType(), label,parm.description());
+            operation.addInParameter(count,parm.valueType(), label,parm.description(),OperationResource::ueNONE, parm.needsQuotes());
             if ( count != 0 )
                 syntax += ",";
             syntax += parm.syntax();
