@@ -55,7 +55,7 @@ TableModel *UIContextModel::createTableModel(QObject *parent,const QString& filt
 
     IlwisTypes tp = IlwisObject::name2Type(type);
     Resource resource;
-    if ( filter.indexOf("itemid=") != -1){
+    if ( filter.indexOf("itemid=") != -1 || filter.indexOf("resource=") != -1){
         std::vector<Resource> res = mastercatalog()->select(filter);
         if ( res.size() != 1)
             return 0;

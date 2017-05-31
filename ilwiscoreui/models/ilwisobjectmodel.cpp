@@ -565,6 +565,18 @@ QStringList IlwisObjectModel::quickProps() const
     return result;
 }
 
+bool IlwisObjectModel::hasAttributes() const
+{
+    if ( _ilwisobject->ilwisType() == itRASTER){
+        IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+        return  raster->hasAttributes();
+
+    } else if ( hasType(_ilwisobject->ilwisType(),itFEATURE)){
+        return true;
+    }
+    return false;
+}
+
 QString IlwisObjectModel::pixSizeString() const{
     if (hasType(_ilwisobject->ilwisType(), itRASTER | itGEOREF)){
         double pixsizex=rUNDEF, pixsizey=rUNDEF;
@@ -654,6 +666,14 @@ QString IlwisObjectModel::getProperty(const QString &propertyname) const
             if ( env.isNull() || !env.isValid())
                 return "unspecified";
             return env.toString();
+        }
+        if ( propertyname == "attributetableurl"){
+             if ( hasType(_ilwisobject->ilwisType(), itRASTER)){
+                 IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
+                 if ( raster.isValid() && raster->hasAttributes() && raster->attributeTable().isValid()){
+                     return raster->attributeTable()->resource().url().toString();
+                 }
+             }
         }
         if ( propertyname == "script"){
             if ( hasType(_ilwisobject->ilwisType(), itSCRIPT)){

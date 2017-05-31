@@ -50,6 +50,7 @@ class ILWISCOREUISHARED_EXPORT IlwisObjectModel : public ResourceModel
     Q_PROPERTY(QQmlListProperty<ProjectionParameterModel> projectionItems READ projectionItems CONSTANT)
     Q_PROPERTY(QVariantList layerInfo READ layerInfo NOTIFY layerInfoChanged)
     Q_PROPERTY(QStringList quickProps READ quickProps CONSTANT)
+    Q_PROPERTY(bool hasAttributes READ hasAttributes CONSTANT)
 
 
 public:
@@ -109,6 +110,8 @@ private:
     QString centerPixelLocation() const;
     QString parentDomain() const;
     QStringList quickProps() const;
+
+    bool hasAttributes() const;
 };
 
 #endif // ILWISOBJECTMODEL_H
