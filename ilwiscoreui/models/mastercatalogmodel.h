@@ -32,6 +32,7 @@ class ILWISCOREUISHARED_EXPORT MasterCatalogModel : public QObject
     Q_PROPERTY(int activeSplit READ activeSplit WRITE setActiveSplit NOTIFY activeSplitChanged)
     Q_PROPERTY(QString currentUrl READ currentUrl WRITE setCurrentUrl NOTIFY currentUrlChanged)
     Q_PROPERTY(CatalogModel* currentCatalog READ currentCatalog WRITE setCurrentCatalog NOTIFY currentCatalogChanged)
+    Q_PROPERTY(QStringList history READ history NOTIFY historyChanged)
 
 
 
@@ -53,6 +54,7 @@ public:
 
     Q_INVOKABLE quint32 selectedBookmark(const QString &url);
     Q_INVOKABLE  CatalogModel *newCatalog(const QString& inpath, const QString &filter="");
+    Q_INVOKABLE  void add2history(const QString& location);
     Q_INVOKABLE QStringList driveList() const;
     Q_INVOKABLE QString getDrive(quint32 index);
     Q_INVOKABLE void addBookmark(const QString &path);
@@ -62,7 +64,7 @@ public:
     Q_INVOKABLE void deleteBookmark(quint32 index);
     Q_INVOKABLE void setCatalogMetadata(const QString &displayName, const QString &description);
     Q_INVOKABLE ResourceModel *id2Resource(const QString& objectid, QObject *parent=0);
-    Q_INVOKABLE QStringList knownCatalogs(bool fileonly=true);
+    Q_INVOKABLE QStringList history();
     Q_INVOKABLE void setWorkingCatalog(const QString& path);
     Q_INVOKABLE void refreshCatalog(const QString& path);
     Q_INVOKABLE int activeTab() const;
@@ -96,6 +98,7 @@ private:
     QList<WorkSpaceModel *> _workspaces;
     QList<CatalogFilterModel *> _defaultFilters;
     QList<IlwisObjectModel *> _selectedObjects;
+    QList<QString> _history;
 
     QQmlContext *_qmlcontext = 0;
     QObject *_rootObject = 0;
@@ -124,6 +127,7 @@ signals:
     void currentCatalogChanged();
     void bookmarksChanged();
     void workspacesChanged();
+    void historyChanged();
 private slots:
     void initFinished();
  };

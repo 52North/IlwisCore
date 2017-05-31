@@ -66,23 +66,24 @@ Rectangle {
         property ComboBox pathCB
     }
 
-    ListModel {
-        id: pathModel
 
-        function fillModel() {
-            var paths = mastercatalog.knownCatalogs(true)
-            var current =  mastercatalog.currentUrl
-            current = Global.urlToLocalPath(current)
-            pathModel.clear()
-            for(var i=0; i < paths.length; ++i){
-                var path = Global.urlToLocalPath(paths[i])
-                pathModel.append({"folderid" : path})
-                if ( path === current){
-                    pathText.currentIndex = i
-                }
-            }
-        }
-    }
+    ListModel {
+           id: pathModel
+
+           function fillModel() {
+               var paths = mastercatalog.history
+               var current =  mastercatalog.currentUrl
+               current = Global.urlToLocalPath(current)
+               pathModel.clear()
+               for(var i=0; i < paths.length; ++i){
+                   var path = Global.urlToLocalPath(paths[i])
+                   pathModel.append({"folderid" : path})
+                   if ( path === current){
+                       pathText.currentIndex = i
+                   }
+               }
+           }
+       }
 
 
     ComboBox {
@@ -113,7 +114,7 @@ Rectangle {
             width : parent.width - 26
             height : 18
             editable: true
-            model: pathModel
+            model: mastercatalog.history
             anchors.verticalCenter: parent.verticalCenter
             clip : true
             Component.onCompleted: {
@@ -122,12 +123,13 @@ Rectangle {
             }
             onActivated: {
                 currentIndex = index
-                var path = pathModel.get(currentIndex)
-                if ( path !== null && typeof path != 'undefined'){
-                    folderModel.folder = Global.createfileUrlFromParts(path.folderid, "")
-                    var filter = "container='" + folderModel.folder + "'"
-                    mainSplit.changeCatalog(filter,"catalog",folderModel.folder)
-                }
+                   var path = currentText
+                console.debug("a" , currentIndex, currentText)
+                   if ( path !== null && typeof path != 'undefined'){
+                       folderModel.folder = currentText
+                       var filter = "container='" + currentText+ "'"
+                       mainSplit.changeCatalog(filter,"catalog",folderModel.folder)
+                   }
             }
         }
         Button {
@@ -172,9 +174,6 @@ Rectangle {
 
                 Component.onCompleted: {
                     folder = mastercatalog.currentUrl
-                }
-                onFolderChanged: {
-
                 }
             }
 

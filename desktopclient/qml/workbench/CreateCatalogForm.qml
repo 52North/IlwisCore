@@ -71,8 +71,9 @@ Item {
     }
 
     ListModel {
-        id: pathModel
+          id: pathModel
     }
+
 
     id: catalogTypes
     TabView {

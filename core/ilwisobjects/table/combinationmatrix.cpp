@@ -89,9 +89,11 @@ void CombinationMatrix::combo(int x, int y, double v)
     if ( _combos.size() == 0 ){
         _combos.resize(_axisValues[aYAXIS].size());
         for(auto& data : _combos){
-            data.resize(_axisValues[aXAXIS].size());
+            data.resize(_axisValues[aXAXIS].size(),rUNDEF);
         }
     }
+    if ( v == rUNDEF)
+        return;
     if ( x < _axisValues[aXAXIS].size() &&  y < _axisValues[aYAXIS].size()){
             QVariant val = _comboDef.domain() ->impliedValue(v);
             if ( val.isValid())

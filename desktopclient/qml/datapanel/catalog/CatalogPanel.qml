@@ -73,9 +73,12 @@ Item {
         if ( currentCatalog){
             currentCatalog.makeParent(catalogViews)
             mastercatalog.currentCatalog = currentCatalog
+            createParameters = [filter, sourceName, sourceType]
+            mastercatalog.add2history(url);
+            return currentCatalog.id
         }
-        createParameters = [filter, sourceName, sourceType]
-        return currentCatalog.id
+        return -1
+
     }
 
     function setSelected(objectid){

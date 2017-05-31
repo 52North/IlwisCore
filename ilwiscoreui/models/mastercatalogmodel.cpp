@@ -516,6 +516,15 @@ CatalogModel *MasterCatalogModel::newCatalog(const QString &inpath, const QStrin
     return 0;
 }
 
+void MasterCatalogModel::add2history(const QString &location)
+{
+    if ( _history.size() > 0 && _history.front() == location)
+        return;
+
+    _history.push_front(location);
+    emit historyChanged();
+}
+
 // TODO insure that the drive "index" is coherent
 QString MasterCatalogModel::getDrive(quint32 index){
     QStringList drives = MasterCatalogModel::driveList();
@@ -726,16 +735,11 @@ ResourceModel* MasterCatalogModel::id2Resource(const QString &objectid, QObject 
     return 0;
 }
 
-QStringList MasterCatalogModel::knownCatalogs(bool fileonly)
+QStringList MasterCatalogModel::history()
 {
     QStringList folders;
-    std::vector<Resource> catalogs = mastercatalog()->select("type=" + QString::number(itCATALOG));
-    for(const auto& resource : catalogs){
-        if ( resource.url().scheme() != "file" && fileonly == false)
-            folders.append(resource.url().toString());
-        else if ( fileonly && resource.url().scheme() == "file"){
-            folders.append(resource.url().toLocalFile());
-        }
+    for(auto url : _history){
+        folders.append(url);
     }
     return folders;
 }

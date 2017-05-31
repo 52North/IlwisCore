@@ -84,6 +84,8 @@ Ilwis::OperationImplementation::State CreateCombinationMatrix::prepare(Execution
     }
     _xAxisValues = _expression.input<QString>(3).split("|");
     for(auto item : _xAxisValues){
+        if ( item == sUNDEF)
+            continue;
         if(!_xaxisDomain->contains(item)){
             kernel()->issues()->log(TR("Item doesn exist in x axis domain:") + item);
             return sPREPAREFAILED;
@@ -91,6 +93,8 @@ Ilwis::OperationImplementation::State CreateCombinationMatrix::prepare(Execution
     }
     _yAxisValues = _expression.input<QString>(4).split("|");
     for(auto item : _yAxisValues){
+        if ( item == sUNDEF)
+            continue;
         if(!_yaxisDomain->contains(item)){
             kernel()->issues()->log(TR("Item doesn exist in y axis domain:") + item);
             return sPREPAREFAILED;
@@ -101,6 +105,9 @@ Ilwis::OperationImplementation::State CreateCombinationMatrix::prepare(Execution
 
     for(int i=0; i < items.size(); i+=3){
         QString item = items[i+2];
+        if ( item == sUNDEF)
+            continue;
+
         if(!_comboDomain->contains(item)){
             continue;
         }
