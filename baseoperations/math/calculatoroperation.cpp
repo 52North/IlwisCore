@@ -432,6 +432,7 @@ IDomain CalculatorOperation::linearize(const QStringList &tokens)
 
                     }else {
                         evalItem.push_back(token);
+                       check(_functions.find(token) != _functions.end(), TR("invalid function token:") + token);
                         int n = _functions[token];
                         for(int i=0; i < n; ++i){
                             check(tokenstack.size()>= 1, TR("Invalid syntax"));
