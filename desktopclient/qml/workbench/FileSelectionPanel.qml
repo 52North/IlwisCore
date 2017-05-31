@@ -124,7 +124,6 @@ Rectangle {
             onActivated: {
                 currentIndex = index
                    var path = currentText
-                console.debug("a" , currentIndex, currentText)
                    if ( path !== null && typeof path != 'undefined'){
                        folderModel.folder = currentText
                        var filter = "container='" + currentText+ "'"
