@@ -80,7 +80,7 @@ quint64 TableValue::createMetadata()
     operation.setOutParameterCount({1});
     operation.addValidation(0,1,"columns");
     operation.addOutParameter(0,itDOUBLE , TR("value"),TR("value in the indicated cell"));
-    operation.setKeywords("raster,pixel");
+    operation.setKeywords("raster,pixel,workflow");
 
     mastercatalog()->addItems({operation});
     return operation.id();

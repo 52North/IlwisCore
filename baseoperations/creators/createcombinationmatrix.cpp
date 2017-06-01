@@ -142,7 +142,7 @@ quint64 CreateCombinationMatrix::createMetadata()
     resource.addInParameter(6, itSTRING,TR("Description"), TR("Short text explaining the use of the this combination matrix"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itCOMBINATIONMATRIX, TR("output matrix"), TR("The newly created combination matrix"));
-    resource.setKeywords("classification, table");
+    resource.setKeywords("classification, table,workflow");
 
     mastercatalog()->addItems({resource});
     return resource.id();

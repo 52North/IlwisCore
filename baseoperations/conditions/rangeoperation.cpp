@@ -48,7 +48,7 @@ quint64 RangeOperation::createMetadata()
     operation.addInParameter(0,itSTRING, TR("RangeOperation variable"),TR("Variable name that indicates the type of value that is used in the iteration"));
     operation.addInParameter(1,itSTRING|itCOVERAGE|itTABLE, TR("Data container"),TR("Any object that describes a set of objects"));
     operation.setOutParameterCount({0});
-    operation.setKeywords("tests, workflow, placeholder");
+    operation.setKeywords("tests, workflow");
 
     mastercatalog()->addItems({operation});
     return operation.id();

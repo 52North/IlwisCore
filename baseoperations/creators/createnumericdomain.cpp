@@ -100,7 +100,7 @@ quint64 CreateNumericDomain::createMetadata()
     resource.addOptionalInParameter(5, itDOMAIN, TR("Parent domain"), TR("optional indication of a parent domain"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itNUMERICDOMAIN, TR("output domain"), TR("The newly created domain"));
-    resource.setKeywords("domain, create, numeric,internal");
+    resource.setKeywords("domain, create, numeric,workflow");
 
     mastercatalog()->addItems({resource});
     return resource.id();

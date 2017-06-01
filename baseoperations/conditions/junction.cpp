@@ -84,7 +84,7 @@ quint64 Junction::createMetadata()
     operation.addInParameter(2,itSTRING, TR("type"),TR("The type of the values"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itANY, TR("set value"), TR("first if set else second"));
-    operation.setKeywords("junction");
+    operation.setKeywords("junction,workflow");
 
     mastercatalog()->addItems({operation});
     return operation.id();

@@ -82,7 +82,7 @@ quint64 Coord2Pixel::createMetadata()
     operation.addInParameter(1,itCOORDINATE, TR("source coordinate"),TR("the coordinate that has to translted to a pixel location"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itPIXEL, TR("Pixel"));
-    operation.setKeywords("pixel, coordinate, geometry,transformation");
+    operation.setKeywords("pixel, coordinate, geometry,transformation,workflow");
 
     mastercatalog()->addItems({operation});
     return operation.id();

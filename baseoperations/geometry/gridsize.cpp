@@ -73,7 +73,7 @@ quint64 GridSize::createMetadata()
 
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itINT32, TR("size"),TR("Lenght in one dimension measured in grid cells") );
-    operation.setKeywords("raster, size");
+    operation.setKeywords("raster, size,workflow");
 
     mastercatalog()->addItems({operation});
     return operation.id();

@@ -71,7 +71,7 @@ quint64 RasValue::createMetadata()
     operation.addOptionalInParameter(3,itINTEGER, TR("band number"), TR("band number in the grid"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itDOUBLE , TR("value"),TR("value at the indicated location"));
-    operation.setKeywords("raster,pixel");
+    operation.setKeywords("raster,pixel,workflow");
 
     mastercatalog()->addItems({operation});
     return operation.id();

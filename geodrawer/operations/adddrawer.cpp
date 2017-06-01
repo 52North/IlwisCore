@@ -89,7 +89,7 @@ Ilwis::OperationImplementation::State AddDrawer::prepare(ExecutionContext *ctx, 
             ERROR2(ERR_ILLEGAL_VALUE_2,TR("dataype for layer drawer"), tpname)    ;
             return sPREPAREFAILED;
         }
-        if ( filter.indexOf("itemid=") != -1){
+        if ( filter.indexOf("itemid=") != -1 || filter.indexOf("resource=") != -1){
             if ( filter[0] == '\"')
                 filter = filter.mid(1, filter.size() - 2);
             std::vector<Resource> res = mastercatalog()->select(filter);

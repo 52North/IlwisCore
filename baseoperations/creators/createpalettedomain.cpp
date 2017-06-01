@@ -101,7 +101,7 @@ quint64 CreatePaletteDomain::createMetadata()
     resource.addOptionalInParameter(3, itDOMAIN, TR("Parent domain"), TR("optional indication of a parent domain"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itITEMDOMAIN, TR("output domain"), TR("The newly created domain"));
-    resource.setKeywords("domain, create, identifier, itemdomain,internal");
+    resource.setKeywords("domain, create, identifier, itemdomain,workflow");
 
     mastercatalog()->addItems({resource});
     return resource.id();

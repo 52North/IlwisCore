@@ -78,7 +78,7 @@ quint64 Text2Output::createMetadata()
     operation.addInParameter(0,itANY, TR("input string"),TR("input string"));
     operation.addOptionalInParameter(1,itANY, TR("filename or path"),TR("optional file where strings will be written; if no path is provided, current working folder will be used"));
     operation.setOutParameterCount({0});
-    operation.setKeywords("text, output");
+    operation.setKeywords("text, output,internal");
 
     mastercatalog()->addItems({operation});
     return operation.id();
