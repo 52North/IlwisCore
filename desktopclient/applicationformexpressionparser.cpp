@@ -3,7 +3,9 @@
 #include "models/resourcemodel.h"
 #include "operationmetadata.h"
 #include "dataformat.h"
+#include "uicontextmodel.h"
 #include "applicationformexpressionparser.h"
+
 
 using namespace Ilwis;
 
@@ -248,6 +250,49 @@ QString ApplicationFormExpressionParser::dropKeys(IlwisTypes type) const{
     return keypart;
 }
 
+QString ApplicationFormExpressionParser::setoutputIcons(const QString& iconField1, const QString& iconField2,const std::vector<FormParameter>& parameters, int i, int& imagewidth) const
+{
+    const int iconsize = 20;
+    QString imagePart;
+    imagewidth = 4;
+    if ( hasType(parameters[i]._dataType, itRASTER)){
+        imagePart += QString(iconField1).arg(iconName(itRASTER));
+        imagewidth += iconsize;
+    }
+    if ( hasType(parameters[i]._dataType,  itTABLE)){
+        imagePart += QString(iconField1).arg(iconName(itTABLE));
+        imagewidth += iconsize;
+    }
+    if ( hasType(parameters[i]._dataType, itFEATURE)){
+        imagePart += QString(iconField1).arg(iconName(itFEATURE));
+        imagewidth += iconsize;
+    }
+    if ( hasType(parameters[i]._dataType, itDOMAIN)){
+        imagePart += QString(iconField1).arg(iconName(itDOMAIN));
+        imagewidth += iconsize;
+    }
+    if ( hasType(parameters[i]._dataType, itGEOREF)){
+        imagePart += QString(iconField1).arg(iconName(itGEOREF));
+        imagewidth += iconsize;
+    }
+    if ( hasType(parameters[i]._dataType, itCOMBINATIONMATRIX)){
+        imagePart += QString(iconField1).arg(iconName(itCOMBINATIONMATRIX));
+        imagewidth += iconsize;
+    }
+    if ( hasType(parameters[i]._dataType, itNUMBER)){
+        imagePart += QString(iconField2).arg(iconName(itNUMBER));
+        imagewidth += iconsize;
+    }
+    if ( hasType(parameters[i]._dataType, itSTRING)){
+        imagePart += QString(iconField2).arg(iconName(itSTRING));
+        imagewidth += iconsize;
+    }
+    if ( imagePart != ""){
+        imagePart = QString("Row{width:%1;spacing:2;height:20 ;anchors.right: parent.right;anchors.rightMargin: 2;%2}").arg(imagewidth).arg(imagePart) ;
+    }
+    return imagePart;
+}
+
 QString ApplicationFormExpressionParser::setInputIcons(const QString& iconField1, const QString& iconField2,const std::vector<FormParameter>& parameters, int i, int& imagewidth) const
 {
     const int iconsize = 20;
@@ -305,6 +350,9 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
             "onClicked : {mastercatalog.currentCatalog.filterChanged(\"%2|exclusive\" , checked)}"
             "Image{anchors.centerIn : parent;width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}}";
     QString iconField2 = "Image{width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}";
+    QString iconField3 = "Button{ width : 20; height:20; checkable : true;checked : false;"
+             "onClicked : { eval( uicontext.showLastGeneratedResult )}"
+              "Image{anchors.centerIn : parent;width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}}";
     QString comboField = "ComboBox{id : pin_%1; objectName : \"pin_%1_\" + " + metaid + "; property string itemType : \"combobox\";x : %2;width : parent.width - label_pin_%1.width - 5 - %3;Controls.ToolTip{target : pin_%1; text:operation ? operation.inputparameterDescription(%1) : \"\"}model : %4;currentIndex: %5;";
     QString rowBodyChoiceHeader = "Row{ width : parent.width;Text { text: qsTr(\"%1\"); width : %2; } Column{ExclusiveGroup { id: exclusivegroup_pin_%3} %4}}";
     QString rowChoiceOption = "RadioButton{id:choice_pin_%1;text:qsTr(\"%2\");checked:%3;exclusiveGroup:exclusivegroup_pin_%4;property string value:qsTr(\"%5\")}";
@@ -398,7 +446,7 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
             int checkWidth = check == "" ? 0 : 20;
             int imagewidth = 0;
             if ( (hasType(parameters[i]._fieldType,ftTEXTEDIT | ftTEXTAREA)) || (parameters[i]._fieldType == (ftTEXTEDIT | ftRADIOBUTTON))){
-                QString imagePart = setInputIcons(iconField1, iconField2, parameters, i,imagewidth);
+                QString imagePart = input ? setInputIcons( iconField1 , iconField2, parameters, i,imagewidth) :  setoutputIcons(iconField3 , iconField2, parameters, i,imagewidth);
                 QString checkEffects;
                 if ( check != ""){
                     checkEffects=QString(";enabled: check_pin_%1.checked;opacity:check_pin_%1.checked?1 :0.25").arg(i);
@@ -560,6 +608,7 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, const QVaria
     Resource resource = mastercatalog()->id2Resource(metaid);
 
 
+    uicontext()->showLastGeneratedResult("");
     QVariantList parms = node["parameters"].value<QVariantList>();
 
     QStringList constantValues;
@@ -574,6 +623,7 @@ QString ApplicationFormExpressionParser::index2Form(quint64 metaid, const QVaria
 
 QString ApplicationFormExpressionParser::index2Form(quint64 metaid, bool showoutputformat, bool showEmptyOptionInList, QStringList hiddenFields, QVariantList operationNames, QStringList constantValues)  {
     try {
+        uicontext()->showLastGeneratedResult("");
         Resource resource = mastercatalog()->id2Resource(metaid);
         std::vector<FormParameter> parameters = getParameters(resource,false);
 

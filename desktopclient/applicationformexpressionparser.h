@@ -44,6 +44,7 @@ private:
     std::vector<FormParameter> createWorkflowMetadata(quint64 metaid) const;
     QString formats(const QString &query, quint64 ilwtype) const;
     QString index2FormInternal(quint64 metaid, bool showoutputformat, bool showEmptyOptionInList, QStringList hiddenFields, QVariantList operationNames, QStringList constantValues, const std::vector<FormParameter> &parameters);
+    QString setoutputIcons(const QString &iconField1, const QString &iconField2, const std::vector<FormParameter> &parameters, int i, int &imagewidth) const;
 };
 
 #endif // APPLICATIONFORMEXPRESSIONPARSER_H
