@@ -6,7 +6,9 @@
 #include "commandhandler.h"
 #include "operation.h"
 #include "catalog.h"
+#include "operationhelper.h"
 #include "ilwiscontext.h"
+#include "uicontextmodel.h"
 
 using namespace Ilwis;
 
@@ -17,10 +19,10 @@ OperationWorker::OperationWorker(const OperationExpression &opExpr) :_expression
 void OperationWorker::run(const OperationExpression &expression){
     try {
 
+        uicontext()->showLastGeneratedResult("");
         Operation op(expression);
         SymbolTable tbl;
         ExecutionContext ctx;
-
         if(op->execute(&ctx, tbl)){
             if ( ctx._results.size() > 0){
                 for(auto resultName : ctx._results){
@@ -39,6 +41,13 @@ void OperationWorker::run(const OperationExpression &expression){
                     }else if ( hasType(symbol._type, itBOOL)){
                         QVariantList varList = symbol._var.value<QVariantList>();
                         kernel()->issues()->log(varList[0].toString(), IssueObject::itRESULT);
+                    }
+                    if ( hasType(symbol._type, itCOVERAGE | itTABLE) ){
+                        IIlwisObject obj = OperationHelper::variant2ilwisobject(symbol._var, symbol._type);
+                        if ( obj.isValid()){
+                            QString lgr = QString("bigthing.newCatalog('itemid=%1',\'%2\',\'%3\', \'other\')").arg(obj->resource().id()).arg(TypeHelper::type2name(obj->ilwisType())).arg(obj->resource().url().toString());
+                            uicontext()->showLastGeneratedResult(lgr);
+                        }
                     }
                 }
             }
