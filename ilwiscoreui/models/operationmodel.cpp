@@ -307,4 +307,18 @@ bool OperationModel::booleanOperation() const
     return ret == "16777216"; // bool
 }
 
+QString OperationModel::specialIcon() const
+{
+    QString keyw = keywords();
+    if ( keyw == "")
+        return "";
+    if (keyw.indexOf("workflow") != -1){
+        return "workflow20.png";
+    }
+    if ( keyw.indexOf("visualization") != -1){
+        return "vector_fill.png";
+    }
+    return "";
+}
+
 

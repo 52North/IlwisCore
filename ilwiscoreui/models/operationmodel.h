@@ -19,6 +19,7 @@ public:
     Q_PROPERTY(QStringList outParameterIconList READ outParameterIconList CONSTANT)
     Q_PROPERTY(QString provider READ provider CONSTANT)
     Q_PROPERTY(bool booleanOperation READ booleanOperation CONSTANT)
+    Q_PROPERTY(QString specialIcon READ specialIcon CONSTANT)
 
 
     OperationModel();
@@ -59,6 +60,7 @@ public:
     QString modelType() const;
 private:
     bool booleanOperation() const;
+    QString specialIcon() const;
 
 };
 
