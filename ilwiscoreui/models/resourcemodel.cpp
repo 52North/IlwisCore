@@ -283,7 +283,7 @@ QString ResourceModel::iconPath(IlwisTypes tp)
     else if ( tp & itSTRING)
         return "text20.png";
     else if ( tp & itWORKFLOW)
-        return "workflow.png";
+        return "workflow20.png";
     else if ( tp & itOPERATIONMETADATA)
         return "operation.png";
     else if ( tp & itCOORDINATE)
