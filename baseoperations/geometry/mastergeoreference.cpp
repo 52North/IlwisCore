@@ -52,11 +52,11 @@ quint64 MasterGeoreference::createMetadata()
     operation.setSyntax("mastergeoref(targetgeoref)");
     operation.setDescription(TR("Sets the georeference for all operations that trigger an on the fly resampling of a gridcoverage"));
     operation.setInParameterCount({1});
-    operation.addInParameter(0,itRASTER, TR("georeference"),TR("input georeference or raster, in which case it takes the georeference of the raster"));
+    operation.addInParameter(0,itRASTER|itGEOREF, TR("georeference"),TR("input georeference or raster, in which case it takes the georeference of the raster"));
 
     operation.setOutParameterCount({1});
     operation.addOutParameter(0,itUNKNOWN, TR(""));
-    operation.setKeywords("georeference");
+    operation.setKeywords("georeference,workflow");
 
     mastercatalog()->addItems({operation});
     return operation.id();
