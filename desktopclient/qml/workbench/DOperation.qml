@@ -23,14 +23,27 @@ Item{
             x : 4
             spacing : 4
 
-            Text {
-                id : label
-                text : displayName
+            Row {
                 width : parent.width - outputIcons.width
                 height : 17
-                y : 3
-                x : 5
-                font.pointSize: 12
+                spacing: 3
+                Image {
+                    y : 7
+                    width : parent.height - 5
+                    height : parent.height - 5
+                    source : specialIcon == "" ? "" : "../images/"  + specialIcon
+                    opacity: 0.8
+                }
+
+                Text {
+                    id : label
+                    text : displayName
+                    width : parent.width - outputIcons.width - 14
+                    height : 17
+                    y : 3
+                    x : 5
+                    font.pointSize: 12
+                }
             }
             Text {
                 id : pytsyntax
@@ -66,70 +79,25 @@ Item{
                     }
                 }
             }
-//            Text {
-//                width : 7
-//                height : parent.height
-//                text : "="
-//            }
-//            Text {
-//                width : 7
-//                height : parent.height
-//                text : "("
-//            }
 
-//            ListView {
-//                id : inputIcons
-//                model : operations.operation(id).inParameterIconList
-//                //anchors.fill: parent
-//                height : parent.height
-//                width : childrenRect.width
-
-//                orientation : ListView.Horizontal
-//                visible : currentOperation.width > 200
-//                delegate: Component{
-//                    Image{
-//                        y : 2
-//                        x : 3
-//                        width : 12
-//                        height : 12
-//                        source : "../images/" + modelData
-//                    }
-//                }
-//            }
-//            Text {
-//                width : 7
-//                height : parent.height
-//                text : ")"
-//            }
         }
-//        Text {
-//            id : operationSyntax
-//            text : syntax
-//            anchors.top : operationName.bottom
-//            width : parent.width
-//            height : 12
-//            font.pointSize: 8
-//            x : 5
-//            color : "grey"
-//        }
-    }
 
-    focus : true
-    MouseArea {
-        id: mouseArea
-        hoverEnabled: true
-        anchors.fill: parent
-        cursorShape: Qt.ArrowCursor
+        focus : true
+        MouseArea {
+            id: mouseArea
+            hoverEnabled: true
+            anchors.fill: parent
+            cursorShape: Qt.ArrowCursor
 
 
-        onClicked: {
-            applicationForm.state = operationsList.currentIndex == index && applicationForm.state != "minimized" ? "minimized" : "maximized"
-            operationsList.currentIndex = index;
-            operationid = id
-            makeForm(id, displayName, url)
-        }
-        onPressed:{
-            drag.target =  Qt.createQmlObject('import QtQuick 2.0; Image{
+            onClicked: {
+                applicationForm.state = operationsList.currentIndex == index && applicationForm.state != "minimized" ? "minimized" : "maximized"
+                operationsList.currentIndex = index;
+                operationid = id
+                makeForm(id, displayName, url)
+            }
+            onPressed:{
+                drag.target =  Qt.createQmlObject('import QtQuick 2.0; Image{
                     id : image
                     width : 20; height : 20
                     source : "../images/operation20.png"
@@ -152,14 +120,15 @@ Item{
                         AnchorChanges { target: image; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
                     }
                 }', mouseArea, "dynamicImage");
+            }
+            onReleased: {
+                drag.target.Drag.drop()
+                drag.target.parent = mouseArea
+                drag.target.anchors.fill = mouseArea
+                drag.target.destroy();
+            }
         }
-        onReleased: {
-            drag.target.Drag.drop()
-            drag.target.parent = mouseArea
-            drag.target.anchors.fill = mouseArea
-            drag.target.destroy();
-        }
+
     }
 
 }
-
