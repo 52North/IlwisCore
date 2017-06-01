@@ -64,7 +64,7 @@ quint64 WorkingCatalog::createMetadata()
     operation.setInParameterCount({1});
     operation.addInParameter(0,itSTRING , TR("Location working catalog"),TR("The default location were to look for data as an url"));
     operation.setOutParameterCount({0});
-    operation.setKeywords("data");
+    operation.setKeywords("data,workflow");
 
     mastercatalog()->addItems({operation});
     return operation.id();
