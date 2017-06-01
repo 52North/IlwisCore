@@ -424,6 +424,17 @@ QString UIContextModel::ilwisFolder() const
     return url.toString();
 }
 
+QString UIContextModel::showLastGeneratedResult() const
+{
+    return _lastGeneratedShowCommand;
+}
+
+void UIContextModel::showLastGeneratedResult(const QString &lgr)
+{
+    _lastGeneratedShowCommand = lgr;
+    emit showLastGeneratedResultChanged();
+}
+
 QString UIContextModel::paleColor() const
 {
     QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/palecolor",QString("#B9CEBD"));

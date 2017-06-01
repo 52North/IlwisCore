@@ -64,8 +64,7 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
     Q_PROPERTY(QString genericBGColor READ genericBGColor WRITE genericBGColor NOTIFY genericBGColorChanged)
     Q_PROPERTY(QString actionColor READ actionColor WRITE actionColor NOTIFY actionColorChanged)
     Q_PROPERTY(QString actionHeaderColor READ actionHeaderColor WRITE actionHeaderColor NOTIFY actionHeaderColorChanged)
-
-
+    Q_PROPERTY (QString showLastGeneratedResult READ showLastGeneratedResult NOTIFY showLastGeneratedResultChanged)
 
 public:
     explicit UIContextModel(QObject *parent = 0);
@@ -87,6 +86,7 @@ public:
     Q_INVOKABLE QVariantList debugProperty(const QString& property);
     Q_INVOKABLE QString type2icon(const QString& typeName);
     Q_INVOKABLE void addMessage(const QString& message, const QString& type);
+
 
     int addPropertyEditor(const QString& propertyName, CreatePropertyEditor func);
     QList<VisualAttributeEditor *> propertyEditors(VisualAttributeModel *vattrib, const IIlwisObject &obj, const Ilwis::ColumnDefinition& datadef) ;
@@ -116,6 +116,8 @@ public:
     qint64 addMapPanel(const QString &filter, const QString &side, const QString url);
     QStringList formatList() const;
     QString ilwisFolder() const;
+    QString showLastGeneratedResult() const;
+    void showLastGeneratedResult(const QString& lgr);
 
 signals:
     void activeSplitChanged();
@@ -132,6 +134,7 @@ signals:
     void genericBGColorChanged();
     void actionColorChanged();
     void actionHeaderColorChanged();
+    void showLastGeneratedResultChanged();
 
 
 public slots:
@@ -157,6 +160,7 @@ private:
     std::mutex _mutexAddPanel;
     QMutex _mutex4viewLock;
     QWaitCondition _wait4ViewCreate;
+    QString _lastGeneratedShowCommand;
 
     static std::unique_ptr<UIContextModel>_uicontext;
 
