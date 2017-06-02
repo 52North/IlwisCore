@@ -113,6 +113,7 @@ public:
      * \param box The bounding box which desides what part of the raster should be walked
      */
     PixelIterator(const IRasterCoverage& raster, const BoundingBox& box=BoundingBox(), Flow flow=fXYZ);
+    PixelIterator(const IRasterCoverage& raster, Flow flow);
 
     /*!
      * Copy's all the values from the existing PixelIterator onto this one

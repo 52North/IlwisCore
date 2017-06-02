@@ -88,6 +88,17 @@ PixelIterator::PixelIterator(const IRasterCoverage &raster, const BoundingBox& b
     init();
 }
 
+PixelIterator::PixelIterator(const IRasterCoverage &raster, PixelIterator::Flow flow) :
+    _raster(raster),
+    _box(BoundingBox()),
+    _localOffset(0),
+    _currentBlock(0),
+    _flow(flow),
+    _isValid(false)
+{
+    init();
+}
+
 PixelIterator::PixelIterator(PixelIterator&& iter) :
     _raster(std::move(iter._raster)),
     _grid(std::move(iter._grid)),
@@ -402,11 +413,11 @@ PixelIterator PixelIterator::end() const {
 
 void PixelIterator::toEnd()
 {
-    _x = _box.min_corner().x;
-    _z = _endz + 1;
-    _y = _box.min_corner().y;
-    _linearposition = _endposition;
-    _localOffset = _endposition - _z * _grid->blocksPerBand();
+    _x = _endx;
+    _z = _endz;
+    _y = _endy;
+    _linearposition = (_endx + 1) * (_endy + 1) * (_endz + 1)  -1;
+    _localOffset = _grid->blockSize(_grid->blocks() -1 ) - 1;
 }
 
 void PixelIterator::setFlow(Flow flw) {
