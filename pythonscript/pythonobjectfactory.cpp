@@ -35,17 +35,19 @@ IlwisObject *Ilwis::PythonScript::PythonObjectFactory::create(const Ilwis::Resou
 
 bool PythonObjectFactory::canUse(const Resource &resource) const
 {
-    if ( resource.url().scheme() == "ilwis") // can't use anything marked as internal
-        return false;
+    if( resource.url().scheme() == "ilwis")  {
+        if ( resource.url().toString().indexOf("ilwis://operations/") != 0)
+            return false;
+    }
 
-    if ( resource.url().scheme() != "file") // can't read non file based data
+    if ( resource.url(true).scheme() != "file") // can't read non file based data
         return false;
 
     QString filename = resource.url(true).toLocalFile();
     if ( filename == "")
         return false;
 
-    QString ext = QFileInfo(filename).suffix();
+    QString ext = QFileInfo(filename).suffix().toLower();
 
     return ext == "py" && resource.ilwisType() == itSCRIPT;
 }
