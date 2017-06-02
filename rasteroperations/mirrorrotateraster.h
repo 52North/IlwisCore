@@ -25,7 +25,7 @@ private:
     IRasterCoverage _outputRaster;
     TransPoseMethod _method;
 
-    void translatepixels(Ilwis::PixelIterator iterIn, Ilwis::PixelIterator iterOut, const Ilwis::BoundingBox &box, quint32 linelength);
+    void translatepixels(Ilwis::PixelIterator iterIn, Ilwis::PixelIterator iterOut, quint32 linelength, int xstep, int ystep);
     bool dimChanged(const PixelIterator& iter) const;
 };
 }
