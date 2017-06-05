@@ -11,7 +11,7 @@
 
 using namespace Ilwis;
 
-OperationImplementation::OperationImplementation(quint64 metaid, const Ilwis::OperationExpression &e) : _prepState(sNOTPREPARED)
+OperationImplementation::   OperationImplementation(quint64 metaid, const Ilwis::OperationExpression &e) : _prepState(sNOTPREPARED)
 {
    _expression = e;
    if(!_metadata.prepare(metaid)) {

@@ -65,4 +65,6 @@ private:
 
 }
 
+Q_DECLARE_METATYPE(Ilwis::IEllipsoid)
+
 #endif // ELLIPSOID_H

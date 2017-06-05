@@ -34,6 +34,11 @@ protected:
     OperationExpression _expression;
     State _prepState;
     std::unique_ptr<Tranquilizer> _tranquilizer;
+    template<class T> void setOutput(const T& obj, ExecutionContext *ctx, SymbolTable& symTable){
+        QVariant v;
+        v.setValue(obj);
+        ctx->setOutput(symTable, v, obj->name(), obj->ilwisType(), obj->resource());
+    }
 
     virtual State prepare(ExecutionContext *ctx, const SymbolTable& symTable) =0;
 

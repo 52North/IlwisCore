@@ -74,7 +74,9 @@ HEADERS += \
     baseoperations/data/tablevaluebyprimarykey.h \
     baseoperations/data/setvariable.h \
     baseoperations/math/calculatoroperation.h \
-    baseoperations/math/tabcalc.h
+    baseoperations/math/tabcalc.h \
+    baseoperations/conditions/iscompatible.h \
+    baseoperations/data/serviceobject.h
     baseoperations/data/setattributetabel.h
 
 SOURCES += \
@@ -136,7 +138,9 @@ SOURCES += \
     baseoperations/data/tablevaluebyprimarykey.cpp \
     baseoperations/data/setvariable.cpp \
     baseoperations/math/calculatoroperation.cpp \
-    baseoperations/math/tabcalc.cpp
+    baseoperations/math/tabcalc.cpp \
+    baseoperations/conditions/iscompatible.cpp \
+    baseoperations/data/serviceobject.cpp
     baseoperations/data/setattributetabel.cpp
 
 

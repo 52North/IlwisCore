@@ -73,6 +73,8 @@ private:
 typedef Ilwis::IlwisData<Ilwis::Projection> IProjection;
 }
 
+Q_DECLARE_METATYPE(Ilwis::IProjection)
+
 
 
 #endif // PROJECTION_H

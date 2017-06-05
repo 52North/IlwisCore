@@ -25,7 +25,7 @@ WorkflowImplementation::WorkflowImplementation(quint64 metaid, const Ilwis::Oper
 
 }
 
-template<class T> void setOutput(const QVariant& value,ExecutionContext *ctx, SymbolTable &symTable){
+template<class T> void setOutput2(const QVariant& value,ExecutionContext *ctx, SymbolTable &symTable){
     T obj = value.value<T>();
     ctx->addOutput(symTable,value,obj->name(), obj->ilwisType(), obj->resource() );
 }
@@ -93,11 +93,11 @@ bool WorkflowImplementation::execute(ExecutionContext *ctx, SymbolTable &symTabl
         Symbol sym = symTable2.getSymbol(ctx2._results[i]);
         QVariant value = sym._var;
         if ( hasType(sym._type, itTABLE)){
-            setOutput<ITable>(value, ctx, symTable);
+            setOutput2<ITable>(value, ctx, symTable);
         }else  if ( hasType(sym._type, itRASTER)){
-            setOutput<IRasterCoverage>(value, ctx, symTable)   ;
+            setOutput2<IRasterCoverage>(value, ctx, symTable)   ;
         }else if ( hasType(sym._type, itFEATURE)){
-            setOutput<IFeatureCoverage>(value, ctx, symTable)   ;
+            setOutput2<IFeatureCoverage>(value, ctx, symTable)   ;
         }else if ( hasType(sym._type, itNUMBER)){
              ctx->addOutput(symTable, QVariant(value), sUNDEF, itDOUBLE, Resource());
         }else if ( hasType(sym._type, itSTRING)){
