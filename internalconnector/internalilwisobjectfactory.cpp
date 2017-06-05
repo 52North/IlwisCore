@@ -90,7 +90,7 @@ Ilwis::IlwisObject *InternalIlwisObjectFactory::create(const Resource& resource,
     if ( resource.url(true).scheme() == "file") { // we might have a streamed object
         QString filename = resource.url(true).toLocalFile();
         QFileInfo inf(filename);
-        if ( inf.exists()) // internal objects never exist on disk,
+        if ( inf.exists() && resource.ilwisType() != itSINGLEOPERATION) // internal objects never exist on disk,
             return 0;
     }
 
@@ -306,7 +306,7 @@ bool InternalIlwisObjectFactory::canUse(const Resource& resource) const
     if ( resource.url(true).scheme() == "file") { // we might have a streamed object
         QString filename = resource.url(true).toLocalFile();
         QFileInfo inf(filename);
-        if ( inf.exists()) // internal objects never exist on disk,
+        if ( inf.exists() && resource.ilwisType() != itSINGLEOPERATION) // internal objects never exist on disk,
             return false;
     }
 

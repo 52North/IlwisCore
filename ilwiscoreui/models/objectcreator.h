@@ -56,6 +56,7 @@ private:
     QString createModel(const QVariantMap &parms);
     QString createCombinationMatrix(const QVariantMap &parms);
     void executeoperation(const QString &expr);
+    QString createOperationScriptHeader(const QVariantMap &parms);
 };
 
 #endif // OBJECTCREATOR_H

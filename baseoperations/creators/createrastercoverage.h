@@ -19,7 +19,7 @@ public:
 
     NEW_OPERATION(CreateRasterCoverage);
 
-private:
+protected:
     IDomain _domain;
     IDomain _stackDomain;
     IGeoReference _grf;
@@ -34,6 +34,22 @@ private:
     bool parseStackDefintionNumericCase(const QString &stackDef);
     bool parseStackDefintionTimeCase(const QString &stackDef);
     QString expandWildCards(const QString &wildmaps);
+};
+
+class CreateSimpelRasterCoverage :  public CreateRasterCoverage
+{
+public:
+    CreateSimpelRasterCoverage();
+
+    CreateSimpelRasterCoverage(quint64 metaid, const Ilwis::OperationExpression &expr);
+
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx,const SymbolTable&);
+
+    static quint64 createMetadata();
+
+    NEW_OPERATION(CreateSimpelRasterCoverage);
+    bool execute(ExecutionContext *ctx, SymbolTable &symTable);
 };
 }
 }

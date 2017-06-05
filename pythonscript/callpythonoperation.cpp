@@ -63,8 +63,14 @@ bool CallPythonOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
     PyObject  *pName = PyUnicode_FromString(basname.toLatin1());//creates new reference so you have to DECREF if
 
     PyObject *pModule = PyImport_Import(pName);//import module pythonTest.py. New reference
+    if ( pModule == 0){
+        kernel()->issues()->log(TR("Python code couldnt be loaded. Is the syntax correct?"));
+        return false;
+    }
 
     PyObject *pDict = PyModule_GetDict(pModule);//borowed reference so no DECREF
+    if ( pDict == 0)
+        return false;
 
     ///function call and return test
     QString operName =_expression.name(true);

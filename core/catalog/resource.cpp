@@ -408,7 +408,7 @@ void Resource::setUrl(const QUrl &url, bool asRaw, bool updateDatabase)
                     if ( !isRoot(inf.absolutePath())){
                         name(inf.fileName(), false, updateDatabase);
                         if ( !inf.isRoot())
-                            addContainer(QUrl::fromLocalFile(inf.absolutePath()),asRaw);
+                            addContainer(QUrl::fromLocalFile(OSHelper::neutralizeFileName(inf.absolutePath())),asRaw);
                         else
                             addContainer(QUrl("file:///"),asRaw);
                     }

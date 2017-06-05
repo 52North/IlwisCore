@@ -37,7 +37,7 @@ std::vector<Ilwis::Resource> PythonScriptCatalogExplorer::loadItems(const IOOpti
         }
     }
 
-     kernel()->issues()->log(QString(TR("Added %1 objects through the spreadsheet connector")).arg( resources.size()),IssueObject::itMessage);
+     kernel()->issues()->log(QString(TR("Added %1 objects through the script connector")).arg( resources.size()),IssueObject::itMessage);
 
      kernel()->issues()->silent(false);
 

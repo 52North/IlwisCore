@@ -51,6 +51,8 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
     Q_PROPERTY(WorkSpaceModel * currentWorkSpace READ currentWorkSpace WRITE setCurrentWorkSpace NOTIFY currentWorkSpaceChanged)
     Q_PROPERTY(QString ilwisFolder READ ilwisFolder CONSTANT)
     Q_PROPERTY(bool debugMode READ debugMode CONSTANT)
+    Q_PROPERTY (QString showLastGeneratedResult READ showLastGeneratedResult NOTIFY showLastGeneratedResultChanged)
+    Q_PROPERTY(QStringList typeNames READ typeNames CONSTANT)
 
     Q_PROPERTY(QString paleColor READ paleColor WRITE paleColor NOTIFY paleColorChanged)
     Q_PROPERTY(QString middleColor READ middleColor WRITE middleColor NOTIFY middleColorChanged)
@@ -64,7 +66,7 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
     Q_PROPERTY(QString genericBGColor READ genericBGColor WRITE genericBGColor NOTIFY genericBGColorChanged)
     Q_PROPERTY(QString actionColor READ actionColor WRITE actionColor NOTIFY actionColorChanged)
     Q_PROPERTY(QString actionHeaderColor READ actionHeaderColor WRITE actionHeaderColor NOTIFY actionHeaderColorChanged)
-    Q_PROPERTY (QString showLastGeneratedResult READ showLastGeneratedResult NOTIFY showLastGeneratedResultChanged)
+
 
 public:
     explicit UIContextModel(QObject *parent = 0);
@@ -188,6 +190,8 @@ private:
     void actionColor(const QString& clr);
     QString actionHeaderColor() const;
     void actionHeaderColor(const QString& clr);
+
+    QStringList typeNames() const;
 
 
     bool debugMode() const;

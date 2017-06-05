@@ -33,7 +33,7 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
 {
     _creators["workflow"] = new IlwisObjectCreatorModel("workflow",TR("Workflow"),itWORKFLOW,"CreateWorkflow.qml", 400, this);
     _creators["model"] = new IlwisObjectCreatorModel("model",TR("Model"),itMODEL,"CreateModel.qml", 400, this);
-    _creators["script"] = new IlwisObjectCreatorModel("script",TR("Script"),itSCRIPT,"CreateScript.qml", 400, this);
+    _creators["script"] = new IlwisObjectCreatorModel("script",TR("Script"),itSCRIPT,"CreateScript.qml", 600, this);
     _creators["numericdomain" ] = new IlwisObjectCreatorModel("numericdomain",TR("Numeric Domain"),itNUMERICDOMAIN,"CreateNumDom.qml", 250, this);
     _creators["thematicdomain" ] = new IlwisObjectCreatorModel("thematicdomain", TR("Thematic Domain"),itITEMDOMAIN | itTHEMATICITEM,"CreateThematicDom.qml", 520, this);
     _creators["nameidentifierdomain" ] = new IlwisObjectCreatorModel("nameidentifierdomain",TR("Identifier Domain"),itITEMDOMAIN | itIDENTIFIERITEM,"CreateIdentifierDomain.qml", 520, this);
@@ -328,6 +328,45 @@ QString ObjectCreator::createWorkflow(const QVariantMap &parms)
     }
     return QString::number(wf->id());
 }
+QString ObjectCreator::createOperationScriptHeader(const QVariantMap& parms){
+    QString header = "#- ILWIS OBJECTS OPERATION METADATA\n";
+    QString operationname = parms["operationname"].toString();
+    header += "#- operation = ilwis://operations/" + operationname + "\n";
+    QString longname = parms["longname"].toString();
+    if ( longname != ""){
+        header += "#- longname = " + longname + "\n";
+    }
+    int inparmCount = parms["inputparameters"].toList().size();
+    header += "#- input parameter count =" + QString::number(inparmCount) + "\n";
+    for(int i = 0; i < inparmCount; ++i){
+        QVariantMap props = parms["inputparameters"].toList()[i].toMap();
+        QString parm = props["valuetype"].toString() + "|" + props["name"].toString() + "|" + props["description"].toString();
+        header += QString("#- input parameter %1 = %2\n").arg(i+1).arg(parm) ;
+    }
+    int outparmCount = parms["outputparameters"].toList().size();
+    header += "#- output parameter count =" + QString::number(outparmCount) + "\n";
+    for(int i = 0; i < outparmCount; ++i){
+        QVariantMap props = parms["outputparameters"].toList()[i].toMap();
+        QString parm = props["valuetype"].toString() + "|" + props["name"].toString() + "|" + props["description"].toString();
+        header += QString("#- output parameter %1 = %2\n").arg(i+1).arg(parm) ;
+    }
+    header += "#- keywords = " + parms["keywords"].toString() + "\n";
+    header += "#- END ILWIS OBJECTS OPERATION METADATA\n";
+    header += "import ilwis\n";
+    header += "def " + operationname + "(";
+    for(int i=0; i < inparmCount; ++i){
+        if ( i!= 0){
+            header += ",";
+        }
+        QVariantMap props = parms["inputparameters"].toList()[i].toMap();
+        QString name = props["name"].toString();
+        name = name.replace(QRegExp("[/ .'\"-]"),"_");
+        header += name;
+    }
+    header += "):\n";
+
+    return header;
+}
 
 QString ObjectCreator::createScript(const QVariantMap &parms)
 {
@@ -339,13 +378,35 @@ QString ObjectCreator::createScript(const QVariantMap &parms)
     if ( url.indexOf(".py") == -1){
         url += ".py";
     }
-    script->resourceRef().setUrl(url);
+//    if ( parms.contains("asoperation") && parms["asoperation"].toBool()){
+//        QString operationname = parms["operationname"].toString();
+//        script->resourceRef().setUrl("ilwis://operations/" + operationname);
+//    }else
+        script->resourceRef().setUrl(url);
     script->resourceRef().setUrl(url, true);
     script->resourceRef().setDescription(parms["description"].toString());
     script->resourceRef().addProperty("keyword", parms["keywords"].toString());
     script->connectTo(parms["url"].toString(),"script","python",IlwisObject::cmOUTPUT);
-    script->store();
+
+    if ( parms.contains("asoperation") && parms["asoperation"].toBool()){
+        QString header = createOperationScriptHeader( parms);
+        QString filename = QUrl(url).toLocalFile();
+        QFile file(filename);
+        if (file.open(QFile::WriteOnly | QFile::Text)){
+            file.write(header.toLocal8Bit());
+            file.close();
+        }
+    }
+
     mastercatalog()->addItems({script->resource()});
+    QVariant mastercatalog = uicontext()->rootContext()->contextProperty("mastercatalog");
+    if ( mastercatalog.isValid()){
+        MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel*>();
+        CatalogModel *ocmodel = mcmodel->currentCatalog();
+        if ( dynamic_cast<OperationCatalogModel *>(ocmodel)){
+            ocmodel->refresh();
+        }
+    }
     return QString::number(script->id());
 }
 

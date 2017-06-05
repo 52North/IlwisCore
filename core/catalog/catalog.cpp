@@ -81,6 +81,12 @@ QString Catalog::resolve(const QString &nm, IlwisTypes tp) const
 {
     if ( nm == sUNDEF)
         return sUNDEF;
+    quint64 id = IlwisObject::internalname2id(nm);
+    if ( id != i64UNDEF){
+        Resource res = mastercatalog()->id2Resource(id);
+        if ( res.isValid())
+            return res.url().toString();
+    }
 
     QString name = nm;
     name = Resource::quoted2string(name);

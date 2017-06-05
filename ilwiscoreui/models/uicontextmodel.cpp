@@ -611,6 +611,27 @@ void UIContextModel::actionHeaderColor(const QString &clr)
     }
 }
 
+QStringList UIContextModel::typeNames() const
+{
+    QStringList types;
+    types.append(TypeHelper::type2name(itRASTER));
+    types.append(TypeHelper::type2name(itFEATURE));
+    types.append(TypeHelper::type2name(itCOVERAGE));
+    types.append(TypeHelper::type2name(itTABLE));
+    types.append(TypeHelper::type2name(itCOORDSYSTEM));
+    types.append(TypeHelper::type2name(itPROJECTION));
+    types.append(TypeHelper::type2name(itGEOREF));
+    types.append(TypeHelper::type2name(itDOMAIN));
+    types.append(TypeHelper::type2name(itITEMDOMAIN));
+    types.append(TypeHelper::type2name(itNUMERICDOMAIN));
+    types.append(TypeHelper::type2name(itNUMBER));
+    types.append(TypeHelper::type2name(itSTRING));
+    types.append(TypeHelper::type2name(itENVELOPE));
+    types.append(TypeHelper::type2name(itBOUNDINGBOX));
+
+    return types;
+}
+
 QString UIContextModel::actionColor() const
 {
     QString sc = ilwisconfig("users/" + Ilwis::context()->currentUser() + "/actioncolor",QString("#eeeeee"));

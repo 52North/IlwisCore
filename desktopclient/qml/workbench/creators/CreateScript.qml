@@ -21,7 +21,9 @@ Controls.DropableItem{
     property bool isNew : true
 
     Item {
-        anchors.fill: parent
+        x : 4
+        width : parent.width - 5
+        height : parent.height
         Column {
             id : workflowItems
             anchors.fill: parent
@@ -120,6 +122,68 @@ Controls.DropableItem{
                     }
                 }
             }
+
+            Column {
+                ListModel {
+                    id : inputparameterList
+                }
+                ListModel {
+                    id : outputparameterList
+                }
+                width : parent.width
+                height : 250
+                spacing : 3
+                CheckBox{
+                    id : operationCheck
+                    text : qsTr("As Operation")
+                    checked: false
+                }
+                Controls.TextEditLabelPair{
+                    id : operationNameField
+                    width : parent.width
+                    labelText: qsTr("Operation Name")
+                    labelWidth: 100
+                    visible: operationCheck.checked
+                    enabled: visible
+                }
+                Controls.TextEditLabelPair{
+                    id : longNameField
+                    width : parent.width
+                    labelText: qsTr("Long name")
+                    labelWidth: 100
+                    visible: operationCheck.checked
+                    enabled: visible
+                }
+
+                ParameterList{
+                    id : parameterlistField
+                    visible: operationCheck.checked
+                    enabled: visible
+                    width : parent.width
+                    height : 80
+                }
+                Button{
+                    anchors.right : parent.right
+                    anchors.rightMargin: 5
+                    visible: operationCheck.checked
+                    enabled: visible
+                    width : 100
+                    height : 20
+                    text : qsTr("New Parameter")
+                    onClicked: {
+                        details.visible = true;
+                    }
+                }
+                ParameterDetails{
+                    id : details
+                    visible: false
+                    enabled: visible
+                    width : parent.width
+                    height : 100
+                }
+
+
+            }
             Rectangle{
                 x : 2
                 width : parent.width -4
@@ -152,6 +216,16 @@ Controls.DropableItem{
                         } else {
                             keywords += ", script"
                         }
+                        var inputparms = []
+                        for(i=0; i < inputparameterList.count; ++i){
+                            var parm = inputparameterList.get(i)
+                            inputparms.push({"name" : parm.name, "valuetype" : parm.valuetype,"description" : parm.description })
+                        }
+                        var outputparms = []
+                        for(i=0; i < outputparameterList.count; ++i){
+                            parm = outputparameterList.get(i)
+                            outputparms.push({"name" : parm.name, "valuetype" : parm.valuetype,"description" : parm.description })
+                        }
 
                         var name = nameedit.content
                         if ( name.indexOf(".py") == -1)
@@ -161,7 +235,12 @@ Controls.DropableItem{
                             name : name,
                             keywords : keywords,
                             description : descedit.content,
-                            url : mastercatalog.currentUrl + "/" + name
+                            url : mastercatalog.currentUrl + "/" + name,
+                            asoperation : operationCheck.checked,
+                            inputparameters : inputparms,
+                            outputparameters : outputparms,
+                            operationname : operationNameField.content,
+                            longname : longNameField.content
                         }
                         var ilwisid = objectcreator.createObject(createInfo)
                         var filter = "itemid=" + ilwisid

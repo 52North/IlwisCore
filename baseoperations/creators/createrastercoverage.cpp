@@ -11,6 +11,9 @@
 #include "itemiterator.h"
 #include "pixeliterator.h"
 #include "catalog.h"
+#include "ilwisoperation.h"
+#include "operationhelper.h"
+#include "operationhelpergrid.h"
 #include "createrastercoverage.h"
 #include "ilwiscontext.h"
 
@@ -341,6 +344,68 @@ quint64 CreateRasterCoverage::createMetadata()
     mastercatalog()->addItems({resource});
     return resource.id();
 }
+//-----------------------------------------------------------------------------------------------------
+REGISTER_OPERATION(CreateSimpelRasterCoverage)
+
+quint64 CreateSimpelRasterCoverage::createMetadata()
+{
+    OperationResource resource({"ilwis://operations/createrastercoverage"});
+    resource.setLongName("Create Simpel Raster coverage");
+    resource.setSyntax("createrastercoverage(georeference)");
+    resource.setDescription(TR("Creates a empty raster based on the provided georeference. If a georeference is used to create it it will always have a numeric domain; else it will copy it from the raster"));
+    resource.setInParameterCount({1});
+    resource.addInParameter(0, itGEOREF|itRASTER,TR("Georeference"), TR("Geometry of the new rastercoverage"));
+    resource.setOutParameterCount({1});
+    resource.addOutParameter(0, itRASTER, TR("raster coverage"), TR("The newly created raster"));
+    resource.setKeywords("raster,create,workflow");
+
+    mastercatalog()->addItems({resource});
+    return resource.id();
+}
+
+OperationImplementation *CreateSimpelRasterCoverage::create(quint64 metaid, const Ilwis::OperationExpression &expr)
+{
+    return new CreateSimpelRasterCoverage( metaid, expr);
+}
+
+CreateSimpelRasterCoverage::CreateSimpelRasterCoverage(quint64 metaid,const Ilwis::OperationExpression &expr) : CreateRasterCoverage(metaid, expr)
+{}
+
+Ilwis::OperationImplementation::State CreateSimpelRasterCoverage::prepare(ExecutionContext *ctx,const SymbolTable&){
+    IRasterCoverage inputRaster;
+    if ( _expression.parm(0).valuetype() == itRASTER){
+        if(!inputRaster.prepare(_expression.input<QString>(0))){
+            kernel()->issues()->log(TR("Invalid raster used to create new raster:") + _expression.input<QString>(0));
+            return sPREPAREFAILED;
+        }
+        _outputRaster = OperationHelperRaster::initialize(inputRaster,itRASTER,itRASTERSIZE|itDOMAIN|itCOORDSYSTEM|itGEOREF);
+        return sPREPARED;
+    }
+    QString grf = _expression.input<QString>(0);
+    if ( ! _grf.prepare(grf)){
+        kernel()->issues()->log(QString(TR("%1 is and invalid georeference")).arg(grf));
+        return sPREPAREFAILED;
+    }
+    _domain.prepare("code=domain:value");
+    _stackDomain = IDomain("count");
+    _stackValueStrings = {"1"};
+    _stackValueNumbers = {1};
+    _outputRaster.prepare();
+    _outputRaster->georeference(_grf);
+    _outputRaster->setDataDefintions(_domain, _stackValueNumbers , _stackDomain);
+
+    return sPREPARED;
+}
 
 
+bool CreateSimpelRasterCoverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
+{
+    if (_prepState == sNOTPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
+            return false;
 
+    setOutput(_outputRaster,ctx,symTable);
+    logOperation(_outputRaster, _expression);
+
+    return true;
+}
