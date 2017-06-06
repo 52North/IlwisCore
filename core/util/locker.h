@@ -33,7 +33,10 @@ public:
         _mutex.unlock();
     }
 
-
+#else
+    virtual ~Locker() {
+        _mutex.unlock();
+    }
 #endif
 private:
     MutexType& _mutex;
