@@ -420,7 +420,9 @@ void Resource::setUrl(const QUrl &url, bool asRaw, bool updateDatabase)
                     }else
                         index = path.lastIndexOf("/");
                     addContainer(path.left(index),asRaw);
-                    name(path.mid(index + 1),false, updateDatabase);
+                    QString oldName = name();
+                    if ( !asRaw || ( asRaw && (oldName == "" || oldName == sUNDEF)))
+                        name(path.mid(index + 1),false, updateDatabase);
                 }
             } else {
                 QString fragment = url.fragment();
