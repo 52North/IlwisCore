@@ -13,6 +13,7 @@ namespace Ilwis {
 class Resource;
 class IlwisObject;
 typedef IlwisData<IlwisObject> IIlwisObject;
+class OperationResource;
 }
 class IlwisObjectCreatorModel;
 class CatalogModel;
@@ -57,6 +58,7 @@ private:
     QString createCombinationMatrix(const QVariantMap &parms);
     void executeoperation(const QString &expr);
     QString createOperationScriptHeader(const QVariantMap &parms);
+    Ilwis::OperationResource createOperationResource(const QString &url, const QVariantMap &parms);
 };
 
 #endif // OBJECTCREATOR_H

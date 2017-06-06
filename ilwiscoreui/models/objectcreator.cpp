@@ -33,7 +33,7 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
 {
     _creators["workflow"] = new IlwisObjectCreatorModel("workflow",TR("Workflow"),itWORKFLOW,"CreateWorkflow.qml", 400, this);
     _creators["model"] = new IlwisObjectCreatorModel("model",TR("Model"),itMODEL,"CreateModel.qml", 400, this);
-    _creators["script"] = new IlwisObjectCreatorModel("script",TR("Script"),itSCRIPT,"CreateScript.qml", 600, this);
+    _creators["script"] = new IlwisObjectCreatorModel("script",TR("Script"),itSCRIPT,"CreateScript.qml", 700, this);
     _creators["numericdomain" ] = new IlwisObjectCreatorModel("numericdomain",TR("Numeric Domain"),itNUMERICDOMAIN,"CreateNumDom.qml", 250, this);
     _creators["thematicdomain" ] = new IlwisObjectCreatorModel("thematicdomain", TR("Thematic Domain"),itITEMDOMAIN | itTHEMATICITEM,"CreateThematicDom.qml", 520, this);
     _creators["nameidentifierdomain" ] = new IlwisObjectCreatorModel("nameidentifierdomain",TR("Identifier Domain"),itITEMDOMAIN | itIDENTIFIERITEM,"CreateIdentifierDomain.qml", 520, this);
@@ -368,6 +368,38 @@ QString ObjectCreator::createOperationScriptHeader(const QVariantMap& parms){
     return header;
 }
 
+OperationResource ObjectCreator::createOperationResource(const QString& url, const QVariantMap& parms){
+    QString operationname = parms["operationname"].toString();
+    OperationResource opResource("ilwis://operations/" + operationname);
+    QString longname = parms["longname"].toString();
+    if ( longname != sUNDEF)
+        opResource.setLongName(longname);
+    opResource.setDescription(parms["description"].toString() );
+    int inparmCount = parms["inputparameters"].toList().size();
+    opResource.setInParameterCount({inparmCount});
+    for(int i=0; i < inparmCount; ++i){
+         QVariantMap props = parms["inputparameters"].toList()[i].toMap();
+        IlwisTypes tp = TypeHelper::name2type(props["valuetype"].toString());
+        QString name = props["name"].toString();
+        QString description = props["description"].toString();
+        opResource.addInParameter(i, tp, name, description);
+    }
+    int outparmCount = parms["outputparameters"].toList().size();
+    opResource.setInParameterCount({outparmCount});
+    for(int i=0; i < outparmCount; ++i){
+         QVariantMap props = parms["outputparameters"].toList()[i].toMap();
+        IlwisTypes tp = TypeHelper::name2type(props["valuetype"].toString());
+        QString name = props["name"].toString();
+        QString description = props["description"].toString();
+        opResource.addInParameter(i+1, tp, name, description);
+    }
+    opResource.setKeywords(parms["keywords"].toString());
+    opResource.setUrl(url, true);
+
+    return opResource;
+
+}
+
 QString ObjectCreator::createScript(const QVariantMap &parms)
 {
     Ilwis::IScript script;
@@ -378,15 +410,15 @@ QString ObjectCreator::createScript(const QVariantMap &parms)
     if ( url.indexOf(".py") == -1){
         url += ".py";
     }
-//    if ( parms.contains("asoperation") && parms["asoperation"].toBool()){
-//        QString operationname = parms["operationname"].toString();
-//        script->resourceRef().setUrl("ilwis://operations/" + operationname);
-//    }else
+    if ( parms.contains("asoperation") && parms["asoperation"].toBool()){
+        script->resourceRef() = createOperationResource(url, parms);
+    }else{
         script->resourceRef().setUrl(url);
-    script->resourceRef().setUrl(url, true);
-    script->resourceRef().setDescription(parms["description"].toString());
-    script->resourceRef().addProperty("keyword", parms["keywords"].toString());
-    script->connectTo(parms["url"].toString(),"script","python",IlwisObject::cmOUTPUT);
+        script->resourceRef().setUrl(url, true);
+        script->resourceRef().setDescription(parms["description"].toString());
+        script->resourceRef().addProperty("keyword", parms["keywords"].toString());
+        script->connectTo(parms["url"].toString(),"script","python",IlwisObject::cmOUTPUT);
+    }
 
     if ( parms.contains("asoperation") && parms["asoperation"].toBool()){
         QString header = createOperationScriptHeader( parms);
