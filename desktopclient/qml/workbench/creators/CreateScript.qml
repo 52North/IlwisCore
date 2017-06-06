@@ -23,7 +23,7 @@ Controls.DropableItem{
     Item {
         x : 4
         width : parent.width - 5
-        height : parent.height
+        height : 750
         Column {
             id : workflowItems
             anchors.fill: parent
@@ -131,7 +131,7 @@ Controls.DropableItem{
                     id : outputparameterList
                 }
                 width : parent.width
-                height : 250
+                height : 350
                 spacing : 3
                 CheckBox{
                     id : operationCheck
@@ -160,7 +160,7 @@ Controls.DropableItem{
                     visible: operationCheck.checked
                     enabled: visible
                     width : parent.width
-                    height : 80
+                    height : 120
                 }
                 Button{
                     anchors.right : parent.right
