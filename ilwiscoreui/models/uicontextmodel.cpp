@@ -101,14 +101,26 @@ ScriptModel *UIContextModel::scriptModel(const QString& fileorid, QObject *paren
     IScript scr;
     quint64 id = fileorid.toULongLong(&ok);
     if ( ok){
-        scr.prepare(id)    ;
+        Resource res = mastercatalog()->id2Resource(id);
+        if ( res.isValid()){
+            if ( res.ilwisType() == itSCRIPT && scr.prepare(res)){
+                return new ScriptModel(scr, parent);
+            }
+            else if ( res.ilwisType() == itSINGLEOPERATION) {
+                IOperationMetaData metadata;
+                if ( metadata.prepare(res)){
+                    return new ScriptModel(metadata, parent);
+                }
+            }
+        }
     }else {
         Resource res(fileorid, itSCRIPT);
         scr.prepare(res);
+        if ( scr.isValid()){
+            return new ScriptModel(scr, parent);
+        }
     }
-    if ( scr.isValid()){
-        return new ScriptModel(scr, parent);
-    }
+
     return 0;
 }
 
