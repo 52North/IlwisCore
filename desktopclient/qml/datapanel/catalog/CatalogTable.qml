@@ -224,7 +224,7 @@ Rectangle {
         }
         onDoubleClicked: {
             if ( currentRow != -1){
-                showObject(model[currentRow].id)
+                catalogViews.showObject(model[currentRow].id)
 
             }
         }
