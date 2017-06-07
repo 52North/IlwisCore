@@ -231,6 +231,9 @@ TabModel *SidePanelModel::createPanel(quint32 index, const QString &filter, cons
                 tab = new TabModel(url,"modeller/ModellerDataPane.qml", outputtype, this);
             } else if (hasType(resources[0].ilwisType(), itSCRIPT)){
                 tab = new TabModel(url,"script/ScriptPane.qml", outputtype, this);
+            } else if (hasType(resources[0].ilwisType(), itSINGLEOPERATION)){
+                if ( resources[0].url(true).toString().indexOf(".py") != -1)
+                    tab = new TabModel(url,"script/ScriptPane.qml", outputtype, this);
             }
         }
     }
