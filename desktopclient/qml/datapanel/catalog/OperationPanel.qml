@@ -19,6 +19,7 @@ Item {
     property string panelType : "operationcatalog"
 
     function showObject(objectid){
+
         var type = mastercatalog.id2type(objectid)
         var newPanel = null
         if ( !type)
@@ -28,6 +29,9 @@ Item {
             if ( resource.typeName === "workflow"){
                 var filter = "itemid=" + resource.id
                 newPanel = datapanesplit.newPanel(filter, "model",resource.url,"other")
+            }else if ( resource.hasExtendedType("script")){
+                filter = "itemid=" + resource.id
+                newPanel = datapanesplit.newPanel(filter, "script",resource.url,"other")
             }else {
                 mastercatalog.setSelectedObjects(objectid)
                 bigthing.getWorkbenchPane("objectproperties","visible");
