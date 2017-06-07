@@ -337,20 +337,29 @@ QString ObjectCreator::createOperationScriptHeader(const QVariantMap& parms){
         header += "#- longname = " + longname + "\n";
     }
     int inparmCount = parms["inputparameters"].toList().size();
-    header += "#- input parameter count =" + QString::number(inparmCount) + "\n";
+    header += "#- input parameter count = " + QString::number(inparmCount) + "\n";
+    QString syntax = operationname + "(";
     for(int i = 0; i < inparmCount; ++i){
         QVariantMap props = parms["inputparameters"].toList()[i].toMap();
-        QString parm = props["valuetype"].toString() + "|" + props["name"].toString() + "|" + props["description"].toString();
+        QString name = props["name"].toString();
+        QString parm = props["valuetype"].toString() + "|" + name + "|" + props["description"].toString();
         header += QString("#- input parameter %1 = %2\n").arg(i+1).arg(parm) ;
+        name  =name.replace(QRegExp("[/ .-,;:'\"]"),"_");
+        if ( i != 0)
+               syntax + ",";
+        syntax += name;
     }
+    syntax += ")\n";
+    header += "#- syntax = " + syntax;
     int outparmCount = parms["outputparameters"].toList().size();
-    header += "#- output parameter count =" + QString::number(outparmCount) + "\n";
+    header += "#- output parameter count = " + QString::number(outparmCount) + "\n";
     for(int i = 0; i < outparmCount; ++i){
         QVariantMap props = parms["outputparameters"].toList()[i].toMap();
         QString parm = props["valuetype"].toString() + "|" + props["name"].toString() + "|" + props["description"].toString();
         header += QString("#- output parameter %1 = %2\n").arg(i+1).arg(parm) ;
     }
     header += "#- keywords = " + parms["keywords"].toString() + "\n";
+    header += "#- description = " + parms["description"].toString() + "\n";
     header += "#- END ILWIS OBJECTS OPERATION METADATA\n";
     header += "import ilwis\n";
     header += "def " + operationname + "(";
@@ -371,19 +380,27 @@ QString ObjectCreator::createOperationScriptHeader(const QVariantMap& parms){
 OperationResource ObjectCreator::createOperationResource(const QString& url, const QVariantMap& parms){
     QString operationname = parms["operationname"].toString();
     OperationResource opResource("ilwis://operations/" + operationname);
+    opResource.setExtendedType(itSCRIPT);
     QString longname = parms["longname"].toString();
     if ( longname != sUNDEF)
         opResource.setLongName(longname);
     opResource.setDescription(parms["description"].toString() );
     int inparmCount = parms["inputparameters"].toList().size();
     opResource.setInParameterCount({inparmCount});
+    QString syntax = operationname + "(";
     for(int i=0; i < inparmCount; ++i){
          QVariantMap props = parms["inputparameters"].toList()[i].toMap();
         IlwisTypes tp = TypeHelper::name2type(props["valuetype"].toString());
         QString name = props["name"].toString();
         QString description = props["description"].toString();
         opResource.addInParameter(i, tp, name, description);
+        name  =name.replace(QRegExp("[/ .-,;:'\"]"),"_");
+        if ( i != 0)
+            syntax + ",";
+        syntax += name;
     }
+    syntax += ")";
+    opResource.setSyntax(syntax);
     int outparmCount = parms["outputparameters"].toList().size();
     opResource.setInParameterCount({outparmCount});
     for(int i=0; i < outparmCount; ++i){
