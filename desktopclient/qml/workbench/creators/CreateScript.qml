@@ -20,6 +20,23 @@ Controls.DropableItem{
     property var keylist : []
     property bool isNew : true
 
+    function currentCatalogCorrectUrl(){ // must be a file location
+        var panel = datapanel.activeItem
+        if ( !panel)
+            return ""
+        if ( panel.panelType === "catalog"){
+            var url = panel.currentCatalog.isFileBased ? panel.currentCatalog.container : panel.currentCatalog.url
+            if ( url.indexOf("file://") !== 0) {
+                createButton.visible = false
+                return ""
+            }else
+                createButton.visible = true
+            return url
+        }
+        createButton.visible = false
+        return ""
+    }
+
     Item {
         x : 4
         width : parent.width - 5
@@ -193,9 +210,17 @@ Controls.DropableItem{
             Row{
                 anchors.right: parent.right
                 height : 22
-                width : 110
+                width : 250
                 spacing : 5
+                Text {
+                    id : wronglocation
+                    width :150
+                    height : parent.height
+                    text : qsTr("Location can't be used for writing")
+                    visible : currentCatalogCorrectUrl() === "" ? true : false
+                    color : "red"
 
+                }
                 Button {
                     id : createButton
                     text : qsTr("Create & Open")
