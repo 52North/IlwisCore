@@ -109,6 +109,7 @@ bool PythonScriptCatalogExplorer::splitLine(QString line, QString& front, QStrin
 
 std::vector<Resource> PythonScriptCatalogExplorer::loadOperationResource(QFile& file, const QString& filename, quint64 id){
 
+    file.seek(0);
     QString pyText = file.readAll();
     int index = -1;
     std::vector<Resource> result;
@@ -122,6 +123,7 @@ std::vector<Resource> PythonScriptCatalogExplorer::loadOperationResource(QFile& 
                 if ( splitLine(lines[1], front, back)){
                     if ( front == "operation"){
                         OperationResource resource(back,QUrl::fromLocalFile(filename));
+                        resource.setExtendedType(itSCRIPT);
                          QFileInfo inf(filename);
                         resource.createTime(Time(inf.created()));
                         resource.modifiedTime(Time(inf.lastModified()));
