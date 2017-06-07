@@ -17,6 +17,7 @@ class ILWISCOREUISHARED_EXPORT ScriptModel : public ResourceModel
 public:
     explicit ScriptModel(QObject *parent = 0);
     ScriptModel(const Ilwis::IScript &script, QObject *parent);
+    ScriptModel(const Ilwis::IOperationMetaData &metadata, QObject *parent);
 
     Q_INVOKABLE void store() const;
     Q_INVOKABLE QString storeAs(const QString& file);
@@ -34,6 +35,7 @@ public slots:
 
 private:
     Ilwis::IScript _script;
+    Ilwis::IOperationMetaData _metadata;
 };
 
 #endif // SCRIPTMODEL_H

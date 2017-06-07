@@ -25,6 +25,15 @@ ScriptModel::ScriptModel(const Ilwis::IScript& script,QObject *parent) : Resourc
     }
 }
 
+ScriptModel::ScriptModel(const IOperationMetaData &metadata, QObject *parent)
+{
+    _metadata = metadata;
+    if ( hasType(_metadata->extendedType(), itSCRIPT)){
+        Resource res(metadata->resource().url(true), itSCRIPT);
+        _script.prepare(res);
+    }
+}
+
 void ScriptModel::store() const
 {
    if ( _script.isValid()){
