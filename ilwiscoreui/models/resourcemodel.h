@@ -43,8 +43,6 @@ class ILWISCOREUISHARED_EXPORT ResourceModel : public QObject
     Q_PROPERTY(QString keywords READ keywords WRITE keywords NOTIFY keywordsChanged)
     Q_PROPERTY(bool extendedType READ extendedType CONSTANT)
 
-
-
 public:
     ResourceModel();
     ResourceModel(const ResourceModel& model);
@@ -77,7 +75,7 @@ public:
     QString url() const;
     QString rawUrl() const;
     QString container() const;
-    QString iconPath() const;
+    virtual QString iconPath() const;
     void iconPath(const QString& name);
     bool isRoot() const;
     bool changed() const;
@@ -122,6 +120,7 @@ private:
     bool _selected = false;
     bool _is3d = false;
     quint32 _ref = 0;
+
 
 
 

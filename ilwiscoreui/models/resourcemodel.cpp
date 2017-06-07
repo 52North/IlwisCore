@@ -193,6 +193,9 @@ QString ResourceModel::iconPath() const
         if ( hasType(itemRef().extendedType(), itRASTER)){
             return iconPath(tp | itRASTER);
         }
+        if ( tp == itSINGLEOPERATION && hasType(itemRef().extendedType(),itSCRIPT)){
+            return iconPath(itOPERATIONMETADATA | itSCRIPT);
+        }
         if ( hasType(tp ,itCOORDSYSTEM)){
             return iconPath(itCOORDSYSTEM);
         }
@@ -216,6 +219,8 @@ QString ResourceModel::iconPath(IlwisTypes tp)
         return "catalogTable20.png";
     if ( tp == (itCOVERAGE|itCATALOG))
         return "vector_set.png";
+    if ( tp == (itOPERATIONMETADATA|itSCRIPT))
+        return "operation20.png";
     if ( tp & itRASTER)
         return "raster.png";
     else if ( tp == itPOLYGON)
@@ -629,3 +634,4 @@ void ResourceModel::keywords(const QString &pkeys)
     mastercatalog()->changeResource(itemRef().id(), "keyword",keywrds,true);
     emit keywordsChanged();
 }
+
