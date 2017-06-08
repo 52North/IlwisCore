@@ -410,6 +410,10 @@ bool Grid::update(quint32 block, bool loadDiskData) {
         auto gbnp = (*iter);
         _cache.erase(iter);
         _cache.insert(_cache.begin(), gbnp);
+        if ( !_blocks[block]->inMemory()){
+            _blocks[block]->init();
+            _blocks[block]->loadDiskDataToMemory();
+        }
     } else { // block is not in memory, bring it in
         if (_cache.size() >= _maxCacheBlocks) { // keep list same size
             _cache.back()._grid->_blocks[_cache.back()._blocknr]->save2Cache(); // least used element is saved to disk
