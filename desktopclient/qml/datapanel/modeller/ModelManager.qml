@@ -28,6 +28,10 @@ Rectangle {
         tabPosition: Qt.BottomEdge
 
         function tabClicked(index){
+            if ( workflowOnly){
+                if ( index !== 3)
+                    return
+            }
             var newState = datapane.state
             if ( currentIndex === index){
                 if ( modelmanager.height <= 60){
