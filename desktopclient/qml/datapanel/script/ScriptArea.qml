@@ -81,8 +81,8 @@ Item {
                                 }else {
                                     var b = inputArea.selectionStart;
                                     var e = inputArea.selectionEnd;
-                                    inputArea.remove(b,e);
-                                    inputArea.insert(b, obj.url)
+                                     inputArea.remove(b,e);
+                                    inputArea.insert(b, "\'" + obj.url + "\'")
                                 }
                                 obj.suicide()
 
