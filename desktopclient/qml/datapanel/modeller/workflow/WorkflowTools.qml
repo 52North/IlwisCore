@@ -21,10 +21,11 @@ ToolBar{
         id : editingtools
 
         Loader {
-            source : "../GenericTools.qml"
+            source : workflowOnly ? "" : "../GenericTools.qml"
             height : buttonSize
+            width : workflowOnly ? 0 : 60
             onLoaded: {
-                width = item.width
+                width =  workflowOnly ? 0 : item.width
             }
         }
 
@@ -52,9 +53,6 @@ ToolBar{
                 workarea.dropSaveBox(x)
             }
         }
-
-
-
 
         Controls.ToolButton {
             height : buttonSize
