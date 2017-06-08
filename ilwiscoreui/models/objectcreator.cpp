@@ -396,19 +396,19 @@ OperationResource ObjectCreator::createOperationResource(const QString& url, con
         opResource.addInParameter(i, tp, name, description);
         name  =name.replace(QRegExp("[/ .-,;:'\"]"),"_");
         if ( i != 0)
-            syntax + ",";
+            syntax += ",";
         syntax += name;
     }
     syntax += ")";
     opResource.setSyntax(syntax);
     int outparmCount = parms["outputparameters"].toList().size();
-    opResource.setInParameterCount({outparmCount});
+    opResource.setOutParameterCount({outparmCount});
     for(int i=0; i < outparmCount; ++i){
          QVariantMap props = parms["outputparameters"].toList()[i].toMap();
         IlwisTypes tp = TypeHelper::name2type(props["valuetype"].toString());
         QString name = props["name"].toString();
         QString description = props["description"].toString();
-        opResource.addInParameter(i+1, tp, name, description);
+        opResource.addOutParameter(i, tp, name, description);
     }
     opResource.setKeywords(parms["keywords"].toString());
     opResource.setUrl(url, true);
@@ -428,6 +428,11 @@ QString ObjectCreator::createScript(const QVariantMap &parms)
         url += ".py";
     }
     if ( parms.contains("asoperation") && parms["asoperation"].toBool()){
+        OperationResource ores = createOperationResource(url, parms);
+        if ( ores.compatibleOperationAlreadyExists()){
+            kernel()->issues()->log(TR("An operation with the same signature already exists. Change the name or parameter order/types"));
+            return sUNDEF;
+        }
         script->resourceRef() = createOperationResource(url, parms);
     }else{
         script->resourceRef().setUrl(url);
@@ -448,9 +453,9 @@ QString ObjectCreator::createScript(const QVariantMap &parms)
     }
 
     mastercatalog()->addItems({script->resource()});
-    QVariant mastercatalog = uicontext()->rootContext()->contextProperty("mastercatalog");
-    if ( mastercatalog.isValid()){
-        MasterCatalogModel *mcmodel = mastercatalog.value<MasterCatalogModel*>();
+    QVariant masterc = uicontext()->rootContext()->contextProperty("mastercatalog");
+    if ( masterc.isValid()){
+        MasterCatalogModel *mcmodel = masterc.value<MasterCatalogModel*>();
         CatalogModel *ocmodel = mcmodel->currentCatalog();
         if ( dynamic_cast<OperationCatalogModel *>(ocmodel)){
             ocmodel->refresh();
