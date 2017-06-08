@@ -44,8 +44,19 @@ bool Property::execute(ExecutionContext *ctx, SymbolTable& symTable)
     }else if ( _property == "rawurl"){
         v = _object->resource().url(true).toString();
     }
-    else if ( hasType(tp, itCOVERAGE|itCOORDSYSTEM|itTABLE|itGEOREF)){
-        if ( _property == "xsize" || _property == "ysize" || _property == "zsize" || _property == "rowcount" || _property == "columncount"){
+    if ( hasType(tp, itRASTER) ){
+        IRasterCoverage raster = _object.as<RasterCoverage>();
+        if ( _property == "valuetype"){
+            v =  TypeHelper::type2name(raster->datadef().domain()->valueType());
+        }else if (raster->datadef().domain()->ilwisType() == itNUMERICDOMAIN &&  _property == "max" ){
+            v = raster->datadef().range()->as<NumericRange>()->max();
+        }else if (raster->datadef().domain()->ilwisType() == itNUMERICDOMAIN && _property == "min" ){
+            v = raster->datadef().range()->as<NumericRange>()->min();
+        }
+    }
+    if ( hasType(tp, itCOVERAGE|itCOORDSYSTEM|itTABLE|itGEOREF)){
+        if ( _property == "xsize" || _property == "ysize" || _property == "zsize" || _property == "rowcount"
+             || _property == "columncount" ){
             if ( hasType(tp, itRASTER)){
                 IRasterCoverage raster = _object.as<RasterCoverage>();
                 if ( _property == "rowcount" || _property == "columncount"){
@@ -98,9 +109,10 @@ bool Property::execute(ExecutionContext *ctx, SymbolTable& symTable)
         if ( _property == "valuetype"){
             v =  TypeHelper::type2name(dom->valueType());
         }
-    }else if ( hasType(tp, itRASTER) && _property == "valuetype"){
-         IRasterCoverage raster = _object.as<RasterCoverage>();
-         v =  TypeHelper::type2name(raster->datadef().domain()->valueType());
+    }
+    if ( !v.isValid()){
+        v = sUNDEF;
+        valueType = itSTRING;
     }
     logOperation(_expression);
     ctx->setOutput(symTable, v, sUNDEF, valueType, Resource());
@@ -119,7 +131,7 @@ Ilwis::OperationImplementation::State Property::prepare(ExecutionContext *, cons
         ERROR2(ERR_COULD_NOT_LOAD_2,objecturl,"");
         return sPREPAREFAILED;
     }
-    std::vector<QString> names {"name","xsize","ysize","zsize","rowcount","columncount","type","valuetype","featurecount","pointcount","linecount","polygoncount","pixelcount","domain","projection","ellipsoid","url","rawurl"};
+    std::vector<QString> names {"name","xsize","ysize","zsize","rowcount","columncount","type","valuetype","featurecount","pointcount","linecount","polygoncount","pixelcount","domain","projection","ellipsoid","url","rawurl","min","max"};
      _property = _expression.parm(1).value().toLower().trimmed();
     if (std::find(names.begin(), names.end(), _property) == names.end()){
         kernel()->issues()->log(TR("Property is not in the list of recognized properties:" + _property));
@@ -134,7 +146,7 @@ quint64 Property::createMetadata()
 {
 
     OperationResource operation({"ilwis://operations/property"});
-    operation.setSyntax("property(ilwisobject,property=!name|xsize|ysize|zsize|rows|columns|type|valuetype|featurecount|pointcount|linecount|polygoncount|pixelcount|domain|projection|ellipsoid|url|rawurl)");
+    operation.setSyntax("property(ilwisobject,property=!name|xsize|ysize|zsize|rows|columns|type|valuetype|featurecount|pointcount|linecount|polygoncount|pixelcount|domain|projection|ellipsoid|url|rawurl|min|max)");
     operation.setDescription(TR("returns value of the indicated property. Not all choices makes sense for all object in which case an undefined value is returned)"));
     operation.setInParameterCount({2});
     operation.addInParameter(0,itILWISOBJECT , TR("input object"),TR("Any ilwis object"));
