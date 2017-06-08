@@ -446,6 +446,33 @@ void OperationResource::parameterNeedsQuotes(quint32 order)
     addProperty(prefix + "needsquotes", true);
 }
 
+bool OperationResource::compatibleOperationAlreadyExists(bool ignoreSelf)
+{
+    std::vector<Resource> items = mastercatalog()->select("resource=" + url().toString());
+    if ( items.size() == 0)
+        return false;
+    if (!ignoreSelf){
+       for(const Resource& item : items){
+           if ( item.id() == id())
+               return true;
+       }
+    }
+    int pinCountOther = (*this)["inparameters"].toList().size();
+    for(const Resource& item : items){
+        int pinCountSelf= item["inparameters"].toList().size();
+        if ( pinCountSelf == pinCountOther){
+             for(int order = 1; order < pinCountSelf; ++order){
+                QString prefix = "pin_" + QString::number(order) + "_";
+                IlwisTypes inType = item[prefix + "type"].toULongLong();
+                IlwisTypes outType =  (*this)[prefix + "type"].toULongLong();
+                if ( !hasType(inType,outType))
+                    return false;
+             }
+        }
+    }
+    return true;
+}
+
 void OperationResource::addOptionalInParameter(quint32 order, IlwisTypes type, const QString &name, const QString &description, UIElement altUIType)
 {
     addInParameter(order, type, name, description, altUIType);

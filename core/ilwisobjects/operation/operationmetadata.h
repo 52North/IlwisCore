@@ -27,6 +27,8 @@ public:
     void setKeywords(const QString &words);
     void addValidation(quint32 parent, quint32 child, const QString &validationCondition);
     void parameterNeedsQuotes(quint32 order);
+
+    bool compatibleOperationAlreadyExists(bool ignoreSelf=true);
 };
 
 
@@ -44,6 +46,7 @@ public:
     bool isOptional() const;
     void copyMetaToResourceOf(QScopedPointer<Ilwis::ConnectorInterface> &otherconnector, quint16 index) const;
     void prepare(quint64 base=0);
+
 
 private:
     OperationParameter(ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString &description=sUNDEF,bool optional=false,bool needsQuotes=false);
