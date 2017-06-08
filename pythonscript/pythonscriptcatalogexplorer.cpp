@@ -200,6 +200,7 @@ std::vector<Resource> PythonScriptCatalogExplorer::loadOperationResource(QFile& 
                         }
                         if ( i <= 1000){
                             resource.addProperty("stuboperation", id);
+                            CallPythonOperation::addOperation(resource.name(),filename);
                             result.push_back(resource);
 
                         }
