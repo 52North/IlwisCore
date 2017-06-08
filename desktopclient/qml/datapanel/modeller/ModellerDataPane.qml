@@ -23,6 +23,7 @@ Item {
     property var createParameters : []
     property double factor : 1.1
     property bool canSeparate : true
+    property bool workflowOnly: false
 
     signal exit;
 
@@ -110,8 +111,10 @@ Item {
                 if ( resource){
                     modellerDataPane.model = modelbuilder.createModel(resource, modellerDataPane)
                     if ( modellerDataPane.model){
-                        if ( resource.typeName === "workflow")
+                        if ( resource.typeName === "workflow"){
                             workflowView.workflow = model.addWorkflow(filter);
+                            workflowOnly = true
+                        }
                         model.currentWorkflow = workflowView.workflow
                         if (resource) {
                             workflowView.recreateWorkflow()
