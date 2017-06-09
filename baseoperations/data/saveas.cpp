@@ -33,6 +33,7 @@ bool SaveAs::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
     _inputObject->connectTo(_outputUrl,_format,_provider,IlwisObject::cmOUTPUT);
     _inputObject->store();
+    mastercatalog()->addContainer(_inputObject->resource(IlwisObject::cmOUTPUT).container() , true);
     logOperation( _expression);
     return true;
 }
