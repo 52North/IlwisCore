@@ -44,7 +44,6 @@ QString RasterOperationsModule::getInterfaceVersion() const
 void RasterOperationsModule::prepare()
 {
    commandhandler()->addOperation(AggregateRaster::createMetadata(), AggregateRaster::create);
-   commandhandler()->addOperation(CrossRasters::createMetadata(), CrossRasters::create);
    commandhandler()->addOperation(LinearStretchOperation::createMetadata(), LinearStretchOperation::create);
 
   kernel()->issues()->log("Loaded raster operations module",IssueObject::itMessage);

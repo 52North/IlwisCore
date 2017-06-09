@@ -18,11 +18,11 @@
 using namespace Ilwis;
 using namespace RasterOperations;
 
-CrossRasters::CrossRasters()
+CrossRastersBase::CrossRastersBase()
 {
 }
 
-CrossRasters::CrossRasters(quint64 metaid, const Ilwis::OperationExpression &expr) : OperationImplementation(metaid, expr)
+CrossRastersBase::CrossRastersBase(quint64 metaid, const Ilwis::OperationExpression &expr) : OperationImplementation(metaid, expr)
 {
 
 }
@@ -36,7 +36,7 @@ struct Combo {
     quint32 _count;
 };
 
-QString CrossRasters::determineCrossId(double v1, double v2) const{
+QString CrossRastersBase::determineCrossId(double v1, double v2) const{
     QString elem1 = _inputRaster1->datadef().domain<>()->impliedValue(v1).toString();
     QString elem2 = _inputRaster2->datadef().domain<>()->impliedValue(v2).toString();
     QString id = QString("%1 * %2").arg(elem1 == "" ? "?" : elem1).arg(elem2 == "" ? "?" :elem2);
@@ -59,14 +59,14 @@ QString CrossRasters::determineCrossId(double v1, double v2) const{
     return id;
 }
 
-void CrossRasters::checkUndef(double& v1, double& v2){
+void CrossRastersBase::checkUndef(double& v1, double& v2){
     if ( isNumericalUndef2(v1,_inputRaster1) )
         v1 = rUNDEF;
     if ( isNumericalUndef2(v2,_inputRaster2) )
         v2 = rUNDEF;
 }
 
-bool CrossRasters::crossWithRaster(const  BoundingBox& box){
+bool CrossRastersBase::crossWithRaster(const  BoundingBox& box){
     PixelIterator iterIn1(_inputRaster1, box);
     PixelIterator iterIn2(_inputRaster2, box);
     PixelIterator iterOut(_outputRaster, box);
@@ -150,7 +150,7 @@ struct KeyHasher
     }
 };
 
-bool CrossRasters::crossNoRaster( const BoundingBox& box){
+bool CrossRastersBase::crossNoRaster( const BoundingBox& box){
     PixelIterator iterIn1(_inputRaster1, box);
     PixelIterator iterIn2(_inputRaster2, box);
     std::unordered_map<ComboValues, quint64,KeyHasher> combos;
@@ -202,7 +202,7 @@ bool CrossRasters::crossNoRaster( const BoundingBox& box){
     return true;
 }
 
-bool CrossRasters::execute(ExecutionContext *ctx, SymbolTable &symTable)
+bool CrossRastersBase::execute(ExecutionContext *ctx, SymbolTable &symTable)
 {
     if (_prepState == sNOTPREPARED)
         if((_prepState = prepare(ctx,symTable)) != sPREPARED)
@@ -234,12 +234,12 @@ bool CrossRasters::execute(ExecutionContext *ctx, SymbolTable &symTable)
     return ok;
 }
 
-Ilwis::OperationImplementation *CrossRasters::create(quint64 metaid, const Ilwis::OperationExpression &expr)
+Ilwis::OperationImplementation *CrossRastersBase::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {
-    return new CrossRasters(metaid, expr);
+    return new CrossRastersBase(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State CrossRastersBase::prepare(ExecutionContext *ctx, const SymbolTable &)
 {
     QString raster1 = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
@@ -268,20 +268,7 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
     _crossDomain->name(crossName);
     _crossDomain->range(new NamedIdentifierRange());
 
-    if ( _expression.input<bool>(3)) { // need to create an output raster?
-        outputName = _expression.parm(1,false).value();
-        OperationHelperRaster helper;
-        helper.initialize(_inputRaster1, _outputRaster, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
-        if ( _outputRaster.isValid()) {
-            DataDefinition def(_crossDomain);
-            _outputRaster->datadefRef() = def;
-            for ( int band = 0; band < _outputRaster->size().zsize(); ++band)
-                _outputRaster->datadefRef(band) = def;
-            if ( outputName != sUNDEF)
-                _outputRaster->name(outputName);
-        }
 
-    }
     QString undefh = _expression.parm(2).value().toLower();
     _undefhandling = uhDontCare;
     if ( undefh == "ignoreundef1" )
@@ -298,32 +285,92 @@ Ilwis::OperationImplementation::State CrossRasters::prepare(ExecutionContext *ct
     newTable->addColumn("npix", IlwisObject::create<IDomain>("count"));
     newTable->addColumn("area", IlwisObject::create<IDomain>("value"));
     _outputTable = newTable;
-    if ( _outputRaster.isValid()){
-        _outputTable->addColumn(_outputRaster->primaryKey(), _crossDomain);
-        _outputRaster->setAttributes(_outputTable);
-    }
+
 
     initialize(_inputRaster1->size().linearSize());
 
     return sPREPARED;
 }
 
-quint64 CrossRasters::createMetadata()
+quint64 CrossRastersBase::createMetadata(OperationResource& operation)
 {
-
-    OperationResource operation({"ilwis://operations/cross"});
-    operation.setSyntax("cross(raster1, raster2, undefhandling=!ignoreundef|ignoreundef1 | ignoreundef2 | dontcare,true|!false)");
-    operation.setDescription(TR("generates a new boolean map based on the logical condition used"));
-    operation.setInParameterCount({4});
+    operation.setInParameterCount({3});
     operation.addInParameter(0,itRASTER , TR("first rastercoverage"),TR("input rastercoverage with domain item or integer"));
     operation.addInParameter(1,itRASTER , TR("second rastercoverage"),TR("input rastercoverage with domain item or integer"));
     operation.addInParameter(2,itSTRING , TR("undef handling"),TR("how undefs are handled can be defined per input raster"));
-    operation.addInParameter(3, itBOOL , TR("Generate raster"), TR("Generate an output raster with the domain of the cross table"));
-    operation.setOutParameterCount({1,2});
-    operation.addOutParameter(0,itTABLE, TR("output table"),TR("output table with the results of the cross operation"));
-    operation.addOptionalOutParameter(1,itRASTER, TR("output raster"),TR("optional output raster with the results of the cross operation"));
     operation.setKeywords("cross,raster,table");
 
     mastercatalog()->addItems({operation});
     return operation.id();
+
+}
+
+//-------------------------------------------------------------------------------
+REGISTER_OPERATION(CrossRasters)
+
+CrossRasters::CrossRasters(quint64 metaid, const Ilwis::OperationExpression &expr) : CrossRastersBase(metaid, expr)
+{}
+
+Ilwis::OperationImplementation *CrossRasters::create(quint64 metaid, const Ilwis::OperationExpression &expr)
+{
+    return new CrossRasters(metaid,expr);
+}
+
+quint64 CrossRasters::createMetadata()
+{
+
+    OperationResource operation({"ilwis://operations/cross"});
+    operation.setLongName("Cross");
+    operation.setSyntax("cross(raster1, raster2, undefhandling=!ignoreundef|ignoreundef1 | ignoreundef2 | dontcare)");
+    operation.setDescription(TR("Performs an overlay of two raster maps. Pixels values combinations on the same location are stored and aggregate combination info is stored in a table"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0,itTABLE, TR("output table"),TR("output table with the results of the cross operation"));
+    operation.setKeywords("cross,raster,table");
+    return CrossRastersBase::createMetadata(operation) ;
+
+}
+
+//------------------------------------------------------------------
+REGISTER_OPERATION(CrossRastersWithRasterOutput)
+
+CrossRastersWithRasterOutput::CrossRastersWithRasterOutput(quint64 metaid, const Ilwis::OperationExpression &expr)
+{}
+
+Ilwis::OperationImplementation *CrossRastersWithRasterOutput::create(quint64 metaid, const Ilwis::OperationExpression &expr)
+{
+    return new CrossRastersWithRasterOutput(metaid, expr);
+}
+
+Ilwis::OperationImplementation::State CrossRastersWithRasterOutput::prepare(ExecutionContext *ctx, const SymbolTable &symTable)
+{
+    if ( CrossRastersBase::prepare(ctx, symTable) == sPREPAREFAILED)
+        return sPREPAREFAILED;
+    OperationHelperRaster helper;
+    helper.initialize(_inputRaster1, _outputRaster, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
+    if ( _outputRaster.isValid()) {
+        DataDefinition def(_crossDomain);
+        _outputRaster->datadefRef() = def;
+        for ( int band = 0; band < _outputRaster->size().zsize(); ++band){
+            _outputRaster->datadefRef(band) = def;
+        }
+        _outputTable->addColumn(_outputRaster->primaryKey(), _crossDomain);
+        _outputRaster->setAttributes(_outputTable);
+        return sPREPARED;
+    }
+    return sPREPAREFAILED;
+}
+
+quint64 CrossRastersWithRasterOutput::createMetadata()
+{
+
+    OperationResource operation({"ilwis://operations/crosswithraster"});
+    operation.setLongName("Cross with raster output");
+    operation.setSyntax("crosswithraster(raster1, raster2, undefhandling=!ignoreundef|ignoreundef1 | ignoreundef2 | dontcare)");
+    operation.setDescription(TR("Performs an overlay of two raster maps. Pixels values combinations on the same location are stored and aggregate combination info is stored in a table. A raster is generated which shows the combinations"));
+
+    operation.setOutParameterCount({2});
+    operation.addOutParameter(0,itTABLE, TR("output table"),TR("output table with the results of the cross operation"));
+    operation.addOutParameter(1,itRASTER, TR("output raster"),TR("output raster with the results of the cross operation"));
+
+    return CrossRastersBase::createMetadata(operation) ;
 }
