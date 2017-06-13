@@ -701,7 +701,7 @@ QStringList UIContextModel::formatList(const QString& query, const QString& sele
         formatList.append(format.second.property(Ilwis::DataFormat::fpNAME).toString());
     }
     if ( formatList.size() != 0)
-       formatList.append("Memory");
+       formatList.append("Temporary");
     if ( hasType(ilwtype, itCOLUMN)){
         formatList.append("Keep original");
     }
