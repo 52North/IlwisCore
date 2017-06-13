@@ -713,7 +713,7 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
                 //If not memory
                 QString fileName;
 
-                if(formatName == "Memory" ){
+                if(formatName == "Temporary" ){
                     //Get all files in the internal catalog
                     QString dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/internalcatalog";
                     directory = opendir(dataLocation.toStdString().c_str());
@@ -756,7 +756,7 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
 
                 //Check if a file with the same name already exist
                 for(int j=0;j<existingFileNames.size();++j){
-                    if(formatName == "Memory"){
+                    if(formatName == "Temporary"){
                         if(existingFileNames[j] == output) {
                             duplicateFileNames = true;
                             kernel()->issues()->log(TR("Workflow did not execute duplicate name: " + output + ". Please change this name."));
@@ -771,7 +771,7 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
             }
 
             if ( hasType(outputtype, itCOLUMN)){
-                if ( formatName == "Memory"){
+                if ( formatName == "Temporary"){
                     output = modifyTableOutputUrl(output, parms);
                 }else
                     output = parms[0] + "[" + output + "]";
@@ -792,8 +792,8 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
             }
             //overrule the user if he wants to store things in the internalcatalog, then the format is by defintion stream
             if ( context()->workingCatalog()->resource().url() == INTERNAL_CATALOG_URL)
-                formatName == "Memory";
-            if ( formatName != "Memory"){ // special case
+                formatName == "Temporary";
+            if ( formatName != "Temporary"){ // special case
                 if ( format == "") {
                     QString query = "name='" + formatName + "'";
                     std::multimap<QString, Ilwis::DataFormat>  formats = Ilwis::DataFormat::getSelectedBy(Ilwis::DataFormat::fpNAME, query);
@@ -823,7 +823,7 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
                 }else if (hasType(outputtype, itGEOREF)){
                     format = "{format(stream,\"georeference\")}";
                 }
-                if ( formatName == "Memory"){
+                if ( formatName == "Temporary"){
                     if ( output.indexOf(".ilwis")== -1)
                         output += ".ilwis";
                 }
