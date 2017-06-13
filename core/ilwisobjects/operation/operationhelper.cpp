@@ -21,6 +21,8 @@
 #include "basetable.h"
 #include "flattable.h"
 #include "conventionalcoordinatesystem.h"
+#include "numericdomain.h"
+#include "itemdomain.h"
 #include "ilwiscontext.h"
 #include "operationhelper.h"
 
@@ -102,9 +104,22 @@ IIlwisObject OperationHelper::variant2ilwisobject(const QVariant& variant, Ilwis
         return variant.value<IConventionalCoordinateSystem>();
     case itDOMAIN:
         return variant.value<IDomain>();
+    case itNUMERICDOMAIN:
+        return variant.value<INumericDomain>();
+    case itITEMDOMAIN:
+        return variant.value<IDomain>();
     default:
-        return variant.value<IIlwisObject>();
-        //TODO rest of the cases
+        {
+            IIlwisObject obj;
+            std::vector<IlwisTypes> aggregate = {itTABLE , itRASTER , itFEATURE , itFLATTABLE , itCOORDSYSTEM , itCONVENTIONALCOORDSYSTEM ,
+                                                 itDOMAIN , itITEMDOMAIN , itNUMERICDOMAIN};
+            for(IlwisTypes specificType : aggregate){
+                obj = OperationHelper::variant2ilwisobject(variant,specificType);
+                if (obj.isValid())
+                    return obj;
+            }
+
+        }
     }
     return IIlwisObject();
 }
