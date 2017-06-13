@@ -138,13 +138,15 @@ bool AggregateTable::execute(ExecutionContext *ctx, SymbolTable &symTable)
     for(int r = 0; r < _inputTable->recordCount(); ++r){
         recordsByKey[_inputTable->cell(_aggregateColumn,r).toString()].push_back(r);
     }
-
+    initialize(recordsByKey.size());
+    int count = 0;
 
     for(auto iter = recordsByKey.begin(); iter != recordsByKey.end();++iter){
         std::vector<int>& records = (*iter).second;
         if (tableValues[(*iter).first].size() == 0)
             tableValues[(*iter).first].resize(_inputTable->columnCount()) ;
 
+        updateTranquilizer(count++, 5);
         for(int c = 0; c < _inputTable->columnCount(); ++c){
             if ( c == _aggregateColumn){
                 if ( types[c] == itTEXTDOMAIN)
