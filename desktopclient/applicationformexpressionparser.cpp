@@ -671,7 +671,7 @@ QString ApplicationFormExpressionParser::formats(const QString& query, quint64 i
         formatList += "'"+ format.second.property(Ilwis::DataFormat::fpNAME).toString() + "'";
     }
     if ( formatList != "")
-       formatList = "'Memory'," + formatList;
+       formatList = "'Temporary'," + formatList;
     if ( hasType(ilwtype, itCOLUMN)){
         formatList = "'Keep original'," + formatList;
     }
