@@ -52,6 +52,7 @@ bool TabCalc::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
    for(QVariant& v : values){
        v = calc();
+       updateTranquilizer(_record, 5);
        ++_record;
    }
    _outputTable->column(_outputColumn,values);
@@ -110,6 +111,7 @@ OperationImplementation::State TabCalc::prepare(ExecutionContext *ctx, const Sym
 
 
     _outputTable->addColumn(ColumnDefinition(_outputColumn,DataDefinition(outputDomain),_outputTable->columnCount()));
+    initialize(_inputTable->recordCount());
 
     return sPREPARED;
 }
