@@ -26,7 +26,7 @@ ExecutionNode::ExecutionNode(){
 
 ExecutionNode::ExecutionNode(const SPWorkFlowNode& node, WorkflowIdMapping &mapping) : _node(node)
 {
-    _parameterValues.resize(node->inputCount(),sUNDEF);
+    _parameterValues.resize(node->inputCount());
     if ( node->isWorkflow()){
         IWorkflow wf = node->operation().as<Workflow>();
         wf->createMetadata(mapping.offset());
@@ -73,7 +73,7 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
         if ( workflowImpl->stopExecution())
             return false;
         WorkFlowParameter& parameter = _node->inputRef(i);
-        if ( parameterValue(i) == sUNDEF){
+        if ( !parameterValue(i).isValid()){
             if (parameter.inputLink()) {
                 ExecutionNode& exNode = workflowImpl->executionNode(parameter.inputLink(), mapping);
                 ExecutionContext ctx2;
@@ -81,9 +81,8 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
                     QString outputName = ctx2._results[parameter.outputParameterIndex()];
                     Symbol sym =  symTable2.getSymbol(outputName);
                     QVariant val = symTable2.getValue(outputName);
-                    QString sval = OperationHelper::variant2string(val,sym._type);
                     parameter.value("", sym._type);
-                    _parameterValues[i] = sval;
+                    _parameterValues[i] = val;
                 }else{
                     return false;
                 }
@@ -109,7 +108,8 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
         if ( parms != "")
             parms += ",";
         if ( hasType(inParam.valueType(),itILWISOBJECT)){
-            QString objectname = mapping.getValue(inParam, *this).toString();
+            QVariant parmValue = mapping.getValue(inParam, *this);
+            QString objectname = OperationHelper::variant2string(parmValue, inParam.valueType());
             parms += objectname;
             unloadableObject.push_back(objectname);
         }else {
@@ -187,21 +187,20 @@ bool ExecutionNode::executeJunction(ExecutionContext *ctx, SymbolTable &symTable
     // is not set we are going to execute the tests of the condition
     // the result of the tests is the "value" of the condition node (true or false)
     // of course this isnt the result of the operations inside the condition; those have their own logic
-    if (parameterValue(0) == sUNDEF){
+    if (!parameterValue(0).isValid()){
         ExecutionContext ctxLocal;
         SymbolTable symTableLocal(symTable);
         ExecutionNode& exNode = workflowImpl->executionNode(condParm.inputLink(),mapping);
         if (exNode.execute(&ctxLocal, symTableLocal,workflowImpl, mapping)){
             QString outputName = ctxLocal._results[0];
             QVariant val = symTableLocal.getValue(outputName);
-            QString sval = OperationHelper::variant2string(val, symTableLocal.getSymbol(outputName)._type);
             condParm.value("", symTableLocal.getSymbol(outputName)._type);
-            _parameterValues[0] = sval;
+            _parameterValues[0] = val;
         }
     }
     ExecutionContext ctxLocal;
     SymbolTable symTableLocal(symTable);
-    ExecutionNode& exNode = parameterValue(0) == "true" ?
+    ExecutionNode& exNode = parameterValue(0).toString() == "true" ?
                 workflowImpl->executionNode(_node->inputRef(1).inputLink(),mapping) :
                 workflowImpl->executionNode(_node->inputRef(2).inputLink(),mapping);
 
@@ -216,7 +215,7 @@ bool ExecutionNode::executeContent(ExecutionContext *ctx, SymbolTable &symTable,
     int inputCount = _node->inputCount();
     for(int i=0; i < inputCount; ++i){
         WorkFlowParameter& parameter = _node->inputRef(i);
-        if ( parameterValue(i) == sUNDEF){
+        if ( !parameterValue(i).isValid()){
             ExecutionContext ctx2;
             if (parameter.inputLink()) {
                 ExecutionNode& exNode = workflowImpl->executionNode(parameter.inputLink(),mapping);
@@ -238,7 +237,7 @@ bool ExecutionNode::next(){
     return false;
 }
 
-QString ExecutionNode::parameterValue(int parmIndex) const
+QVariant ExecutionNode::parameterValue(int parmIndex) const
 {
     if ( _node->inputRef(parmIndex).state() == WorkFlowParameter::pkCALCULATED)
         return _parameterValues[parmIndex];
@@ -261,6 +260,6 @@ bool ExecutionNode::executeLoop(ExecutionContext *ctx, SymbolTable &symTable, Wo
 }
 
 void ExecutionNode::clearCalculatedValues(){
-    for(QString& v : _parameterValues)
-        v = sUNDEF;
+    for(QVariant& v : _parameterValues)
+        v = QVariant();
 }

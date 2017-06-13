@@ -13,11 +13,11 @@ public:
 
     bool execute(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping &mapping);
     void clearCalculatedValues();
-    QString parameterValue(int parmIndex) const;
+    QVariant parameterValue(int parmIndex) const;
     int parameterCount() const;
 
 private:
-    std::vector<QString> _parameterValues;
+    std::vector<QVariant> _parameterValues;
     SPWorkFlowNode _node;
 
     bool executeOperation(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation *workflowImpl, Ilwis::WorkflowIdMapping &mapping);
