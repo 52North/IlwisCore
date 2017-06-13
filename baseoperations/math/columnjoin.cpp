@@ -268,6 +268,14 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
             logOperation(_outputTable, _expression);
             ctx->setOutput(symTable,var, _outputTable->name(),itTABLE,_outputTable->resource(),_foreignKeyColumn);
         }
+        QString sql = "Drop Table " + _objectname;
+        if ( !db.exec(sql)){
+           kernel()->issues()->log(db.lastError().text());
+        }
+        sql = "Drop Table "+ _joinTable;
+        if ( !db.exec(sql)){
+           kernel()->issues()->log(db.lastError().text());
+        }
         return true;
     }
     return false;
@@ -308,7 +316,7 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
     QUrl url(inputTable);
     _joinTable = url.fileName().split(".",QString::SkipEmptyParts).at(0);
     _joinTable = _joinTable+"_join_tbl";
-    if (!_inputTable.prepare(inputTable)) {
+    if (!_inputTable.prepare(inputTable,{"mustexist", true})) {
         ERROR2(ERR_COULD_NOT_LOAD_2,inputTable,"");
         return sPREPAREFAILED;
     }
@@ -319,6 +327,13 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
         return sPREPAREFAILED;
     }
     _foreignKeyColumn = _expression.parm(3).value();
+     ColumnDefinition def2 = _inputTable->columndefinition(_foreignKeyColumn);
+
+     if ( !def1.datadef().domain()->isCompatibleWith(def2.datadef().domain().ptr())){
+        kernel()->issues()->log(TR("Column domains are not compatible:") + def1.datadef().domain()->name() + " and " + def2.datadef().domain()->name()) ;
+        return sPREPAREFAILED;
+     }
+
     QString outName = _expression.parm(0, false).value();
     if (baseName != outName) {
         if (outName == sUNDEF){
