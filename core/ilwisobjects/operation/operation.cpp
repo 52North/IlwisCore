@@ -42,7 +42,6 @@ void OperationImplementation::logOperation(const IIlwisObject &obj, const Operat
     if (obj.isValid()){
         obj->addDescription(expr.toString());
     }
-    logOperation(expr);
 }
 
 void OperationImplementation::logOperation(const OperationExpression &expr)
@@ -51,13 +50,21 @@ void OperationImplementation::logOperation(const OperationExpression &expr)
     kernel()->issues()->log(message, IssueObject::itExpression);
 }
 
+OperationImplementation::State OperationImplementation::prepare(ExecutionContext *ctx, const SymbolTable &)
+{
+    logOperation(_expression);
+    return sPREPARED;
+}
+
 void OperationImplementation::initialize(quint64 totalCount)
 {
-    if (!_tranquilizer){
-        _tranquilizer.reset(Tranquilizer::create(context()->runMode()));
+    if ( totalCount != i64UNDEF){
+        if (!_tranquilizer){
+            _tranquilizer.reset(Tranquilizer::create(context()->runMode()));
+        }
     }
     _tranquilizer->prepare(_metadata->name(), _metadata->description(), totalCount);
-    kernel()->issues()->log(_expression.toString(), IssueObject::itMessage);
+
 }
 
 bool OperationImplementation::isValid() const

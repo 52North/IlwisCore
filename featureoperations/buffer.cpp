@@ -89,8 +89,9 @@ OperationImplementation *Buffer::create(quint64 metaid, const OperationExpressio
     return new Buffer(metaid, expr);
 }
 
-OperationImplementation::State Buffer::prepare(ExecutionContext *, const SymbolTable &)
+OperationImplementation::State Buffer::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString inputFeatureCoverage = _expression.parm(0).value();
     QString inputBufferDistance = _expression.parm(1).value();
     QString inputQuadSegments = _expression.parm(2).value();

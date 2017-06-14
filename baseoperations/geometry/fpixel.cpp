@@ -38,8 +38,9 @@ Ilwis::OperationImplementation *FPixel::create(quint64 metaid, const Ilwis::Oper
     return new FPixel(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State FPixel::prepare(ExecutionContext *, const SymbolTable&)
+Ilwis::OperationImplementation::State FPixel::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     bool ok;
     double sx = _expression.parm(0).value().toLong(&ok);
     if (!ok){

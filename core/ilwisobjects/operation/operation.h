@@ -27,9 +27,10 @@ public:
     }
     void logOperation(const IIlwisObject& obj, const OperationExpression& expr);
     void logOperation(const OperationExpression &expr);
+    Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const SymbolTable &);
 
 protected:
-    void initialize(quint64 totalCount);
+    void initialize(quint64 totalCoun);
     IOperationMetaData _metadata;
     OperationExpression _expression;
     State _prepState;
@@ -39,8 +40,6 @@ protected:
         v.setValue(obj);
         ctx->setOutput(symTable, v, obj->name(), obj->ilwisType(), obj->resource());
     }
-
-    virtual State prepare(ExecutionContext *ctx, const SymbolTable& symTable) =0;
 
     template<typename T, typename S> bool compare1(LogicalOperator oper, const T& v1, const S& v2){
         switch(oper) {

@@ -110,8 +110,9 @@ quint64 Gridding::createMetadata()
     return resource.id();
 }
 
-OperationImplementation::State Gridding::prepare(ExecutionContext *ctx, const SymbolTable &symTable)
+OperationImplementation::State Gridding::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString csyName =  _expression.parm(0).value();
     if (!_csy.prepare(csyName)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,csyName,"" );
@@ -119,7 +120,7 @@ OperationImplementation::State Gridding::prepare(ExecutionContext *ctx, const Sy
     }
 
     QString name = _expression.parm(1).value();
-    QVariant var = symTable.getValue(name);
+    QVariant var = st.getValue(name);
     _top = var.value<Coordinate>();
     if (!_top.isValid() || _top.is0()) {
         _top = var.value<Coordinate>();

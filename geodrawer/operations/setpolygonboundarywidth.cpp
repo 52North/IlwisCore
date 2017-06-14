@@ -58,8 +58,9 @@ Ilwis::OperationImplementation *SetPolygonBoundaryWidth::create(quint64 metaid, 
     return new SetPolygonBoundaryWidth(metaid, expr)    ;
 }
 
-Ilwis::OperationImplementation::State SetPolygonBoundaryWidth::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State SetPolygonBoundaryWidth::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if ( (_rootDrawer = getRootDrawer()) == 0){
         return sPREPAREFAILED;
     }

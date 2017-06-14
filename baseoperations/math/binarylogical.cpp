@@ -177,7 +177,8 @@ bool BinaryLogical::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype2) 
     return true;
 }
 
-OperationImplementation::State BinaryLogical::prepare(ExecutionContext *,const SymbolTable&) {
+OperationImplementation::State BinaryLogical::prepare(ExecutionContext *ctx,const SymbolTable &st) {
+    OperationImplementation::prepare(ctx,st);
     if ( _expression.parameterCount() != 3){
         return sPREPAREFAILED;
     }

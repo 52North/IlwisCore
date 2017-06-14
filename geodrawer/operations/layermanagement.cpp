@@ -73,8 +73,9 @@ Ilwis::OperationImplementation *LayerManagement::create(quint64 metaid, const Il
     return new  LayerManagement(metaid, expr)   ;
 }
 
-Ilwis::OperationImplementation::State LayerManagement::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State LayerManagement::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     auto iter = ctx->_additionalInfo.find("rootdrawer");
     if ( iter == ctx->_additionalInfo.end())
         return sPREPAREFAILED;

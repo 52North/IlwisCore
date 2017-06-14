@@ -117,8 +117,9 @@ bool MovingAverage::execute(ExecutionContext *ctx, SymbolTable &symTable)
     return true;
 }
 
-Ilwis::OperationImplementation::State MovingAverage::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State MovingAverage::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString features = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 

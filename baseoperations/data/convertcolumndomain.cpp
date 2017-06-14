@@ -179,8 +179,9 @@ Ilwis::OperationImplementation *ConvertColumnDomain::create(quint64 metaid, cons
     return new ConvertColumnDomain(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State ConvertColumnDomain::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State ConvertColumnDomain::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString sourceUrl = _expression.input<QString>(0);
     if(!_inputTable.prepare(sourceUrl,{"mustexist", true})){
         IFeatureCoverage fc;

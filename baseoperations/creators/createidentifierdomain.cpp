@@ -55,8 +55,9 @@ Ilwis::OperationImplementation *CreateIdentifierDomain::create(quint64 metaid, c
     return new CreateIdentifierDomain(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State CreateIdentifierDomain::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State CreateIdentifierDomain::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if ( _expression.parameterCount() == 4){
         _parentdomain.prepare(_expression.input<QString>(3),{"mustexist", true});
         if (!_parentdomain.isValid()){

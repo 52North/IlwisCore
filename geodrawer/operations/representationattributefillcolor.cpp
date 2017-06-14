@@ -63,8 +63,9 @@ Ilwis::OperationImplementation *Ilwis::Geodrawer::RepresentationAttributeFillCol
     return new RepresentationAttributeFillColor(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State Ilwis::Geodrawer::RepresentationAttributeFillColor::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State Ilwis::Geodrawer::RepresentationAttributeFillColor::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if ( (_rootDrawer = getRootDrawer()) == 0){
         return sPREPAREFAILED;
     }

@@ -63,8 +63,10 @@ Ilwis::OperationImplementation *CreateCombinationMatrix::create(quint64 metaid, 
     return new CreateCombinationMatrix(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State CreateCombinationMatrix::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State CreateCombinationMatrix::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
+
     QString domainName = _expression.input<QString>(0);
     if (! _xaxisDomain.prepare(domainName)){
         kernel()->issues()->log(TR("Domain doesnt exist :") + domainName);
@@ -122,7 +124,6 @@ Ilwis::OperationImplementation::State CreateCombinationMatrix::prepare(Execution
             }
         }
     }
-
 
     return sPREPARED;
 }

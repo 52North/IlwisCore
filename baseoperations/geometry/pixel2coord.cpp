@@ -36,8 +36,9 @@ OperationImplementation *Pixel2Coord::create(quint64 metaid, const Ilwis::Operat
     return new Pixel2Coord(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State Pixel2Coord::prepare(ExecutionContext *ctx, const SymbolTable& symTable)
+Ilwis::OperationImplementation::State Pixel2Coord::prepare(ExecutionContext *ctx, const SymbolTable& st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString raster = _expression.parm(0).value();
     if (!_inputGC.prepare(raster)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");
@@ -45,7 +46,7 @@ Ilwis::OperationImplementation::State Pixel2Coord::prepare(ExecutionContext *ctx
     }
     if ( _expression.parameterCount() == 2) {
         QString name = _expression.parm(1).value();
-        QVariant var = symTable.getValue(name);
+        QVariant var = st.getValue(name);
         _pixel = var.value<Pixel>();
     }
     if ( _expression.parameterCount() == 3) {

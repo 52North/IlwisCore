@@ -55,8 +55,9 @@ Ilwis::OperationImplementation *ShowCoverage::create(quint64 metaid, const Ilwis
     return new ShowCoverage(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State ShowCoverage::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State ShowCoverage::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     _url = _expression.input<QString>(0);
     ICoverage cov(_url, itCOVERAGE,{"mustexist", true});
     if ( !cov.isValid()){

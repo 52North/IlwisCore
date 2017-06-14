@@ -123,9 +123,9 @@ DataDefinition MapCalc::datadef(int index)
 
 
 
-OperationImplementation::State MapCalc::prepare(ExecutionContext *,const SymbolTable&) {
+OperationImplementation::State MapCalc::prepare(ExecutionContext *ctx,const SymbolTable &st) {
 
-
+    OperationImplementation::prepare(ctx,st);
     QString expr = _expression.input<QString>(0);
 
 

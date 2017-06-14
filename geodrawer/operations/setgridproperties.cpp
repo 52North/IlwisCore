@@ -55,8 +55,9 @@ Ilwis::OperationImplementation *SetGridProperties::create(quint64 metaid, const 
     return new SetGridProperties(metaid,expr)    ;
 }
 
-Ilwis::OperationImplementation::State SetGridProperties::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State SetGridProperties::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if ( (_rootDrawer = getRootDrawer()) == 0){
         return sPREPAREFAILED;
     }

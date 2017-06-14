@@ -94,6 +94,7 @@ quint64 PointRasterCrossing::createMetadata()
 
 OperationImplementation::State PointRasterCrossing::prepare(ExecutionContext *ctx, const SymbolTable &sym)
 {
+    OperationImplementation::prepare(ctx,sym);
     QString points = _expression.parm(0).value();
     QString raster = _expression.parm(1).value();
     QString outputName = _expression.parm(0,false).value();

@@ -59,8 +59,9 @@ Ilwis::OperationImplementation *CreatePaletteDomain::create(quint64 metaid, cons
     return new CreatePaletteDomain(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State CreatePaletteDomain::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State CreatePaletteDomain::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if ( _expression.parameterCount() == 4){
         _parentdomain.prepare(_expression.input<QString>(3),{"mustexist", true});
         if (!_parentdomain.isValid()){

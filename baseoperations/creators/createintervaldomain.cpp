@@ -62,8 +62,9 @@ Ilwis::OperationImplementation *CreateIntervalDomain::create(quint64 metaid, con
     return new CreateIntervalDomain(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State CreateIntervalDomain::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State CreateIntervalDomain::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if ( _expression.parameterCount() == 5){
         _parentdomain.prepare(_expression.input<QString>(3),{"mustexist", true});
         if (!_parentdomain.isValid()){

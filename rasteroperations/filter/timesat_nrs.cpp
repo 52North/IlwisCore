@@ -30,8 +30,9 @@ Timesat::Timesat()
 {
 }
 
-Ilwis::OperationImplementation::State Timesat::prepare(ExecutionContext *, const SymbolTable & )
+Ilwis::OperationImplementation::State Timesat::prepare(ExecutionContext *ctx, const SymbolTable &st )
 {
+    OperationImplementation::prepare(ctx,st);
     QString raster = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 

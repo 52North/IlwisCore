@@ -104,8 +104,9 @@ Ilwis::OperationImplementation *Assignment::create(quint64 metaid, const Ilwis::
     return new Assignment(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *, const SymbolTable &)
+Ilwis::OperationImplementation::State Assignment::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if ( _expression.parameterCount() != 1) {
         ERROR3(ERR_ILLEGAL_NUM_PARM3,"assignment","1",QString::number(_expression.parameterCount()));
         return sPREPAREFAILED;

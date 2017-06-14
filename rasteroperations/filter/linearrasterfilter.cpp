@@ -59,8 +59,9 @@ Ilwis::OperationImplementation *LinearRasterFilter::create(quint64 metaid, const
     return new LinearRasterFilter(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State LinearRasterFilter::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State LinearRasterFilter::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString raster1 = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 

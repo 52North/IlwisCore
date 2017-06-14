@@ -83,8 +83,9 @@ bool Aggregation::execute(ExecutionContext *ctx, SymbolTable &symTable)
     return false;
 }
 
-Ilwis::OperationImplementation::State Aggregation::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State Aggregation::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString table = _expression.parm(0).value();
     if (!_inputTable.prepare(table)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,table,"");

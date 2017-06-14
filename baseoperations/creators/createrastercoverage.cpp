@@ -215,8 +215,9 @@ bool CreateRasterCoverage::parseStackDefintion(const QString& stacDef){
 
 }
 
-Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     auto CreateStackDomain = [&](const QString& dom)-> Ilwis::OperationImplementation::State{
         _stackDomain.prepare(dom);
         if ( !_stackDomain.isValid()){

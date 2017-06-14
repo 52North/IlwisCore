@@ -91,8 +91,9 @@ OperationImplementation *RasterSlicing::create(quint64 metaid, const Ilwis::Oper
     return new RasterSlicing(metaid, expr);
 }
 
-OperationImplementation::State RasterSlicing::prepare(ExecutionContext *ctx, const SymbolTable &)
+OperationImplementation::State RasterSlicing::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString raster = _expression.parm(0).value();
 
     QString outputName = _expression.parm(0,false).value();

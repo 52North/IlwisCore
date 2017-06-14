@@ -179,8 +179,9 @@ Ilwis::OperationImplementation *AggregateTable::create(quint64 metaid, const Ilw
     return new  AggregateTable(metaid, expr)   ;
 }
 
-Ilwis::OperationImplementation::State AggregateTable::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State AggregateTable::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     OperationHelper::check([&] ()->bool { return _inputTable.prepare(_expression.input<QString>(0), itTABLE); },
     {ERR_COULD_NOT_LOAD_2,_expression.input<QString>(0), "" } );
 

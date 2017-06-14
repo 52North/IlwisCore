@@ -78,8 +78,10 @@ Ilwis::OperationImplementation *Line2Polygon::create(quint64 metaid, const Ilwis
     return new Line2Polygon(metaid, expr)    ;
 }
 
-Ilwis::OperationImplementation::State Line2Polygon::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State Line2Polygon::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
+
     QString features = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 

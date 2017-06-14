@@ -62,8 +62,9 @@ Ilwis::OperationImplementation *RankOrderRasterFilter::create(quint64 metaid, co
     return new RankOrderRasterFilter(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State RankOrderRasterFilter::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State RankOrderRasterFilter::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString raster1 = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 

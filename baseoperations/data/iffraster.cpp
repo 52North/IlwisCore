@@ -82,8 +82,9 @@ OperationImplementation *IffRaster::create(quint64 metaid, const OperationExpres
     return new IffRaster(metaid, expr);
 }
 
-OperationImplementation::State IffRaster::prepare(ExecutionContext *, const SymbolTable &)
+OperationImplementation::State IffRaster::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString raster = _expression.parm(0).value();
 
     if (!_inputGC.prepare(raster)) {

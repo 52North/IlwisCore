@@ -281,8 +281,9 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
     return false;
 }
 
-OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const SymbolTable &)
+OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString baseName = _expression.parm(0).value();
     QUrl dr(baseName);
     _objectname = dr.fileName().split(".",QString::SkipEmptyParts).at(0);

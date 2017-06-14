@@ -63,8 +63,9 @@ Ilwis::OperationImplementation *Connect::create(quint64 metaid, const Ilwis::Ope
         return new Connect(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State Connect::prepare(ExecutionContext *, const SymbolTable&)
+Ilwis::OperationImplementation::State Connect::prepare(ExecutionContext *ctx, const SymbolTable& st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString url = _expression.parm(0).value();
     if (!_object.prepare(url)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,url,"");

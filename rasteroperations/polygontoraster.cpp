@@ -122,8 +122,9 @@ Ilwis::OperationImplementation *PolygonToRaster::create(quint64 metaid, const Il
     return new PolygonToRaster(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State PolygonToRaster::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State PolygonToRaster::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString features = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 

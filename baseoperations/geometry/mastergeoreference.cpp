@@ -36,8 +36,9 @@ bool MasterGeoreference::execute(ExecutionContext *ctx, SymbolTable &symTable)
     return true;
 }
 
-Ilwis::OperationImplementation::State MasterGeoreference::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State MasterGeoreference::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
    QString georef = _expression.parm(0).value();
    if(!_georef.prepare(georef)) {
        ERROR2(ERR_COULD_NOT_LOAD_2,georef,"");

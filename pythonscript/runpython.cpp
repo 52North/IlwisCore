@@ -115,8 +115,9 @@ quint64 RunPython::createMetadata()
     return operation.id();
 }
 
-OperationImplementation::State RunPython::prepare(ExecutionContext *, const SymbolTable &)
+OperationImplementation::State RunPython::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString exp(_expression.input<QString>(0));
     if ( exp[0] == '\"' && exp[exp.size() - 1] == '\"'){
         exp = exp.mid(1,exp.size() - 2);

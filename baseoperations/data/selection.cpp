@@ -117,8 +117,9 @@ Ilwis::OperationImplementation *SelectionRaster::create(quint64 metaid, const Il
 }
 
 
-Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext *, const SymbolTable &)
+Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if ( _expression.parameterCount() != 2) {
         ERROR3(ERR_ILLEGAL_NUM_PARM3,"rasvalue","1",QString::number(_expression.parameterCount()));
         return sPREPAREFAILED;

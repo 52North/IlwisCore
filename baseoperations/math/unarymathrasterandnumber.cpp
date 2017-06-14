@@ -70,8 +70,9 @@ NumericRange *UnaryMathRasterAndNumber::constructRangeFrom(const SPNumericRange 
     return static_cast<NumericRange *>(range->clone());
 }
 
-OperationImplementation::State UnaryMathRasterAndNumber::prepare(ExecutionContext *,const SymbolTable&)
+OperationImplementation::State UnaryMathRasterAndNumber::prepare(ExecutionContext *ctx,const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     IlwisTypes ptype = _expression.parm(0).valuetype();
 
 

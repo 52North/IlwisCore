@@ -69,10 +69,11 @@ Ilwis::OperationImplementation *CreateCornersGeoreference::create(quint64 metaid
     return new CreateCornersGeoreference(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State CreateCornersGeoreference::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State CreateCornersGeoreference::prepare(ExecutionContext *ctx, const SymbolTable &symbolTable)
 {
 
     bool ok;
+    OperationImplementation::prepare(ctx,symbolTable);
     _minx = _expression.input<double>(0,ok);
     if (!ok){
         kernel()->issues()->log(QString(TR("%1 is not a valid minx value").arg(_expression.parm(0).value())));

@@ -70,8 +70,9 @@ Ilwis::OperationImplementation *ServiceObject::create(quint64 metaid, const Ilwi
         return new ServiceObject(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State ServiceObject::prepare(ExecutionContext *, const SymbolTable&)
+Ilwis::OperationImplementation::State ServiceObject::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString objecturl = _expression.parm(0).value();
     if (!_object.prepare(objecturl)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,objecturl,"");

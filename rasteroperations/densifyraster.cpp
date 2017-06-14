@@ -82,8 +82,9 @@ Ilwis::OperationImplementation *DensifyRaster::create(quint64 metaid, const Ilwi
 }
 
 
-Ilwis::OperationImplementation::State DensifyRaster::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State DensifyRaster::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString inputRaster = _expression.parm(0).value();
     QString inputEnlargementFactor = _expression.input<QString>(1);
     QString inputInterpolationMethod = _expression.parm(2).value();

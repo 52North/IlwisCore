@@ -73,8 +73,9 @@ Ilwis::OperationImplementation *StackMinMaxFilter::create(quint64 metaid, const 
     return new StackMinMaxFilter(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State StackMinMaxFilter::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State StackMinMaxFilter::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString raster1 = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 

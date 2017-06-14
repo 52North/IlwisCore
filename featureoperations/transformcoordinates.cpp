@@ -65,6 +65,7 @@ quint64 TransformCoordinates::createMetadata()
 
 OperationImplementation::State TransformCoordinates::prepare(ExecutionContext *ctx, const SymbolTable &sym)
 {
+    OperationImplementation::prepare(ctx,sym);
     kernel()->issues()->log(TR("not implemented"));
     return sPREPAREFAILED;
 }

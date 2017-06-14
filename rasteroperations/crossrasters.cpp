@@ -239,8 +239,9 @@ Ilwis::OperationImplementation *CrossRastersBase::create(quint64 metaid, const I
     return new CrossRastersBase(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State CrossRastersBase::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State CrossRastersBase::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString raster1 = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 

@@ -225,8 +225,9 @@ Ilwis::OperationImplementation *DistanceRaster::create(quint64 metaid, const Ilw
     return new DistanceRaster(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString inputRasterName = _expression.input<QString>(0);
     //QString inputThiessenRaster = _expression.input<QString>(2);
     QString outputRasterName = _expression.parm(0,false).value();

@@ -80,8 +80,9 @@ Ilwis::OperationImplementation *Line2Raster::create(quint64 metaid, const Ilwis:
     return new Line2Raster(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State Line2Raster::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State Line2Raster::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString features = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 

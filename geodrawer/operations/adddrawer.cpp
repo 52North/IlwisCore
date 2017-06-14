@@ -71,8 +71,9 @@ Ilwis::OperationImplementation *AddDrawer::create(quint64 metaid, const Ilwis::O
     return new AddDrawer(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State AddDrawer::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State AddDrawer::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     auto iter = ctx->_additionalInfo.find("rootdrawer");
     if ( iter == ctx->_additionalInfo.end())
         return sPREPAREFAILED;

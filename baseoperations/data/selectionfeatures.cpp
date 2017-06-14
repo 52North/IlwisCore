@@ -89,8 +89,9 @@ Ilwis::OperationImplementation *SelectionFeatures::create(quint64 metaid, const 
     return new SelectionFeatures(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContext *, const SymbolTable &)
+Ilwis::OperationImplementation::State SelectionFeatures::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     IlwisTypes inputType = itFEATURE;
     QString fc = _expression.parm(0).value();
     if (!_inputObj.prepare(fc, inputType)) {

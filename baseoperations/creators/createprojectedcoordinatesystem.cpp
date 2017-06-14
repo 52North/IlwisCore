@@ -80,8 +80,9 @@ Ilwis::OperationImplementation *Ilwis::BaseOperations::CreateProjectedCoordinate
     return new CreateProjectedCoordinateSystem(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State Ilwis::BaseOperations::CreateProjectedCoordinateSystem::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State Ilwis::BaseOperations::CreateProjectedCoordinateSystem::prepare(ExecutionContext *ctx, const SymbolTable& st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString proj;
     QString parameters = _expression.input<QString>(1).remove('\"');
     auto ProjError = [proj](const QString& message)->bool{

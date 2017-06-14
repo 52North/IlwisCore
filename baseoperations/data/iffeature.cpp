@@ -67,8 +67,9 @@ Ilwis::OperationImplementation *IfFeature::create(quint64 metaid, const Ilwis::O
     return new IfFeature(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State IfFeature::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State IfFeature::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString fc = _expression.parm(0).value();
 
     if (!_inputFC.prepare(fc)) {

@@ -53,8 +53,9 @@ Ilwis::OperationImplementation *SetAttributeTable::create(quint64 metaid, const 
     return new SetAttributeTable(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State SetAttributeTable::prepare(ExecutionContext *, const SymbolTable &)
+Ilwis::OperationImplementation::State SetAttributeTable::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
 
     OperationHelper::check([&] ()->bool { return _inputTable.prepare(_expression.input<QString>(0), itTABLE); },
     {ERR_COULD_NOT_LOAD_2,_expression.input<QString>(0), "" } );

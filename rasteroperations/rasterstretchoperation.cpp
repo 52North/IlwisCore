@@ -73,8 +73,9 @@ bool LinearStretchOperation::execute(ExecutionContext *ctx,SymbolTable& symTable
     return ok;
 }
 
-Ilwis::OperationImplementation::State LinearStretchOperation::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State LinearStretchOperation::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString intputName = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 

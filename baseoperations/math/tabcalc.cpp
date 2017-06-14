@@ -68,8 +68,9 @@ bool TabCalc::execute(ExecutionContext *ctx, SymbolTable &symTable)
    return true;
 }
 
-OperationImplementation::State TabCalc::prepare(ExecutionContext *ctx, const SymbolTable &)
+OperationImplementation::State TabCalc::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString expr = _expression.input<QString>(0);
 
     OperationHelper::check([&] ()->bool { return _inputTable.prepare(_expression.input<QString>(1), itTABLE); },

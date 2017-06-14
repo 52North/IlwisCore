@@ -38,8 +38,9 @@ Ilwis::OperationImplementation *StringFind::create(quint64 metaid, const Ilwis::
     return new StringFind(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State StringFind::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &)
+Ilwis::OperationImplementation::State StringFind::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if (_expression.parameterCount() < 2) {
         return sPREPAREFAILED;
     }
@@ -111,8 +112,9 @@ Ilwis::OperationImplementation *StringSub::create(quint64 metaid, const Ilwis::O
     return new StringSub(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State StringSub::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &)
+Ilwis::OperationImplementation::State StringSub::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     _text = _expression.parm(0).value();
     bool ok;
     _start = _expression.parm(1).value().toLong(&ok);
@@ -179,8 +181,9 @@ Ilwis::OperationImplementation *StringReplace::create(quint64 metaid, const Ilwi
     return new StringReplace(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State StringReplace::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &)
+Ilwis::OperationImplementation::State StringReplace::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if (_expression.parameterCount() < 3) {
         return sPREPAREFAILED;
     }
@@ -237,8 +240,9 @@ Ilwis::OperationImplementation *StringAdd::create(quint64 metaid, const Ilwis::O
     return new StringAdd(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State StringAdd::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &)
+Ilwis::OperationImplementation::State StringAdd::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     _text1 = _expression.parm(0).value();
     _text2 = _expression.parm(1).value();
     return sPREPARED;

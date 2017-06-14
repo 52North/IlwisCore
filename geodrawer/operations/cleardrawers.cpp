@@ -53,8 +53,9 @@ Ilwis::OperationImplementation *ClearDrawers::create(quint64 metaid, const Ilwis
     return new ClearDrawers(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State ClearDrawers::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State ClearDrawers::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     auto iter = ctx->_additionalInfo.find("rootdrawer");
     if ( iter == ctx->_additionalInfo.end())
         return sPREPAREFAILED;

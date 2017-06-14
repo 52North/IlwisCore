@@ -54,8 +54,9 @@ Ilwis::OperationImplementation *CreateNumericDomain::create(quint64 metaid, cons
     return new CreateNumericDomain(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State CreateNumericDomain::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State CreateNumericDomain::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     bool ok1, ok2, ok3;
     _vmin = _expression.input<double>(0, ok1);
     _vmax = _expression.input<double>(1, ok2);

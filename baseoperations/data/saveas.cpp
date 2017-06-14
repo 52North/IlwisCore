@@ -43,9 +43,9 @@ Ilwis::OperationImplementation *SaveAs::create(quint64 metaid, const Ilwis::Oper
         return new SaveAs(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State SaveAs::prepare(ExecutionContext *, const SymbolTable&)
+Ilwis::OperationImplementation::State SaveAs::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
-
+    OperationImplementation::prepare(ctx,st);
     QString objectname = _expression.parm(0).value();
     objectname.remove("\"");
     if (!_inputObject.prepare(objectname,{"mustexist",true})) {

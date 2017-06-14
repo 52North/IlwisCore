@@ -203,7 +203,8 @@ bool BinaryMathRaster::prepareCoverageNumber(IlwisTypes ptype1, IlwisTypes ptype
     return true;
 }
 
-OperationImplementation::State BinaryMathRaster::prepare(ExecutionContext *,const SymbolTable&) {
+OperationImplementation::State BinaryMathRaster::prepare(ExecutionContext *ctx,const SymbolTable &st) {
+    OperationImplementation::prepare(ctx,st);
     if ( _expression.parameterCount() != 3){
         return sPREPAREFAILED;
     }

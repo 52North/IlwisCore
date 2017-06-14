@@ -43,8 +43,9 @@ bool WorkingCatalog::execute(ExecutionContext *ctx, SymbolTable &symTable)
     return true;
 }
 
-Ilwis::OperationImplementation::State WorkingCatalog::prepare(ExecutionContext *, const Ilwis::SymbolTable &symTable)
+Ilwis::OperationImplementation::State WorkingCatalog::prepare(ExecutionContext *ctx, const Ilwis::SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString location =  _expression.input<QString>(0);
     QUrl url( location);
     if ( !url.isValid() || url.isEmpty() || url.isRelative()){

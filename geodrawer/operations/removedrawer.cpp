@@ -57,8 +57,9 @@ Ilwis::OperationImplementation *RemoveDrawer::create(quint64 metaid, const Ilwis
     return new RemoveDrawer(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State RemoveDrawer::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State RemoveDrawer::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if ( (_rootDrawer = getRootDrawer()) == 0){
         return sPREPAREFAILED;
     }

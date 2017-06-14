@@ -122,8 +122,9 @@ Ilwis::OperationImplementation *MirrorRotateRaster::create(quint64 metaid, const
     return new MirrorRotateRaster(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State MirrorRotateRaster::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State MirrorRotateRaster::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString raster = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
     QString method = _expression.parm(1).value().toLower();

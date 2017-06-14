@@ -64,8 +64,9 @@ OperationImplementation *BinaryMathFeature::create(quint64 metaid, const Ilwis::
     return new BinaryMathFeature(metaid, expr);
 }
 
-OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx, const SymbolTable &)
+OperationImplementation::State BinaryMathFeature::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString featureCovName =  _expression.parm(0).value();
     if (!_inputFeatureSet1.prepare(featureCovName)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,featureCovName,"" );

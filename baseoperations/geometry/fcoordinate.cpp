@@ -39,8 +39,9 @@ Ilwis::OperationImplementation *FCoordinate::create(quint64 metaid, const Ilwis:
     return new FCoordinate(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State FCoordinate::prepare(ExecutionContext *, const SymbolTable &)
+Ilwis::OperationImplementation::State FCoordinate::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     bool ok;
     double sx = _expression.parm(0).value().toDouble(&ok);
     if (!ok){

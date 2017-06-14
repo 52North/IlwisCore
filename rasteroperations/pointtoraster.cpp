@@ -89,8 +89,9 @@ Ilwis::OperationImplementation *PointToRaster::create(quint64 metaid, const Ilwi
     return new PointToRaster(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State PointToRaster::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State PointToRaster::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     // according to syntax specification the first input parameter will be  the name of the featurecoverage
     // used in this operation. Usually this will be a full url ( eg.g file://d:/somedata/mycoverage.shp
     // remember Ilwis-objects uses urls for locations, not file paths

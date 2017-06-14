@@ -58,8 +58,9 @@ Ilwis::OperationImplementation *SetLayerVisibility::create(quint64 metaid, const
     return new SetLayerVisibility(metaid, expr) ;
 }
 
-Ilwis::OperationImplementation::State SetLayerVisibility::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State SetLayerVisibility::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if ( (_rootDrawer = getRootDrawer()) == 0){
         return sPREPAREFAILED;
     }

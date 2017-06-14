@@ -82,8 +82,9 @@ bool AreaNumbering::execute(ExecutionContext *ctx, SymbolTable& symTable)
     return res;
 }
 
-Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *, const SymbolTable & )
+Ilwis::OperationImplementation::State AreaNumbering::prepare(ExecutionContext *ctx, const SymbolTable &st )
 {
+    OperationImplementation::prepare(ctx,st);
     QString raster = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
     int copylist = itCOORDSYSTEM | itGEOREF;

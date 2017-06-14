@@ -74,8 +74,9 @@ Ilwis::OperationImplementation *SetValueRange::create(quint64 metaid, const Ilwi
     return new SetValueRange(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State SetValueRange::prepare(ExecutionContext *, const SymbolTable &)
+Ilwis::OperationImplementation::State SetValueRange::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString objectName = _expression.parm(0).value();
     if ( !_raster.prepare(objectName)) {
         ERROR2(ERR_COULD_NOT_LOAD_2, "raster", objectName);

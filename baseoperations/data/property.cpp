@@ -124,8 +124,9 @@ Ilwis::OperationImplementation *Property::create(quint64 metaid, const Ilwis::Op
         return new Property(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State Property::prepare(ExecutionContext *, const SymbolTable&)
+Ilwis::OperationImplementation::State Property::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString objecturl = _expression.parm(0).value();
     if (!_object.prepare(objecturl)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,objecturl,"");

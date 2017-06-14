@@ -39,8 +39,9 @@ Ilwis::OperationImplementation *SetVariable::create(quint64 metaid, const Ilwis:
         return new SetVariable(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State SetVariable::prepare(ExecutionContext *, const SymbolTable&)
+Ilwis::OperationImplementation::State SetVariable::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     _value = _expression.input<QString>(0);
 
     return sPREPARED;

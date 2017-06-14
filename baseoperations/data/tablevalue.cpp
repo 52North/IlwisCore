@@ -49,8 +49,10 @@ Ilwis::OperationImplementation *TableValue::create(quint64 metaid, const Ilwis::
         return new TableValue(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State TableValue::prepare(ExecutionContext *, const SymbolTable&)
+Ilwis::OperationImplementation::State TableValue::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
+
     OperationHelper::check([&] ()->bool { return _inputTable.prepare(_expression.input<QString>(0), itTABLE); },
     {ERR_COULD_NOT_LOAD_2,_expression.input<QString>(0), "" } );
 

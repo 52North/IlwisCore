@@ -44,7 +44,8 @@ OperationImplementation *GridSize::create(quint64 metaid, const Ilwis::Operation
     return new GridSize(metaid, expr);
 }
 
-OperationImplementation::State GridSize::prepare(ExecutionContext *, const SymbolTable& ){
+OperationImplementation::State GridSize::prepare(ExecutionContext *ctx, const SymbolTable &st ){
+    OperationImplementation::prepare(ctx,st);
     QString raster = _expression.parm(0).value();
     if (!_inputGC.prepare(raster)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,raster,"");

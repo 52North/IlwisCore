@@ -101,8 +101,8 @@ Ilwis::OperationImplementation *ComboClassification::create(quint64 metaid,const
     return new ComboClassification(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State ComboClassification::prepare(ExecutionContext *ctx, const SymbolTable &){
-
+Ilwis::OperationImplementation::State ComboClassification::prepare(ExecutionContext *ctx, const SymbolTable &st){
+    OperationImplementation::prepare(ctx,st);
     OperationHelper::check([&] ()->bool { return _inputRasterX.prepare(_expression.input<QString>(0), itRASTER); },
     {ERR_COULD_NOT_LOAD_2,_expression.input<QString>(0), "" } );
 

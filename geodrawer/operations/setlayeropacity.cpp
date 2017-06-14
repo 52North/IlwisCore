@@ -47,8 +47,9 @@ Ilwis::OperationImplementation *SetLayerOpacity::create(quint64 metaid, const Il
     return new SetLayerOpacity(metaid,expr)    ;
 }
 
-Ilwis::OperationImplementation::State SetLayerOpacity::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State SetLayerOpacity::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if ( (_rootDrawer = getRootDrawer()) == 0){
         return sPREPAREFAILED;
     }

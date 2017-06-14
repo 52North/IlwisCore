@@ -75,8 +75,9 @@ Ilwis::OperationImplementation *RasterToPoint::create(quint64 metaid, const Ilwi
     return new RasterToPoint(metaid,expr);
 }
 
-Ilwis::OperationImplementation::State RasterToPoint::prepare(ExecutionContext *ctx, const SymbolTable &)
+Ilwis::OperationImplementation::State RasterToPoint::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString raster = _expression.parm(0).value();
     QString outputName = _expression.parm(0,false).value();
 

@@ -94,8 +94,9 @@ bool SpatialRelationOperation::execute(ExecutionContext *ctx, SymbolTable &symTa
 }
 
 
-OperationImplementation::State SpatialRelationOperation::prepare(ExecutionContext *ctx, const SymbolTable &)
+OperationImplementation::State SpatialRelationOperation::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     QString fc = _expression.parm(0).value();
 
     if (!_coverage.prepare(fc)) {

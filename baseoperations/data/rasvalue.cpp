@@ -36,8 +36,9 @@ Ilwis::OperationImplementation *RasValue::create(quint64 metaid, const Ilwis::Op
         return new RasValue(metaid, expr);
 }
 
-Ilwis::OperationImplementation::State RasValue::prepare(ExecutionContext *, const SymbolTable&)
+Ilwis::OperationImplementation::State RasValue::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
+    OperationImplementation::prepare(ctx,st);
     if ( _expression.parameterCount() < 3 || _expression.parameterCount() > 4) {
         ERROR3(ERR_ILLEGAL_NUM_PARM3,"rasvalue","3 or 4",QString::number(_expression.parameterCount()));
         return sPREPAREFAILED;
