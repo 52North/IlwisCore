@@ -56,7 +56,7 @@ ApplicationWindow {
         id : root
         height : parent.height/uiScale
         width : parent.width/uiScale
-        property int defaultCommLineHeight : 60
+        property int defaultCommLineHeight : 64
 
         scale : uiScale
         transformOrigin:Item.TopLeft

@@ -147,7 +147,8 @@ void ResourceModel::setDisplayName(const QString &name)
     try {
         if ( itemRef().isValid()){
             _displayName = name;
-            itemRef().name(name, false);
+            if ( item().name() == "")
+                itemRef().name(name, false);
             mastercatalog()->changeResource(itemRef().id(), "name",name);
             emit displayNameChanged();
         }

@@ -52,14 +52,15 @@ MasterCatalogModel::MasterCatalogModel()
 {
 }
 
-CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QUrl& location, const QString& descr, const QString& query, bool threading)
+CatalogModel *MasterCatalogModel::addBookmark(const QString& label, const QString& shortName, const QUrl& location, const QString& descr, const QString& query, bool threading)
 {
     Resource res(location, itCATALOGVIEW ) ;
     if ( label != "")
-        res.name(label,false);
+        res.name(shortName,false);
     res.addProperty("filter",query);
     res.setDescription(descr);
     auto cm = new CatalogModel(res, CatalogModel::getCatalogType(res, CatalogModel::ctBOOKMARK));
+    cm->setDisplayName(label);
     cm->scanContainer(threading,false);
     return cm;
 }
@@ -579,7 +580,7 @@ void MasterCatalogModel::addBookmark(const QString& path){
         if ( cat->url() == path)
             return;
     }
-    _bookmarks.push_back(addBookmark(path,path,"",""));
+    _bookmarks.push_back(addBookmark("", path,path,"",""));
 
 
     int catid = _bookmarkids.size() == 0 ? 0 : _bookmarkids.last().toInt() + 1;
@@ -864,15 +865,15 @@ void MasterCatalogModel::prepare()
     TranquilizerFactory *factory = kernel()->factory<TranquilizerFactory>("ilwis::tranquilizerfactory");
     factory->registerTranquilizerType(rmDESKTOP, Ilwis::Geodrawer::DesktopTranquilizer::create);
 
-    _bookmarks.push_back(addBookmark(TR("Temporary Catalog"),
+    _bookmarks.push_back(addBookmark(TR("Temporary Catalog"),TR("Temporary"),
                INTERNAL_CATALOG_URL,
                TR("Catalog that holds objects that are only available this session.\nThey will not be available in when ilwis is restarted"),
                "type=" + QString::number(itANY) + " and container='ilwis://internalcatalog'",false));
-     _bookmarks.push_back(addBookmark(TR("System Catalog"),
+     _bookmarks.push_back(addBookmark(TR("System Catalog"),TR("System"),
                QUrl("ilwis://system"),
                TR("Catalog that shows all system objects in ilwis\n System objects are read-only objects that are always available"),
                "type<>" + QString::number(itGEODETICDATUM),false));
-     _bookmarks.push_back(addBookmark(TR("Operations"),
+     _bookmarks.push_back(addBookmark(TR("Operations"),TR("Operations"),
                QUrl("ilwis://operations"),
                TR("Catalog that shows all available operations and workflows in ilwis"),
                "(type=" + QString::number(itSINGLEOPERATION) + " or type=" + QString::number(itWORKFLOW) + ")", false));

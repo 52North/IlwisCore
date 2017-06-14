@@ -63,81 +63,22 @@ Item {
                         }
                     }
                 }
-                Controls.FlatButton{
-                    icon : "../images/bookmark.png"
-                    label : qsTr("Temporary")
-                    tooltip : qsTr("Catalog that holds objects that are only available this session.\nThey will not be available in when ilwis is restarted")
-                    onClicked: {
-                        var url = "ilwis://internalcatalog"
-                        mastercatalog.selectedBookmark(url)
-                        var filter = mastercatalog.filter(url)
-                        bigthing.changeCatalog(filter,"catalog", url)
-                    }
-                }
-                Controls.FlatButton{
-                    icon : "../images/bookmark.png"
-                    label : qsTr("System")
-                    tooltip : qsTr("Catalog that shows all system objects in ilwis\n System objects are read-only objects that are always available")
-                    onClicked: {
-                        var url = "ilwis://system"
-                        mastercatalog.selectedBookmark(url)
-                        var filter = mastercatalog.filter(url)
-                        bigthing.changeCatalog(filter,"catalog", url)
-                    }
-                }
-                Controls.FlatButton{
-                    icon : "../images/bookmark.png"
-                    label : qsTr("Operations")
-                    tooltip : qsTr("Catalog that shows all available operations and workflows in ilwis")
-                    onClicked: {
-                        var url = "ilwis://operations"
-                        mastercatalog.selectedBookmark(url)
-                        var filter = mastercatalog.filter(url)
-                        bigthing.changeCatalog(filter,"catalog", url)
-                    }
-                }
-                Controls.FlatButton{
-                    icon : "../images/bookmark.png"
-                    label : mastercatalog.getName("bookmark 3")
-                    tooltip : mastercatalog.getUrl("bookmark 3")
-                    width : 85
-                    onClicked: {
-                        var url = "bookmark 3"
-                        var filter = mastercatalog.filter(url)
-                        if ( filter !== ""){
-                            url = mastercatalog.getUrl(url)
-                            mastercatalog.selectedBookmark(url)
-                            bigthing.changeCatalog(filter,"catalog", url)
-                        }
-                    }
-                }
-                Controls.FlatButton{
-                    icon : "../images/bookmark.png"
-                    label : mastercatalog.getName("bookmark 4")
-                    tooltip : mastercatalog.getUrl("bookmark 4")
-                    width : 85
-                    onClicked: {
-                        var url = "bookmark 4"
-                        var filter = mastercatalog.filter(url)
-                        if ( filter !== ""){
-                            url = mastercatalog.getUrl(url)
-                            mastercatalog.selectedBookmark(url)
-                            bigthing.changeCatalog(filter,"catalog", url)
-                        }
-                    }
-                }
-                Controls.FlatButton{
-                    icon : "../images/bookmark.png"
-                    label : mastercatalog.getName("bookmark 5")
-                    tooltip : mastercatalog.getUrl("bookmark 5")
-                    width : 85
-                    onClicked: {
-                        var url = "bookmark 5"
-                        var filter = mastercatalog.filter(url)
-                        if ( filter !== ""){
-                            url = mastercatalog.getUrl(url)
-                            mastercatalog.selectedBookmark(url)
-                            bigthing.changeCatalog(filter,"catalog", url)
+                ListView {
+                    width : childrenRect.width
+                    height : parent.height
+                    model : mastercatalog.bookmarked
+                    orientation: ListView.Horizontal
+                    delegate {
+                        Controls.FlatButton{
+                            icon : "../images/bookmark.png"
+                            label : name
+                            width : 75
+                            tooltip : description
+                            onClicked: {
+                                mastercatalog.selectedBookmark(url)
+                                var filter = mastercatalog.filter(url)
+                                bigthing.changeCatalog(filter,"catalog", url)
+                            }
                         }
                     }
                 }
