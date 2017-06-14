@@ -138,7 +138,9 @@ QString ResourceModel::dimensions() const
 
 QString ResourceModel::displayName() const
 {
-    return _displayName;
+    if ( _displayName != "")
+        return _displayName;
+    return name();
 }
 
 void ResourceModel::setDisplayName(const QString &name)
