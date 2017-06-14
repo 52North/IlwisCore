@@ -98,8 +98,9 @@ Item {
                 }
                 Controls.FlatButton{
                     icon : "../images/bookmark.png"
-                    label : qsTr("Bookmark 1")
+                    label : mastercatalog.getName("bookmark 3")
                     tooltip : mastercatalog.getUrl("bookmark 3")
+                    width : 85
                     onClicked: {
                         var url = "bookmark 3"
                         var filter = mastercatalog.filter(url)
@@ -112,8 +113,9 @@ Item {
                 }
                 Controls.FlatButton{
                     icon : "../images/bookmark.png"
-                    label : qsTr("Bookmark 2")
+                    label : mastercatalog.getName("bookmark 4")
                     tooltip : mastercatalog.getUrl("bookmark 4")
+                    width : 85
                     onClicked: {
                         var url = "bookmark 4"
                         var filter = mastercatalog.filter(url)
@@ -126,8 +128,9 @@ Item {
                 }
                 Controls.FlatButton{
                     icon : "../images/bookmark.png"
-                    label : qsTr("Bookmark 3")
+                    label : mastercatalog.getName("bookmark 5")
                     tooltip : mastercatalog.getUrl("bookmark 5")
+                    width : 85
                     onClicked: {
                         var url = "bookmark 5"
                         var filter = mastercatalog.filter(url)

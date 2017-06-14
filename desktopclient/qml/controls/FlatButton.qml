@@ -14,10 +14,11 @@ Button {
     y : 2
     width : 62
     height : parent.height - 4
+    clip : true
     Image {
         id : plaatje
         source : icon
-        width : parent.width - 32
+        width : 30
         height : 28
         y : 2
         anchors.horizontalCenter: parent.horizontalCenter
@@ -27,6 +28,7 @@ Button {
         anchors.top : plaatje.bottom
         text : label
         color : "white"
+        elide: Text.ElideMiddle
         anchors.horizontalCenter: parent.horizontalCenter
     }
     ToolTip{

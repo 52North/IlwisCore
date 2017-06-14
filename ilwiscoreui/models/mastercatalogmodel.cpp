@@ -296,6 +296,13 @@ void MasterCatalogModel::setActiveTab(int value)
 QString MasterCatalogModel::getName(const QString &id)
 {
     bool ok;
+    if (id.indexOf("bookmark") == 0){
+        int nr = id.split(" ")[1].toInt();
+        if ( nr < _bookmarks.size()){
+             auto resource = _bookmarks[nr]->resource();
+             return resource.name();
+        }
+    }
     quint64 objid = id.toULongLong(&ok);
     if ( ok){
         Resource res = mastercatalog()->id2Resource(objid);
