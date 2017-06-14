@@ -64,7 +64,7 @@ Item {
                     }
                 }
                 ListView {
-                    width : childrenRect.width
+                    width : Math.min(600,childrenRect.width)
                     height : parent.height
                     model : mastercatalog.bookmarked
                     orientation: ListView.Horizontal
