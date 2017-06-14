@@ -117,6 +117,12 @@ Rectangle {
             model: mastercatalog.history
             anchors.verticalCenter: parent.verticalCenter
             clip : true
+            onCurrentIndexChanged: {
+                if ( currentIndex == -1){
+                    currentIndex = 0
+                    editText = model[0]
+                }
+            }
             Component.onCompleted: {
                 privateProperty.pathCB = pathText
                 pathModel.fillModel()
