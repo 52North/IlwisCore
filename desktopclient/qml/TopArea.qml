@@ -70,7 +70,7 @@ Item {
                     orientation: ListView.Horizontal
                     delegate {
                         Controls.FlatButton{
-                            icon : "../images/bookmark.png"
+                            icon : index < 3 ? "../images/bookmarkSystem.png" :  "../images/bookmark.png"
                             label : name
                             width : 75
                             tooltip : description
