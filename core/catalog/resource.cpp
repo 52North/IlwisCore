@@ -392,7 +392,10 @@ void Resource::setUrl(const QUrl &url, bool asRaw, bool updateDatabase)
         addContainer(QUrl("ilwis://operations"));
         return;
     }
-    if ( hasType(ilwisType(), itWORKFLOW) && !asRaw && url.scheme() == "file"){ // case of setting the path of a workflow; must ofc be normalized to operations catalog
+    if ( ilwisType() != itANY &&
+         hasType(ilwisType(), itWORKFLOW) &&
+         !asRaw && url.scheme() == "file")
+    { // case of setting the path of a workflow; must ofc be normalized to operations catalog
         int index = url.toString().lastIndexOf("/");
         QString sname = url.toString().mid(index + 1);
         name(sname, false, updateDatabase);
@@ -584,6 +587,7 @@ bool Resource::store(InternalDatabaseConnection &queryItem, InternalDatabaseConn
     queryItem.bindValue(":modifiedtime", (double)_modifiedTime);
     queryItem.bindValue(":createtime", (double)_createTime);
     ok = queryItem.exec();
+
     if (!ok) {
         kernel()->issues()->logSql(queryProperties.lastError());
         return false;
