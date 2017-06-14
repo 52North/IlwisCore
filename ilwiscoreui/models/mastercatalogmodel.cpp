@@ -598,6 +598,7 @@ void MasterCatalogModel::addBookmark(const QString& path){
     context()->configurationRef().addValue(basekey + "/label", label);
     QString availableid = _bookmarkids.join("|");
     context()->configurationRef().addValue("users/" + Ilwis::context()->currentUser() + "/available-catalog-ids", availableid);
+    emit bookmarksChanged();
 
 
 }
@@ -646,6 +647,7 @@ void MasterCatalogModel::deleteBookmark(quint32 index){
             _selectedBookmarkIndex = 2;
 
         QString availableid = _bookmarkids.join("|");
+        emit bookmarksChanged();
         context()->configurationRef().addValue("users/" + Ilwis::context()->currentUser() + "/available-catalog-ids", availableid);
     }
 }
