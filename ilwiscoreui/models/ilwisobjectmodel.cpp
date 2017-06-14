@@ -567,6 +567,7 @@ QStringList IlwisObjectModel::quickProps() const
 
 bool IlwisObjectModel::hasAttributes() const
 {
+    try {
     if ( _ilwisobject->ilwisType() == itRASTER){
         IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
         return  raster->hasAttributes();
@@ -574,6 +575,8 @@ bool IlwisObjectModel::hasAttributes() const
     } else if ( hasType(_ilwisobject->ilwisType(),itFEATURE)){
         return true;
     }
+    } catch(const ErrorObject&){}
+
     return false;
 }
 
