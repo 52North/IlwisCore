@@ -28,16 +28,31 @@ void TableModel::setColumns()
     }
 }
 
-TableModel::TableModel(const Ilwis::Resource &resource, QObject *parent): QAbstractTableModel(parent)
-{
-    if ( resource.isValid()){
-        _table = Ilwis::ITable(resource);
+TableModel::TableModel(const Ilwis::ITable& tbl, QObject *parent) : QAbstractTableModel(parent){
+    if ( tbl.isValid())    {
+        _table = tbl;
         setColumns();
         auto *factory = Ilwis::kernel()->factory<Ilwis::Desktop::TableOperationFactory>("ilwis::tableoperationfactory");
         QVariantMap parameters = {{"tableonly",true}};
         _operations = factory->selectedOperations(this, parameters);
         for(auto iter = _operations.begin(); iter != _operations.end(); ++iter)
             (*iter)->setParent(this);
+    }
+}
+
+
+TableModel::TableModel(const Ilwis::Resource &resource, QObject *parent): QAbstractTableModel(parent)
+{
+    if ( resource.isValid()){
+        _table = Ilwis::ITable(resource);
+        if ( _table.isValid()){
+            setColumns();
+            auto *factory = Ilwis::kernel()->factory<Ilwis::Desktop::TableOperationFactory>("ilwis::tableoperationfactory");
+            QVariantMap parameters = {{"tableonly",true}};
+            _operations = factory->selectedOperations(this, parameters);
+            for(auto iter = _operations.begin(); iter != _operations.end(); ++iter)
+                (*iter)->setParent(this);
+        }
 
     }
 }

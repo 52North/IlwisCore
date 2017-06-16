@@ -29,6 +29,7 @@ class ILWISCOREUISHARED_EXPORT TableModel : public QAbstractTableModel
 public:
     TableModel();
     TableModel(const Ilwis::Resource& resource, QObject * parent);
+    TableModel(const Ilwis::ITable &tbl, QObject *parent);
 
     int rowCount(const QModelIndex & parent = QModelIndex()) const;
     int recordCount() const;
@@ -55,6 +56,7 @@ public:
     ~TableModel();
 
     QQmlListProperty<Ilwis::Desktop::TableOperation> operations();
+
 signals:
   void columnCountChanged();
   void recordCountChanged();
