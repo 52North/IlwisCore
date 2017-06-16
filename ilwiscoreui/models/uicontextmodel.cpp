@@ -11,6 +11,7 @@
 #include "coverage.h"
 #include "featurecoverage.h"
 #include "feature.h"
+#include "raster.h"
 #include "uicontextmodel.h"
 #include "factory.h"
 #include "abstractfactory.h"
@@ -63,7 +64,18 @@ TableModel *UIContextModel::createTableModel(QObject *parent,const QString& filt
     } else
         resource = mastercatalog()->name2Resource(filter,tp);
     if ( resource.isValid()){
-        return new TableModel(resource, parent);
+        if ( resource.extendedType() == itRASTER){
+            bool ok;
+            quint64 rasterid = resource["rasterid"].toULongLong(&ok) ;
+            if ( ok){
+                IRasterCoverage raster;
+                raster.prepare(rasterid);
+                if ( raster.isValid() && raster->attributeTable().isValid())
+                    return new TableModel(raster->attributeTable(), parent);
+            }
+        }else {
+            return new TableModel(resource, parent);
+        }
     }
     return 0;
 }
