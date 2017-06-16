@@ -356,6 +356,9 @@ QVariant NamedIdentifierRange::impliedValue(const QVariant& v) const
             SPNamedIdentifier it = item(v.toString()).staticCast<NamedIdentifier>();
             if (it)
                 return it->raw();
+            if ( v.toString() == "" || v.toString() == sUNDEF){ // undefines are acceptable values
+                return QVariant();
+            }
         }
         ERROR2(ERR_COULD_NOT_CONVERT_2,v.toString(), "raw value");
         return QVariant();
