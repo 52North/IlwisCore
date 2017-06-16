@@ -49,6 +49,7 @@ ToolBar{
             height : buttonSize
             width : buttonSize
             iconSource: iconsource("saveasb.png")
+            tooltip: qsTr("Copies the workflow in the current active catalog under a different name(if possible)")
             onClicked: {
                 workarea.dropSaveBox(x)
             }
@@ -58,7 +59,7 @@ ToolBar{
             height : buttonSize
             width : buttonSize
             iconSource : iconsource("trash20.png")
-            tooltip: qsTr("Removes a selected flow or operation)")
+            tooltip: qsTr("Removes a selected flow or operation")
             onClicked: {
                 workarea.deleteSelectedItem()
 
@@ -70,6 +71,7 @@ ToolBar{
              enabled : workflow ? workflow.isValid : false
              opacity : enabled ? 1 : 0.2
             iconSource : iconsource("run20.png")
+            tooltip: qsTr("Starts a workflow from the first input node")
             onClicked: {
                 workflowManager.executeRunForm({"id" :  workflow.id, "runid" : workflow.runid, "stepmode" :false})
             }
@@ -81,6 +83,7 @@ ToolBar{
             enabled : workflow ? workflow.isValid : false
             opacity : enabled ? 1 : 0.2
             iconSource : iconsource("step20.png")
+            tooltip: qsTr("Starts a workflow and stops after each operation has run. Pressing the button again moves it to the next operation")
             onClicked :{
                 var wasInStepMode = workarea.workflow.stepMode
                 workarea.workflow.stepMode = true
@@ -98,6 +101,7 @@ ToolBar{
             height : buttonSize
             width : buttonSize
             iconSource : iconsource("stop20.png")
+            tooltip: qsTr("Ends the workflow in either step mode or normal mode")
             enabled : workflow ? workflow.isValid : false
             opacity : enabled ? 1 : 0.2
             onClicked: {
