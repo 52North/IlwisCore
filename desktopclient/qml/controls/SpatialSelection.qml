@@ -81,7 +81,7 @@ Item {
     }
 
     Component.onCompleted: {
-        worldmapcontainer.manager = uicontext.createLayerManager(objectName)
+        worldmapcontainer.manager = uicontext.createLayerManager(selector)
         worldmap.setManager(worldmapcontainer.manager)
     }
     states: [
