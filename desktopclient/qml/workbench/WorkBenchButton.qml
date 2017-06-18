@@ -45,7 +45,7 @@ ToolButton{
         horizontalAlignment: Text.AlignHCenter
         visible : true
         font.weight: Font.DemiBold
-        font.pointSize: 9
+        font.pixelSize: 12
         color : "white"
         opacity : button.height > 70 ? 1 : 0
    }
