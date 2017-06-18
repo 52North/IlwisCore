@@ -57,7 +57,8 @@ Rectangle {
         anchors.topMargin: 4
         width : box.width -10
         elide: Text.ElideMiddle
-        font.pointSize: 11
+        font.pixelSize: 11
+        color : workflow.currentNode == itemid ? "red" : "black"
         x : 15
         text : itemid + ". " + (operation ? label() : "??")
         font.bold : true
