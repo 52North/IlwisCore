@@ -7,7 +7,7 @@ namespace Ilwis {
 
 class KERNELSHARED_EXPORT JunctionNode : public WorkFlowNode
 {
-public:Workfl
+public:
     JunctionNode();
     JunctionNode(quint64 nodeid);
     Ilwis::WorkFlowNode::NodeTypes type() const;
