@@ -123,7 +123,7 @@ Rectangle {
         }
 
         Component.onCompleted: {
-            manager = uicontext.createLayerManager(objectName)
+            manager = uicontext.createLayerManager(catalogMapView)
             renderer.setManager(manager)
             var cmd = uicontext.worldmapCommand(renderer.viewerId)
             renderer.addCommand(cmd)
