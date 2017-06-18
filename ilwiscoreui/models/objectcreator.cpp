@@ -331,9 +331,10 @@ QString ObjectCreator::createWorkflow(const QVariantMap &parms)
 QString ObjectCreator::createOperationScriptHeader(const QVariantMap& parms){
     QString header = "#- ILWIS OBJECTS OPERATION METADATA\n";
     QString operationname = parms["operationname"].toString();
+    operationname = operationname.replace(QRegExp("[/ .-,;:'\"]"),"_");
     header += "#- operation = ilwis://operations/" + operationname + "\n";
     QString longname = parms["longname"].toString();
-    if ( longname != ""){
+    if ( longname != sUNDEF && longname != ""){
         header += "#- longname = " + longname + "\n";
     }
     int inparmCount = parms["inputparameters"].toList().size();
@@ -346,7 +347,7 @@ QString ObjectCreator::createOperationScriptHeader(const QVariantMap& parms){
         header += QString("#- input parameter %1 = %2\n").arg(i+1).arg(parm) ;
         name  =name.replace(QRegExp("[/ .-,;:'\"]"),"_");
         if ( i != 0)
-               syntax + ",";
+               syntax += ",";
         syntax += name;
     }
     syntax += ")\n";
@@ -379,10 +380,15 @@ QString ObjectCreator::createOperationScriptHeader(const QVariantMap& parms){
 
 OperationResource ObjectCreator::createOperationResource(const QString& url, const QVariantMap& parms){
     QString operationname = parms["operationname"].toString();
-    OperationResource opResource("ilwis://operations/" + operationname);
+    if ( operationname == ""){
+        kernel()->issues()->log(TR("An operation must have a name"));
+        return OperationResource();
+    }
+    operationname = operationname.replace(QRegExp("[/ .-,;:'\"]"),"_");
+    OperationResource opResource("ilwis://operations/" + operationname,"python");
     opResource.setExtendedType(itSCRIPT);
     QString longname = parms["longname"].toString();
-    if ( longname != sUNDEF)
+    if ( longname != sUNDEF && longname != "")
         opResource.setLongName(longname);
     opResource.setDescription(parms["description"].toString() );
     int inparmCount = parms["inputparameters"].toList().size();
@@ -392,6 +398,10 @@ OperationResource ObjectCreator::createOperationResource(const QString& url, con
          QVariantMap props = parms["inputparameters"].toList()[i].toMap();
         IlwisTypes tp = TypeHelper::name2type(props["valuetype"].toString());
         QString name = props["name"].toString();
+        if ( name == ""){
+            kernel()->issues()->log(TR("A parameter must have a name"));
+            return OperationResource();
+        }
         QString description = props["description"].toString();
         opResource.addInParameter(i, tp, name, description);
         name  =name.replace(QRegExp("[/ .-,;:'\"]"),"_");
@@ -407,9 +417,19 @@ OperationResource ObjectCreator::createOperationResource(const QString& url, con
          QVariantMap props = parms["outputparameters"].toList()[i].toMap();
         IlwisTypes tp = TypeHelper::name2type(props["valuetype"].toString());
         QString name = props["name"].toString();
+        if ( name == ""){
+            kernel()->issues()->log(TR("A parameter must have a name"));
+            return OperationResource();
+        }
         QString description = props["description"].toString();
         opResource.addOutParameter(i, tp, name, description);
     }
+    quint64 id = mastercatalog()->name2id("ilwis://operations/callpython", itSINGLEOPERATION);
+    if (id == i64UNDEF){
+        kernel()->issues()->log(TR("Python module is not properly loaded by ilwis"));
+        return OperationResource();
+    }
+    opResource.addProperty("stuboperation", id);
     opResource.setKeywords(parms["keywords"].toString());
     opResource.setUrl(url, true);
 
@@ -429,11 +449,15 @@ QString ObjectCreator::createScript(const QVariantMap &parms)
     }
     if ( parms.contains("asoperation") && parms["asoperation"].toBool()){
         OperationResource ores = createOperationResource(url, parms);
+        if (!ores.isValid()){
+            kernel()->issues()->log(TR("Invalid operation metadata"));
+            return QString::number(i64UNDEF);
+        }
         if ( ores.compatibleOperationAlreadyExists()){
             kernel()->issues()->log(TR("An operation with the same signature already exists. Change the name or parameter order/types"));
-            return sUNDEF;
+            return QString::number(i64UNDEF);
         }
-        script->resourceRef() = createOperationResource(url, parms);
+        script->resourceRef() = ores;
     }else{
         script->resourceRef().setUrl(url);
         script->resourceRef().setUrl(url, true);
