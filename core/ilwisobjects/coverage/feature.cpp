@@ -92,7 +92,7 @@ VertexIterator SPFeatureI::end()
 }
 
 //--------------------------------------------
-Feature::Feature() : _featureid(i64UNDEF){
+Feature::Feature() : _featureid(i64UNDEF), _parentFCoverage(0){
 }
 
 Feature::~Feature()
@@ -101,7 +101,7 @@ Feature::~Feature()
 
 Feature::Feature(const IFeatureCoverage& fcoverage, qint32 level){
     _featureid = _idbase++;
-    _parentFCoverage = fcoverage;
+    _parentFCoverage = fcoverage.ptr();
     _attributes.addColumn(_parentFCoverage->attributeDefinitions().definitionCount());
     _level = level;
 }
@@ -110,7 +110,6 @@ Feature::Feature(FeatureCoverage *fcoverage, qint32 level)
 {
     _featureid = _idbase++;
     _parentFCoverage = fcoverage;
-    _parentFCoverage.set(fcoverage)    ;
     _attributes.addColumn(_parentFCoverage->attributeDefinitions().definitionCount());
     _level = level;
 }
@@ -154,6 +153,7 @@ void Feature::record(const std::vector<QVariant> &values, quint32 offset)
 
 QVariant Feature::cell(quint32 colIndex, bool asRaw) const
 {
+
     if ( isValid() && colIndex < _parentFCoverage->attributeDefinitions(_level).definitionCount()){
         QVariant cellValue = _attributes.cell(colIndex);
         if ( asRaw)
@@ -185,18 +185,26 @@ void Feature::setCell(const QString &columnname, const QVariant &var)
 
 void Feature::setCell(quint32 colIndex, const QVariant &var)
 {
-    QVariant value = _parentFCoverage->attributeDefinitions(_level).checkInput(var,colIndex);
-    _attributes.cell(colIndex, value);
+    if ( isValid()) {
+        QVariant value = _parentFCoverage->attributeDefinitions(_level).checkInput(var,colIndex);
+        _attributes.cell(colIndex, value);
+    }
 }
 
 ColumnDefinition Feature::attributedefinition(const QString &attributeName) const{
-    int columnIndex =_parentFCoverage->attributeDefinitions(_level).columnIndex(attributeName);
-    return _parentFCoverage->attributeDefinitions(_level).columndefinition(columnIndex);
+    if ( isValid()) {
+        int columnIndex =_parentFCoverage->attributeDefinitions(_level).columnIndex(attributeName);
+        return _parentFCoverage->attributeDefinitions(_level).columndefinition(columnIndex);
+    }
+    return ColumnDefinition();
 }
 
 ColumnDefinition Feature::attributedefinition(quint32 columnIndex) const
 {
-    return _parentFCoverage->attributeDefinitions(_level).columndefinition(columnIndex);
+    if ( isValid()) {
+        return _parentFCoverage->attributeDefinitions(_level).columndefinition(columnIndex);
+    }
+    return ColumnDefinition();
 }
 
 quint32 Feature::attributeColumnCount() const
@@ -206,25 +214,31 @@ quint32 Feature::attributeColumnCount() const
 
 SPFeatureI Feature::subFeatureRef(double subFeatureIndex)
 {
-    quint32 index = _parentFCoverage->attributeDefinitions(_level).index(subFeatureIndex);
-    if ( index != iUNDEF)
-        return _subFeatures[index];
+    if ( isValid()) {
+        quint32 index = _parentFCoverage->attributeDefinitions(_level).index(subFeatureIndex);
+        if ( index != iUNDEF)
+            return _subFeatures[index];
+    }
     return SPFeatureI();
 
 }
 
 SPFeatureI Feature::subFeatureRef(const QString &subFeatureIndex)
 {
-    quint32 index = _parentFCoverage->attributeDefinitions(_level).index(subFeatureIndex);
-    if ( index != iUNDEF){
-        if ( _subFeatures.find(index) != _subFeatures.end())
-            return _subFeatures[index];
+    if ( isValid()) {
+        quint32 index = _parentFCoverage->attributeDefinitions(_level).index(subFeatureIndex);
+        if ( index != iUNDEF){
+            if ( _subFeatures.find(index) != _subFeatures.end())
+                return _subFeatures[index];
+        }
     }
     return SPFeatureI();
 }
 
 void Feature::store(const FeatureAttributeDefinition& columns, QDataStream &stream, const IOOptions &options)
 {
+    if ( !isValid())
+        return;
     std::vector<IlwisTypes> types = columns.ilwisColumnTypes();
     _attributes.storeData(types,stream,options);
     storeGeometry(stream);
@@ -254,6 +268,9 @@ void Feature::storeGeometry(QDataStream &stream)
             StoreSequence(polygon->getInteriorRingN(g)->getCoordinates(), stream);
         }
     };
+
+    if ( !isValid())
+        return;
 
     int gtype = _geometry->getGeometryTypeId();
     stream << gtype;
@@ -368,7 +385,7 @@ quint64 Feature::featureid() const{
 
 bool Feature::isValid() const {
 
-    return _attributes.isValid() || _geometry;
+    return _attributes.isValid() || _geometry || _parentFCoverage != 0;
 }
 
 //UPGeometry &Feature::geometryRef(){
@@ -380,6 +397,9 @@ const UPGeometry &Feature::geometry() const{
 }
 
 void Feature::geometry(geos::geom::Geometry *geom){
+    if (_parentFCoverage == 0)
+        return;
+
     IlwisTypes geomType = geometryType();
     _parentFCoverage->setFeatureCount(geomType,-1, _level);
     _geometry.reset(geom);
@@ -404,7 +424,7 @@ void Feature::setSubFeature(const QString &subFeatureIndex, FeatureInterface *fe
 
 void Feature::setSubFeature(const QString &subFeatureIndex, SPFeatureI &feature)
 {
-    setSubFeaturePrivate(subFeatureIndex, feature->clone(_parentFCoverage.ptr()));
+    setSubFeaturePrivate(subFeatureIndex, feature->clone(_parentFCoverage));
 }
 
 void Feature::setSubFeature(double subFeatureIndex, FeatureInterface *feature)
@@ -414,7 +434,7 @@ void Feature::setSubFeature(double subFeatureIndex, FeatureInterface *feature)
 
 void Feature::setSubFeature(double subFeatureIndex, SPFeatureI &feature)
 {
-   setSubFeaturePrivate(subFeatureIndex, feature->clone(_parentFCoverage.ptr()));
+   setSubFeaturePrivate(subFeatureIndex, feature->clone(_parentFCoverage));
 }
 
 quint32 Feature::subFeatureCount() const
@@ -429,11 +449,14 @@ bool operator==(const Feature& f1, const Feature& f2) {
 
 FeatureInterface *Feature::clone(FeatureCoverage *fcoverage) const
 {
+    if ( !_parentFCoverage)
+        return 0;
+
     Feature *f = new Feature(_parentFCoverage);
     for(const auto& node : _subFeatures){
         f->_subFeatures[node.first].reset(node.second->clone(fcoverage));
     }
-    f->_parentFCoverage.set(fcoverage);
+    f->_parentFCoverage = fcoverage;
     if ( _geometry)
         f->_geometry.reset(_geometry->clone());
     f->_attributes = _attributes;
@@ -445,6 +468,9 @@ FeatureInterface *Feature::clone(FeatureCoverage *fcoverage) const
 
 SPFeatureI Feature::createSubFeature(const QString& subFeatureIndex, geos::geom::Geometry *geom)
 {
+    if ( !_parentFCoverage)
+        return SPFeatureI();
+
     quint32 index = _parentFCoverage->attributeDefinitions().index(subFeatureIndex);
     if ( index == iUNDEF)
         return SPFeatureI();

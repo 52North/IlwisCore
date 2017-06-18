@@ -105,7 +105,7 @@ private:
     SubFeatures _subFeatures;
     Record _attributes;
     UPGeometry _geometry;
-    IFeatureCoverage _parentFCoverage;
+    FeatureCoverage *_parentFCoverage;
     qint32 _level = 0;
 
     template<typename T> void removeSubFeaturePrivate(const T &subFeatureIndex)
