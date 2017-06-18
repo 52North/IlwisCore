@@ -41,6 +41,7 @@ Item {
         if ( filter.indexOf("=") !== -1){
             filter = "\"" + filter + "\""
         }
+        console.debug("addrawer 1")
         maparea.drawer.addCommand("adddrawer(" + maparea.drawer.viewerId + ","+ sourceName + "," + filter + "," + sourceType + ")")
         maparea.drawer.update()
         viewmanager.addDataSource(filter2, sourceName, sourceType)
