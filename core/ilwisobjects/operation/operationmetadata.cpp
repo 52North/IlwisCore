@@ -448,7 +448,7 @@ void OperationResource::parameterNeedsQuotes(quint32 order)
 
 bool OperationResource::compatibleOperationAlreadyExists(bool ignoreSelf)
 {
-    std::vector<Resource> items = mastercatalog()->select("resource=" + url().toString());
+    std::vector<Resource> items = mastercatalog()->select("resource='" + url().toString() + "'");
     if ( items.size() == 0)
         return false;
     if (!ignoreSelf){
