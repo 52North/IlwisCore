@@ -55,7 +55,7 @@ void DesktopTranquilizer::prepare(const QString &title, const QString &descripti
     _runsInMainThread = QThread::currentThread() == QCoreApplication::instance()->thread();
     BaseTranquilizer::prepare(title, description,end, start);
     kernel()->connect(this, &BaseTranquilizer::updateTranquilizer, kernel(), &Kernel::changeTranquilizer);
-    kernel()->connect(this, &BaseTranquilizer::removeTranquilizer, kernel(), &Kernel::removeTranquilizer);
+    kernel()->connect(this, &BaseTranquilizer::removeTranquilizer, kernel(), &Kernel::deleteTranquilizer);
     kernel()->newTranquilizer(_id, title, description, _start, _end);
 
 }
