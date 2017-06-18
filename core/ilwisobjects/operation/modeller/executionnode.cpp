@@ -191,7 +191,7 @@ bool ExecutionNode::executeJunction(ExecutionContext *ctx, SymbolTable &symTable
     // the result of the tests is the "value" of the condition node (true or false)
     // of course this isnt the result of the operations inside the condition; those have their own logic
     if (!parameterValue(WorkFlowCondition::cpTEST).isValid()){
-=        ExecutionContext ctxLocal;
+        ExecutionContext ctxLocal;
         SymbolTable symTableLocal(symTable);
         // the value of the parameter comes from the test node, so we follow the inputlink and than execute the test
         // after execution we know the result of the test
@@ -200,7 +200,6 @@ bool ExecutionNode::executeJunction(ExecutionContext *ctx, SymbolTable &symTable
             // collect the result from the test; the result will be used to determine which branch of the flow is taken
             QString outputName = ctxLocal._results[0];
             QVariant val = symTableLocal.getValue(outputName);
-            condParm.value("", symTableLocal.getSymbol(outputName)._type);
             _parameterValues[WorkFlowCondition::cpTEST] = val;
         }
     }
