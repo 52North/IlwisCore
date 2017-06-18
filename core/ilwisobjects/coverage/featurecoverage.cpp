@@ -41,7 +41,10 @@ FeatureCoverage::FeatureCoverage(const Resource& resource) : Coverage(resource),
 }
 
 FeatureCoverage::~FeatureCoverage() {
-
+    for(int i=0; i < _features.size(); ++i){
+        if ( _features[i])
+            static_cast<Feature *>(_features[i].get())->_parentFCoverage = 0;
+    }
 }
 
 bool FeatureCoverage::prepare(const IOOptions &options) {
@@ -281,11 +284,10 @@ ITable FeatureCoverage::attributeTable(quint32 level)
 
     // TODO add level parameter to access subfeature attributes
 
-    if ( !_tbl.isValid()){
-        _tbl.prepare();
-        _tbl->featureCoverage(this);
-    }
-    return _tbl;
+    IAttributeTable tbl;
+    tbl.prepare();
+    tbl->featureCoverage(this);
+    return tbl;
 }
 
 void FeatureCoverage::setAttributes(const ITable& otherTable, const QString &joinColumn)
