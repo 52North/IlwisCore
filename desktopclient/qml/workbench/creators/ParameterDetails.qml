@@ -37,7 +37,7 @@ Column {
             id : addButton
             width : 100
             height : 20
-            text : qsTr("Create")
+            text : qsTr("Add")
             onClicked: {
                 if (parameterlistField.inputActive)
                     inputparameterList.append({"name" : namefield.content,"valuetype" : datatypefield.comboText,"description" : descField.content })
