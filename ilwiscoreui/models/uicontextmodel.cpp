@@ -42,11 +42,9 @@ UIContextModel::UIContextModel(QObject *parent) :
 
 }
 
-LayerManager *UIContextModel::createLayerManager(const QString& objectName)
+LayerManager *UIContextModel::createLayerManager(QObject *parent)
 {
-    QObject *object =_qmlcontext->findChild<QObject *>(objectName);
-    QObject *newparent = object == 0 ? this : object;
-    LayerManager *manager =  new LayerManager(newparent, this);
+    LayerManager *manager =  new LayerManager(parent, this);
 
     return manager;
 }
@@ -743,9 +741,10 @@ QVariantList UIContextModel::debugProperty(const QString &property)
 {
     QVariantList results;
 #ifdef QT_DEBUG
-
+    std::multimap<QString, QVariantMap> items;
     if ( property == "references"){
         const QHash<quint64, ESPIlwisObject>& lookup = mastercatalog()->dumpLookup();
+
         for(auto object : lookup){
          //   ESPIlwisObject object = objectentry.second;
             QVariantMap mp;
@@ -755,8 +754,11 @@ QVariantList UIContextModel::debugProperty(const QString &property)
             v.setValue(object.use_count());
             mp["referenceCount"] = v;
             mp["type"] = TypeHelper::type2name(object->ilwisType());
-            results.push_back(mp);
+           items.insert({TypeHelper::type2name(object->ilwisType()), mp});
         }
+    }
+    for(auto pair : items){
+        results.push_back(pair.second);
     }
 
 #endif

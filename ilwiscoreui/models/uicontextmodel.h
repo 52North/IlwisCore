@@ -71,7 +71,7 @@ class ILWISCOREUISHARED_EXPORT UIContextModel : public QObject
 public:
     explicit UIContextModel(QObject *parent = 0);
 
-    Q_INVOKABLE LayerManager* createLayerManager(const QString& objectname);
+    Q_INVOKABLE LayerManager* createLayerManager(QObject *parent);
     Q_INVOKABLE TableModel *createTableModel(QObject *parent,const QString& url, const QString& type);
     Q_INVOKABLE ChartModel *chartModel(const QString& objectname, TableModel *tbl);
     Q_INVOKABLE QString uniqueName();
