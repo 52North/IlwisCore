@@ -60,7 +60,7 @@ quint32 WorkflowModel::addNode(const QString &id, const QVariantMap& parameters)
             else if ( nodeType == WorkFlowNode::ntJUNCTION)
                 nodePtr = new JunctionNode();
             else if ( nodeType == WorkFlowNode::ntRANGE)
-                nodePtr = new LoopNode();
+                nodePtr = new RangeNode();
             else if ( nodeType== WorkFlowNode::ntOPERATION)
                 nodePtr = new OperationNode(objid);
             if ( nodePtr){
@@ -853,13 +853,23 @@ void WorkflowModel::acceptMessage(const QString &type, const QString &subtype, c
                 _outputs.append(newlist);
                 emit outputCurrentOperationChanged();
                 emit operationNodeChanged();
-            }else if ( subtype == "currentnode"){
+            }else if ( subtype == "lastrunnode"){
                 bool ok;
                 quint64 conditionid = parameters["condtionid"].toULongLong(&ok);
                 if ( ok && conditionid != i64UNDEF){
                     _lastOperationNode = conditionid;
-                }else
+                }else {
                     _lastOperationNode = parameters["node"].toInt();
+                }
+
+            }else if ( subtype == "currentnode"){
+                quint64 conditionid = parameters["condtionid"].toULongLong(&ok);
+                if ( ok && conditionid != i64UNDEF){
+                    _currentNode = conditionid;
+                }else {
+                    _currentNode = parameters["node"].toInt();
+                }
+                emit currentNodeChanged();
             }
         }
     }
@@ -867,7 +877,12 @@ void WorkflowModel::acceptMessage(const QString &type, const QString &subtype, c
 
 int WorkflowModel::lastOperationNode() const
 {
-  return _lastOperationNode;
+    return _lastOperationNode;
+}
+
+int WorkflowModel::currentNode() const
+{
+    return _currentNode;
 }
 
 QVariantList WorkflowModel::outputCurrentOperation()

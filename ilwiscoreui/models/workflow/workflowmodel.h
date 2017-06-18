@@ -47,6 +47,7 @@ public:
     Q_PROPERTY(QVariantMap translation READ translation NOTIFY translationChanged)
     Q_PROPERTY(bool stepMode READ stepMode WRITE stepMode NOTIFY stepModeChanged)
     Q_PROPERTY(int lastOperationNode READ lastOperationNode NOTIFY operationNodeChanged)
+    Q_PROPERTY(int currentNode READ currentNode NOTIFY currentNodeChanged)
     Q_PROPERTY(QVariantList outputCurrentOperation READ outputCurrentOperation NOTIFY outputCurrentOperationChanged)
     Q_PROPERTY(qint32 runid READ runid CONSTANT)
 
@@ -103,6 +104,7 @@ signals:
     void outputCurrentOperationChanged();
     void operationNodeChanged();
     void stepModeChanged();
+    void currentNodeChanged();
 
 public slots:
     void acceptMessage(const QString &type, const QString &subtype, const QVariantMap &parameters);
@@ -113,12 +115,14 @@ private:
     OperationExpression _expression;
     quint32 _runid;
     qint32 _lastOperationNode = -1;
+    qint32 _currentNode = -1;
     static quint32 _baserunid;
     QVariantMap _outputsCurrentOperation;
     QVariantList _outputs;
 
     QVariantList outputCurrentOperation();
     int lastOperationNode() const;
+    int currentNode() const;
 
     QList<IlwisObjectModel*> _selectedOperation;
     QVariantMap getParameter(const SPWorkFlowNode& node, int i);
@@ -126,6 +130,7 @@ private:
     bool isValid() const;
     double scale() const;
     void scale(double s);
+
 
     QString nodetype2string(WorkFlowNode::NodeTypes ntype) const;
     WorkFlowNode::NodeTypes string2nodetype(const QString& ntype) const;

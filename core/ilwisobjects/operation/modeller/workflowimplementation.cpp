@@ -152,7 +152,7 @@ void WorkflowImplementation::wait(const SPWorkFlowNode& node)
         mp["id"] = _metadata->id();
         mp["runid"] = _runid;
         mp["condtionid"] = node->conditionIdOfTest();
-        emit sendMessage("workflow","currentnode",mp);
+        emit sendMessage("workflow","lastrunnode",mp);
 
         if ( !_initial){
             QWaitCondition& waitc = kernel()->waitcondition(_runid, ok);
@@ -161,6 +161,7 @@ void WorkflowImplementation::wait(const SPWorkFlowNode& node)
                 waitc.wait(&_syncMutex);
             }
         }
+        emit sendMessage("workflow","currentnode",mp);
 
     }
 }
