@@ -54,7 +54,6 @@ Item {
     function addDataSource(sourceUrl, sourceName, sourceType){
         if ( sourceUrl !== ""){
             var id = layers.addDataSource(sourceUrl, sourceName, sourceType)
-            viewmanager.addDataSource(sourceUrl, sourceName, sourceType)
             createParameters = [sourceUrl, sourceName, sourceType]
             return id
         }
@@ -176,7 +175,7 @@ Item {
     }
 
     Component.onCompleted: {
-        manager = uicontext.createLayerManager(objectName)
+        manager = uicontext.createLayerManager(layerview)
         layers.setManager(manager)
 
     }
