@@ -59,85 +59,14 @@ Controls.DropableItem{
                 height : 60
                 width : parent.width
             }
-            Item {
+
+            Controls.TextEditLabelPair{
+                id : keywords
                 width : parent.width
-                height : 90
-                Text {
-                    id : label
-                    text : qsTr("Keywords")
-                    height : 20
-                    width : 100
-                    font.bold: true
-                }
+                labelText: qsTr("Keywords")
+                labelWidth: 100
 
-                Rectangle {
-                    id : itemList
-                    anchors.left: label.right
-                    width : parent.width - 100
-                    height : 60
-                    border.width: 1
-                    border.color : Global.edgecolor
-                    radius : 3
-                    ScrollView{
-                        anchors.fill : parent
-                        ListView {
-                            id : keyitems
-                            anchors.fill : parent
-                            model : keylist
-                            highlight : Rectangle{width : 80;height : 18;color : Global.selectedColor}
-                            delegate: Component {
-                                Text{
-                                    x : 4
-                                    text : modelData
-                                    width :80
-                                    height : 18
-                                    MouseArea{
-                                        anchors.fill: parent
-                                        onClicked: {
-                                            keyitems.currentIndex = index
-                                        }
-                                    }
-                                }
 
-                            }
-                        }
-                    }
-                }
-                Row {
-                    anchors.top : itemList.bottom
-                    anchors.topMargin: 3
-                    x : 100
-                    width : parent.width - 100
-                    height : 20
-                    spacing : 5
-                    Button {
-                        width : 60
-                        height : 18
-                        text : qsTr("Delete")
-                        onClicked: {
-                            keylist.splice(keyitems.currentIndex,1)
-                            keyitems.model = keylist
-                        }
-                    }
-
-                    Controls.ComboxLabelPair{
-                        id : keys
-                        content : "test"
-                        labelText: ""
-                        labelWidth: 10
-                        width : parent.width - 90
-                        itemModel: operations.keywords
-                    }
-                    Button{
-                        text : qsTr("+")
-                        width : 20
-                        height : 20
-                        onClicked: {
-                            keylist.push(keys.comboText)
-                            keyitems.model = keylist
-                        }
-                    }
-                }
             }
 
             Column {
@@ -228,29 +157,27 @@ Controls.DropableItem{
                     height : 18
                     enabled: nameedit.content.length > 0
                     onClicked: {
-                        var keywords = ""
-                        for( var i=0; i < keyitems.model.length; ++i){
-                            var item = keyitems.model[i]
-                            if ( keywords != ""){
-                                keywords += ", "
-                            }
-                            keywords += item.trim()
-                        }
-                        if ( keywords === ""){
-                            keywords = "script"
-                        } else {
-                            keywords += ", script"
-                        }
+
                         var inputparms = []
+                        console.debug(inputparameterList.count)
                         for(i=0; i < inputparameterList.count; ++i){
                             var parm = inputparameterList.get(i)
+                            console.debug(parm.name)
                             inputparms.push({"name" : parm.name, "valuetype" : parm.valuetype,"description" : parm.description })
                         }
+                        console.debug("aa" , inputparms.length)
                         var outputparms = []
                         for(i=0; i < outputparameterList.count; ++i){
                             parm = outputparameterList.get(i)
                             outputparms.push({"name" : parm.name, "valuetype" : parm.valuetype,"description" : parm.description })
                         }
+                        var kw = keywords.content
+                        if ( kw.indexOf("python") == -1){
+                            if ( kw != "")
+                                kw += ","
+                            kw += "python"
+                        }
+
 
                         var name = nameedit.content
                         if ( name.indexOf(".py") == -1)
@@ -258,7 +185,8 @@ Controls.DropableItem{
                         var createInfo = {
                             type : "script",
                             name : name,
-                            keywords : keywords,
+
+                            keywords : kw,
                             description : descedit.content,
                             url : mastercatalog.currentUrl + "/" + name,
                             asoperation : operationCheck.checked,
