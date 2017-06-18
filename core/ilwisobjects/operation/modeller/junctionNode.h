@@ -5,11 +5,11 @@
 
 namespace Ilwis {
 
-class KERNELSHARED_EXPORT Junction : public WorkFlowNode
+class KERNELSHARED_EXPORT JunctionNode : public WorkFlowNode
 {
-public:
-    Junction();
-    Junction(quint64 nodeid);
+public:Workfl
+    JunctionNode();
+    JunctionNode(quint64 nodeid);
     Ilwis::WorkFlowNode::NodeTypes type() const;
     int inputCount() const;
     void link2trueCase(SPWorkFlowNode trueNode, int parmIndex);
@@ -21,7 +21,7 @@ public:
 private:
 };
 
-typedef std::shared_ptr<Junction> SPJunction;
+typedef std::shared_ptr<JunctionNode> SPJunctionNode;
 }
 
 #endif // JUNCTION_H

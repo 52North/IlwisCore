@@ -41,7 +41,7 @@ std::vector<QString> GenerateScriptNode::execute(const OperationExpression &expr
         return executeJunction( expression, idmap, script);
     case WorkFlowNode::ntOPERATION:
         return executeOperation(expression, idmap, script,whitespace);
-    case WorkFlowNode::ntLOOP:
+    case WorkFlowNode::ntRANGE:
         return executeLoop(expression, idmap, script);
     default:
         return std::vector<QString>();

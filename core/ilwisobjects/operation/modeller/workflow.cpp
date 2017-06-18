@@ -11,7 +11,7 @@
 #include "workflownode.h"
 #include "conditionNode.h"
 #include "junctionNode.h"
-#include "loopnode.h"
+#include "rangenode.h"
 #include "executionnode.h"
 #include "workflowimplementation.h"
 #include "modeller/workflow.h"
@@ -108,9 +108,9 @@ void Workflow::addFlow(NodeId fromNode, NodeId toNode, qint32 inParmIndex, qint3
     if ( from && to){
         if ( inParmIndex < to->inputCount()){
             // is this a link from an operation in a loop to a operation outside a loop, special case
-            if ( from->owner() && from->owner()->type() == WorkFlowNode::ntLOOP){
+            if ( from->owner() && from->owner()->type() == WorkFlowNode::ntRANGE){
                 if ( !to->owner()){ // the target is not in the loop
-                   SPLoopNode loop = std::static_pointer_cast<LoopNode>(from->owner());
+                   SPLRangeNode loop = std::static_pointer_cast<RangeNode>(from->owner());
                    int current = loop->inputCount();
                    WorkFlowParameter parm(current, loop->id(), "parm" + QString::number(current));
                    parm.inputLink(from, outParmIndex);
@@ -142,7 +142,7 @@ void Workflow::addJunctionFlow(int junctionIdTo, const QString &operationIdFrom,
 {
     SPWorkFlowNode node = nodeById(junctionIdTo);
     SPWorkFlowNode operationFrom = nodeById(operationIdFrom.toULongLong());
-    std::shared_ptr<Junction> junction = std::static_pointer_cast<Junction>(node);
+    std::shared_ptr<JunctionNode> junction = std::static_pointer_cast<JunctionNode>(node);
     if ( truecase){
 
         junction->link2trueCase(operationFrom, paramIndex);
@@ -307,7 +307,7 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
     // linked to a previous input and thus not being free; they are scrapped from the list by
     // making its value invalied
     for(const auto& item : _graph){
-        if (hasType(item->type(), WorkFlowNode::ntCONDITION|WorkFlowNode::ntLOOP)){
+        if (hasType(item->type(), WorkFlowNode::ntCONDITION|WorkFlowNode::ntRANGE)){
             auto subnodes = item->subnodes("tests");
             for(auto subnode : subnodes){
                 for(int j=0; j < subnode->inputCount(); ++j){
@@ -390,7 +390,7 @@ SPWorkFlowNode Workflow::nodeById(NodeId id)
         if ( node->id() == id)
             return node;
         //it might be part of a condition
-        if ( hasType(node->type(), WorkFlowNode::ntCONDITION|WorkFlowNode::ntLOOP)){
+        if ( hasType(node->type(), WorkFlowNode::ntCONDITION|WorkFlowNode::ntRANGE)){
             std::vector<SPWorkFlowNode> subnodes = node->subnodes("all");
             for(auto subnode : subnodes)
                 if ( subnode->id() == id)
@@ -407,7 +407,7 @@ const SPWorkFlowNode Workflow::nodeById(NodeId id) const
         if ( node->id() == id)
             return node;
         //it might be part of a condition
-        if ( hasType(node->type(), WorkFlowNode::ntCONDITION|WorkFlowNode::ntLOOP)){
+        if ( hasType(node->type(), WorkFlowNode::ntCONDITION|WorkFlowNode::ntRANGE)){
             std::vector<SPWorkFlowNode> subnodes = node->subnodes("all");
             for(auto subnode : subnodes)
                 if ( subnode->id() == id)

@@ -18,50 +18,50 @@
 
 using namespace Ilwis;
 
-Junction::Junction() :  WorkFlowNode("")
+JunctionNode::JunctionNode() :  WorkFlowNode("")
 {
     _inputParameters1.resize(3);
 
 }
 
-Junction::Junction(quint64 nodeid) :  WorkFlowNode("")
+JunctionNode::JunctionNode(quint64 nodeid) :  WorkFlowNode("")
 {
     nodeId(nodeid);
-    _inputParameters1.push_back(WorkFlowParameter(0,id(),"condition"));
-    _inputParameters1.push_back(WorkFlowParameter(1,id(),"trueLink"));
-    _inputParameters1.push_back(WorkFlowParameter(2,id(),"falseLink"));
+    _inputParameters1.push_back(WorkFlowParameter(WorkFlowCondition::cpTEST,id(),"condition"));
+    _inputParameters1.push_back(WorkFlowParameter(WorkFlowCondition::cpTRUECASE,id(),"trueLink"));
+    _inputParameters1.push_back(WorkFlowParameter(WorkFlowCondition::cpFALSECASE,id(),"falseLink"));
 }
 
-WorkFlowNode::NodeTypes Junction::type() const
+WorkFlowNode::NodeTypes JunctionNode::type() const
 {
     return WorkFlowNode::ntJUNCTION   ;
 }
 
-void Junction::link2condition(SPWorkFlowNode conditionnode)
+void JunctionNode::link2condition(SPWorkFlowNode conditionnode)
 {
-    WorkFlowParameter parm(0,id(),sUNDEF);
+    WorkFlowParameter parm(WorkFlowCondition::cpTEST,id(),sUNDEF);
     parm.inputLink(conditionnode, iUNDEF);
-    _inputParameters1[0] = parm;
+    _inputParameters1[WorkFlowCondition::cpTEST] = parm;
     if ( conditionnode)
         name(QString("junction_%1_%2").arg(conditionnode->id()).arg(id()));
     else
         name(QString("junction_%1").arg(id()));
 }
 
-void Junction::nodeId(quint64 id)
+void JunctionNode::nodeId(quint64 id)
 {
     WorkFlowNode::nodeId(id);
     name(QString("junction_%1").arg(id));
 }
 
-bool Junction::isValid(const Workflow *workflow, WorkFlowNode::ValidityCheck) const
+bool JunctionNode::isValid(const Workflow *workflow, WorkFlowNode::ValidityCheck) const
 {
-    WorkFlowParameter parm1 = input(1);
-    WorkFlowParameter parm2 = input(2);
+    WorkFlowParameter trueParm = input(WorkFlowCondition::cpTRUECASE);
+    WorkFlowParameter falseParm = input(WorkFlowCondition::cpFALSECASE);
 
-    bool ok = parm1.inputLink() && parm2.inputLink();
+    bool ok = trueParm.inputLink() && falseParm.inputLink();
     if ( ok){
-        ok = parm1.valueType() == parm2.valueType();
+        ok = trueParm.valueType() == falseParm.valueType();
         if ( ok){
             // we now try to find the junction as input in one of the nodes of the graph, else the junction is not correctly linked and thus invalid(incomplete)
            const std::vector<SPWorkFlowNode>& nodes = workflow->graph();
@@ -79,21 +79,21 @@ bool Junction::isValid(const Workflow *workflow, WorkFlowNode::ValidityCheck) co
 
 }
 
-void Junction::link2trueCase(SPWorkFlowNode trueNode, int parmIndex)
+void JunctionNode::link2trueCase(SPWorkFlowNode trueNode, int parmIndex)
 {
-    WorkFlowParameter parm(1,id(),sUNDEF);
+    WorkFlowParameter parm(WorkFlowCondition::cpTRUECASE,id(),sUNDEF);
     parm.inputLink(trueNode, parmIndex);
-    _inputParameters1[1] = parm;
+    _inputParameters1[WorkFlowCondition::cpTRUECASE] = parm;
 }
 
-void Junction::link2falseCase(SPWorkFlowNode falseNode, int parmIndex)
+void JunctionNode::link2falseCase(SPWorkFlowNode falseNode, int parmIndex)
 {
-    WorkFlowParameter parm(2,id(),sUNDEF);
+    WorkFlowParameter parm(WorkFlowCondition::cpFALSECASE,id(),sUNDEF);
     parm.inputLink(falseNode, parmIndex);
-    _inputParameters1[2] = parm;
+    _inputParameters1[WorkFlowCondition::cpFALSECASE] = parm;
 }
 
-int Junction::inputCount() const
+int JunctionNode::inputCount() const
 {
     return 1; // though there are three parameters in the junction, there is only one that is not optional and that is the link to the condition (actually thet tests)
 }

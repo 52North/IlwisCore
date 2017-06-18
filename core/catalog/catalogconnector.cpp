@@ -25,7 +25,7 @@
 #include "workflownode.h"
 #include "conditionNode.h"
 #include "junctionNode.h"
-#include "loopnode.h"
+#include "rangenode.h"
 #include "executionnode.h"
 #include "workflowimplementation.h"
 #include "workflow.h"

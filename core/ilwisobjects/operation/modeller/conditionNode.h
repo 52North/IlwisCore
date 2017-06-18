@@ -14,6 +14,7 @@ typedef std::shared_ptr<WorkFlowNode> SPWorkFlowNode;
 class KERNELSHARED_EXPORT WorkFlowCondition : public WorkFlowNode
 {
 public:
+    enum ConditionParts{cpTEST=0, cpTRUECASE=1, cpFALSECASE=2};
     struct Test{
         LogicalOperator _pre= loNONE;
         SPWorkFlowNode _operation;

@@ -14,26 +14,26 @@
 #include "mastercatalog.h"
 #include "operationhelper.h"
 #include "conditionNode.h"
-#include "loopnode.h"
+#include "rangenode.h"
 
 using namespace Ilwis;
 
-LoopNode::LoopNode() : WorkFlowNode("")
+RangeNode::RangeNode() : WorkFlowNode("")
 {
 
 }
 
-Ilwis::WorkFlowNode::NodeTypes Ilwis::LoopNode::type() const
+Ilwis::WorkFlowNode::NodeTypes Ilwis::RangeNode::type() const
 {
-    return WorkFlowNode::ntLOOP;
+    return WorkFlowNode::ntRANGE;
 }
 
-bool LoopNode::isValid(const Ilwis::Workflow *workflow, WorkFlowNode::ValidityCheck check) const
+bool RangeNode::isValid(const Ilwis::Workflow *workflow, WorkFlowNode::ValidityCheck check) const
 {
     return true;
 }
 
-void LoopNode::nodeId(quint64 id)
+void RangeNode::nodeId(quint64 id)
 {
     WorkFlowNode::nodeId(id);
     name(QString("loop_%1").arg(id));

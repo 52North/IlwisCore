@@ -39,13 +39,15 @@ bool ExecutionNode::execute(ExecutionContext *ctx, SymbolTable &symTable, Workfl
     bool ok;
     switch(_node->type()) {
     case WorkFlowNode::ntCONDITION:
-        ok = executeCondition(ctx, symTable, workflowImpl, mapping);break;
+        ok = executeTest(ctx, symTable, workflowImpl, mapping);break;
     case WorkFlowNode::ntJUNCTION:
         ok = executeJunction(ctx, symTable, workflowImpl, mapping); break;
     case WorkFlowNode::ntOPERATION:
         ok = executeOperation(ctx, symTable, workflowImpl, mapping); break;
-    case WorkFlowNode::ntLOOP:
-        ok = executeLoop(ctx, symTable, workflowImpl, mapping); break;
+    case WorkFlowNode::ntRANGE:
+        ok = executeRange(ctx, symTable, workflowImpl, mapping); break;
+    case WorkFlowNode::ntRANGEJUNCTION:
+        ok = executeRangeJunction(ctx, symTable, workflowImpl, mapping); break;
     default:
         return false;
     }
@@ -69,6 +71,7 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
      //auto iter = ctx->_additionalInfo.find("testoperation");
     SymbolTable symTable2(symTable);
     int inputCount = _node->inputCount();
+    // for all input parameters
     for(int i=0; i < inputCount; ++i){
         if ( workflowImpl->stopExecution())
             return false;
@@ -86,17 +89,13 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
                 }else{
                     return false;
                 }
-//                // if this is a workflow it has used a number of parameters that were in the list of input parameters; they are used and
-//                // are not considered anymore for matching input values and node execution
-//                if ( parameter.inputLink()->isWorkflow()){
-//                    mapping.advanceOffset(parameter.inputLink()->inputCount());
-//                }
             }
         }
     }
     if ( workflowImpl->stopExecution())
         return false;
 
+    // all input parameters should have a value now so we can start building the expression for this operation
     SPOperationNode opNode = std::static_pointer_cast<OperationNode>(_node);
     IOperationMetaData metadata = opNode->operation();
     QString expr = metadata->name()  + "(";
@@ -146,19 +145,22 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
     return ok;
 }
 
-bool ExecutionNode::executeCondition(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping)
+bool ExecutionNode::executeTest(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping)
 {
 
     bool testRestult = true;
     SPCondition condition = std::static_pointer_cast<WorkFlowCondition>(_node);
+    // for all tests
     for(int i=0; i < condition->testCount(); ++i){
        const WorkFlowCondition::Test& test = condition->test(i);
        SymbolTable symTableLocal(symTable);
        ExecutionContext ctx;
        ctx._additionalInfo["testoperation"] = true;
+       // execute test
        ExecutionNode& exNode = workflowImpl->executionNode(test._operation,mapping);
        if (!exNode.execute(&ctx,symTableLocal,workflowImpl, mapping))
            return false;
+       // combine result test with previous tests
        if ( ctx._results.size() == 1){
            Symbol sym = symTableLocal.getSymbol(ctx._results[0]);
            if ( sym._type == itBOOL){
@@ -182,27 +184,32 @@ bool ExecutionNode::executeCondition(ExecutionContext *ctx, SymbolTable &symTabl
 
 bool ExecutionNode::executeJunction(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping)
 {
-    WorkFlowParameter& condParm = _node->inputRef(0);
+    // get the parameter that represents the test in the condition. It's value determines which path the junction takes (true, false)
+    WorkFlowParameter& testParameter = _node->inputRef(WorkFlowCondition::cpTEST);
      // if the value of the condition (basically the test value
     // is not set we are going to execute the tests of the condition
     // the result of the tests is the "value" of the condition node (true or false)
     // of course this isnt the result of the operations inside the condition; those have their own logic
-    if (!parameterValue(0).isValid()){
-        ExecutionContext ctxLocal;
+    if (!parameterValue(WorkFlowCondition::cpTEST).isValid()){
+=        ExecutionContext ctxLocal;
         SymbolTable symTableLocal(symTable);
-        ExecutionNode& exNode = workflowImpl->executionNode(condParm.inputLink(),mapping);
-        if (exNode.execute(&ctxLocal, symTableLocal,workflowImpl, mapping)){
+        // the value of the parameter comes from the test node, so we follow the inputlink and than execute the test
+        // after execution we know the result of the test
+        ExecutionNode& tests = workflowImpl->executionNode(testParameter.inputLink(),mapping);
+        if (tests.execute(&ctxLocal, symTableLocal,workflowImpl, mapping)){
+            // collect the result from the test; the result will be used to determine which branch of the flow is taken
             QString outputName = ctxLocal._results[0];
             QVariant val = symTableLocal.getValue(outputName);
             condParm.value("", symTableLocal.getSymbol(outputName)._type);
-            _parameterValues[0] = val;
+            _parameterValues[WorkFlowCondition::cpTEST] = val;
         }
     }
     ExecutionContext ctxLocal;
     SymbolTable symTableLocal(symTable);
-    ExecutionNode& exNode = parameterValue(0).toString() == "true" ?
-                workflowImpl->executionNode(_node->inputRef(1).inputLink(),mapping) :
-                workflowImpl->executionNode(_node->inputRef(2).inputLink(),mapping);
+    // determine which link we follow for the flow
+    ExecutionNode& exNode = parameterValue(WorkFlowCondition::cpTEST) == "true" ?
+                workflowImpl->executionNode(_node->inputRef(WorkFlowCondition::cpTRUECASE).inputLink(),mapping) :
+                workflowImpl->executionNode(_node->inputRef(WorkFlowCondition::cpFALSECASE).inputLink(),mapping);
 
     exNode.execute(ctx, symTableLocal,workflowImpl, mapping);
     symTable.copyFrom(ctx, symTableLocal);
@@ -249,7 +256,11 @@ int ExecutionNode::parameterCount() const
     return _parameterValues.size();
 }
 
-bool ExecutionNode::executeLoop(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping)
+bool ExecutionNode::executeRangeJunction(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping){
+    return executeJunction(ctx,symTable, workflowImpl, mapping)    ;
+}
+
+bool ExecutionNode::executeRange(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping)
 {
     while( next()){
         if(!executeContent(ctx,symTable, workflowImpl, mapping))

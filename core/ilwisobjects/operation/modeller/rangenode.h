@@ -5,10 +5,10 @@
 
 namespace Ilwis {
 
-class KERNELSHARED_EXPORT LoopNode : public WorkFlowNode
+class KERNELSHARED_EXPORT RangeNode : public WorkFlowNode
 {
 public:
-    LoopNode();
+    RangeNode();
 
     Ilwis::WorkFlowNode::NodeTypes type() const;
     bool isValid(const Ilwis::Workflow *workflow, WorkFlowNode::ValidityCheck check) const;
@@ -19,7 +19,7 @@ private:
 
 };
 
-typedef std::shared_ptr<LoopNode> SPLoopNode;
+typedef std::shared_ptr<RangeNode> SPLRangeNode;
 }
 
 #endif // LOOPNODE_H
