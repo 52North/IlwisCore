@@ -11,12 +11,12 @@ import "../../Global.js" as Global
 import "../.." as Base
 
 LayersView {
-
+    id : overviewobj
     objectName : "overview_mainui_"  + uicontext.uniqueName()
     active : false
 
     Component.onCompleted: {
-        manager = uicontext.createLayerManager(objectName)
+        manager = uicontext.createLayerManager(overviewobj)
         overview.setManager(manager)
         renderer.associate(objectName,"drawEnded")
     }
