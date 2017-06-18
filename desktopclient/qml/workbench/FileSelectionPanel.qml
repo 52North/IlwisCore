@@ -37,11 +37,10 @@ Rectangle {
         if ( index !== -1){
             pathString = pathString.slice(0,index) // chop the /..
             index = pathString.lastIndexOf("/")
-            if ( index !== -1){
+            if ( index !== -1 ){
                 pathString = pathString.slice(0,index)  // chop the last 'real'folder as that is what we want here
             }
         }
-
         var found = false
         var i = 0
         for( ; i < pathModel.count; ++i){
@@ -202,7 +201,10 @@ Rectangle {
                         //fileFolders.currentIndex = index;
                         var path = folderModel.get(index,"filePath")
                         path = path2pathView(path)
+                        if ( path.charAt(path.length - 1) === ':')
+                            path += '/'
                         currentFolder = Global.createfileUrlFromParts(path, "")
+
                         folderModel.folder = currentFolder;
                         var filter = "container='" + folderModel.folder + "'"
                         mainSplit.changeCatalog(filter,"catalog", currentFolder)
