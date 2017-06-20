@@ -802,8 +802,8 @@ QString MasterCatalogModel::currentUrl() const
 void MasterCatalogModel::setCurrentUrl(const QString &url)
 {
     _currentUrl = url;
-    //mastercatalog()->addContainer(QUrl(url));
-    refreshCatalog(url);
+    mastercatalog()->addContainer(QUrl(url));
+    //refreshCatalog(url);
 }
 
 CatalogModel *MasterCatalogModel::currentCatalog() const
