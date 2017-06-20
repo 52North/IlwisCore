@@ -678,8 +678,10 @@ void WorkflowModel::stopStepMode(){
     parms["runid"] = _runid;
     _stepMode = false;
     _lastOperationNode = -1;
+    _currentNode == -1;
     emit sendMessage("workflow","stopstepmode", parms);
     emit operationNodeChanged();
+    emit currentNodeChanged();
 }
 
 void WorkflowModel::stopExecution()
@@ -691,9 +693,11 @@ void WorkflowModel::stopExecution()
         parms["id"] = _workflow->id();
         parms["runid"] = _runid;
         _stepMode = false;
-        _lastOperationNode;
+        _lastOperationNode = -1;
+        _currentNode = -1;
         emit sendMessage("workflow","stopexecution", parms);
         emit operationNodeChanged();
+        emit currentNodeChanged();
     }
 
 }
@@ -869,6 +873,26 @@ void WorkflowModel::acceptMessage(const QString &type, const QString &subtype, c
                 }else {
                     _currentNode = parameters["node"].toInt();
                 }
+                emit currentNodeChanged();
+            }else if ( subtype == "stopexecution"){
+                _stepMode = false;
+                _lastOperationNode = -1;
+                _currentNode = -1;
+                emit operationNodeChanged();
+                emit currentNodeChanged();
+
+            }
+        }
+    }
+    if ( type == "operation"){
+        bool ok;
+        quint64 id = parameters["runid"].toLongLong(&ok);
+        if ( ok && id == _runid){
+            if ( subtype == "stopped"){
+                _stepMode = false;
+                _lastOperationNode = -1;
+                _currentNode = -1;
+                emit operationNodeChanged();
                 emit currentNodeChanged();
             }
         }

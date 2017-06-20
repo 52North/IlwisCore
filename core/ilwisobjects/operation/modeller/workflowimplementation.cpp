@@ -41,12 +41,13 @@ void WorkflowImplementation::initStepMode(){
     QVariant var = current->property("runparameters");
     if ( var.isValid()){
         QVariantMap values = var.toMap();
+        bool ok;
+        quint32 id = values["runid"].toUInt(&ok);
+        if ( ok)
+            _runid = id;
         _stepMode = values["stepmode"].toBool();
         if ( _stepMode){
-            bool ok;
-            quint32 id = values["runid"].toUInt(&ok);
             if ( ok){
-                _runid = id;
                 kernel()->addSyncLock(_runid);
             }else
                 _stepMode = false;
@@ -144,14 +145,15 @@ ExecutionNode &WorkflowImplementation::executionNode(const SPWorkFlowNode &node,
 
 void WorkflowImplementation::wait(const SPWorkFlowNode& node)
 {
+    QVariantMap mp;
+    mp["node"] = node->id();
+    mp["id"] = _metadata->id();
+    mp["runid"] = _runid;
+    mp["condtionid"] = node->conditionIdOfTest();
 
     if (_stepMode){
         bool ok;
-        QVariantMap mp;
-        mp["node"] = node->id();
-        mp["id"] = _metadata->id();
-        mp["runid"] = _runid;
-        mp["condtionid"] = node->conditionIdOfTest();
+
         emit sendMessage("workflow","lastrunnode",mp);
 
         if ( !_initial){
@@ -161,9 +163,10 @@ void WorkflowImplementation::wait(const SPWorkFlowNode& node)
                 waitc.wait(&_syncMutex);
             }
         }
-        emit sendMessage("workflow","currentnode",mp);
+
 
     }
+    emit sendMessage("workflow","currentnode",mp);
 }
 
 void WorkflowImplementation::wakeup()
@@ -194,7 +197,7 @@ void WorkflowImplementation::acceptMessage(const QString &type, const QString &s
                 _stepMode = false;
                 _stopExecution = true;
                 clearCalculatedValues();
-            }else if ( subtype == "stopexecution"){
+            } if ( subtype == "stopexecution"){
                 _stopExecution = true;
                 clearCalculatedValues();
             }

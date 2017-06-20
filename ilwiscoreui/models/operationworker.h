@@ -24,6 +24,7 @@ public slots:
 signals:
     void finished();
     void operationResults(QVariantList values);
+    void sendMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
 
 private:
    OperationExpression _expression;

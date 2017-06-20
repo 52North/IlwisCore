@@ -14,6 +14,7 @@ using namespace Ilwis;
 
 OperationWorker::OperationWorker(const OperationExpression &opExpr) :_expression(opExpr)
 {
+   connect(this, &OperationWorker::sendMessage, kernel(), &Kernel::acceptMessage);
 }
 
 void OperationWorker::run(const OperationExpression &expression){
@@ -24,6 +25,7 @@ void OperationWorker::run(const OperationExpression &expression){
         SymbolTable tbl;
         ExecutionContext ctx;
         if(op->execute(&ctx, tbl)){
+
             if ( ctx._results.size() > 0){
                 for(auto resultName : ctx._results){
                     Symbol symbol = tbl.getSymbol(resultName);
@@ -69,6 +71,19 @@ void OperationWorker::process(){
         kernel()->setTLS("workingcatalog", new QVariant(var));
     }
     run(_expression);
+
+    QThread *current = QThread::currentThread();
+    QVariant runvar = current->property("runparameters");
+    if ( runvar.isValid()){
+        QVariantMap values = runvar.toMap();
+        bool ok;
+        quint32 id = values["runid"].toUInt(&ok);
+        if ( ok){
+            QVariantMap mp;
+            mp["runid"] = id;
+            emit sendMessage("operation","stopped", mp );
+        }
+    }
 
     emit finished();
 }
