@@ -37,26 +37,35 @@ bool RunPython::execute(ExecutionContext *ctx, SymbolTable &symTable)
     QString tempPath = context()->cacheLocation().toLocalFile();
     QString tempPathOut = tempPath + "/python.stdout";
     QString tempPathErr = tempPath + "/python.stderr";
-    QString cmd = QString("f = open(\"%1\", \"w\", encoding=\"utf-8\")").arg(tempPathOut);
-    QString cmd2 = QString("f2 = open(\"%1\", \"w\", encoding=\"utf-8\")").arg(tempPathErr);
-    PyRun_SimpleString("import sys");
-    PyRun_SimpleString("import io");
-    PyRun_SimpleString("stdout = sys.stdout");
-    PyRun_SimpleString("stderr = sys.stderr");
-    PyRun_SimpleString(cmd.toStdString().c_str());
-    PyRun_SimpleString(cmd2.toStdString().c_str());
-    PyRun_SimpleString("sys.stdout = f");
-    PyRun_SimpleString("sys.stderr = f2");
-    QStringList statList = _statements.split('\n');
-    for (QString stat : statList)
-        PyRun_SimpleString(stat.toStdString().c_str());
-    PyRun_SimpleString("\n");
-    PyRun_SimpleString("sys.stdout.flush()");
-    PyRun_SimpleString("sys.stderr.flush()");
-    PyRun_SimpleString("sys.stdout = stdout");
-    PyRun_SimpleString("sys.stderr = stderr");
-    PyRun_SimpleString("f.close()");
-    PyRun_SimpleString("f2.close()");
+
+    PyObject *py_main = PyImport_AddModule("__main__");
+    PyObject *py_dict = PyModule_GetDict(py_main);
+
+    QString statements = "import sys\n";
+    statements += "import io\n";
+    statements += "import ilwis\n";
+    statements += "stdout = sys.stdout\n";
+    statements += "stderr = sys.stderr\n";
+    statements += QString("f = open(\"%1\", \"w\", encoding=\"utf-8\")\n").arg(tempPathOut);
+    statements += QString("f2 = open(\"%1\", \"w\", encoding=\"utf-8\")\n").arg(tempPathErr);
+    statements += "sys.stdout = f\n";
+    statements += "sys.stderr = f2\n";
+    statements += _statements + "\n";
+    statements += "sys.stdout.flush()\n";
+    statements += "sys.stderr.flush()\n";
+    statements += "sys.stdout = stdout\n";
+    statements += "sys.stderr = stderr\n";
+    statements += "f.close()\n";
+    statements += "f2.close()\n";
+
+    PyObject *pValue = PyRun_String(statements.toStdString().c_str(), Py_file_input, py_dict, py_dict);
+    if ( !pValue){
+        PyErr_Print();
+    }else
+        Py_DECREF(pValue);
+   // Py_DECREF(pLocal);
+   // Py_DECREF(pGlobal);
+    //Py_DECREF(py_main);
 
     bool hasError = false;
     QFile errFile(tempPathErr);
