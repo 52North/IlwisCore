@@ -152,21 +152,20 @@ void CatalogConnector::unload()
 bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &options){
     Catalog *cat = static_cast<Catalog *>(obj);
     kernel()->issues()->log(QString(TR("Scanning %1")).arg(sourceRef().url(true).toString()),IssueObject::itMessage);
+    std::vector<Resource> items;
     for(const auto& explorer : _dataProviders){
 
         // TODO clear security issues which may arise here, as
         // all _dataProviders gets passed the ioptions probably
-        // not indendet for them
+        // not intended for them
 
         IOOptions iooptions = options.isEmpty() ? ioOptions() : options;
-        std::vector<Resource> items = explorer->loadItems(iooptions);
-        auto addedItems = mastercatalog()->addContainerContent(source().url().toString(), items);
-        cat->addItemsPrivate(addedItems);
-        mastercatalog()->addItems(addedItems);
-
-
-
+        std::vector<Resource> newitems = explorer->loadItems(iooptions);
+        std::copy(newitems.begin(), newitems.end(), std::back_inserter(items));
     }
+    auto addedItems = mastercatalog()->addContainerContent(source().url().toString(), items); // addContainerContent first clears the container (deletes it and all its items from the mastercatalog) before adding the new items
+    cat->addItemsPrivate(addedItems);
+    mastercatalog()->addItems(addedItems);
     return true;
 }
 
