@@ -26,7 +26,7 @@ Rectangle {
             onCurrentIndexChanged: {
                 if ( modellerDataPane.model){
                     var wf = modellerDataPane.model.workflow(currentIndex)
-                    modellerDataPane.setCurrentWorkflow(wf);
+                    modellerDataPane.setCurrentWorkflow(wf,currentIndex);
                 }
             }
         }
@@ -46,13 +46,15 @@ Rectangle {
     }
 
     Component.onCompleted: {
-        updateLists()
+        updateLists(0)
     }
 
-    function updateLists() {
+    function updateLists(currentIndex) {
         if ( modellerDataPane.model){
-            workflows.workflowNamesModel = null
-            workflows.workflowNamesModel = modellerDataPane.model.workflowNames
+            if ( currentIndex != workflows.currentIndex || workflows.workflowNamesModel == null){
+                workflows.workflowNamesModel = null
+                workflows.workflowNamesModel = modellerDataPane.model.workflowNames
+            }
         }
     }
 

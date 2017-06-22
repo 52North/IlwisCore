@@ -120,24 +120,23 @@ Item {
                             workflowView.recreateWorkflow()
                         }
                         createParameters = [filter, sourceName, sourceType]
-                        manager.updateLists()
+                        manager.updateLists(0)
                     }
                 }
             }
         }
     }
 
-    function setCurrentWorkflow(wf) {
+    function setCurrentWorkflow(wf, currentIndex) {
          if ( wf && wf.name !== model.currentWorkflow.name){
-            // workflowView.clearCurrent()
+             workflowView.clearCurrent()
              workflowView.workflow = wf
              model.currentWorkflow = workflowView.workflow
              if (model.currentWorkflow) {
                  workflowView.recreateWorkflow()
              }
              createParameters = ['itemid=' + wf.id, wf.name, 'workflow']
-
-             manager.updateLists()
+             manager.updateLists(currentIndex)
          }
      }
 

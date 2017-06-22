@@ -221,6 +221,9 @@ Modeller.ModellerWorkArea {
             return
 
         var parameters = node.parameters
+        if (!parameters)
+            return
+
         for(var j=0; j < parameters.length; ++j){
             recreateFlow(parameters[j], kvp,operationItem,j)
         }
@@ -556,6 +559,9 @@ Modeller.ModellerWorkArea {
     }
 
     function clearCurrent() {
+        if ( !workflow)
+            return
+
         currentItem = null
         dropCondition = false
         dropLoop = false
@@ -568,11 +574,9 @@ Modeller.ModellerWorkArea {
             var item = conditionsList[i]
             item.clear()
         }
-        workflow = null
-        wfCanvas.canvasValid = false
         conditionsList = []
-
-        //console.debug("workflow changed", workflow.name, operationsList.length, currentItem)
+         workflow = null
+        wfCanvas.canvasValid = false
     }
 
 }

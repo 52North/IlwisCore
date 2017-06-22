@@ -22,9 +22,13 @@ DropArea {
             anchors.verticalCenter: parent.verticalCenter
         }
     }
-    onDropped: {
-        modellerDataPane.model.addWorkflow("itemid=" + drag.source.ilwisobjectid)
+    function addWorkflow(ilwisobjectid){
+        modellerDataPane.model.addWorkflow("itemid=" + ilwisobjectid)
         namesColumn.model = modellerDataPane.model.workflowNames
+    }
+
+    onDropped: {
+        addWorkflow(drag.source.ilwisobjectid)
     }
 
     Rectangle {
@@ -32,6 +36,7 @@ DropArea {
         anchors.bottom : parent.bottom
         width : parent.width
         color : uicontext.lightestColor
+
         Rectangle {
             width : parent.width - 2
             height : parent.height - buttons.height - 5
@@ -101,6 +106,7 @@ DropArea {
                     anchors.centerIn: parent
                 }
                 onClicked: {
+                    createForm.state = "visible"
                 }
 
             }

@@ -86,6 +86,19 @@ function drawLine(canvas, ctx, pt1,pt2, selected, color, width){
     ctx.stroke()
 }
 
+function currentCatalogCorrectUrl(panel) {
+    if ( !panel)
+        return ""
+    if ( panel.panelType === "catalog"){
+        var url = panel.currentCatalog.url
+        if ( url.indexOf("file://") !== 0) {
+            return ""
+        }
+        return url
+    }
+    return ""
+}
+
 function drawArrow(canvas, ctx, pt1,pt2, selected){
     var fromx = pt1.x
     var fromy = pt1.y

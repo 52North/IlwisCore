@@ -108,30 +108,28 @@ Rectangle {
         //workflowManager.item.selectedWorkflowItem(itemid)
     }
 
-    function updateLists(){
+    function updateLists(subcurrentIndex){
         if ( modellerDataPane.model ){
             if ( modellerDataPane.model.conceptCount > 0)
                 modellerViews.currentIndex = 0
             else if ( modellerDataPane.model.applicationCount > 0){
                 modellerViews.currentIndex = 1
-                applicationView.currentApplication = modellerDataPane.model.application(0)
+                applicationView.currentApplication = modellerDataPane.model.application(currentIndex)
                 analysisView.state = workflowView.state = "invisible"
             }else if ( modellerDataPane.model.analysisCount > 0){
                 modellerViews.currentIndex = 2
-                var analysis = modellerDataPane.model.analysisPattern(0)
+                var analysis = modellerDataPane.model.analysisPattern(subcurrentIndex)
                 analisysView.currentAnalysis = analysis
                 analysisManager.item.refreshFormArea(analysis.panel("form"))
                 applicationView.state = workflowView.state = "invisible"
             } else if ( modellerDataPane.model.workflowCount > 0){
                 modellerViews.currentIndex = 3
-                workflowView.workflow = modellerDataPane.model.workflow(0)
-                 applicationView.state = analisysView.state = "invisible"
+                workflowView.workflow = modellerDataPane.model.workflow(subcurrentIndex)
+                applicationView.state = analisysView.state = "invisible"
+                workflowManager.updateLists(subcurrentIndex)
             }
             else
                 modellerViews.currentIndex = 0
-        }
-        if ( workflowManager){
-            workflowManager.updateLists()
         }
     }
 }

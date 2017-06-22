@@ -48,7 +48,7 @@ Rectangle {
     Image {
         id : box
         anchors.fill: parent
-        source : getBackground(workflow.lastOperationNode)
+        source : workflow != null ? getBackground(workflow.lastOperationNode) : ""
     }
 
     Text{
@@ -58,7 +58,7 @@ Rectangle {
         width : box.width -10
         elide: Text.ElideMiddle
         font.pixelSize: 11
-        color : workflow.currentNode == itemid ? "red" : "black"
+        color : (workflow && workflow.currentNode == itemid) ? "red" : "black"
         x : 15
         text : itemid + ". " + (operation ? label() : "??")
         font.bold : true
@@ -267,6 +267,10 @@ Rectangle {
         attachementRectangles.push(att6)
         attachementRectangles.push(att7)
         attachementRectangles.push(att8)
+//        console.debug("created", operationItem, workflow.name)
+    }
+    Component.onDestruction: {
+//        console.debug("destroyed", operationItem)
     }
 
     states: [
@@ -309,20 +313,28 @@ Rectangle {
     }
 
     function getInputNames(){
-        var node = workflow.getNode(itemid);
-        var parms = node["parameters"]
         var lst = []
-        if ( parms){
-            for(var i=0; i < parms.length; ++i){
-                lst.push(parms[i].label)
+        if ( workflow){
+            var node = workflow.getNode(itemid);
+
+            if ( node){
+                var parms = node["parameters"]
+
+                if ( parms){
+                    for(var i=0; i < parms.length; ++i){
+                        lst.push(parms[i].label)
+                    }
+                }
             }
         }
         return lst
     }
 
     function label(){
-        var node = workflow.getNode(itemid)
-        return node.label
+        if ( workflow ){
+            var node = workflow.getNode(itemid)
+            return node.label
+        }
     }
 
     function setLabel(value){
@@ -378,6 +390,8 @@ Rectangle {
     }
 
     function drawFlows(ctx){
+        if(!workflow)
+            return
 
         for(var i=0; i < flowConnections.length; i++){
             var flow = flowConnections[i]
