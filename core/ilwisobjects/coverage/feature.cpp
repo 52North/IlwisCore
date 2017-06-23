@@ -452,7 +452,7 @@ FeatureInterface *Feature::clone(FeatureCoverage *fcoverage) const
     if ( !_parentFCoverage)
         return 0;
 
-    Feature *f = new Feature(_parentFCoverage);
+    Feature *f = new Feature(fcoverage);
     for(const auto& node : _subFeatures){
         f->_subFeatures[node.first].reset(node.second->clone(fcoverage));
     }
