@@ -21,6 +21,8 @@
 using namespace Ilwis;
 using namespace BaseOperations;
 
+REGISTER_OPERATION(SpatialRelationOperation)
+
 SpatialRelationOperation::SpatialRelationOperation()
 {
 }
@@ -30,20 +32,85 @@ SpatialRelationOperation::SpatialRelationOperation(quint64 metaid, const Ilwis::
 
 }
 
-quint64 SpatialRelationOperation::createMetadata(OperationResource& operation)
+Ilwis::OperationImplementation *SpatialRelationOperation::create(quint64 metaid, const Ilwis::OperationExpression &expr)
 {
-    operation.setInParameterCount({2});
+    return new SpatialRelationOperation(metaid, expr);
+}
 
-    operation.addInParameter(0,itCOVERAGE, TR("coverage"),TR("coverage on which the spatial relation is applicable"));
-    operation.addInParameter(1,itSTRING, TR("Geometry"), TR("the geometry for which the spatial relation holds true"));
+quint64 SpatialRelationOperation::createMetadata()
+{
+    OperationResource operation({"ilwis://operations/spatialrelation"});
+    operation.setLongName("Spatial Relation");
+    operation.setDescription("Checks if a certain boolean relation holds true for matched geometries of the input data");
+    operation.setSyntax("contains(featurecoverage,geometries,contains|covers|coveredBy|touches|intersects|disjoint|within|equals|crosses|overlaps)");
+    operation.setDescription(TR("returns a feature-index of all features that satisfy the contains constraint"));
+    operation.setInParameterCount({3});
 
+    operation.addInParameter(0,itFEATURE, TR("feature coverage"),TR("coverage on which the spatial relation is applicable"));
+    operation.addInParameter(1,itSTRING|itFEATURE, TR("Geometries"), TR("the geometry for which the spatial relation holds true. It can come from a featurecoverage or a predefined geometry(wkt)"));
+    operation.addInParameter(2,itSTRING, TR("Relation"), TR("Relation to be checked; if the relation holds true the feature will be in the output set"));
     operation.setOutParameterCount({1});
-    operation.addOutParameter(0,itCOLLECTION | itINTEGER, TR("result index collection"));
+    operation.addOutParameter(0,itFEATURE, TR("feature coverage"));
     operation.setKeywords("geometry, vector, spatial relation,features");
 
     mastercatalog()->addItems({operation});
     return operation.id();
 
+}
+
+bool SpatialRelationOperation::contains(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
+    return geomCoverage->contains(geomRelation);
+}
+bool SpatialRelationOperation::covers(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
+    return  geomRelation->covers(geomCoverage);
+}
+bool SpatialRelationOperation::coveredBy(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
+    return geomRelation->coveredBy(geomCoverage);
+}
+bool SpatialRelationOperation::touches(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
+    return geomRelation->touches(geomCoverage);
+}
+
+bool SpatialRelationOperation::intersects(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
+    return geomRelation->intersects(geomCoverage);
+}
+
+bool SpatialRelationOperation::disjoint(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
+    return geomRelation->disjoint(geomCoverage);
+}
+
+bool SpatialRelationOperation::within(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
+    return geomRelation->within(geomCoverage);
+}
+
+bool SpatialRelationOperation::equals(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
+    return geomRelation->equals(geomCoverage);
+}
+
+bool SpatialRelationOperation::crosses(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
+    return geomRelation->crosses(geomCoverage);
+}
+
+bool SpatialRelationOperation::overlaps(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
+    return geomRelation->overlaps(geomCoverage);
+}
+
+void SpatialRelationOperation::collectResults( const geos::geom::Geometry *geomRelation, SPFeatureI inputfeature, std::vector<SPFeatureI>& outFeatures){
+    const geos::geom::Geometry *geomCoverage = inputfeature->geometry().get();
+    for(int gi = 0; gi < geomRelation->getNumGeometries(); ++gi){
+
+        if ( geomCoverage!= 0 &&_relation(geomCoverage,geomRelation->getGeometryN(gi) )){
+            outFeatures.push_back(inputfeature);
+        }
+        int variantCount = inputfeature->subFeatureCount();
+        for(int subGindex = 0; subGindex < variantCount; ++subGindex){
+            const geos::geom::Geometry *geomCoverage =  inputfeature->subFeatureRef(gi)->geometry().get();
+
+            if ( geomCoverage!= 0 &&_relation(geomCoverage,geomRelation->getGeometryN(subGindex) )){
+                outFeatures.push_back(inputfeature);
+            }
+        }
+    }
 }
 
 bool SpatialRelationOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
@@ -52,43 +119,40 @@ bool SpatialRelationOperation::execute(ExecutionContext *ctx, SymbolTable &symTa
         if((_prepState = prepare(ctx, symTable)) != sPREPARED)
             return false;
 
-    IFeatureCoverage features = _coverage.as<FeatureCoverage>();
-
-    std::set<quint32> resultset;
-    int index = 0;
+    std::vector<SPFeatureI> resultset;
+    int count = 0;
     geos::geom::Geometry *geomRelation = _geometry.get();
     try{
-    if ( geomRelation != 0) {
-        for(auto iter : features){
-                for(int gi = 0; gi < geomRelation->getNumGeometries(); ++gi){
-                    const geos::geom::Geometry *geomCoverage = iter->geometry().get();
-
-                    if ( geomCoverage!= 0 &&_relation(geomCoverage,geomRelation->getGeometryN(gi) )){
-                        resultset.insert(index);
-                    }
-                    int variantCount = iter->subFeatureCount();
-                    for(int subGindex = 0; subGindex < variantCount; ++subGindex){
-                        const geos::geom::Geometry *geomCoverage =  iter->subFeatureRef(gi)->geometry().get();
-
-                        if ( geomCoverage!= 0 &&_relation(geomCoverage,geomRelation->getGeometryN(subGindex) )){
-                            resultset.insert(index);
-                        }
-                    }
+        if ( geomRelation != 0) {
+            for(auto feature : _inputFeatures){
+                collectResults(geomRelation, feature, resultset);
+                updateTranquilizer(count++, 20);
+            }
+        } else {
+            for(auto inputfeature : _inputFeatures){
+                for(auto relatedfeatures : _relatedFeatures)    {
+                    collectResults(relatedfeatures->geometry().get(), inputfeature, resultset);
+                    updateTranquilizer(count++, 20);
                 }
             }
-            ++index;
         }
     } catch(geos::util::GEOSException& exc){
         ERROR0(QString(exc.what()));
         return false;
+    } catch (std::bad_function_call& err){
+        ERROR0(err.what());
+        return false;
     }
 
-    std::vector<quint32> result(resultset.begin(), resultset.end());
-    if ( ctx != 0) {
-        QVariant value;
-        value.setValue<std::vector<quint32>>(result);
-        ctx->setOutput(symTable, value, sUNDEF, itINTEGER | itCOLLECTION, Resource());
+    std::set<quint64> ids;
+    for(SPFeatureI feature : resultset){
+        if ( std::find(ids.begin(), ids.end(),feature->featureid()) == ids.end()) {
+            ids.insert(feature->featureid());
+            _outputFeatures->newFeatureFrom(feature);
+        }
+
     }
+    setOutput(_outputFeatures, ctx, symTable);
 
     return true;
 }
@@ -99,333 +163,57 @@ OperationImplementation::State SpatialRelationOperation::prepare(ExecutionContex
     OperationImplementation::prepare(ctx,st);
     QString fc = _expression.parm(0).value();
 
-    if (!_coverage.prepare(fc)) {
+    if (!_inputFeatures.prepare(fc)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,fc,"");
         return sPREPAREFAILED;
     }
+    if ( _expression.parm(1).valuetype() == itSTRING){
+        QString geom = _expression.parm(1).value();
+        _geometry.reset(GeometryHelper::fromWKT(geom, ICoordinateSystem())); // dont use the csy of coverage; not relevant here
 
-    QString quotedGeom = _expression.parm(1).value();
-    QString geom = quotedGeom.remove('\"');
-    _geometry.reset(GeometryHelper::fromWKT(geom, ICoordinateSystem())); // dont use the csy of coverage; not relevant here
-    if ( !_geometry){
-        ERROR2(ERR_NO_INITIALIZED_2, TR("Geometry"), TR("Contains operation"));
+        if ( !_geometry){
+            ERROR2(ERR_NO_INITIALIZED_2, TR("Geometry"), TR("Contains operation"));
+            return sPREPAREFAILED;
+        }
+        _outputFeatures = OperationHelperFeatures::initialize(_inputFeatures, itFEATURE, itCOORDSYSTEM | itENVELOPE|itDOMAIN | itTABLE);
+
+    }else if ( hasType(_expression.parm(1).valuetype(), itFEATURE)){
+        fc =  _expression.parm(1).value();
+        if(!_relatedFeatures.prepare(fc)){
+            ERROR2(ERR_COULD_NOT_LOAD_2,fc,"");
+            return sPREPAREFAILED;
+        }
+        _outputFeatures = OperationHelperFeatures::initialize(_relatedFeatures, itFEATURE, itCOORDSYSTEM | itENVELOPE|itDOMAIN | itTABLE);
+    }
+    QString relation = _expression.parm(2).value().toLower();
+    if (relation == "disjoint")
+        _relation = disjoint;
+    else if (relation == "contains")
+        _relation = contains;
+    else if (relation == "covers")
+        _relation = covers;
+    else if (relation == "coveredby")
+        _relation = coveredBy;
+   else  if (relation == "touches")
+        _relation = touches;
+    else if (relation == "intersects")
+        _relation = intersects;
+    else if (relation == "within")
+        _relation = within;
+    else if (relation == "crosses")
+        _relation = crosses;
+    else if (relation == "overlaps")
+        _relation = overlaps;
+    else if (relation == "equals")
+        _relation = equals;
+    else    {
+        kernel()->issues()->log(TR("Unknown relation:") + relation);
         return sPREPAREFAILED;
     }
 
+
+    initialize(_inputFeatures->featureCount());
+
     return sPREPARED;
 
 }
-
-//---------------------------------------------------------------------------------
-REGISTER_OPERATION(Contains)
-
-Contains::Contains(){}
-
-Contains::Contains(quint64 metaid, const Ilwis::OperationExpression &expr) : SpatialRelationOperation(metaid, expr){}
-
-Ilwis::OperationImplementation *Contains::create(quint64 metaid, const Ilwis::OperationExpression &expr){
-    return new Contains(metaid, expr);
-}
-
-bool Contains::contains(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
-    return geomCoverage->contains(geomRelation);
-}
-
-OperationImplementation::State Contains::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
-        return sPREPAREFAILED;
-    _relation = Contains::contains;
-    return sPREPARED;
-}
-
-quint64 Contains::createMetadata(){
-    OperationResource operation({"ilwis://operations/contains"});
-    operation.setLongName("Contains Feature Geometry");
-    operation.setSyntax("contains(coverage,wkt-defintion)");
-    operation.setDescription(TR("returns a feature-index of all features that satisfy the contains constraint"));
-
-    return SpatialRelationOperation::createMetadata(operation);
-}
-//----------------------------------------------------------------------------------
-REGISTER_OPERATION(Covers)
-
-Covers::Covers(){}
-
-Covers::Covers(quint64 metaid, const Ilwis::OperationExpression &expr) : SpatialRelationOperation(metaid, expr){}
-
-Ilwis::OperationImplementation *Covers::create(quint64 metaid, const Ilwis::OperationExpression &expr){
-    return new Covers(metaid, expr);
-}
-
-bool Covers::covers(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
-    return  geomRelation->covers(geomCoverage);
-}
-
-OperationImplementation::State Covers::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
-        return sPREPAREFAILED;
-    _relation = Covers::covers;
-    return sPREPARED;
-}
-
-quint64 Covers::createMetadata(){
-    OperationResource operation({"ilwis://operations/covers"});
-    operation.setLongName("Covers Feature Geometry");
-    operation.setSyntax("covers(coverage,wkt-definition)");
-    operation.setDescription(TR("returns a feature-index of all features that satisfy the covers constraint"));
-
-    return SpatialRelationOperation::createMetadata(operation);
-}
-//-----------------------------------------------------------------------------------
-REGISTER_OPERATION(CoveredBy)
-
-CoveredBy::CoveredBy(){}
-
-CoveredBy::CoveredBy(quint64 metaid, const Ilwis::OperationExpression &expr) : SpatialRelationOperation(metaid, expr){}
-
-Ilwis::OperationImplementation *CoveredBy::create(quint64 metaid, const Ilwis::OperationExpression &expr)
-{
-    return new CoveredBy(metaid, expr);
-}
-
-bool CoveredBy::coveredBy(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
-    return geomRelation->coveredBy(geomCoverage);
-}
-
-OperationImplementation::State CoveredBy::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
-        return sPREPAREFAILED;
-    _relation = CoveredBy::coveredBy;
-    return sPREPARED;
-}
-
-quint64 CoveredBy::createMetadata()
-{
-    OperationResource operation({"ilwis://operations/coveredby"});
-    operation.setLongName("Covered by Feature Geometry");
-    operation.setSyntax("coveredby(coverage,wkt-definition)");
-    operation.setDescription(TR("returns a feature-index of all features that satisfy the CoveredBy constraint"));
-
-    return SpatialRelationOperation::createMetadata(operation);
-}
-//-----------------------------------------------------------------------------------
-REGISTER_OPERATION(Touches)
-
-Touches::Touches(){}
-
-Touches::Touches(quint64 metaid, const Ilwis::OperationExpression &expr) : SpatialRelationOperation(metaid, expr){}
-
-Ilwis::OperationImplementation *Touches::create(quint64 metaid, const Ilwis::OperationExpression &expr)
-{
-    return new Touches(metaid, expr);
-}
-
-bool Touches::touches(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
-    return geomRelation->touches(geomCoverage);
-}
-
-OperationImplementation::State Touches::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
-        return sPREPAREFAILED;
-    _relation = Touches::touches;
-    return sPREPARED;
-}
-
-quint64 Touches::createMetadata()
-{
-    OperationResource operation({"ilwis://operations/touches"});
-    operation.setSyntax("touches(coverage,wkt-defintion)");
-    operation.setDescription(TR("returns a feature-index of all features that satisfy the Touches constraint"));
-
-    return SpatialRelationOperation::createMetadata(operation);
-}
-//-----------------------------------------------------------------------------------
-REGISTER_OPERATION(Intersects)
-
-Intersects::Intersects(){}
-
-Intersects::Intersects(quint64 metaid, const Ilwis::OperationExpression &expr) : SpatialRelationOperation(metaid, expr){}
-
-Ilwis::OperationImplementation *Intersects::create(quint64 metaid, const Ilwis::OperationExpression &expr)
-{
-    return new Intersects(metaid, expr);
-}
-
-bool Intersects::intersects(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
-    return geomRelation->intersects(geomCoverage);
-}
-
-OperationImplementation::State Intersects::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
-        return sPREPAREFAILED;
-    _relation = Intersects::intersects;
-    return sPREPARED;
-}
-
-quint64 Intersects::createMetadata()
-{
-    OperationResource operation({"ilwis://operations/intersects"});
-    operation.setSyntax("intersects(coverage,wkt-defintion)");
-    operation.setDescription(TR("returns a feature-index of all features that satisfy the intersects constraint"));
-
-    return SpatialRelationOperation::createMetadata(operation);
-}
-//--------------------------------------------------------------------------------
-REGISTER_OPERATION(Disjoint)
-
-Disjoint::Disjoint(){}
-
-Disjoint::Disjoint(quint64 metaid, const Ilwis::OperationExpression &expr) : SpatialRelationOperation(metaid, expr){}
-
-Ilwis::OperationImplementation *Disjoint::create(quint64 metaid, const Ilwis::OperationExpression &expr)
-{
-    return new Disjoint(metaid, expr);
-}
-
-bool Disjoint::disjoint(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
-    return geomRelation->disjoint(geomCoverage);
-}
-
-OperationImplementation::State Disjoint::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
-        return sPREPAREFAILED;
-    _relation = Disjoint::disjoint;
-    return sPREPARED;
-}
-
-quint64 Disjoint::createMetadata()
-{
-    OperationResource operation({"ilwis://operations/disjoint"});
-    operation.setSyntax("disjoint(coverage,wkt-defintion)");
-    operation.setDescription(TR("returns a feature-index of all features that satisfy the disjoint constraint"));
-
-    return SpatialRelationOperation::createMetadata(operation);
-}
-
-//--------------------------------------------------------------------------------
-REGISTER_OPERATION(Within)
-
-Within::Within(){}
-
-Within::Within(quint64 metaid, const Ilwis::OperationExpression &expr) : SpatialRelationOperation(metaid, expr){}
-
-Ilwis::OperationImplementation *Within::create(quint64 metaid, const Ilwis::OperationExpression &expr)
-{
-    return new Within(metaid, expr);
-}
-
-bool Within::within(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
-    return geomRelation->within(geomCoverage);
-}
-
-OperationImplementation::State Within::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
-        return sPREPAREFAILED;
-    _relation = Within::within;
-    return sPREPARED;
-}
-
-quint64 Within::createMetadata()
-{
-    OperationResource operation({"ilwis://operations/within"});
-    operation.setSyntax("within(coverage,wkt-defintion)");
-    operation.setDescription(TR("returns a feature-index of all features that satisfy the within constraint"));
-
-    return SpatialRelationOperation::createMetadata(operation);
-}
-
-//--------------------------------------------------------------------------------
-REGISTER_OPERATION(Equals)
-
-Equals::Equals(){}
-
-Equals::Equals(quint64 metaid, const Ilwis::OperationExpression &expr) : SpatialRelationOperation(metaid, expr){}
-
-Ilwis::OperationImplementation *Equals::create(quint64 metaid, const Ilwis::OperationExpression &expr)
-{
-    return new Equals(metaid, expr);
-}
-
-bool Equals::equals(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
-    return geomRelation->equals(geomCoverage);
-}
-
-OperationImplementation::State Equals::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
-        return sPREPAREFAILED;
-    _relation = Equals::equals;
-    return sPREPARED;
-}
-
-quint64 Equals::createMetadata()
-{
-    OperationResource operation({"ilwis://operations/equals"});
-    operation.setSyntax("equals(coverage,wkt-defintion)");
-    operation.setDescription(TR("returns a feature-index of all features that satisfy the equals constraint"));
-
-    return SpatialRelationOperation::createMetadata(operation);
-}
-//--------------------------------------------------------------------------------
-REGISTER_OPERATION(Crosses)
-
-Crosses::Crosses(){}
-
-Crosses::Crosses(quint64 metaid, const Ilwis::OperationExpression &expr) : SpatialRelationOperation(metaid, expr){}
-
-Ilwis::OperationImplementation *Crosses::create(quint64 metaid, const Ilwis::OperationExpression &expr)
-{
-    return new Crosses(metaid, expr);
-}
-
-bool Crosses::crosses(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
-    return geomRelation->crosses(geomCoverage);
-}
-
-OperationImplementation::State Crosses::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
-        return sPREPAREFAILED;
-    _relation = Crosses::crosses;
-    return sPREPARED;
-}
-
-quint64 Crosses::createMetadata()
-{
-    OperationResource operation({"ilwis://operations/crosses"});
-    operation.setSyntax("crosses(coverage,wkt-defintion)");
-    operation.setDescription(TR("returns a feature-index of all features that satisfy the Crosses constraint"));
-
-    return SpatialRelationOperation::createMetadata(operation);
-}
-//-----------------------------------------------------------------------------------
-REGISTER_OPERATION(Overlaps)
-
-Overlaps::Overlaps(){}
-
-Overlaps::Overlaps(quint64 metaid, const Ilwis::OperationExpression &expr) : SpatialRelationOperation(metaid, expr){}
-
-Ilwis::OperationImplementation *Overlaps::create(quint64 metaid, const Ilwis::OperationExpression &expr)
-{
-    return new Overlaps(metaid, expr);
-}
-
-bool Overlaps::overlaps(const geos::geom::Geometry *geomCoverage, const geos::geom::Geometry *geomRelation) {
-    return geomRelation->overlaps(geomCoverage);
-}
-
-OperationImplementation::State Overlaps::prepare(ExecutionContext *ctx, const SymbolTable &sym){
-    if (SpatialRelationOperation::prepare(ctx, sym) != sPREPARED)
-        return sPREPAREFAILED;
-    _relation = Overlaps::overlaps;
-    return sPREPARED;
-}
-
-quint64 Overlaps::createMetadata()
-{
-    OperationResource operation({"ilwis://operations/overlaps"});
-    operation.setSyntax("overlaps(coverage,wkt-defintion)");
-    operation.setDescription(TR("returns a feature-index of all features that satisfy the Overlaps constraint"));
-
-    return SpatialRelationOperation::createMetadata(operation);
-}
-
-
