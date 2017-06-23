@@ -634,6 +634,11 @@ QString WorkflowModel::generateScript(const QString &type, const QString& parame
             if ( index == 0){
                 expr = expr.mid(7);
             }
+            index = expr.indexOf(")}=");
+            if ( index != -1){
+                expr = expr.mid(index + 3);
+            }
+
             OperationExpression expression = OperationExpression(expr);
             QUrl url = _workflow->resource().url(true);
             QFileInfo inf(url.toLocalFile());

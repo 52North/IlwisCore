@@ -92,6 +92,10 @@ std::vector<QString> GenerateScriptNode::executeOperation(const OperationExpress
             parms += getValue(inParam, expression, idmap).toString();
         }else if ( hasType(inParam.valueType(), itINTEGER | itFLOAT | itDOUBLE )) {
             QString val = getValue(inParam,expression, idmap).toString();
+            bool ok;
+            val.toDouble(&ok); // some parms can be strings or numbers; we test what it actually is
+            if (!ok)
+                val = "\'" + val + "\'";
             parms += val;
         } else if (hasType(inParam.valueType(),itSTRING)){
             parms += "\'" + getValue(inParam,expression, idmap).toString() + "\'";
