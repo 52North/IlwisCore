@@ -355,7 +355,7 @@ IlwisTypes TypeHelper::name2type(const QString &dname)
         return  itITEMDOMAIN;
     if ( name == "numericdomain")
         return  itNUMERICDOMAIN;
-    if ( name == "TextDomain")
+    if ( name == "textdomain")
         return  itTEXTDOMAIN;
     if ( name == "colordomain")
         return  itCOLORDOMAIN;
@@ -369,7 +369,7 @@ IlwisTypes TypeHelper::name2type(const QString &dname)
         return  itBOUNDSONLYCSY;
     if ( name == "georeference")
         return  itGEOREF;
-    if ( name == "Table")
+    if ( name == "table")
         return  itTABLE;
     if ( name == "flattable")
         return  itFLATTABLE;
