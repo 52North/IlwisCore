@@ -19,6 +19,7 @@ public:
     NEW_OPERATION(IsCompatible);
 private:
     IIlwisObject _object1, _object2;
+    IlwisTypes _role;
 
 
 };
