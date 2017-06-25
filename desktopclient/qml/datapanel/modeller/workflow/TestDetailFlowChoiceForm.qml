@@ -109,7 +109,7 @@ WorkflowChoiceForm {
             }
 
             var fromIndex = getIndex(fromComboBox.currentText)
-            var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : 0};
+            var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};
             nodeFrom.setFlow(conditionTo, conditionTo.att1, flowPoints, testIndex)
             conditionTo.setValue(nodeFrom.itemid, fromIndex, toIndex)
             refresh()
