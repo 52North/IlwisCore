@@ -111,12 +111,12 @@ void WorkflowModel::addJunctionFlows(int junctionIdTo, const QString &operationI
     } catch ( const ErrorObject& ){}
 }
 
-void WorkflowModel::addConditionFlow(int conditionIdTo, const QString &operationIdFrom, int testIndex, int inParameterIndex, int outParmIndex, int rectFrom, int rectTo)
+void WorkflowModel::addConditionFlow(int operationIdFrom, const QString &conditionIdTo, int testIndex, int inParameterIndex, int outParmIndex, int rectFrom, int rectTo)
 {
     try {
         if ( _workflow.isValid()){
 
-            _workflow->addConditionFlow(conditionIdTo, operationIdFrom.toULongLong(), testIndex, inParameterIndex, outParmIndex, rectFrom, rectTo);
+            _workflow->addConditionFlow(operationIdFrom, conditionIdTo.toULongLong(), testIndex, inParameterIndex, outParmIndex, rectFrom, rectTo);
                emit validChanged();
         }
     }
@@ -524,6 +524,7 @@ void WorkflowModel::updateOperationParameters(quint32 nodeid, int order, const Q
 
 QVariantList WorkflowModel::getTests(int conditionId) const
 {
+    try {
     QVariantList result;
     if (_workflow.isValid()){
         SPWorkFlowNode node = _workflow->nodeById(conditionId)    ;
@@ -543,7 +544,8 @@ QVariantList WorkflowModel::getTests(int conditionId) const
                 QVariantMap parameterKeys;
                 QString value;
                 if ( test._operation->inputRef(j).inputLink()){
-                   value = "link=" + QString::number(test._operation->inputRef(j).inputLink()->id()) + ":" + QString::number(j);
+                    int n = test._operation->inputRef(j).outputParameterIndex();
+                    value = "link=" + QString::number(test._operation->inputRef(j).inputLink()->id()) + ":" + QString::number(n);
                 }else
                     value = operNode->inputRef(j).value();
                 QString label = operNode->inputRef(j).label();
@@ -562,6 +564,11 @@ QVariantList WorkflowModel::getTests(int conditionId) const
         }
     }
     return result;
+    } catch (const ErrorObject&){
+        kernel()->issues()->log(TR("Could not create condition tests"));
+    }
+
+    return QVariantList();
 }
 
 QVariantList WorkflowModel::getNodes()
