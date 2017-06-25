@@ -108,10 +108,12 @@ IIlwisObject OperationHelper::variant2ilwisobject(const QVariant& variant, Ilwis
         return variant.value<INumericDomain>();
     case itITEMDOMAIN:
         return variant.value<IDomain>();
+    case itGEOREF:
+        return variant.value<IGeoReference>();
     default:
         {
             IIlwisObject obj;
-            std::vector<IlwisTypes> aggregate = {itTABLE , itRASTER , itFEATURE , itFLATTABLE , itCOORDSYSTEM , itCONVENTIONALCOORDSYSTEM ,
+            std::vector<IlwisTypes> aggregate = {itTABLE , itRASTER , itFEATURE , itGEOREF, itFLATTABLE , itCOORDSYSTEM , itCONVENTIONALCOORDSYSTEM ,
                                                  itDOMAIN , itITEMDOMAIN , itNUMERICDOMAIN};
             for(IlwisTypes specificType : aggregate){
                 obj = OperationHelper::variant2ilwisobject(variant,specificType);
