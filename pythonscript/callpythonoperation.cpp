@@ -127,8 +127,10 @@ bool CallPythonOperation::execute(ExecutionContext *ctx, SymbolTable &symTable)
             auto str = QString::fromStdString(PyBytes_AsString(PyUnicode_AsUTF8String(const_cast<PyObject*>(pValue))));
             ctx->setOutput(symTable, QVariant(str), sUNDEF, itSTRING, Resource());
         }else {
-            kernel()->issues()->log(TR("Unexpected type returned from python operation") + QString(pValue->ob_type->tp_doc));
-            ok = false;
+            if ( _expression.parameterCount(false) > 0){
+                kernel()->issues()->log(TR("Unexpected type returned from python operation") + QString(pValue->ob_type->tp_doc));
+                ok = false;
+            }
         }
     }
 
