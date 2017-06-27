@@ -51,9 +51,10 @@ Ilwis::OperationImplementation::State Timesat::prepare(ExecutionContext *ctx, co
     int n(1);
     std::generate(_win.begin(), _win.end(), [&]{ return n++; });
 
-    _forceUpperEnvelope = _expression.parm(2).value().endsWith("true", Qt::CaseInsensitive);
-    _lastIterationLikeTIMESATfit = _expression.parm(3).value().endsWith("true", Qt::CaseInsensitive);
-    _extendWindow = _expression.parm(4).value().endsWith("true", Qt::CaseInsensitive);
+    // Some scripts still use true/false instead of yes/no
+    _forceUpperEnvelope = _expression.parm(2).value().endsWith("true", Qt::CaseInsensitive) || _expression.parm(2).value().endsWith("yes", Qt::CaseInsensitive);
+    _lastIterationLikeTIMESATfit = _expression.parm(3).value().endsWith("true", Qt::CaseInsensitive) || _expression.parm(3).value().endsWith("yes", Qt::CaseInsensitive);
+    _extendWindow = _expression.parm(4).value().endsWith("true", Qt::CaseInsensitive) || _expression.parm(4).value().endsWith("yes", Qt::CaseInsensitive);
 
     IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
     // initialize tranquilizer
@@ -158,7 +159,6 @@ std::vector<bool> Timesat::detectSpikes(const std::vector<double> y, std::vector
                 ( y[m1] < (avg_y - distance) ||
                   y[m1] > (max_y + distance) ) ) valid[m1] = false;
     }
-
     return valid;
 }
 
