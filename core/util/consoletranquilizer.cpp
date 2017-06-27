@@ -51,20 +51,15 @@ bool ConsoleTranquilizer::update(double howfar)
 
     _current += howfar;
 
-    // detect 10 percent boundary
-    int vp1 = 10.0 * _current / _end;
-    int vp2 = 10.0 * (_current + 1) / _end;
-
     if (_current >= _next) {
-        if (_count % 3 == 0) {
-            if (vp1 != vp2) // 10 percent boundar: print percentage
-              std::cout << 100 * int((_current + 1) / _end);
-        }
-        else
-            std::cout << ".";
-        _count++;
-        _next += _inc;
-    }
+         if (_count % 3 == 0)
+             std::cout << _count * 10 / 3;   // round to integer between 0 and 100 in steps of 10
+         else
+             std::cout << ".";
+         _count++;
+         _next += _inc;
+     }
+
     return true;
 }
 
