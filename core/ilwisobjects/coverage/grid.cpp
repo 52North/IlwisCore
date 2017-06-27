@@ -362,7 +362,7 @@ bool Grid::prepare(RasterCoverage *raster, const Size<> &sz) {
     _memUsed = std::min(bytesNeeded, mleft/2);
     context()->changeMemoryLeft(-_memUsed);
     int n = numberOfBlocks();
-    _maxCacheBlocks = 10; //std::max(1ULL, n * _memUsed / bytesNeeded);
+    _maxCacheBlocks = _size.zsize() > 1 ? _size.zsize() * 2 : 10; // allow more blocks when using maplists
     _blocksPerBand = n / sz.zsize();
 
     int nblocks = numberOfBlocks();
