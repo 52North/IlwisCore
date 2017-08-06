@@ -24,7 +24,6 @@ Rectangle {
          width : parent.width
         height : parent.height - 30 < 0 ?  0 : parent.height - 30
         opacity : 0
-
     }
     Button{
         y : parent.height - 25

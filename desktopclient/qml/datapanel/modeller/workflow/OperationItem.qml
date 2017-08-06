@@ -15,6 +15,7 @@ Rectangle {
     property var selectedAttach
     property var itemid;
     property var condition
+    property var range
     property string type : "operationitem"
     property alias background : box.source
     transformOrigin: Item.TopLeft
@@ -267,10 +268,6 @@ Rectangle {
         attachementRectangles.push(att6)
         attachementRectangles.push(att7)
         attachementRectangles.push(att8)
-//        console.debug("created", operationItem, workflow.name)
-    }
-    Component.onDestruction: {
-//        console.debug("destroyed", operationItem)
     }
 
     states: [
@@ -468,6 +465,7 @@ Rectangle {
     function usableLink(){
         // we only me draw links from items within the same condition
         // all links to the outside must use the junction
+        console.debug("ddddd", currentItem.type,currentItem.condition)
         if ( currentItem && currentItem.type == "operationitem"){
             if ( currentItem.condition){
                 if ( condition){
@@ -498,7 +496,7 @@ Rectangle {
                 if (operation.needChoice(target.operation)) {
                     wfCanvas.showAttachmentForm(target, attachRectTo,"")
                 } else {
-                    if ( checkValidityFlow(workarea.currentItem, target)){
+                     if ( checkValidityFlow(workarea.currentItem, target)){
                         var fromIndex = 0
                         var toIndex = 0
                         var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex};

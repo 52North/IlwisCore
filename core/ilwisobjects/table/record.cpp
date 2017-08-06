@@ -146,9 +146,9 @@ void Record::storeData(const std::vector<IlwisTypes>& types, QDataStream& stream
 
         switch (types[col]){
         case itUINT8:
-            stream << _data[col].toUInt();break;
+            stream << (quint8)_data[col].toUInt();break;
         case itINT8:
-            stream << _data[col].toInt();break;
+            stream << (qint8)_data[col].toInt();break;
         case itUINT32:
         case itINDEXEDITEM:
         case itTHEMATICITEM:

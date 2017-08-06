@@ -16,7 +16,6 @@ Item {
 
      function setOperations(operations){
         operationlist.model = operations
-         console.debug("aa", operationlist.model[0].name)
      }
 
     function setOperation(newindex){

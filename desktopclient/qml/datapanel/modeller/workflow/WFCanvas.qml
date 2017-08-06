@@ -103,6 +103,9 @@ Canvas {
             for( i=0; i < conditionsList.length; i++){
                 conditionsList[i].drawFlows(ctx)
             }
+            for( i=0; i < rangesList.length; i++){
+                rangesList[i].drawFlows(ctx)
+            }
             //console.debug("drawing done")
 
         }

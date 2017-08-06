@@ -401,9 +401,9 @@ QString WorkflowModel::nodetype2string(WorkFlowNode::NodeTypes ntype) const{
     case WorkFlowNode::ntCONDITION:
         return "conditionnode";
     case WorkFlowNode::ntRANGE:
-        return "loopnode";
+        return "rangenode";
     case WorkFlowNode::ntRANGEJUNCTION:
-        return "loopjunction";
+        return "loopjunctionnode";
     default:
         return sUNDEF;
     }
@@ -420,7 +420,7 @@ WorkFlowNode::NodeTypes WorkflowModel::string2nodetype(const QString &ntype) con
     if (ntype == "conditionnode"){
         return WorkFlowNode::ntCONDITION;
     }
-    if (ntype == "loopnode"){
+    if (ntype == "rangenode"){
         return WorkFlowNode::ntRANGE;
     }
     if (ntype == "loopjunctionnode"){
@@ -472,7 +472,7 @@ QVariantMap WorkflowModel::getNode(int nodeId){
                 parameters.push_back(getParameter(node, i));
             }
             data["parameters"] = parameters;
-        }else if ( hasType(node->type(), WorkFlowNode::ntCONDITION | WorkFlowNode::ntRANGE)){
+        }else if ( hasType(node->type(), WorkFlowNode::ntCONDITION)){
             QVariantList test;
             QVariantList operations;
             std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
@@ -490,6 +490,14 @@ QVariantMap WorkflowModel::getNode(int nodeId){
             }
             data["ownedoperations"] = operations;
             data["tests"] = test;
+        }if ( hasType(node->type(), WorkFlowNode::ntRANGE)){
+              QVariantList operations;
+           //std::shared_ptr<RangeNode> range = std::static_pointer_cast<RangeNode>(node);
+            std::vector<SPWorkFlowNode> subnodes = node->subnodes("operations");
+            for(int i=0; i < subnodes.size(); ++i){
+                operations.push_back(getNode(subnodes[i]->id()));
+            }
+            data["ownedoperations"] = operations;
         }else if ( node->type() == WorkFlowNode::ntJUNCTION){
             std::shared_ptr<JunctionNode> junction = std::static_pointer_cast<JunctionNode>(node);
             SPWorkFlowNode testNode =  junction->inputRef(WorkFlowCondition::cpTEST).inputLink();

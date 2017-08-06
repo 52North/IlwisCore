@@ -24,7 +24,7 @@ Rectangle {
         id : txt
         width : parent.width - 5
         height : parent.height
-        text: styleData.value ? styleData.value : ""
+        text: styleData.value ? styleData.value : (table.isNumericalColumn(styleData.column) ? 0 : "")
         color : ( styleData.selected || table.isColumnSelected(styleData.column)) ? "#2121A3" : "black"
         elide: Text.ElideMiddle
         horizontalAlignment: table.isNumericalColumn(styleData.column) ? Text.AlignRight : Text.AlignLeft

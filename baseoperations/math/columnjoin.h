@@ -22,19 +22,13 @@ class ColumnJoin : public NumericOperation
         void deleteTable(const QString &tmpTable);
 private:
         ITable _baseTable;
-        ITable _inputTable;
+        ITable _foreignTable;
         ITable _outputTable;
         ICoverage _inputCoverage;
         ICoverage _outputCoverage;
-        QString _objectname = sUNDEF;
-        QString _joinTable = sUNDEF;
 
         QString _primaryKeyColumn = sUNDEF;
         QString _foreignKeyColumn = sUNDEF;
-        QString insertSQL;
-        QString createSQL;
-        QString deleteSQL;
-        QString selectSQL;
         NEW_OPERATION(ColumnJoin);
       };
  }

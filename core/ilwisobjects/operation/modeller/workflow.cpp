@@ -11,6 +11,7 @@
 #include "workflownode.h"
 #include "conditionNode.h"
 #include "junctionNode.h"
+#include "rangetestnode.h"
 #include "rangenode.h"
 #include "executionnode.h"
 #include "workflowimplementation.h"
@@ -107,22 +108,19 @@ void Workflow::addFlow(NodeId fromNode, NodeId toNode, qint32 inParmIndex, qint3
     SPWorkFlowNode to = nodeById(toNode);
     if ( from && to){
         if ( inParmIndex < to->inputCount()){
-            // is this a link from an operation in a loop to a operation outside a loop, special case
-            if ( from->owner() && from->owner()->type() == WorkFlowNode::ntRANGE){
-                if ( !to->owner()){ // the target is not in the loop
-                   SPLRangeNode loop = std::static_pointer_cast<RangeNode>(from->owner());
-                   int current = loop->inputCount();
-                   WorkFlowParameter parm(current, loop->id(), "parm" + QString::number(current));
-                   parm.inputLink(from, outParmIndex);
-                   loop->addInput(parm);
-                   to->inputRef(inParmIndex).inputLink(loop,current);
-                   changed(true);
-                   return;
-                }
+            // is this a link from an operation in a loop to a operation outside a loop, special case //
+            if ( to->owner() && to->owner()->type() == WorkFlowNode::ntRANGE){
+                   SPLRangeNode range = std::static_pointer_cast<RangeNode>(to->owner());
+                   RangeTestNode *rtest = new RangeTestNode();
+                   rtest->inputRef(0).inputLink(from,outParmIndex);
+                   rtest->inputRef(0).attachement(attachRctIndxFrom, true);
+                   rtest->inputRef(0).attachement(attachRctIndxTo, false);
+                   range->test(rtest);
+            }else {
+                to->inputRef(inParmIndex).inputLink(from,outParmIndex);
+                to->inputRef(inParmIndex).attachement(attachRctIndxFrom, true);
+                to->inputRef(inParmIndex).attachement(attachRctIndxTo, false);
             }
-            to->inputRef(inParmIndex).inputLink(from,outParmIndex);
-            to->inputRef(inParmIndex).attachement(attachRctIndxFrom, true);
-            to->inputRef(inParmIndex).attachement(attachRctIndxTo, false);
             changed(true);
         }
     }

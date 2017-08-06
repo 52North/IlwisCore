@@ -645,6 +645,20 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
             if ( expression.size() != 0)
                 expression += ",";
             QString parm = parms[i];
+            IlwisTypes dataType = operationresource[QString("pin_%1_type").arg(i+1)].toULongLong();
+            if ( hasType(dataType, itCOLLECTION)){
+                QStringList parts = parm.split("\n");
+                QString lst;
+                for(QString part : parts){
+                    if ( part.trimmed() != ""){
+                        if ( lst != "")
+                            lst += "|";
+                        lst += part;
+                    }
+                }
+                parm = lst;
+                parm  = "\"" + parm+ "\"";
+            }
             QString p  = QString("pin_%1_needsquotes").arg(i+1);
             bool needsquotes = operationresource.hasProperty(p) ? operationresource[p].toBool() : false;
             auto iter = std::find(reserved.begin(), reserved.end(), parm);

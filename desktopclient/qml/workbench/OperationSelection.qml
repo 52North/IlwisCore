@@ -43,8 +43,6 @@ WorkBenchShifter {
             id : applicationForm
             width : parent.width
             x : parent.x + 5
-
-
         }
         TabView {
 

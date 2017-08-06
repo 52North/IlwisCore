@@ -58,8 +58,11 @@ Rectangle {
         anchors.topMargin: 15
         owner : conditionItem
         z : 2
+        visible: type == "condtionitem"
 
     }
+
+
 
     Loader {
         id : testRectangle
@@ -160,7 +163,10 @@ Rectangle {
 
     function addToOperationList(operation) {
         operationsList.push(operation);
-        operation.condition = conditionItem
+        if ( type == "condtionitem")
+            operation.condition = conditionItem
+        else
+            operation.range = conditionItem
         resize()
     }
 

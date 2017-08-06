@@ -41,7 +41,10 @@ ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::
         quint64 result = parm._dataType & bits;
         if ( result != 0){ // if there are other things than integers in the choice types; only integers is a 'real'choice list
             if ( hasType(parm._dataType, itCOVERAGE | itNUMBER |itTABLE )){
-                parm._fieldType |= ftTEXTEDIT;
+                if (hasType(parm._dataType, itCOLLECTION)){
+                    parm._fieldType = ftTEXTAREA;
+                }else
+                    parm._fieldType = ftTEXTEDIT;
             }
         }
     }
@@ -51,7 +54,9 @@ ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::
         parm._choiceList = lst;
 
     }
-    else
+    else if (hasType(parm._dataType, itCOLLECTION)){
+       parm._fieldType = ftTEXTAREA;
+    }else
         parm._fieldType = ftTEXTEDIT;
     if ( alternateUIType != ftNONE){
         parm._fieldType = alternateUIType;
@@ -337,14 +342,14 @@ QString ApplicationFormExpressionParser::setInputIcons(const QString& iconField1
 }
 
 QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int width, const std::vector<FormParameter>& parameters, bool input, QString& results, bool showEmptyOptionInList, QStringList hiddenFields, QVariantList operationNames, QStringList constantValues) const{
-    QString rowBodyText = "Rectangle{visible:%7;height : 30;width : parent.width;color : \"white\";%1Text { x:%5 + %6;maximumLineCount: 2;text: qsTr(\"%2\"); id:label_pin_%4; width : %3 - %5 - %6;wrapMode:Text.Wrap; }";
+    QString rowBodyText = "Rectangle{visible:%7;height : %8;width : parent.width;color : \"white\";%1Text { x:%5 + %6;maximumLineCount: 2;text: qsTr(\"%2\"); id:label_pin_%4; width : %3 - %5 - %6;wrapMode:TextEdit.Wrap; }";
 
     QString textField = "DropArea{ x : %2; height : 20; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
                onDropped : { pin_%1.text = drag.source.message; addValidation(pin_%1,%1, drag.source.ilwisobjectid) }\
             TextField{ id : pin_%1; objectName : \"pin_%1_\" + " + metaid + "; property string itemType : \"textfield\"; text: \"%7\";Controls.ToolTip{target : pin_%1; text:operation ? operation.inputparameterDescription(%1) : \"\"} anchors.fill : parent optionalOutputMarker %8}}";
-    QString textArea = "DropArea{ x : %2; height : 55; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
-           onDropped : { pin_%1.text = drag.source.message }\
-        TextArea{ id : pin_%1; property string itemType : \"textarea\";text: \"%7\"; anchors.fill : parent optionalOutputMarker %8}}";
+    QString textArea = "DropArea{ x : %2; height : 65; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
+           onDropped : {pin_%1.text = pin_%1.text === \"\" ? drag.source.message : ( pin_%1.text + \"\\n\" + drag.source.message) }\
+        TextArea{ id : pin_%1; property string itemType : \"textarea\";text: \"%7\"; wrapMode:%9;anchors.fill : parent optionalOutputMarker %8}}";
 
     QString iconField1 = "Button{ width : 20; height:20; checkable : true;checked : false;"
             "onClicked : {mastercatalog.currentCatalog.filterChanged(\"%2|exclusive\" , checked)}"
@@ -431,7 +436,7 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
                     visibile = "false";
                 }
             }
-
+            QString wrapMode = input ? "TextEdit.NoWrap" : "TextEdit.Wrap";
             QString check;
             if ( parameters[i]._isOptional){
                 if ( oldOptionGroup != parameters[i]._optionGroup){
@@ -451,8 +456,9 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
                 if ( check != ""){
                     checkEffects=QString(";enabled: check_pin_%1.checked;opacity:check_pin_%1.checked?1 :0.25").arg(i);
                 }
-
-                QString textFieldPart = QString(hasType(parameters[i]._fieldType,ftTEXTEDIT) ? textField : textArea).arg(i).
+                QString textFieldPart;
+                if (hasType(parameters[i]._fieldType,ftTEXTEDIT))
+                    textFieldPart = textField.arg(i).
                         arg(width).
                         arg(checkWidth).
                         arg(imagewidth).
@@ -460,8 +466,19 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
                         arg(input ? dropKeys(parameters[i]._dataType) : "\"?\"").
                         arg(constantValue).
                         arg(checkEffects);
+                else {
+                    textFieldPart = textArea.arg(i).
+                        arg(width).
+                        arg(checkWidth).
+                        arg(imagewidth).
+                        arg(xshift).
+                        arg(input ? dropKeys(parameters[i]._dataType) : "\"?\"").
+                        arg(constantValue).
+                        arg(checkEffects).
+                        arg(wrapMode);
+                }
 
-                QString parameterRow = QString(rowBodyText + textFieldPart + imagePart + "}").arg(check).arg(parameters[i]._label).arg(width).arg(i).arg(checkWidth).arg(xshift).arg(visibile);
+                QString parameterRow = QString(rowBodyText + textFieldPart + imagePart + "}").arg(check).arg(parameters[i]._label).arg(width).arg(i).arg(checkWidth).arg(xshift).arg(visibile).arg(hasType(parameters[i]._fieldType,ftTEXTEDIT) ? 30 : 75);
                 formRows += parameterRow;
                 if ( results != "")
                     results += "+ \"|\" +";
@@ -521,7 +538,7 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
                 }
                 choices += "]";
                 QString comboPart = QString(comboField).arg(i).arg(width).arg(checkWidth).arg(choices).arg(inputIndex) + "}";
-                QString parameterRow = QString(rowBodyText + comboPart + "}").arg(check).arg(parameters[i]._label).arg(width).arg(i).arg(checkWidth).arg(xshift).arg(visibile);
+                QString parameterRow = QString(rowBodyText + comboPart + "}").arg(check).arg(parameters[i]._label).arg(width).arg(i).arg(checkWidth).arg(xshift).arg(visibile).arg(hasType(parameters[i]._fieldType,ftTEXTEDIT) ? 30 : 75);
                 formRows += parameterRow;
                 if ( results != "")
                     results += "+ \"|\" +";
@@ -560,7 +577,7 @@ QString ApplicationFormExpressionParser::index2FormInternal(quint64 metaid,
         validation += "; var item = uicontext.getItem(ue,0); if ( item !== null) { if ( p.uielement==\"list\"){item.model=p.result}if(p.uielement==\"textfield\"){item.text=p.result}}}}}";
         QString propertyMetaid = "property var metaid :" + mid + ";property var operation : operations.operation(" + mid + ");";
         QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import UIContextModel 1.0;import MasterCatalogModel 1.0;import \"../controls\" as Controls;";
-        columnStart += "Column { " + validation + " " + propertyMetaid + "%1 x:5; width : Math.min(parent.width - 5,420); height : parent.height;spacing :10;";
+        columnStart += "Column { " + validation + " " + propertyMetaid + "%1 x:5; width : parent.width - 5; height : parent.height;spacing :10;";
         QString exclusiveGroup = "ExclusiveGroup { id : sourceFilterGroup; onCurrentChanged: {}}";
         columnStart += exclusiveGroup;
         int width = 0;
@@ -600,7 +617,7 @@ QString ApplicationFormExpressionParser::index2FormInternal(quint64 metaid,
 
 
         //for debugging, check if the qml is ok; can be retrieved from teh log file
-        //  kernel()->issues()->log(component);
+          //kernel()->issues()->log(component);
         return component;
 }
 

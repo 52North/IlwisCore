@@ -11,10 +11,10 @@ struct ExecutionContext;
 
 class KERNELSHARED_EXPORT Symbol{
 public:
-    Symbol(int scope=iUNDEF, quint64 tp=itUNKNOWN, const QVariant& v=QVariant()) ;
+    Symbol(int scope=0, quint64 tp=itUNKNOWN, const QVariant& v=QVariant()) ;
     virtual ~Symbol();
     quint64 _type;
-    int _scope;
+    int _scope = 0;
     QVariant _var;
     QVariant _modifier;
     bool isValid() const;
@@ -29,9 +29,9 @@ public:
 
     void addSymbol(const QString& name, int scope, quint64 tp, const QVariant &v=QVariant());
     void setSymbol(const QString &name, const Symbol &sym);
-    QVariant getValue(const QString& name, int scope=1000) const;
+    QVariant getValue(const QString& name, int scope=0) const;
     Symbol getSymbol(const QString& name, GetAction act=gaKEEP, int scope=1000);
-    Symbol getSymbol(const QString& name, int scope=1000) const;
+    Symbol getSymbol(const QString& name, int scope=0) const;
     template<typename T> T getValue(const QString& name){
         QVariant var = getValue(name)    ;
         return var.value<T>();

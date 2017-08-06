@@ -454,7 +454,8 @@ SOURCES += core/kernel.cpp \
     core/ilwisobjects/operation/modeller/executionnode.cpp \
     core/ilwisobjects/table/combinationmatrix.cpp \
     core/ilwisobjects/operation/modeller/rangenode.cpp \
-    core/ilwisobjects/operation/modeller/rangejunctionnode.cpp
+    core/ilwisobjects/operation/modeller/rangejunctionnode.cpp \
+    core/ilwisobjects/operation/modeller/rangetestnode.cpp
 
 HEADERS += core/kernel.h\
       core/kernel_global.h \
@@ -984,7 +985,8 @@ HEADERS += core/kernel.h\
     core/ilwisobjects/operation/modeller/executionnode.h \
     core/ilwisobjects/table/combinationmatrix.h \
     core/ilwisobjects/operation/modeller/rangenode.h \
-    core/ilwisobjects/operation/modeller/rangejunctionnode.h
+    core/ilwisobjects/operation/modeller/rangejunctionnode.h \
+    core/ilwisobjects/operation/modeller/rangetestnode.h
 
 OTHER_FILES += \
     core/resources/referencesystems.csv \

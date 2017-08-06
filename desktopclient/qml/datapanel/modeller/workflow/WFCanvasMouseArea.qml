@@ -40,6 +40,9 @@ MouseArea {
             if ( currentItem.condition)    {
                 currentItem.condition.resize()
             }
+            if ( currentItem.range)    {
+                currentItem.range.resize()
+            }
         }
 
         if( workarea.dropCondition){
@@ -52,11 +55,11 @@ MouseArea {
             workarea.dropCondition = false
         }
         if( workarea.dropLoop){
-            component = Qt.createComponent("LoopItem.qml");
+            component = Qt.createComponent("RangeItem.qml");
             if (component.status === Component.Ready){
-                nodeid = workflow.addNode(0,{x : mouseX, y:mouseY, w:360, h:160,type:'loopnode'})
+                nodeid = workflow.addNode(0,{x : mouseX, y:mouseY, w:360, h:160,type:'rangenode'})
                 currentItem = component.createObject(wfCanvas, {"x": mouseX, "y": mouseY, "h" : 160, "w" : 360,"itemid" : nodeid, "scale": wfCanvas.scale});
-                workarea.conditionsList.push(currentItem)
+                workarea.rangesList.push(currentItem)
             }
             workarea.dropLoop = false
         }
@@ -68,6 +71,7 @@ MouseArea {
             var operationSelected = -1, highestZ = -1, smallestDistance = 100000, selectedFlow=false
             var alllist = operationsList
             alllist  = alllist.concat(conditionsList)
+            alllist = alllist.concat(rangesList)
             for(var k=0; k<conditionsList.length; ++k){
                 alllist = alllist.concat( conditionsList[k].junctionsList)
             }

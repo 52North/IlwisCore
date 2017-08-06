@@ -46,5 +46,6 @@ Rectangle {
             wfCanvas.workingLineBegin = Qt.point(newpoint.x, newpoint.y)
         }
     }
+
 }
 

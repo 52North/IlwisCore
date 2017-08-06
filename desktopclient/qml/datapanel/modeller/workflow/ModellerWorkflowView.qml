@@ -16,6 +16,7 @@ Modeller.ModellerWorkArea {
     //property OperationCatalogModel operationCatalog;
     property var operationsList: []
     property var conditionsList: []
+    property var rangesList: []
 
     property var currentItem
     property bool canvasActive : true;
@@ -93,7 +94,7 @@ Modeller.ModellerWorkArea {
                     addOperation(drag.source.ilwisobjectid,drag.x,drag.y,-1, wfCanvas)
 
                 }else {
-                    if ( onItem.type === "conditionitem" || onItem.type === "loopitem"){
+                    if ( onItem.type === "conditionitem" || onItem.type === "rangeitem"){
                         if (onItem.inOperationList(drag.y)){
                             var p = wfCanvas.mapToItem(onItem, drag.x, drag.y)
                             var operation = addOperation(drag.source.ilwisobjectid,p.x,p.y,onItem.itemid, onItem)
@@ -144,6 +145,15 @@ Modeller.ModellerWorkArea {
             for(j=0; j < condition.junctionsList.length; ++j){
                 if ( condition.junctionsList[i].itemid === nodeId)
                     return condition.junctionsList[i]
+            }
+        }
+        for(i=0; i < rangesList.length; ++i){
+            var range = rangesList[i]
+            if ( range.itemid == nodeId)
+                return range
+            for(var j=0; j < range.operationsList.length; ++j){
+                if ( range.operationsList[i].itemid === nodeId)
+                    return range.operationsList[i]
             }
         }
         return null
@@ -257,6 +267,24 @@ Modeller.ModellerWorkArea {
                     }
 
                 }
+            } else if ( node.type === "rangenode"){
+                component = Qt.createComponent("RangeItem.qml");
+                if (component.status === Component.Ready){
+                    currentItem = component.createObject(wfCanvas, {"x": node.x, "y": node.y, "height" : node.h, "width" : node.w,"itemid" : node.nodeid, "scale": wfCanvas.scale});
+                    workarea.rangesList.push(currentItem)
+                    kvp[currentItem.itemid] = currentItem
+                    ownedoperations = node.ownedoperations;
+                    for(j = 0;  j < ownedoperations.length; ++j){
+                        oper = ownedoperations[j]
+                        item = createOperationItem(oper.operationid, oper.nodeid,oper.x, oper.y,currentItem)
+                        if ( item){
+                            kvp[item.itemid] = item
+                            item.range = currentItem
+                            currentItem.operationsList.push(item)
+                        }
+                    }
+
+                }
             }else if ( node.type === "operationnode"){
                 currentItem = createOperationItem(node.operationid,node.nodeid,node.x, node.y, wfCanvas)
                 if ( currentItem){
@@ -354,6 +382,11 @@ Modeller.ModellerWorkArea {
                 zoomItem(condition.junctionsList[j], dzoom, cx,cy)
             }
         }
+        for(i=0; i < rangesList.length; ++i){
+
+            var range = rangesList[i]
+            zoomItem(range, dzoom, cx,cy)
+        }
         wfCanvas.canvasValid = false
         var num = Math.round(wfCanvas.zoomScale * 100)
         tools.setZoomEdit(num + "%")
@@ -390,61 +423,64 @@ Modeller.ModellerWorkArea {
         wfCanvas.canvasValid = false
     }
 
-    function itemAt(x,y){
-        for(var i=0; i < operationsList.length; ++i){
+    function checkContainer(x,y,operations, container){
+        for( var j=0; j < operationsList.length; ++j){
+            var operation = operationsList[j]
+            var startCoords = Qt.point(operation.x, operation.y)
+            if ( container){
+                var  p = container.mapToItem(wfCanvas, operation.x, operation.y)
+                startCoords = Qt.point(p.x, p.y)
+            }
 
-            var item = operationsList[i]
-            var startCoords = Qt.point(item.x, item.y)
-
-            var endX = (startCoords.x + (item.width * item.scale));
-            var endY = (startCoords.y + (item.height * item.scale));
-
-            var EndCoords = Qt.point(endX, endY);
+            var endX = (startCoords.x + (operation.width * operation.scale));
+            var endY = (startCoords.y + (operation.height * operation.scale));
 
             if (x >= (startCoords.x) && y >= (startCoords.y) && x <= endX && y <= endY){
-                return item
+                return operation
             }
         }
-
-        for(i=0; i < conditionsList.length; ++i){
-
-            item = conditionsList[i]
-
-            for( var j=0; j < item.operationsList.length; ++j){
-                var op = item.operationsList[j]
-                var  p = item.mapToItem(wfCanvas, op.x, op.y)
-                startCoords = Qt.point(p.x, p.y)
-
-                endX = (startCoords.x + (op.width * op.scale));
-                endY = (startCoords.y + (op.height * op.scale));
-
-                if (x >= (startCoords.x) && y >= (startCoords.y) && x <= endX && y <= endY){
-                    return op
-                }
-            }
-            startCoords = Qt.point(item.x, item.y)
-            endX = (startCoords.x + (item.width * item.scale));
-            endY = (startCoords.y + (item.height * item.scale));
+        if ( container){
+            startCoords = Qt.point(container.x, container.y)
+            endX = (startCoords.x + (container.width * container.scale));
+            endY = (startCoords.y + (container.height * container.scale));
 
             if (x >= (startCoords.x) && y >= (startCoords.y) && x <= endX && y <= endY){
-                return item
+                return container
             }
+        }
+        return null
+    }
 
-            for( var j=0; j < item.junctionsList.length; ++j){
-                var junction = item.junctionsList[j]
+    function itemAt(x,y){
+        var item = checkContainer(x,y,operationsList, null)
+        if (item)
+            return item;
+        for(var i=0; i < conditionsList.length; ++i){
+            var condition = conditionsList[i]
+            item = checkContainer(x,y,condition.operationsList, condition)
+            if ( item)
+                return item
+            for( var j=0; j < condition.junctionsList.length; ++j){
+                var junction = condition.junctionsList[j]
                 startCoords = Qt.point(junction.x, junction.y)
 
-
-                endX = (startCoords.x + (junction.width * junction.scale));
-                endY = (startCoords.y + (junction.height * junction.scale));
+                var endX = (startCoords.x + (junction.width * junction.scale));
+                var endY = (startCoords.y + (junction.height * junction.scale));
 
                 if (x >= (startCoords.x) && y >= (startCoords.y) && x <= endX && y <= endY){
                     return junction
                 }
             }
         }
+        for(i=0; i < rangesList.length; ++i){
+            var range = rangesList[i]
+            item = checkContainer(x,y,range.operationsList, range)
+            if ( item)
+                return item
+        }
         return null
     }
+
     function removeItemFromList(list, nodeid){
         var item
         for(var i=0; i < list.length; ++i)    {
@@ -464,6 +500,9 @@ Modeller.ModellerWorkArea {
         for(j=0; j < conditionsList.length; ++j){
             conditionsList[j].removeLinkTo(nodeid)
         }
+        for(j=0; j < rangesList.length; ++j){
+            rangesList[j].removeLinkTo(nodeid)
+        }
     }
 
     function deleteSelectedItem(){
@@ -477,6 +516,10 @@ Modeller.ModellerWorkArea {
 
                 }else if ( currentItem.type === "conditionitem"){
                     item = removeItemFromList(conditionsList, currentItem.itemid)
+                    removeLinkTo(currentItem.itemid)
+                    item.removeContent()
+                }else if ( currentItem.type === "rangeitem"){
+                    item = removeItemFromList(rangesList, currentItem.itemid)
                     removeLinkTo(currentItem.itemid)
                     item.removeContent()
                 }
@@ -551,6 +594,9 @@ Modeller.ModellerWorkArea {
             if ( item.type === "conditionitem"){
                 nextStepWithList(yesno, item.operationsList)
             }
+            if ( item.type === "rangeitem"){
+                nextStepWithList(yesno, item.operationsList)
+            }
         }
     }
 
@@ -575,6 +621,11 @@ Modeller.ModellerWorkArea {
             item.clear()
         }
         conditionsList = []
+        for(i=0; i < rangesList.length; ++i){
+            item = rangesList[i]
+            item.clear()
+        }
+        rangesList = []
          workflow = null
         wfCanvas.canvasValid = false
     }

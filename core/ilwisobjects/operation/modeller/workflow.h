@@ -68,7 +68,7 @@ public:
     const std::vector<SPWorkFlowNode>& graph() const;
     const std::vector<SPWorkFlowNode> nodes(int filter=WorkFlowNode::ntALL) const;
     bool isValid() const;
-
+    static std::vector<SPWorkFlowNode> outputNodes(const std::vector<Ilwis::SPWorkFlowNode> graph);
 
 private:
     std::vector<SPWorkFlowNode> _graph;
@@ -81,7 +81,7 @@ private:
 
     std::vector<WorkFlowParameter> freeInputParameters() const;
     std::vector<Ilwis::SPOperationParameter> freeOutputParameters() const;
-    static std::vector<SPWorkFlowNode> outputNodes(const std::vector<Ilwis::SPWorkFlowNode> graph);
+
 
 
     void reworkInputNames(SPWorkFlowNode &node);

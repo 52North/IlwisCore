@@ -28,7 +28,7 @@ Rectangle {
             anchors.leftMargin: 5
             height: parent.height - 4
             width : 16
-            color : selectedColor
+            color : selectedColor ? selectedColor : "white"
             y : 2
         }
 
@@ -39,7 +39,7 @@ Rectangle {
             id:chosenItemText
             font.family: "Arial"
             font.pixelSize: 12;
-            text : selectedColor
+            text : selectedColor ? selectedColor : ""
             smooth:true
         }
 
