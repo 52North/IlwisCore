@@ -11,10 +11,10 @@
 #include "operation.h"
 #include "workflownode.h"
 #include "workflow.h"
+#include "raster.h"
 #include "mastercatalog.h"
 #include "operationhelper.h"
 #include "executionnode.h"
-#include "rangetestnode.h"
 #include "rangenode.h"
 
 using namespace Ilwis;
@@ -22,6 +22,7 @@ using namespace Ilwis;
 
 RangeNode::RangeNode() : WorkFlowNode("")
 {
+        _inputParameters1.push_back(WorkFlowParameter(0,id(),"rangetest"));
 }
 
 Ilwis::WorkFlowNode::NodeTypes Ilwis::RangeNode::type() const
@@ -49,8 +50,9 @@ std::vector<std::shared_ptr<WorkFlowNode> > RangeNode::subnodes(const QString &r
 {
     if ( reason == "operations")
         return _operations;
-    std::vector<SPWorkFlowNode > all(_operation.begin(), _operations.end());
-    all.insert(all.begin(), _test);
+    std::vector<SPWorkFlowNode > all(_operations.begin(), _operations.end());
+
+    return all;
 }
 
 void RangeNode::nodeId(quint64 id)
@@ -59,17 +61,85 @@ void RangeNode::nodeId(quint64 id)
     name(QString("range_%1").arg(id));
 }
 
+int RangeNode::inputCount() const
+{
+    return 1;
+}
+
+void RangeNode::setRangeDefinition(const QString &val)
+{
+    _rangeDef = val;
+    if ( _rangeDef.indexOf("..") > 0){
+        QStringList parts = _rangeDef.split("..");
+        if ( parts.size() == 2){
+            bool ok;
+            double rstart = parts[0].toDouble(&ok);
+            if ( ok){
+                QStringList parts2 = parts[1].split(":");
+                double rend = parts2[0].toDouble(&ok);
+                if ( ok){
+                    if ( parts2.size() == 2){
+                        double prec = parts2[1].toDouble(&ok);
+                        if ( ok){
+                            if ( prec == 0){
+                                throw ErrorObject(TR("Illegal precission value; it can not be 0"));
+                            }
+                            _precision = prec;
+                            _rangeStart = rstart;
+                            _rangeEnd = rend;
+                            _case = ccLIMITS;
+                            _currentValue = rUNDEF;
+                        }
+                    }else {
+                        _rangeStart = rstart;
+                        _rangeEnd = rend;
+                        _case = ccLIMITS;
+                        _currentValue = rUNDEF;
+                    }
+                }
+            }
+        }
+    }else {
+        QStringList parts = val.split("|");
+        std::copy(parts.begin(), parts.end(), std::back_inserter(_rangeValues));
+        _case = ccVECTOR;
+        _currentIndex = iUNDEF;
+    }
+}
+
+QString RangeNode::rangeDefinition() const
+{
+    return  _rangeDef;
+}
+
 bool RangeNode::next()
 {
-    return _text->next();
+    if ( _case == ccVECTOR)    {
+        if ( _currentIndex != iUNDEF && _currentIndex >= _rangeValues.size())
+            return false;
+        if ( _currentIndex == iUNDEF || _currentIndex <= _rangeValues.size())
+            _currentIndex = (_currentIndex == iUNDEF ? 0 : ++_currentIndex);
+    }else if ( _case == ccLIMITS){
+        if ( _currentValue != rUNDEF && _currentValue >= _rangeEnd)
+            return false;
+        if ( _currentValue == rUNDEF || _currentValue <= _rangeEnd)
+            _currentValue = (_currentValue == rUNDEF ? _rangeStart : _currentValue + _precision);
+    } 
+    return true;
 }
 
-void RangeNode::test(RangeTestNode *p)
+QVariant RangeNode::currentValue() const
 {
-    _test.reset(p);
-}
-
-const SPRangeTestNode RangeNode::test() const
-{
-    return _test;
+    if ( _case == ccVECTOR)    {
+        if ( _currentIndex == iUNDEF || _currentIndex >= _rangeValues.size())
+            return QVariant();
+        if ( _currentIndex !=iUNDEF && _currentIndex <= _rangeValues.size())
+            return _rangeValues[_currentIndex];
+    }else if ( _case == ccLIMITS){
+        if ( _currentValue != rUNDEF && _currentValue >= _rangeEnd)
+            return QVariant();
+        if ( _currentValue != rUNDEF && _currentValue <= _rangeEnd)
+            return _currentValue;
+    }
+    return QVariant();
 }
