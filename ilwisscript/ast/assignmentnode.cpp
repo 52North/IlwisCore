@@ -203,8 +203,11 @@ bool AssignmentNode::evaluate(SymbolTable& symbols, int scope, ExecutionContext 
                 }
                 if (  hasType(tp, itILWISOBJECT | itCOLUMN)) {
                     if ( hasType(tp, itRASTER)) {
-                        ok &= copyObject<RasterCoverage>(sym, result,symbols);
-                        IRasterCoverage resultGC = symbols.getValue<IRasterCoverage>(result);
+                        IRasterCoverage resultGC = sym._var.value<IlwisData<RasterCoverage>>();;
+                        if ( !keepOriginalFormat){
+                            ok &= copyObject<RasterCoverage>(sym, result,symbols);
+                            resultGC = symbols.getValue<IRasterCoverage>(result);
+                        }
                         if ( resultGC.isValid() && resultGC->size().zsize() > 1){
                             createCatalog(resultGC);
                         }

@@ -76,7 +76,8 @@ HEADERS += \
     baseoperations/math/calculatoroperation.h \
     baseoperations/math/tabcalc.h \
     baseoperations/conditions/iscompatible.h \
-    baseoperations/data/serviceobject.h
+    baseoperations/data/serviceobject.h \
+    baseoperations/data/addrasterband.h
     baseoperations/data/setattributetabel.h
 
 SOURCES += \
@@ -140,7 +141,8 @@ SOURCES += \
     baseoperations/math/calculatoroperation.cpp \
     baseoperations/math/tabcalc.cpp \
     baseoperations/conditions/iscompatible.cpp \
-    baseoperations/data/serviceobject.cpp
+    baseoperations/data/serviceobject.cpp \
+    baseoperations/data/addrasterband.cpp
     baseoperations/data/setattributetabel.cpp
 
 
