@@ -31,11 +31,14 @@ public:
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const SymbolTable &);
     ExecutionNode& executionNode(const SPWorkFlowNode& node, WorkflowIdMapping &mapping);
+    ExecutionNode *executionNode(const SPWorkFlowNode &node) ;
 
     void wait(const Ilwis::SPWorkFlowNode &node);
     void wakeup();
     void sendData(NodeId nodeId, ExecutionContext *ctx, SymbolTable &symTable);
     bool stopExecution() const;
+    void clearCalculatedValues(qint32 nodeid);
+
 signals:
     void sendMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
 public slots:
@@ -54,6 +57,8 @@ private:
     void clearCalculatedValues();
     void initStepMode();
 };
+
+
 }
 
 #endif // WORKFLOWIMPL_H

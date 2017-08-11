@@ -36,6 +36,15 @@ void WorkflowImplementation::clearCalculatedValues(){
     }
 }
 
+void WorkflowImplementation::clearCalculatedValues(qint32 nodeid)
+{
+    auto iter = _nodes.find(nodeid);
+    if ( iter != _nodes.end()){
+
+        (*iter).second.clearCalculatedValues();
+    }
+}
+
 void WorkflowImplementation::initStepMode(){
     QThread *current = QThread::currentThread();
     QVariant var = current->property("runparameters");
@@ -141,6 +150,14 @@ ExecutionNode &WorkflowImplementation::executionNode(const SPWorkFlowNode &node,
         return _nodes[node->id()];
     }
     return (*iter).second;
+}
+
+ExecutionNode *WorkflowImplementation::executionNode(const SPWorkFlowNode &node)
+{
+    auto iter = _nodes.find(node->id());
+    if ( iter != _nodes.end())
+        return &(*iter).second;
+    return 0;
 }
 
 void WorkflowImplementation::wait(const SPWorkFlowNode& node)
