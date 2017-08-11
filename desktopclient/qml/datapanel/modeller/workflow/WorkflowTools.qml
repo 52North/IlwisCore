@@ -122,6 +122,18 @@ ToolBar{
                 workarea.dropCondition = checked
             }
         }
+        Controls.ToolButton {
+            height : buttonSize
+            width : buttonSize
+            id : loop
+            checked: false
+            checkable: true
+            exclusiveGroup: toolgroup
+            iconSource: iconsource("loop.png")
+            onClicked: {
+                workarea.dropLoop = checked
+            }
+        }
 
         Controls.ToolButton {
             id : colbut
@@ -138,18 +150,7 @@ ToolBar{
             }
         }
 
-        Controls.ToolButton {
-            height : buttonSize
-            width : buttonSize
-            id : loop
-            checked: false
-            checkable: true
-            exclusiveGroup: toolgroup
-            iconSource: iconsource("loop.png")
-            onClicked: {
-                workarea.dropLoop = checked
-            }
-        }
+
 
 
         ExclusiveGroup {
