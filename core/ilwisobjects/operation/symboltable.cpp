@@ -94,10 +94,7 @@ Symbol SymbolTable::getSymbol(const QString &name, int scope) const
 {
     QHash<QString, Symbol>::const_iterator   iter = _symbols.find(name);
     while (iter != _symbols.end() && iter.key() == name) {
-        if ( iter.value()._scope == scope) {
             return iter.value();
-        }
-        ++iter;
     }
     return Symbol();
 }
