@@ -28,42 +28,50 @@ Rectangle {
         width : parent.width - 4
         enabled : true
 
-        Text {
-           anchors.centerIn: parent
-           text : qsTr("Drop test operation(s) here")
-           color : "grey"
-        }
         onDropped: {
-            addTestOperation(drag.source.ilwisobjectid)
+            addTestOperation(drag.source.type, drag.source.ilwisobjectid, drag.source.message)
         }
-
-        TextField {
-            id : testArea
-            width : parent.width - 28
-            height : parent.height - 6
-            y : 1
-            z : 2
-            readOnly: true
-        }
-
-        Rectangle {
-            width : 22
-            height : 22
-            anchors.left: testArea.right
-            anchors.leftMargin: 3
-            y : 2
-            Image{
-                width : 20
-                height : 20
-                source : icon
-                anchors.centerIn: parent
+        Row {
+            width : parent.width
+            height : parent.height
+            TextField {
+                id : rangeDefinition
+                width : parent.width - marker.width
+                height : parent.height - 6
+                y : 1
+                z : 2
+                //readOnly: true
             }
+
+
+            Button {
+                id : marker
+                width : 28
+                height : parent.height -6
+                y : 1
+                Image{
+                    width : 20
+                    height : 20
+                    source : icon
+                    anchors.centerIn: parent
+                }
+                onClicked: {
+                    workflow.setRangeTestValues(rangeItem.itemid, rangeDefinition.text)
+                }
+            }
+        }
+    }
+    function setTests() {
+        var node = workflow.getNode(rangeItem.itemid)
+        if ( node){
+            rangeDefinition.text = node["rangedefinition"]
         }
     }
 
 
-
-    function addTestOperation(objectid){
-
+    function addTestOperation(objectid, url, typename){
+            var object = mastercatalog.id2object(objectid,testRectangle)
+        if (object)
+            rangeDefinition.text = object.shortRangeDefinition()
     }
 }
