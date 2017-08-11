@@ -18,7 +18,7 @@ typedef IlwisData<Workflow> IWorkflow;
 class KERNELSHARED_EXPORT WorkFlowNode : public Identity
 {
 public:
-    enum NodeTypes{ ntUNDEFINED=0, ntOPERATION=1, ntCONDITION=2, ntJUNCTION=4, ntRANGE=8, ntRANGEJUNCTION=16,ntRANGETESTNODE=32, ntALL=255};
+    enum NodeTypes{ ntUNDEFINED=0, ntOPERATION=1, ntCONDITION=2, ntJUNCTION=4, ntRANGE=8, ntRANGEJUNCTION=16,ntRANGETESTNODE=32, ntNONE=64,ntALL=255};
     enum ValidityCheck{vcALLDEFINED,vcPARTIAL, vcTESTS, vcOPERATIONS, vcJUNCTIONS, vcAGGREGATE};
     WorkFlowNode(const QString &name, const QString &description="", quint64 id=i64UNDEF);
 
