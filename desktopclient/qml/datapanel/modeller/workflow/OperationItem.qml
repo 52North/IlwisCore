@@ -465,7 +465,6 @@ Rectangle {
     function usableLink(){
         // we only me draw links from items within the same condition
         // all links to the outside must use the junction
-        console.debug("ddddd", currentItem.type,currentItem.condition)
         if ( currentItem && currentItem.type == "operationitem"){
             if ( currentItem.condition){
                 if ( condition){
