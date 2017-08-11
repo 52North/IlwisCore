@@ -24,7 +24,7 @@ struct KERNELSHARED_EXPORT ExecutionContext {
     bool _silent = false;
     bool _threaded = false;
     bool _useAdditionalParameters = false;
-    qint16 _scope=1000;
+    qint16 _scope=0;
     std::vector<QString> _results;
     std::map<QString, QVariant> _additionalInfo;
     QString _masterGeoref;
