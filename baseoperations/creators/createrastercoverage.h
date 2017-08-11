@@ -29,6 +29,7 @@ protected:
     std::vector<IRasterCoverage> _bands;
     bool _autoresample = false;
     IRasterCoverage _outputRaster;
+    bool _empty = false;
 
     bool parseStackDefintion(const QString &stackDef);
     bool parseStackDefintionNumericCase(const QString &stackDef);

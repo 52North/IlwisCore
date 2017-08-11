@@ -352,10 +352,11 @@ quint64 CreateSimpelRasterCoverage::createMetadata()
 {
     OperationResource resource({"ilwis://operations/createrastercoverage"});
     resource.setLongName("Create Simpel Raster coverage");
-    resource.setSyntax("createrastercoverage(georeference)");
+    resource.setSyntax("createrastercoverage(georeference, empty=!true|false)");
     resource.setDescription(TR("Creates a empty raster based on the provided georeference. If a georeference is used to create it it will always have a numeric domain; else it will copy it from the raster"));
-    resource.setInParameterCount({1});
+    resource.setInParameterCount({2});
     resource.addInParameter(0, itGEOREF|itRASTER,TR("Georeference"), TR("Geometry of the new rastercoverage"));
+    resource.addInParameter(1, itBOOL,TR("Clean"), TR("If  clean the raster will contain no layers, else a default empty layer will be created"));
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itRASTER, TR("raster coverage"), TR("The newly created raster"));
     resource.setKeywords("raster,create,workflow");
@@ -387,10 +388,13 @@ Ilwis::OperationImplementation::State CreateSimpelRasterCoverage::prepare(Execut
         kernel()->issues()->log(QString(TR("%1 is and invalid georeference")).arg(grf));
         return sPREPAREFAILED;
     }
+     _empty = _expression.input<bool>(1);
     _domain.prepare("code=domain:value");
     _stackDomain = IDomain("count");
-    _stackValueStrings = {"1"};
-    _stackValueNumbers = {1};
+    if (!_empty){
+        _stackValueStrings = {"1"};
+        _stackValueNumbers = {1};
+    }
     _outputRaster.prepare();
     _outputRaster->georeference(_grf);
     _outputRaster->setDataDefintions(_domain, _stackValueNumbers , _stackDomain);
