@@ -5,6 +5,8 @@ namespace Ilwis {
 class WorkflowImplementation;
 class WorkflowIdMapping;
 
+typedef std::pair<WorkFlowNode::NodeTypes, WorkFlowNode::NodeTypes> FlowContext;
+
 class ExecutionNode
 {
 public:
@@ -13,6 +15,7 @@ public:
 
     bool execute(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping &mapping);
     void clearCalculatedValues();
+
     QVariant parameterValue(int parmIndex) const;
     int parameterCount() const;
 
@@ -28,7 +31,13 @@ private:
     void unloadInputs(const std::vector<QString>& objects);
     bool executeRangeJunction(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation *workflowImpl, WorkflowIdMapping &mapping);
     bool executeRangeTestNode(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation *workflowImpl, WorkflowIdMapping &mapping);
+
+    void clearCalculatedValues(std::vector<SPWorkFlowNode>& operations, WorkflowImplementation *workflowImpl);
+    void clearScopedCalcutedValues();
+    std::pair<WorkFlowNode::NodeTypes, WorkFlowNode::NodeTypes> contextSwitch(const SPWorkFlowNode &sourceNode, const SPWorkFlowNode &targetNode);
 };
 }
+
+Q_DECLARE_METATYPE(Ilwis::FlowContext)
 
 #endif // EXECUTIONNODE_H

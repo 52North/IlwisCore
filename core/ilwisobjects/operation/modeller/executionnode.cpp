@@ -20,7 +20,6 @@
 #include "operationnode.h"
 #include "conditionNode.h"
 #include "executionnode.h"
-#include "rangetestnode.h"
 #include "rangenode.h"
 #include "workflowimplementation.h"
 
@@ -43,26 +42,27 @@ ExecutionNode::ExecutionNode(const SPWorkFlowNode& node, WorkflowIdMapping &mapp
 bool ExecutionNode::execute(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation *workflowImpl, WorkflowIdMapping &mapping)
 {
     bool ok;
-    if ( _node->owner() && _node->owner()->type() == WorkFlowNode::ntRANGE){
-        executeRange(ctx, symTable, workflowImpl, mapping);
-    } else {
-        switch(_node->type()) {
-        case WorkFlowNode::ntCONDITION:
-            ok = executeTest(ctx, symTable, workflowImpl, mapping);break;
-        case WorkFlowNode::ntJUNCTION:
-            ok = executeJunction(ctx, symTable, workflowImpl, mapping); break;
-        case WorkFlowNode::ntOPERATION:
-            ok = executeOperation(ctx, symTable, workflowImpl, mapping); break;
-        case WorkFlowNode::ntRANGEJUNCTION:
-            ok = executeRangeJunction(ctx, symTable, workflowImpl, mapping); break;
-        case WorkFlowNode::ntRANGETESTNODE:
-            ok = executeRangeTestNode(ctx, symTable, workflowImpl, mapping); break;
-        default:
-            return false;
+    auto iter = ctx->_additionalInfo.find("rangeswitch");
+    if ( iter != ctx->_additionalInfo.end() ){
+        FlowContext fc = (*iter).second.value<FlowContext>();
+        if ( fc.second == WorkFlowNode::ntRANGE &&  fc.first != WorkFlowNode::ntRANGE){
+            return executeRange(ctx, symTable, workflowImpl, mapping);
         }
     }
-   // if ( )
-   // mapping.advanceOffset(parameterCount());
+    switch(_node->type()) {
+    case WorkFlowNode::ntCONDITION:
+        ok = executeTest(ctx, symTable, workflowImpl, mapping);break;
+    case WorkFlowNode::ntJUNCTION:
+        ok = executeJunction(ctx, symTable, workflowImpl, mapping); break;
+    case WorkFlowNode::ntOPERATION:
+        ok = executeOperation(ctx, symTable, workflowImpl, mapping); break;
+    case WorkFlowNode::ntRANGEJUNCTION:
+        ok = executeRangeJunction(ctx, symTable, workflowImpl, mapping); break;
+    case WorkFlowNode::ntRANGE:
+        ok = executeRangeTestNode(ctx, symTable, workflowImpl, mapping); break;
+    default:
+        return false;
+    }
     return ok;
 }
 
@@ -82,7 +82,7 @@ bool ExecutionNode::executeRangeTestNode(ExecutionContext *ctx, SymbolTable &sym
         kernel()->issues()->log(TR("Range definition invalid"));
         return false;
     }
-    SPRangeTestNode rtest = std::static_pointer_cast<RangeTestNode>(_node);
+    SPLRangeNode rtest = std::static_pointer_cast<RangeNode>(_node);
     SymbolTable symTable2(symTable);
     WorkFlowParameter& parameter = _node->inputRef(0);
     if ( !parameterValue(0).isValid()){
@@ -94,7 +94,7 @@ bool ExecutionNode::executeRangeTestNode(ExecutionContext *ctx, SymbolTable &sym
                 Symbol sym =  symTable2.getSymbol(outputName);
                 QVariant val = symTable2.getValue(outputName);
 
-                rtest->setRangeDefinition(val);
+               // rtest->setRangeDefinition(val);
                 _parameterValues[0] = val;
             }else{
                 return false;
@@ -114,7 +114,7 @@ bool ExecutionNode::executeRange(ExecutionContext *ctx, SymbolTable &symTable, W
     while(range->next()){
         ExecutionContext ctx2;
         SymbolTable symTable2;
-       // clearCalculatedValues();
+        clearCalculatedValues(operations, workflowImpl);
         for(SPWorkFlowNode node : outputNodes ) {
             ExecutionNode& exnode = workflowImpl->executionNode(node, mapping);
             if(!exnode.execute(&ctx2, symTable2, workflowImpl, mapping)){
@@ -126,11 +126,14 @@ bool ExecutionNode::executeRange(ExecutionContext *ctx, SymbolTable &symTable, W
             Symbol sym = symTable2.getSymbol(ctx2._results[i]);
             QVariant value = sym._var;
             if ( hasType(sym._type, itTABLE)){
-                setOutput3<ITable>(value, ctx, symTable);
+                ITable obj = value.value<ITable>();
+                ctx->addOutput(symTable,value,obj->name(), obj->ilwisType(), obj->resource() );
             }else  if ( hasType(sym._type, itRASTER)){
-                setOutput3<IRasterCoverage>(value, ctx, symTable)   ;
+                IRasterCoverage obj = value.value<IRasterCoverage>();
+                ctx->addOutput(symTable,value,obj->name(), obj->ilwisType(), obj->resource() );
             }else if ( hasType(sym._type, itFEATURE)){
-                setOutput3<IFeatureCoverage>(value, ctx, symTable)   ;
+                IFeatureCoverage obj = value.value<IFeatureCoverage>();
+                ctx->addOutput(symTable,value,obj->name(), obj->ilwisType(), obj->resource() );
             }else if ( hasType(sym._type, itNUMBER)){
                  ctx->addOutput(symTable, QVariant(value), sUNDEF, itDOUBLE, Resource());
             }else if ( hasType(sym._type, itSTRING)){
@@ -140,6 +143,19 @@ bool ExecutionNode::executeRange(ExecutionContext *ctx, SymbolTable &symTable, W
     }
 
     return true;
+}
+
+std::pair<WorkFlowNode::NodeTypes, WorkFlowNode::NodeTypes>  ExecutionNode::contextSwitch(const SPWorkFlowNode& sourceNode, const SPWorkFlowNode& targetNode){
+    if ( !sourceNode->owner() && !targetNode->owner() )
+        return FlowContext(WorkFlowNode::ntNONE,WorkFlowNode::ntNONE);
+    if ( !sourceNode->owner() ){
+            return FlowContext(WorkFlowNode::ntNONE, targetNode->owner()->type());
+    }
+    if ( !targetNode->owner() ){
+            return FlowContext(sourceNode->owner()->type(),WorkFlowNode::ntNONE);
+    }
+    return FlowContext(sourceNode->owner()->type(),targetNode->owner()->type());
+
 }
 
 bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping)
@@ -156,6 +172,10 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
             if (parameter.inputLink()) {
                 ExecutionNode& exNode = workflowImpl->executionNode(parameter.inputLink(), mapping);
                 ExecutionContext ctx2;
+                QVariant fc;
+                FlowContext fcTemp = contextSwitch(_node, parameter.inputLink());
+                fc.setValue(fcTemp);
+                ctx2._additionalInfo["rangeswitch"] = fc;
                 if ( exNode.execute(&ctx2, symTable2, workflowImpl, mapping)) {
                     QString outputName = ctx2._results[parameter.outputParameterIndex()];
                     Symbol sym =  symTable2.getSymbol(outputName);
@@ -314,6 +334,28 @@ template<class T> void setOutput3(const QVariant& value,ExecutionContext *ctx, S
 }
 
 
+void ExecutionNode::clearCalculatedValues(std::vector<SPWorkFlowNode>& operations, WorkflowImplementation* workflowImpl){
+    for(auto& node : operations){
+        ExecutionNode* exnode = workflowImpl->executionNode(node)    ;
+        if ( exnode)
+            exnode->clearScopedCalcutedValues();
+    }
+}
+
+void ExecutionNode::clearScopedCalcutedValues() {
+    for(int i=0; i < _parameterValues.size(); ++i){
+        if ( _parameterValues[i].isValid()){
+           WorkFlowParameter& parameter = _node->inputRef(i);
+           if ( parameter.state() == WorkFlowParameter::pkCALCULATED){
+                if ( parameter.inputLink()->owner() == _node->owner()) { // only clean outputs that have been generated in the same container
+                    _parameterValues[i] = QVariant();
+                } else if ( parameter.inputLink() == _node->owner()  )  { // links to the range itself; output value of the range counter
+                    _parameterValues[i] = QVariant();
+                }
+           }
+        }
+    }
+}
 
 void ExecutionNode::clearCalculatedValues(){
     for(QVariant& v : _parameterValues)
