@@ -40,6 +40,24 @@ public:
 
 
 };
+
+class RasterBand : public SelectionRaster
+{
+public:
+    RasterBand();
+    RasterBand(quint64 metaid, const Ilwis::OperationExpression &expr);
+
+    static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
+    Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const SymbolTable&);
+    bool execute(ExecutionContext *ctx, SymbolTable &symTable);
+
+    static quint64 createMetadata();
+
+    NEW_OPERATION(RasterBand)    ;
+
+
+
+};
 }
 }
 #endif // SELECTION_H

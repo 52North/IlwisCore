@@ -249,4 +249,46 @@ quint64 AttributeRaster::createMetadata()
     return operation.id();
 }
 
+//---------------------------------------------------
+REGISTER_OPERATION(RasterBand)
+RasterBand::RasterBand() : SelectionRaster()
+{}
+
+RasterBand::RasterBand(quint64 metaid, const Ilwis::OperationExpression &expr) : SelectionRaster(metaid, expr){}
+
+Ilwis::OperationImplementation *RasterBand::create(quint64 metaid,const Ilwis::OperationExpression& expr){
+    return new RasterBand(metaid, expr);
+}
+
+Ilwis::OperationImplementation::State RasterBand::prepare(ExecutionContext *ctx, const SymbolTable& tbl){
+    QString newExpression = QString("selection(%1,rasterbands(%2))").arg(_expression.input<QString>(0),_expression.input<QString>(1) );
+    _expression = OperationExpression(newExpression);
+    return SelectionRaster::prepare(ctx, tbl);
+}
+
+bool RasterBand::execute(ExecutionContext *ctx, SymbolTable& symTable)
+{
+    if (_prepState == sNOTPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
+            return false;
+    return SelectionRaster::execute(ctx, symTable);
+}
+
+quint64 RasterBand::createMetadata()
+{
+    OperationResource operation({"ilwis://operations/rasterband"});
+    operation.setLongName("RasterBand");
+    operation.setSyntax("rasterband(raster,stackindex)");
+    operation.setDescription(TR("selects one band of a multi band raster"));
+    operation.setInParameterCount({2});
+    operation.addInParameter(0,itRASTER, TR("input raster"),TR("input rastercoverage with multiple bands"));
+    operation.addInParameter(1,itSTRING,  TR("stack index"),TR("index or band name in the stack"));
+    operation.setOutParameterCount({1});
+    operation.addOutParameter(0, itRASTER, TR("output band"));
+    operation.setKeywords("raster,selection");
+
+    mastercatalog()->addItems({operation});
+    return operation.id();
+}
+
 
