@@ -99,7 +99,7 @@ SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const Q
         _isValid = _polygon.get() != 0;
         _type = ptPOLYGON;
 
-    }else if ( (index = part.indexOf("attributes("))!= -1) {
+    }else if ( part.indexOf("attributes(")!= -1) {
         index = part.indexOf("(");
         int len = part.lastIndexOf(")") - index - 1;
         QString lst = part.mid(index + 1, len);
@@ -111,7 +111,8 @@ SelectionBase::ExpressionPart::ExpressionPart(const ICoverage& coverage, const Q
             }
         }
         _type = ptATTRIBUTE;
-    } else if ((index = part.indexOf("rasterbands("))==0){
+    } else if (part.indexOf("rasterbands(")!=-1){
+        index = part.indexOf("(");
         int len = part.lastIndexOf(")") - index - 1;
         QString lst = part.mid(index + 1, len);
         QStringList indexes = lst.split(",");
@@ -321,8 +322,19 @@ QStringList SelectionBase::attributeNames() const
 BoundingBox SelectionBase::boundingBox(const IRasterCoverage& raster) const
 {
     BoundingBox box;
+    std::set<QString> bands;
     for(const auto& epart : _expressionparts){
         box += epart._box;
+        if ( epart._bands.size() != 0){
+            for(QString b : epart._bands)
+                bands.insert(b) ;
+        }
+    }
+    if ( bands.size() != 0){
+        if ( !box.isValid())
+            box = raster->size();
+        auto &p = box.max_corner();
+        p.z = bands.size();
     }
     return box;
 }
