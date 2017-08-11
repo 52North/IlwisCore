@@ -283,8 +283,14 @@ bool RasterCoverage::band(const QString &bandIndex,  PixelIterator inputIter)
 
 bool RasterCoverage::band(double bandIndex,  PixelIterator inputIter)
 {
-    if ( !_bandDefinition.domain()->contains(bandIndex))
+    if (bandIndex != rUNDEF &&  !_bandDefinition.domain()->contains(bandIndex))
         return false;
+    if ( bandIndex == rUNDEF){
+        bandIndex = _bandDefinition.insert(bandIndex);
+    }
+    if ( bandIndex == rUNDEF)
+        throw InternalError(TR("Couldnt add band; indexe isnt usuable"));
+
     int bndIndex = _bandDefinition.index(bandIndex);
     if ( bndIndex >= size().zsize()){
         _size.zsize(bndIndex + 1);
