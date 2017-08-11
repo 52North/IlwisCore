@@ -93,7 +93,9 @@ Rectangle {
         anchors.top : operationsRectangle.bottom
         width : parent.width - 8
         anchors.horizontalCenter: parent.horizontalCenter
-        height : 24
+        visible : type == "conditionitem"
+        enabled:  visible
+        height : enabled ? 24 : 0
         color : junctionColor
         border.width: 1
         border.color: "darkgrey"
