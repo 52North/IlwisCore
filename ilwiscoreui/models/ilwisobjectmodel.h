@@ -76,6 +76,7 @@ public:
     QString valuetype() const;
     QString value2string(const QVariant& value, const QString& attrName="");
     Q_INVOKABLE QString rangeDefinition(bool defaultRange, bool calc, const QString &columnName);
+    Q_INVOKABLE QString shortRangeDefinition();
     Q_INVOKABLE QString getProperty(const QString& propertyname) const;
     Q_INVOKABLE bool canUse(const QString& id);
     Q_INVOKABLE void setAttribute(const QString& attrname, const QString& value, const QString& extra="" );
@@ -89,6 +90,7 @@ public:
     bool isValid() const;
     Ilwis::IIlwisObject object() const;
     QVariantList layerInfo() const;
+
 
 public slots:
     void recalcDone();
