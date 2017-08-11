@@ -11,7 +11,6 @@
 #include "workflownode.h"
 #include "conditionNode.h"
 #include "junctionNode.h"
-#include "rangetestnode.h"
 #include "rangenode.h"
 #include "executionnode.h"
 #include "workflowimplementation.h"
@@ -49,6 +48,16 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
         }else if ( item->type() == WorkFlowNode::ntCONDITION){
             // test have operations which have parameters that might be linked to the rest of the graph
             auto subnodes = item->subnodes("tests");
+            for(auto subnode : subnodes){
+                for(int i=0; i < subnode->inputCount(); ++i){
+                    if ( subnode->inputRef(i).inputLink()){
+                        usedNodes.insert(subnode->inputRef(i).inputLink()->id());
+                    }
+                }
+            }
+        }else if ( item->type() == WorkFlowNode::ntRANGE){
+            // test have operations which have parameters that might be linked to the rest of the graph
+            auto subnodes = item->subnodes("all");
             for(auto subnode : subnodes){
                 for(int i=0; i < subnode->inputCount(); ++i){
                     if ( subnode->inputRef(i).inputLink()){
@@ -108,23 +117,14 @@ void Workflow::addFlow(NodeId fromNode, NodeId toNode, qint32 inParmIndex, qint3
     SPWorkFlowNode to = nodeById(toNode);
     if ( from && to){
         if ( inParmIndex < to->inputCount()){
-            // is this a link from an operation in a loop to a operation outside a loop, special case //
-            if ( to->owner() && to->owner()->type() == WorkFlowNode::ntRANGE){
-                   SPLRangeNode range = std::static_pointer_cast<RangeNode>(to->owner());
-                   RangeTestNode *rtest = new RangeTestNode();
-                   rtest->inputRef(0).inputLink(from,outParmIndex);
-                   rtest->inputRef(0).attachement(attachRctIndxFrom, true);
-                   rtest->inputRef(0).attachement(attachRctIndxTo, false);
-                   range->test(rtest);
-            }else {
-                to->inputRef(inParmIndex).inputLink(from,outParmIndex);
-                to->inputRef(inParmIndex).attachement(attachRctIndxFrom, true);
-                to->inputRef(inParmIndex).attachement(attachRctIndxTo, false);
-            }
-            changed(true);
+            to->inputRef(inParmIndex).inputLink(from,outParmIndex);
+            to->inputRef(inParmIndex).attachement(attachRctIndxFrom, true);
+            to->inputRef(inParmIndex).attachement(attachRctIndxTo, false);
         }
+        changed(true);
     }
 }
+
 
 void Workflow::removeFlow(NodeId toNode, qint32 parameterIndex)
 {
