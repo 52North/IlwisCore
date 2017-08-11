@@ -76,6 +76,7 @@ Modeller.ModellerWorkArea {
             var connectid = operations.operationId("ilwis://operations/connect")
             addOperation(connectid,dx,dy,ownerid, parentItem)
             var object = mastercatalog.id2Resource(objectid, 0)
+            console.debug(objectid, dx,dy, object)
             if ( object){
                 workflow.setFixedValues(currentItem.itemid, object.url)
                 workflow.createMetadata()
@@ -107,6 +108,14 @@ Modeller.ModellerWorkArea {
                     }
                 }
             }else {
+                onItem = itemAt(drag.x, drag.y)
+                if ( onItem && onItem.type === "rangeitem"){
+                    if ( onItem.droppedOnTestPart( drag.x, drag.y)){
+                        onItem.addTestDataObject(drag.source.ilwisobjectid, drag.source.message, drag.source.type)
+                        return
+                    }
+                }
+
                addConnect(drag.source.ilwisobjectid,drag.x,drag.y,-1, wfCanvas)
             }
         }
@@ -239,6 +248,24 @@ Modeller.ModellerWorkArea {
         }
     }
 
+    function recreateRangeFlows(rangeItem, kvp) {
+        var node = workflow.getNode(rangeItem.itemid)
+        if(!node)
+            return
+
+        var parameters = node.parameters
+        if (!parameters)
+            return
+
+        for(var j=0; j < parameters.length; ++j){
+            recreateFlow(parameters[j], kvp,rangeItem,j)
+        }
+
+        for(var k=0; k < rangeItem.operationsList.length; ++k){
+            recreateFlows(rangeItem.operationsList[k], kvp)
+        }
+    }
+
     function recreateWorkflow() {
         if (!workflow)
             return
@@ -272,6 +299,7 @@ Modeller.ModellerWorkArea {
                 if (component.status === Component.Ready){
                     currentItem = component.createObject(wfCanvas, {"x": node.x, "y": node.y, "height" : node.h, "width" : node.w,"itemid" : node.nodeid, "scale": wfCanvas.scale});
                     workarea.rangesList.push(currentItem)
+                    currentItem.setTests()
                     kvp[currentItem.itemid] = currentItem
                     ownedoperations = node.ownedoperations;
                     for(j = 0;  j < ownedoperations.length; ++j){
@@ -309,9 +337,13 @@ Modeller.ModellerWorkArea {
         for(i=0; i < conditionsList.length; ++i){
             var conditionItem = conditionsList[i]
             recreateConditionFlow(conditionItem, kvp)
-
-
         }
+
+        for(i=0; i < rangesList.length; ++i){
+            var rangeItem = rangesList[i]
+            recreateRangeFlows(rangeItem, kvp)
+        }
+
         for(i=0; i < unlinkedJunctions.length;++i){
             conditionItem  = getItem(unlinkedJunctions[i].condition)
             var junction = unlinkedJunctions[i].junction
@@ -370,7 +402,7 @@ Modeller.ModellerWorkArea {
         var dzoom = wfCanvas.zoomScale /wfCanvas.oldZoomScale
         for(var i=0; i < operationsList.length; ++i){
             var operation = operationsList[i]
-            if ( !operation.condition){
+            if ( !operation.condition &&  !operation.range){
                 zoomItem(operation, dzoom, cx,cy)
             }
         }
@@ -403,7 +435,7 @@ Modeller.ModellerWorkArea {
     function pan(px, py){
         for(var i=0; i < operationsList.length; ++i){
             var operation = operationsList[i]
-            if ( operation.condition)
+            if ( operation.condition || operation.range)
                 continue;
             operation.x -= px;
             operation.y -= py;
@@ -418,6 +450,11 @@ Modeller.ModellerWorkArea {
                 conditions.junctionsList[j].y -= py;
             }
 
+        }
+        for(i=0; i < rangesList.length; ++i){
+            var range = rangesList[i]
+            range.x -= px;
+            range.y -= py;
         }
         workflow.translateObject(px,py,true)
         wfCanvas.canvasValid = false
@@ -453,6 +490,7 @@ Modeller.ModellerWorkArea {
 
     function itemAt(x,y){
         var item = checkContainer(x,y,operationsList, null)
+        console.debug(item)
         if (item)
             return item;
         for(var i=0; i < conditionsList.length; ++i){
