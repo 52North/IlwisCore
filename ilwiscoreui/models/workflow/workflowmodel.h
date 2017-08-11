@@ -57,6 +57,7 @@ public:
     Q_INVOKABLE void addTest2Condition(int conditionId, const QString& operationId, const QString& pre, const QString& post);
     Q_INVOKABLE void addCondition2Junction(int conditionId, int junctionId);
     Q_INVOKABLE void setTestValues(int conditionId, int testIndex, int parameterIndex, const QString& value);
+    Q_INVOKABLE void setRangeTestValues(int rangeid, const QString& rangeDef);
     Q_INVOKABLE QString testValueDataType(quint32 conditionId, quint32 testIndex, quint32 parameterIndex) const;
     Q_INVOKABLE QString testValue(int conditionId, int testIndex, int parameterIndex);
     Q_INVOKABLE QVariantList getTestParameters(int nodeId, int testIndex);

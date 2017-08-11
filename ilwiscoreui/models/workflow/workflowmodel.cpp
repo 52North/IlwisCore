@@ -173,6 +173,17 @@ void WorkflowModel::setTestValues(int conditionId, int testIndex, int parameterI
     } catch(const ErrorObject&){}
 }
 
+void WorkflowModel::setRangeTestValues(int rangeid, const QString &rangeDef)
+{
+    if ( _workflow.isValid()){
+        SPWorkFlowNode node = _workflow->nodeById(rangeid);
+        if ( node){
+            std::shared_ptr<RangeNode> range = std::static_pointer_cast<RangeNode>(node);
+            range->setRangeDefinition(rangeDef.trimmed());
+        }
+    }
+}
+
 QString WorkflowModel::testValueDataType(quint32 conditionId, quint32 testIndex, quint32 parameterIndex) const
 {
     if ( _workflow.isValid()){
@@ -492,12 +503,18 @@ QVariantMap WorkflowModel::getNode(int nodeId){
             data["tests"] = test;
         }if ( hasType(node->type(), WorkFlowNode::ntRANGE)){
               QVariantList operations;
-           //std::shared_ptr<RangeNode> range = std::static_pointer_cast<RangeNode>(node);
-            std::vector<SPWorkFlowNode> subnodes = node->subnodes("operations");
-            for(int i=0; i < subnodes.size(); ++i){
-                operations.push_back(getNode(subnodes[i]->id()));
-            }
-            data["ownedoperations"] = operations;
+              QVariantList parameters;
+            ;
+              std::shared_ptr<RangeNode> range = std::static_pointer_cast<RangeNode>(node);
+              QString def =  range->rangeDefinition();
+              data["rangedefinition"] = def;
+              parameters.push_back(getParameter(node, 0));
+              data["parameters"] = parameters;
+              std::vector<SPWorkFlowNode> subnodes = node->subnodes("operations");
+              for(int i=0; i < subnodes.size(); ++i){
+                  operations.push_back(getNode(subnodes[i]->id()));
+              }
+              data["ownedoperations"] = operations;
         }else if ( node->type() == WorkFlowNode::ntJUNCTION){
             std::shared_ptr<JunctionNode> junction = std::static_pointer_cast<JunctionNode>(node);
             SPWorkFlowNode testNode =  junction->inputRef(WorkFlowCondition::cpTEST).inputLink();
@@ -698,7 +715,7 @@ void WorkflowModel::stopStepMode(){
     parms["runid"] = _runid;
     _stepMode = false;
     _lastOperationNode = -1;
-    _currentNode == -1;
+    _currentNode = -1;
     emit sendMessage("workflow","stopstepmode", parms);
     emit operationNodeChanged();
     emit currentNodeChanged();
