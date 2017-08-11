@@ -297,15 +297,27 @@ void SubFeatureDefinition::insert(const QString& domainItem)
     }
 }
 
-void SubFeatureDefinition::insert(double domainItem)
+double SubFeatureDefinition::insert(double domainItem)
 {
     if (!_subFeatureDomain.isValid()) {
         _index2subFeature.clear();
         _subFeatureDomain = IDomain("count");
         _subFeature2Index.clear();
     }
+    if ( domainItem == rUNDEF){
+        if ( !hasType(_subFeatureDomain->ilwisType(),itNUMERICDOMAIN))
+            throw InternalError(TR("Anonymous inserts may only happen with numeric domains"));
+
+        double res = 1.0;
+        if ( hasType(_subFeatureDomain->valueType(),itDOUBLE | itFLOAT)){
+            res = _subFeatureDomain->range<NumericRange>()->resolution();
+            if  ( res == 0)
+                res = 0.001;
+        }
+        domainItem = _index2subFeature.size() != 0 ? _index2subFeature.back().toDouble() + res: 0;
+    }
     if (!_subFeatureDomain->contains(domainItem))
-        return;
+        return rUNDEF;
     double value = _subFeatureDomain->valueType() == itINTEGER ? (qint64)domainItem : domainItem;
     auto iter = _subFeature2Index.find(QString::number(value));
     if ( iter == _subFeature2Index.end()) { // insert one item
@@ -317,6 +329,7 @@ void SubFeatureDefinition::insert(double domainItem)
             _subFeature2Index[QString::number(domainItem)] = _subFeature2Index.size() - 1;
         }
     }
+    return domainItem;
 }
 
 std::vector<QString> SubFeatureDefinition::indexes() const
