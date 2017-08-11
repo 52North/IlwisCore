@@ -17,10 +17,19 @@
 using namespace Ilwis;
 
 bool Ilwis::operator==(const Ilwis::SPWorkFlowNode& node1, const Ilwis::SPWorkFlowNode& node2 ){
+    if ( !node1)
+        return false;
+    if (!node2)
+        return false;
     return node1->id() == node2->id();
 }
 
 bool Ilwis::operator<(const Ilwis::SPWorkFlowNode& node1, const Ilwis::SPWorkFlowNode& node2 ){
+    if ( !node1)
+        return false;
+    if (!node2)
+        return false;
+
     return node1->id() < node2->id();
 }
 
