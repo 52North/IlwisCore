@@ -37,6 +37,7 @@ MouseArea {
         oldy = -1
         cursorShape = Qt.ArrowCursor
         if ( currentItem && currentItem.type === "operationitem"){
+            console.debug("cccc", currentItem, currentItem.condition, currentItem.range)
             if ( currentItem.condition)    {
                 currentItem.condition.resize()
             }

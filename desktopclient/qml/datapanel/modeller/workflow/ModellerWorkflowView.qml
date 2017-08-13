@@ -308,6 +308,7 @@ Modeller.ModellerWorkArea {
                         if ( item){
                             kvp[item.itemid] = item
                             item.range = currentItem
+                            console.debug("ff", item, item.range)
                             currentItem.operationsList.push(item)
                         }
                     }
@@ -463,17 +464,30 @@ Modeller.ModellerWorkArea {
     function checkContainer(x,y,operations, container){
         for( var j=0; j < operationsList.length; ++j){
             var operation = operationsList[j]
+            var inContainer = operation.condition !== null || operation.range !== null
+            if ( container !== null)
+                console.debug("ee", operation, operation.condition,  operation.range, inContainer, operation.itemid, container)
+            if ( !inContainer && container !== null) // any operation that is contained can be ignored when running for the outer area
+                continue;
             var startCoords = Qt.point(operation.x, operation.y)
             if ( container){
-                var  p = container.mapToItem(wfCanvas, operation.x, operation.y)
-                startCoords = Qt.point(p.x, p.y)
-            }
+                var  p = wfCanvas.mapToItem(container, x, y)
+                var endX = (operation.x + (operation.width * operation.scale));
+                var endY = (operation.y + (operation.height * operation.scale));
+                console.debug("cc", p.x, p.y, operation.x, operation.y, endX, endY)
 
-            var endX = (startCoords.x + (operation.width * operation.scale));
-            var endY = (startCoords.y + (operation.height * operation.scale));
+                if (p.x >= (operation.x) && p.y >= (operation.y) && p.x <= endX && p.y <= endY){
+                    return operation
+                }
 
-            if (x >= (startCoords.x) && y >= (startCoords.y) && x <= endX && y <= endY){
-                return operation
+            }else {
+
+                endX = (startCoords.x + (operation.width * operation.scale));
+                endY = (startCoords.y + (operation.height * operation.scale));
+
+                if (x >= (startCoords.x) && y >= (startCoords.y) && x <= endX && y <= endY){
+                    return operation
+                }
             }
         }
         if ( container){
@@ -490,14 +504,15 @@ Modeller.ModellerWorkArea {
 
     function itemAt(x,y){
         var item = checkContainer(x,y,operationsList, null)
-        console.debug(item)
-        if (item)
+        if (item){
             return item;
+        }
         for(var i=0; i < conditionsList.length; ++i){
             var condition = conditionsList[i]
             item = checkContainer(x,y,condition.operationsList, condition)
-            if ( item)
+            if ( item){
                 return item
+            }
             for( var j=0; j < condition.junctionsList.length; ++j){
                 var junction = condition.junctionsList[j]
                 startCoords = Qt.point(junction.x, junction.y)

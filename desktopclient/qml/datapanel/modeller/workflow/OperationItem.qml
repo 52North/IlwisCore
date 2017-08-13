@@ -13,9 +13,9 @@ Rectangle {
     property var attachementRectangles : []
     property bool isSelected : false
     property var selectedAttach
-    property var itemid;
-    property var condition
-    property var range
+    property var itemid
+    property var condition : null
+    property var range : null
     property string type : "operationitem"
     property alias background : box.source
     transformOrigin: Item.TopLeft

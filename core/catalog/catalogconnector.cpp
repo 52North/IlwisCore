@@ -217,13 +217,16 @@ bool CatalogConnector::loadDataThreaded(IlwisObject *obj, const IOOptions &optio
         //workflows can now be initialized as they may depend on workflows/objects found by different
         // explorers. They are already in the mastercatalog but not yet fully initialized
         if(item.ilwisType() == itWORKFLOW ){
-            if ( wf.prepare(item)){
-                wf->createMetadata();
-                Resource res = wf->resource();
-                res.code(item.code());
-                item = res;
-                updateableItems.push_back(item);
+            try{
+                if ( wf.prepare(item)){
+                    wf->createMetadata();
+                    Resource res = wf->resource();
+                    res.code(item.code());
+                    item = res;
+                    updateableItems.push_back(item);
+                }
             }
+            catch(ErrorObject& err){}
         }
     }
     if ( updateableItems.size() > 0)
