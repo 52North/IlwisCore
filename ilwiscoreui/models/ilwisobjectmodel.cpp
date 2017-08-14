@@ -392,10 +392,10 @@ QString IlwisObjectModel::shortRangeDefinition() {
         QString rangeString;
         if ( objectype == itRASTER){
             IRasterCoverage raster = _ilwisobject.as<RasterCoverage>();
-            rangeString = "0.." + raster->size().zsize()-1;
+            rangeString = "0.." + QString::number(raster->size().zsize()-1);
         } else if ( hasType( objectype , itFEATURE)){
             IFeatureCoverage features = _ilwisobject.as<FeatureCoverage>();
-            rangeString = "feature:0.." + features->featureCount();
+            rangeString = "feature:0.." + QString::number(features->featureCount());
 
         } else if ( hasType( objectype , itDOMAIN)){
             if ( _ilwisobject->ilwisType() == itITEMDOMAIN){
@@ -409,7 +409,7 @@ QString IlwisObjectModel::shortRangeDefinition() {
 
         }else if ( hasType( objectype , itTABLE)){
             ITable tbl  = _ilwisobject.as<Table>();
-            rangeString = "record:0.." + tbl->recordCount() - 1;
+            rangeString = "record:0.." + QString::number(tbl->recordCount() - 1);
         }
         return rangeString;
     }catch(const ErrorObject& ){
