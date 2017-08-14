@@ -76,7 +76,6 @@ Modeller.ModellerWorkArea {
             var connectid = operations.operationId("ilwis://operations/connect")
             addOperation(connectid,dx,dy,ownerid, parentItem)
             var object = mastercatalog.id2Resource(objectid, 0)
-            console.debug(objectid, dx,dy, object)
             if ( object){
                 workflow.setFixedValues(currentItem.itemid, object.url)
                 workflow.createMetadata()
@@ -308,7 +307,6 @@ Modeller.ModellerWorkArea {
                         if ( item){
                             kvp[item.itemid] = item
                             item.range = currentItem
-                            console.debug("ff", item, item.range)
                             currentItem.operationsList.push(item)
                         }
                     }
@@ -581,6 +579,7 @@ Modeller.ModellerWorkArea {
                 }
             }else if ( currentItem.type === "flowconnection"){
                 workflow.deleteFlow(currentItem.target.itemid, currentItem.flowPoints.toParameterIndex)
+                console.debug(currentItem, currentItem.source, currentItem.target,currentItem.target.itemid)
                 currentItem.source.removeLinkTo(currentItem.target.itemid)
                 wfCanvas.canvasValid = false
             }
