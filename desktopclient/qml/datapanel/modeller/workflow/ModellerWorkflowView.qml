@@ -465,8 +465,6 @@ Modeller.ModellerWorkArea {
         for( var j=0; j < operationsList.length; ++j){
             var operation = operationsList[j]
             var inContainer = operation.condition !== null || operation.range !== null
-            if ( container !== null)
-                console.debug("ee", operation, operation.condition,  operation.range, inContainer, operation.itemid, container)
             if ( !inContainer && container !== null) // any operation that is contained can be ignored when running for the outer area
                 continue;
             var startCoords = Qt.point(operation.x, operation.y)
@@ -474,7 +472,6 @@ Modeller.ModellerWorkArea {
                 var  p = wfCanvas.mapToItem(container, x, y)
                 var endX = (operation.x + (operation.width * operation.scale));
                 var endY = (operation.y + (operation.height * operation.scale));
-                console.debug("cc", p.x, p.y, operation.x, operation.y, endX, endY)
 
                 if (p.x >= (operation.x) && p.y >= (operation.y) && p.x <= endX && p.y <= endY){
                     return operation

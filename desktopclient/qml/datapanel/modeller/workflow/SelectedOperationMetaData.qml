@@ -110,7 +110,6 @@ Rectangle {
             if ( workflowView.currentItem.type !== "flowconnection"){
                 return workflowView.workflow.getNode(workflowView.currentItem.itemid).label
             } else{
-                console.debug("daar")
                 var flow = workflowView.currentItem
                 var node = workflowView.workflow.getNode(flow.target.itemid)
                 var txt = node["parameters"][flow.flowPoints.fromParameterIndex].flowlabel

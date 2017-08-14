@@ -82,6 +82,7 @@ MouseArea {
                 var item = alllist[i]
                 item.isSelected = false
                 currentItem = itemAt(mouseX, mouseY)
+                console.debug(item, item.itemid)
 
                 for(var j=0; j < item.flowConnections.length; j++)
                 {
@@ -115,6 +116,7 @@ MouseArea {
                             {
                                 smallestDistance = d;
                                 selectedFlow = flow;
+                                console.debug(selectedFlow)
                             }
                         }
                         flow.isSelected = false;
