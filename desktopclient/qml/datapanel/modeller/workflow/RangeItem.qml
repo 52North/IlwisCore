@@ -66,9 +66,6 @@ ConditionItem {
                         attachRectIndex
                         )
         }
-        //workflow.createMetadata();
-       // workflowManager.updateRunForm()
-       // target.resetInputModel()
         wfCanvas.stopWorkingLine()
 
     }
@@ -79,8 +76,21 @@ ConditionItem {
     }
 
     function droppedOnTestPart( dx,dy) {
-        console.debug(x,y,dx,dy, width, height)
         return dx > x && dx < x + width && dy > y && dy < y + 28
+    }
+
+    function removeLinkTo(nodeid){
+        for( var i=0; i < flowConnections.length; ++i){
+            if ( flowConnections[i].target.itemid === nodeid){
+                flowConnections.splice(i,1)
+                break;
+            }
+        }
+
+        for(var j=0; j < operationsList.length; ++j){
+            operationsList[j].removeLinkTo(nodeid)
+        }
+        resetColors()
     }
 
     Component.onCompleted: {
