@@ -37,7 +37,6 @@ MouseArea {
         oldy = -1
         cursorShape = Qt.ArrowCursor
         if ( currentItem && currentItem.type === "operationitem"){
-            console.debug("cccc", currentItem, currentItem.condition, currentItem.range)
             if ( currentItem.condition)    {
                 currentItem.condition.resize()
             }
@@ -69,7 +68,7 @@ MouseArea {
 
     function selectThing(){
         if (canvasActive) {
-            var operationSelected = -1, highestZ = -1, smallestDistance = 100000, selectedFlow=false
+            var operationSelected = -1, highestZ = -1, smallestDistance = 100000, selectedFlow=null
             var alllist = operationsList
             alllist  = alllist.concat(conditionsList)
             alllist = alllist.concat(rangesList)
@@ -82,7 +81,6 @@ MouseArea {
                 var item = alllist[i]
                 item.isSelected = false
                 currentItem = itemAt(mouseX, mouseY)
-                console.debug(item, item.itemid)
 
                 for(var j=0; j < item.flowConnections.length; j++)
                 {
@@ -116,13 +114,15 @@ MouseArea {
                             {
                                 smallestDistance = d;
                                 selectedFlow = flow;
-                                console.debug(selectedFlow)
                             }
                         }
                         flow.isSelected = false;
                     }
                 }
             }
+           if ( selectedFlow){ // we might have selected a flow inside a range or condition. In that case we ignore the container
+               currentItem = null
+           }
         }
 
         oldx = mouseX

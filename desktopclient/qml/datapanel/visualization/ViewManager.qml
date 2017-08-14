@@ -28,7 +28,6 @@ Item {
         }
         var tab = layersmeta.getTab(2)
 
-        console.debug("addrawer 3")
         if ( tab && tab.item ){
             tab.item.addDataSource(filter, sourceName, sourceType)
         }
