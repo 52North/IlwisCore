@@ -159,13 +159,10 @@ Controls.DropableItem{
                     onClicked: {
 
                         var inputparms = []
-                        console.debug(inputparameterList.count)
                         for(i=0; i < inputparameterList.count; ++i){
                             var parm = inputparameterList.get(i)
-                            console.debug(parm.name)
                             inputparms.push({"name" : parm.name, "valuetype" : parm.valuetype,"description" : parm.description })
                         }
-                        console.debug("aa" , inputparms.length)
                         var outputparms = []
                         for(i=0; i < outputparameterList.count; ++i){
                             parm = outputparameterList.get(i)

@@ -26,7 +26,6 @@ DropArea {
         if ( idstring === "")
             return
 
-        console.debug(idstring)
         var ids = idstring.split("|")
         if ( ids.length === 1){ // you can start a drag of a single item without actually selecting it; this means that the selected ids are not necessarily correct. The ilwisobjectid is though
             ids[0] = drag.source.ilwisobjectid

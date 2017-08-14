@@ -69,7 +69,6 @@ Canvas {
         ctx.clearRect(0,0,width, height);
 
         if (canvasValid == false || (force !== null && force)) {
-           // console.debug("drawing")
             canvasValid = true
             if ( workingLineBegin.x !== -1 && workingLineEnd.x !== -1){
                 ctx.beginPath();
@@ -106,8 +105,6 @@ Canvas {
             for( i=0; i < rangesList.length; i++){
                 rangesList[i].drawFlows(ctx)
             }
-            //console.debug("drawing done")
-
         }
 
         wfCanvas.requestPaint();

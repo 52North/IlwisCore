@@ -54,7 +54,6 @@ Column {
 
 
         function changeColor(index, color){
-            console.debug(index, color)
             switch (index){
             case 0:
                 if ( uicontext.paleColor !== color){

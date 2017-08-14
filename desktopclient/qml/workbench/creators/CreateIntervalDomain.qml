@@ -109,11 +109,6 @@ Controls.DropableItem{
                     uicontext.addMessage(qsTr("Duplicate codes are not allowed"),"warning")
                     illegal = true
                 }
-//                if ( Number(items[i].minvalue) > Number(container.itemArray[j].minvalue)){
-//                    console.debug("check 3",items[i].minvalue, container.itemArray[j].minvalue )
-//                    illegal = true
-//                }
-
                 if ( illegal)
                     break
             }
