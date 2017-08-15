@@ -74,4 +74,9 @@ Rectangle {
         if (object)
             rangeDefinition.text = object.shortRangeDefinition()
     }
+
+    function storeRangeDefinition() {
+        console.debug("stored")
+        workflow.setRangeTestValues(rangeItem.itemid, rangeDefinition.text)
+    }
 }

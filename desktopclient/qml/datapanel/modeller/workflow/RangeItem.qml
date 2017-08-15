@@ -93,6 +93,10 @@ ConditionItem {
         resetColors()
     }
 
+    function storeRangeDefinition() {
+        testItem.storeRangeDefintion()
+    }
+
     Component.onCompleted: {
         attachementRectangles.push(att2)
         attachementRectangles.push(att3)
