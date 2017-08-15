@@ -592,6 +592,13 @@ QString ApplicationFormExpressionParser::index2FormInternal(quint64 metaid,
         QString outputPart;
         QString seperator;
         if ( showoutputformat){
+            if ( outparameters.size() > 0){
+                for(int i = 0; i < outparameters.size(); ++i){
+                    width = std::max(outparameters[i]._label.size(), width);
+                }
+                width *= 10;
+                width = std::max(100, width);
+            }
             outputPart = makeFormPart(mid, width, outparameters, false, results, showEmptyOptionInList,QStringList(), operationNames);
 
             if (results.size() > 0) results = ": " + results;
