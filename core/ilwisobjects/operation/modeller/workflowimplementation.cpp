@@ -97,6 +97,11 @@ bool WorkflowImplementation::execute(ExecutionContext *ctx, SymbolTable &symTabl
             removeLock(_runid);
             return false;
         }
+        FlowContext fcTemp = ExecutionNode::contextSwitch(SPWorkFlowNode(), node);
+        QVariant fc;
+        fc.setValue(fcTemp);
+        ctx2._additionalInfo["rangeswitch"] = fc;
+
         WorkflowIdMapping mapping(_expression, _workflow->parmid2order());
         ExecutionNode& exnode = executionNode(node, mapping);
         if(!exnode.execute(&ctx2, symTable2, this, mapping)){
