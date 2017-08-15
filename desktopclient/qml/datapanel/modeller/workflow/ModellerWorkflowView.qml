@@ -679,4 +679,10 @@ Modeller.ModellerWorkArea {
         wfCanvas.canvasValid = false
     }
 
+    function storeRangeDefinitions() {
+        for(var i=0; i < rangesList.length; ++i)    {
+            rangesList[i].storeRangeDefintion();
+        }
+    }
+
 }
