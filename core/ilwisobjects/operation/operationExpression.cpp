@@ -608,8 +608,8 @@ QString OperationExpression::modifyTableOutputUrl(const QString& output, const Q
 
 }
 OperationExpression OperationExpression::createExpression(quint64 operationid, const QString& parameters, bool acceptIncompleteExpressions){
-    if (  parameters == "")
-        return OperationExpression();
+//    if (  parameters == "")
+//        return OperationExpression();
 
     Resource operationresource = mastercatalog()->id2Resource(operationid);
     if ( !operationresource.isValid())
