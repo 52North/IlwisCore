@@ -55,7 +55,16 @@ protected:
     std::shared_ptr<WorkFlowNode> _owner;
 };
 
+struct IdTypePair {
+     IdTypePair(){}
+    IdTypePair(NodeId nid, WorkFlowNode::NodeTypes tp) : _nodeid(nid), _nodeType(tp){}
+    NodeId _nodeid = i64UNDEF;
+    WorkFlowNode::NodeTypes _nodeType = WorkFlowNode::ntUNDEFINED;
+};
+
 typedef std::shared_ptr<WorkFlowNode> SPWorkFlowNode;
+
+KERNELSHARED_EXPORT bool operator==(const Ilwis::IdTypePair& node1, const Ilwis::IdTypePair& node2 );
 
 KERNELSHARED_EXPORT bool operator==(const Ilwis::SPWorkFlowNode& node1, const Ilwis::SPWorkFlowNode& node2 );
 KERNELSHARED_EXPORT bool operator<(const Ilwis::SPWorkFlowNode& node1, const Ilwis::SPWorkFlowNode& node2 );

@@ -33,6 +33,11 @@ bool Ilwis::operator<(const Ilwis::SPWorkFlowNode& node1, const Ilwis::SPWorkFlo
     return node1->id() < node2->id();
 }
 
+bool Ilwis::operator==(const Ilwis::IdTypePair& node1, const Ilwis::IdTypePair& node2 ){
+
+    return node1._nodeid == node2._nodeid && node1._nodeType == node2._nodeType;
+}
+
 WorkFlowNode::WorkFlowNode(const QString& name, const QString& description, quint64 id) : Identity(name, id, QString::number(id), description)
 {
 
