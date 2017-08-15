@@ -442,8 +442,15 @@ void OperationResource::addInParameter(quint32 order, IlwisTypes type, const QSt
 
 void OperationResource::parameterNeedsQuotes(quint32 order)
 {
+
     QString prefix = "pin_" + QString::number(order + 1) + "_";
     addProperty(prefix + "needsquotes", true);
+}
+
+void OperationResource::setOutputIsInput(int outParm, int inParm)
+{
+    QString prefix = "pout_" + QString::number(outParm + 1) + "_";
+    addProperty(prefix + "input", inParm);
 }
 
 bool OperationResource::compatibleOperationAlreadyExists(bool ignoreSelf)

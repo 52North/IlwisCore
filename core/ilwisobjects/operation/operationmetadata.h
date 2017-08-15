@@ -27,6 +27,7 @@ public:
     void setKeywords(const QString &words);
     void addValidation(quint32 parent, quint32 child, const QString &validationCondition);
     void parameterNeedsQuotes(quint32 order);
+    void setOutputIsInput(int outParm, int inParm);
 
     bool compatibleOperationAlreadyExists(bool ignoreSelf=true);
 };
