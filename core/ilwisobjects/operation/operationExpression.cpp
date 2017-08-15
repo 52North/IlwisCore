@@ -624,24 +624,6 @@ OperationExpression OperationExpression::createExpression(quint64 operationid, c
     QVariant inp =  operationresource["inparameters"];
     int maxinputparameters =inp.isValid() ? inp.toString().split("|").last().toInt() : 0;
     for(int i = 0; i < parms.size(); ++ i){
-//        if (operationresource.ilwisType() & itWORKFLOW){
-//            int parm = i + 1;
-//            if (operationresource[QString("pout_%1_optional").arg(parm)] == "false" && i < operationresource["outparameters"].toInt()) {
-//                QString value = parms[i + operationresource["inparameters"].toInt()];
-//                if (value.split("@@")[0].size() == 0) {
-//                    if ( !acceptIncompleteExpressions){
-//                        kernel()->issues()->log(TR("Output parameter " + QString::number(i) + " is undefined with name " +  operationresource[QString("pout_%1_name").arg(parm)].toString()));
-//                        hasMissingParameters = true;
-//                    }
-//                }
-//            }
-//            if (operationresource[QString("pin_%1_optional").arg(parm)] == "false" && i < operationresource["inparameters"].toInt() && parms[i].size() == 0) {
-//                if ( !acceptIncompleteExpressions){
-//                    kernel()->issues()->log(TR("Input parameter " + QString::number(i) + " is undefined with name " +  operationresource[QString("pin_%1_name").arg(parm)].toString()));
-//                    hasMissingParameters = true;
-//                }
-//            }
-//        }
         if(i < maxinputparameters ){
             if ( expression.size() != 0)
                 expression += ",";
