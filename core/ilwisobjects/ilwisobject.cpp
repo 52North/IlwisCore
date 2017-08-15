@@ -398,8 +398,10 @@ bool IlwisObject::setConnector(ConnectorInterface *connector, int mode, const IO
         if ( pointer != npointer || npointer == 0){
             _connector.reset(connector);
             if ( !_connector.isNull()){
+                bool ok = true;
                 connector->addProperty("connectormode",IlwisObject::cmINPUT);
-                bool ok = _connector->loadMetaData(this, options);
+                if ( !(options.contains("create") && options.find("create").value().toBool() == true))
+                    ok = _connector->loadMetaData(this, options);
                 changed(false);
                 return ok;
             }
