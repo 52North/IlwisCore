@@ -88,6 +88,7 @@ quint64 AddColumn::createMetadata()
     resource.addInParameter(1, itSTRING,TR("column name"), TR("Name of the column to be added"));
     resource.addInParameter(2, itDOMAIN,TR("column domain"), TR("Domain of the column to be added"));
     resource.setOutParameterCount({1});
+    resource.setOutputIsInput(0,0);
     resource.addOutParameter(0, itTABLE, TR("table"), TR("The input table with an extra column"));
     resource.setKeywords("create, table");
 
