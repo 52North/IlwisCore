@@ -109,7 +109,7 @@ bool ExecutionNode::executeRangeTestNode(ExecutionContext *ctx, SymbolTable &sym
 bool ExecutionNode::executeRange(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping)
 {
     std::vector<SPWorkFlowNode> operations = _node->owner()->subnodes("all");
-    std::vector<SPWorkFlowNode> outputNodes = Workflow::outputNodes(operations);
+    std::vector<SPWorkFlowNode> outputNodes = Workflow::outputNodes(operations, workflowImpl->workflow().ptr());
     SPLRangeNode range = std::static_pointer_cast<RangeNode>(_node->owner());
     while(range->next()){
         ExecutionContext ctx2;
