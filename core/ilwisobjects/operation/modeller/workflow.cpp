@@ -318,6 +318,7 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
     };
     std::vector<SPOperationParameter> result;
     std::map<NodeId, std::vector<SPOperationParameter>> outparams;
+
     for(const auto& item : _graph){
         if (item->type() == WorkFlowNode::ntOPERATION){
             IOperationMetaData md = item->operation();
@@ -325,13 +326,33 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
                 outparams[item->id()] = md->getOutputParameters();
             }
         }
+        if (hasType(item->type(), WorkFlowNode::ntRANGE)){
+            auto subnodes = item->subnodes("operations");
+            for(auto subnode : subnodes){
+                if (subnode->type() == WorkFlowNode::ntOPERATION){
+                    IOperationMetaData md = subnode->operation();
+                    if ( md.isValid()){
+                        outparams[subnode->id()] = md->getOutputParameters();
+                    }
+                }
+            }
+        }
     }
     //we have collected a list of all outputs and are now going to check which ones are linked
     // linked to a previous input and thus not being free; they are scrapped from the list by
     // making its value invalied
     for(const auto& item : _graph){
-        if (hasType(item->type(), WorkFlowNode::ntCONDITION|WorkFlowNode::ntRANGE)){
+        if (hasType(item->type(), WorkFlowNode::ntCONDITION)){
             auto subnodes = item->subnodes("tests");
+            for(auto subnode : subnodes){
+                for(int j=0; j < subnode->inputCount(); ++j){
+                    WorkFlowParameter& p = subnode->inputRef(j);
+                    CheckLinks(p, outparams);
+                }
+            }
+        }
+        if (hasType(item->type(), WorkFlowNode::ntRANGE)){
+            auto subnodes = item->subnodes("operations");
             for(auto subnode : subnodes){
                 for(int j=0; j < subnode->inputCount(); ++j){
                     WorkFlowParameter& p = subnode->inputRef(j);
