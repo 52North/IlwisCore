@@ -45,6 +45,11 @@ void WorkflowImplementation::clearCalculatedValues(qint32 nodeid)
     }
 }
 
+IWorkflow WorkflowImplementation::workflow()
+{
+    return _workflow;
+}
+
 void WorkflowImplementation::initStepMode(){
     QThread *current = QThread::currentThread();
     QVariant var = current->property("runparameters");
@@ -84,6 +89,7 @@ bool WorkflowImplementation::execute(ExecutionContext *ctx, SymbolTable &symTabl
 
     ExecutionContext ctx2;
     SymbolTable symTable2;
+    _workflow->createMetadata();
     std::vector<SPWorkFlowNode> nodes = _workflow->outputNodes();
     clearCalculatedValues();
     for(SPWorkFlowNode node : nodes ) {

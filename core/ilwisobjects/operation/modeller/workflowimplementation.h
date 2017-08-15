@@ -38,6 +38,7 @@ public:
     void sendData(NodeId nodeId, ExecutionContext *ctx, SymbolTable &symTable);
     bool stopExecution() const;
     void clearCalculatedValues(qint32 nodeid);
+    IWorkflow workflow();
 
 signals:
     void sendMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);
