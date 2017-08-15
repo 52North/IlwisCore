@@ -27,9 +27,10 @@ Workflow::Workflow(const Resource &resource) : OperationMetaData(resource)
 {
 }
 
-std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNode> graph)
+std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNode> graph,Workflow *flow)
 {
     std::set<NodeId> usedNodes;
+    std::set<NodeId> rangeNodes;
     for(const auto& item : graph){
 
         if ( item->type() == WorkFlowNode::ntOPERATION){ // only operations can have direct inputs; the inputs of a  junction are always set by the system,
@@ -58,6 +59,11 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
         }else if ( item->type() == WorkFlowNode::ntRANGE){
             // test have operations which have parameters that might be linked to the rest of the graph
             auto subnodes = item->subnodes("all");
+            auto potentialRangeOutput = Workflow::outputNodes(subnodes, flow);
+            for(auto nid : potentialRangeOutput ){
+                rangeNodes.insert(nid->id());
+            }
+
             for(auto subnode : subnodes){
                 for(int i=0; i < subnode->inputCount(); ++i){
                     if ( subnode->inputRef(i).inputLink()){
@@ -77,12 +83,31 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
             nodes.push_back(node);
         }
     }
+    for(auto nodeId : rangeNodes){
+        bool found = false;
+        for(auto outnode : nodes){
+            for(int i=0; i < outnode->inputCount(); ++i){
+                if ( outnode->inputRef(i).inputLink()){
+                   if ( outnode->inputRef(i).inputLink()->id() == nodeId ){
+                       found = true;
+                       break;
+                   }
+                }
+            }
+            if ( found) break;
+        }
+        if (!found){
+            auto node = flow->nodeById(nodeId);
+            nodes.push_back(node);
+        }
+    }
+
     return nodes;
 }
 
 std::vector<SPWorkFlowNode> Workflow::outputNodes()
 {
-    return outputNodes(_graph);
+    return outputNodes(_graph, this);
 }
 
 void Workflow::setFixedParameter(const QString &data, NodeId nodeId, qint32 parmIndex)

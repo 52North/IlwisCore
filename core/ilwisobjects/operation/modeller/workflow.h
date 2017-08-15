@@ -68,7 +68,7 @@ public:
     const std::vector<SPWorkFlowNode>& graph() const;
     const std::vector<SPWorkFlowNode> nodes(int filter=WorkFlowNode::ntALL) const;
     bool isValid() const;
-    static std::vector<SPWorkFlowNode> outputNodes(const std::vector<Ilwis::SPWorkFlowNode> graph);
+    static std::vector<SPWorkFlowNode> outputNodes(const std::vector<Ilwis::SPWorkFlowNode> graph, Workflow *flow);
 
 private:
     std::vector<SPWorkFlowNode> _graph;
