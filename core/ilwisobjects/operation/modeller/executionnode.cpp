@@ -45,7 +45,8 @@ bool ExecutionNode::execute(ExecutionContext *ctx, SymbolTable &symTable, Workfl
     auto iter = ctx->_additionalInfo.find("rangeswitch");
     if ( iter != ctx->_additionalInfo.end() ){
         FlowContext fc = (*iter).second.value<FlowContext>();
-        if ( fc.second == WorkFlowNode::ntRANGE &&  fc.first != WorkFlowNode::ntRANGE){
+        if ((fc.second._nodeType == WorkFlowNode::ntRANGE && fc.first._nodeType != WorkFlowNode::ntRANGE) ||
+               (fc.second._nodeType == WorkFlowNode::ntRANGE && fc.first._nodeType == WorkFlowNode::ntRANGE && fc.first._nodeid != fc.second._nodeid)){
             return executeRange(ctx, symTable, workflowImpl, mapping);
         }
     }
@@ -145,16 +146,30 @@ bool ExecutionNode::executeRange(ExecutionContext *ctx, SymbolTable &symTable, W
     return true;
 }
 
-std::pair<WorkFlowNode::NodeTypes, WorkFlowNode::NodeTypes>  ExecutionNode::contextSwitch(const SPWorkFlowNode& sourceNode, const SPWorkFlowNode& targetNode){
-    if ( !sourceNode->owner() && !targetNode->owner() )
-        return FlowContext(WorkFlowNode::ntNONE,WorkFlowNode::ntNONE);
+FlowContext  ExecutionNode::contextSwitch(const SPWorkFlowNode& sourceNode, const SPWorkFlowNode& targetNode){
+    if ( !sourceNode){ // special case at start of worklfow
+        IdTypePair ip1(i64UNDEF, WorkFlowNode::ntNONE);
+        IdTypePair ip2(targetNode->id(), targetNode->owner()->type());
+        return FlowContext(ip1, ip2);
+    }
+    if ( !sourceNode->owner() && !targetNode->owner() ){
+        IdTypePair ip1(sourceNode->id(), WorkFlowNode::ntNONE);
+        IdTypePair ip2(targetNode->id(), WorkFlowNode::ntNONE);
+        return FlowContext(ip1, ip2);
+    }
     if ( !sourceNode->owner() ){
-            return FlowContext(WorkFlowNode::ntNONE, targetNode->owner()->type());
+        IdTypePair ip1(sourceNode->id(), WorkFlowNode::ntNONE);
+        IdTypePair ip2(targetNode->id(), targetNode->owner()->type());
+        return FlowContext(ip1, ip2);
     }
     if ( !targetNode->owner() ){
-            return FlowContext(sourceNode->owner()->type(),WorkFlowNode::ntNONE);
+        IdTypePair ip1(sourceNode->id(), sourceNode->owner()->type());
+        IdTypePair ip2(targetNode->id(), WorkFlowNode::ntNONE);
+        return FlowContext(ip1, ip2);
     }
-    return FlowContext(sourceNode->owner()->type(),targetNode->owner()->type());
+    IdTypePair ip1(sourceNode->id(), sourceNode->owner()->type());
+    IdTypePair ip2(targetNode->id(), targetNode->owner()->type());
+    return FlowContext(ip1, ip2);
 
 }
 
@@ -173,7 +188,7 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
                 ExecutionNode& exNode = workflowImpl->executionNode(parameter.inputLink(), mapping);
                 ExecutionContext ctx2;
                 QVariant fc;
-                FlowContext fcTemp = contextSwitch(_node, parameter.inputLink());
+                FlowContext fcTemp = ExecutionNode::contextSwitch(_node, parameter.inputLink());
                 fc.setValue(fcTemp);
                 ctx2._additionalInfo["rangeswitch"] = fc;
                 if ( exNode.execute(&ctx2, symTable2, workflowImpl, mapping)) {

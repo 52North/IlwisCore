@@ -5,7 +5,9 @@ namespace Ilwis {
 class WorkflowImplementation;
 class WorkflowIdMapping;
 
-typedef std::pair<WorkFlowNode::NodeTypes, WorkFlowNode::NodeTypes> FlowContext;
+struct IdTypePair;
+
+typedef std::pair<IdTypePair, IdTypePair> FlowContext;
 
 class ExecutionNode
 {
@@ -18,6 +20,7 @@ public:
 
     QVariant parameterValue(int parmIndex) const;
     int parameterCount() const;
+    static FlowContext contextSwitch(const SPWorkFlowNode &sourceNode, const SPWorkFlowNode &targetNode);
 
 private:
     std::vector<QVariant> _parameterValues;
@@ -34,7 +37,7 @@ private:
 
     void clearCalculatedValues(std::vector<SPWorkFlowNode>& operations, WorkflowImplementation *workflowImpl);
     void clearScopedCalcutedValues();
-    std::pair<WorkFlowNode::NodeTypes, WorkFlowNode::NodeTypes> contextSwitch(const SPWorkFlowNode &sourceNode, const SPWorkFlowNode &targetNode);
+
 };
 }
 
