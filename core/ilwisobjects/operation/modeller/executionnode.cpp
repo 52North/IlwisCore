@@ -95,7 +95,7 @@ bool ExecutionNode::executeRangeTestNode(ExecutionContext *ctx, SymbolTable &sym
                 Symbol sym =  symTable2.getSymbol(outputName);
                 QVariant val = symTable2.getValue(outputName);
 
-               // rtest->setRangeDefinition(val);
+                  rtest->setRangeDefinition(val.toString());
                 _parameterValues[0] = val;
             }else{
                 return false;
@@ -149,7 +149,7 @@ bool ExecutionNode::executeRange(ExecutionContext *ctx, SymbolTable &symTable, W
 FlowContext  ExecutionNode::contextSwitch(const SPWorkFlowNode& sourceNode, const SPWorkFlowNode& targetNode){
     if ( !sourceNode){ // special case at start of worklfow
         IdTypePair ip1(i64UNDEF, WorkFlowNode::ntNONE);
-        IdTypePair ip2(targetNode->id(), targetNode->owner()->type());
+        IdTypePair ip2(targetNode->id(), targetNode->owner() ? targetNode->owner()->type() : targetNode->type());
         return FlowContext(ip1, ip2);
     }
     if ( !sourceNode->owner() && !targetNode->owner() ){
