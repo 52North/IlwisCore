@@ -69,6 +69,14 @@ int RangeNode::inputCount() const
 void RangeNode::setRangeDefinition(const QString &val)
 {
     _rangeDef = val;
+    if ( val.indexOf("link=") == 0){ // we cant know anything about the range, it will be resolved when the link is executed
+        _case = ccUNKNOWN;
+        _rangeStart = rUNDEF;
+        _rangeEnd= rUNDEF;
+        _precision = 1;
+        _rangeValues = std::vector<QString> ();
+        return;
+    }
     if ( _rangeDef.indexOf("..") > 0){
         QStringList parts = _rangeDef.split("..");
         if ( parts.size() == 2){
@@ -100,7 +108,7 @@ void RangeNode::setRangeDefinition(const QString &val)
             }
         }
     }else {
-        QStringList parts = val.split("|");
+        QStringList parts = val.split(",");
         std::copy(parts.begin(), parts.end(), std::back_inserter(_rangeValues));
         _case = ccVECTOR;
         _currentIndex = iUNDEF;
