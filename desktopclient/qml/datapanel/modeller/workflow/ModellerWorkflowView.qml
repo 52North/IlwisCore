@@ -681,7 +681,7 @@ Modeller.ModellerWorkArea {
 
     function storeRangeDefinitions() {
         for(var i=0; i < rangesList.length; ++i)    {
-            rangesList[i].storeRangeDefintion();
+            rangesList[i].storeRangeDefinition();
         }
     }
 
