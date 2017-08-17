@@ -68,6 +68,10 @@ Rectangle {
         }
     }
 
+    function setTest(txt){
+        rangeDefinition.text = txt;
+    }
+
 
     function addTestOperation(objectid, url, typename){
             var object = mastercatalog.id2object(objectid,testRectangle)
