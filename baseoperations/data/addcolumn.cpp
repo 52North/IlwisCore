@@ -62,7 +62,7 @@ Ilwis::OperationImplementation::State AddColumn::prepare(ExecutionContext *ctx, 
     _columnName = _expression.input<QString>(1);
     for(int c = 0; c < _inputTable->columnCount(); ++c){
         if ( _inputTable->columndefinition(c).name() == _columnName ){
-            kernel()->issues()->log(TR("No duplicate column names are allowed : ") + _columnName);
+            kernel()->issues()->log(TR("No duplicate column or empty names are allowed : ") + _columnName);
             return sPREPAREFAILED;
         }
     }
