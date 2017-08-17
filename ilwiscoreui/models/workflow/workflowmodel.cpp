@@ -768,18 +768,20 @@ void WorkflowModel::store(const QString& container, const QString& name)
 
 void WorkflowModel::setFixedValues(qint32 nodeid, const QString &formValues)
 {
-    SPWorkFlowNode node = _workflow->nodeById(nodeid);
-    if (!node)
-        return;
+    try {
+        SPWorkFlowNode node = _workflow->nodeById(nodeid);
+        if (!node)
+            return;
 
-    IOperationMetaData op = node->operation();
+        IOperationMetaData op = node->operation();
 
-    QStringList inputParameters = formValues.split('|');
-    for (int i = 0; i < inputParameters.length(); ++i) {
-        QString value = inputParameters[i].trimmed();
-        WorkFlowParameter& parm = node->inputRef(i);
-        parm.value(value, op->getInputParameters()[i]->type(), WorkFlowParameter::pkFIXED);
-    }
+        QStringList inputParameters = formValues.split('|');
+        for (int i = 0; i < inputParameters.length(); ++i) {
+            QString value = inputParameters[i].trimmed();
+            WorkFlowParameter& parm = node->inputRef(i);
+            parm.value(value, op->getInputParameters()[i]->type(), WorkFlowParameter::pkFIXED);
+        }
+    }catch(ErrorObject&){}
 
 }
 
