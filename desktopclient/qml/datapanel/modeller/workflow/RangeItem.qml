@@ -42,6 +42,10 @@ ConditionItem {
         var toIndex = 0
         var flowPoints = { "fromParameterIndex" : fromIndex, "toParameterIndex" : toIndex}
         currentItem.setFlow(target, selectedAttach.index, flowPoints,-1)
+        if ( conditionTest){
+            var value = "link=" + currentItem.itemid + ":" +fromIndex
+            conditionTest.setTest(value)
+        }
      }
 
     function attachementPoint(canvas, index){
@@ -94,7 +98,7 @@ ConditionItem {
     }
 
     function storeRangeDefinition() {
-        testItem.storeRangeDefintion()
+        conditionTest.storeRangeDefinition()
     }
 
     Component.onCompleted: {
