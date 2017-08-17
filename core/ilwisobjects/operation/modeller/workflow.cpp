@@ -58,12 +58,17 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
             }
         }else if ( item->type() == WorkFlowNode::ntRANGE){
             // test have operations which have parameters that might be linked to the rest of the graph
-            auto subnodes = item->subnodes("all");
+            auto subnodes = item->subnodes("operations");
+
             auto potentialRangeOutput = Workflow::outputNodes(subnodes, flow);
             for(auto nid : potentialRangeOutput ){
                 rangeNodes.insert(nid->id());
             }
 
+            auto parm = item->input(0);
+            if ( parm.inputLink()){
+                subnodes.push_back(item);
+            }
             for(auto subnode : subnodes){
                 for(int i=0; i < subnode->inputCount(); ++i){
                     if ( subnode->inputRef(i).inputLink()){
@@ -71,6 +76,7 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
                     }
                 }
             }
+
         }
     }
     //if a node is not used as input somewhere it must be an output
@@ -553,7 +559,7 @@ IlwisTypes Workflow::ilwisType() const
 }
 
 
-
+//-------------------------------------------------------------------------
 WorkflowIdMapping::WorkflowIdMapping(const OperationExpression &expr, const std::map<quint64, int> &mapping) :
     _expression(expr),
     _mapping(mapping)
