@@ -50,6 +50,7 @@ Rectangle  {
     }
 
     function executeRunForm(runparms) {
+        workflowView.storeRangeDefinitions()
         var ret = operations.executeoperation(runparms.id,appFrame.currentAppForm.formresult, runparms)
         if ( ret === "?")
             return "?"
