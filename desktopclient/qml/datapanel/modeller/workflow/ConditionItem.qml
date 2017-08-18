@@ -62,8 +62,6 @@ Rectangle {
 
     }
 
-
-
     Loader {
         id : testRectangle
         height : 35 + (item ? item.detailsHeight : 0)
@@ -158,10 +156,12 @@ Rectangle {
         anchors.bottom: parent.bottom
         width : parent.width
         height : 5
+
         onExited: {
             cursorShape = Qt.ArrowCursor
         }
     }
+
 
     function addToOperationList(operation) {
         operationsList.push(operation);

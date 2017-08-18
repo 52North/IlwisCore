@@ -358,7 +358,7 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
     QString iconField3 = "Button{ width : 20; height:20; checkable : true;checked : false;"
              "onClicked : { eval( uicontext.showLastGeneratedResult )}"
               "Image{anchors.centerIn : parent;width : 14; height:14;source:\"../images/%1\";fillMode: Image.PreserveAspectFit}}";
-    QString comboField = "ComboBox{id : pin_%1; objectName : \"pin_%1_\" + " + metaid + "; property string itemType : \"combobox\";x : %2;width : parent.width - label_pin_%1.width - 5 - %3;Controls.ToolTip{target : pin_%1; text:operation ? operation.inputparameterDescription(%1) : \"\"}model : %4;currentIndex: %5;";
+    QString comboField = "ComboBox{id : pin_%1; objectName : \"pin_%1_\" + " + metaid + "; property string itemType : \"combobox\";x : %2;height:20;width : parent.width - label_pin_%1.width - 5 - %3;Controls.ToolTip{target : pin_%1; text:operation ? operation.inputparameterDescription(%1) : \"\"}model : %4;currentIndex: %5;";
     QString rowBodyChoiceHeader = "Row{ width : parent.width;Text { text: qsTr(\"%1\"); width : %2; } Column{ExclusiveGroup { id: exclusivegroup_pin_%3} %4}}";
     QString rowChoiceOption = "RadioButton{id:choice_pin_%1;text:qsTr(\"%2\");checked:%3;exclusiveGroup:exclusivegroup_pin_%4;property string value:qsTr(\"%5\")}";
     QString formRows;
@@ -538,7 +538,7 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
                 }
                 choices += "]";
                 QString comboPart = QString(comboField).arg(i).arg(width).arg(checkWidth).arg(choices).arg(inputIndex) + "}";
-                QString parameterRow = QString(rowBodyText + comboPart + "}").arg(check).arg(parameters[i]._label).arg(width).arg(i).arg(checkWidth).arg(xshift).arg(visibile).arg(hasType(parameters[i]._fieldType,ftTEXTEDIT) ? 30 : 75);
+                QString parameterRow = QString(rowBodyText + comboPart + "}").arg(check).arg(parameters[i]._label).arg(width).arg(i).arg(checkWidth).arg(xshift).arg(visibile).arg(hasType(parameters[i]._fieldType,ftTEXTEDIT|ftCOMBOBOX) ? 30 : 75);
                 formRows += parameterRow;
                 if ( results != "")
                     results += "+ \"|\" +";
@@ -596,7 +596,6 @@ QString ApplicationFormExpressionParser::index2FormInternal(quint64 metaid,
                 for(int i = 0; i < outparameters.size(); ++i){
                     width = std::max(outparameters[i]._label.size(), width);
                 }
-                width *= 10;
                 width = std::max(100, width);
             }
             outputPart = makeFormPart(mid, width, outparameters, false, results, showEmptyOptionInList,QStringList(), operationNames);
@@ -624,7 +623,7 @@ QString ApplicationFormExpressionParser::index2FormInternal(quint64 metaid,
 
 
         //for debugging, check if the qml is ok; can be retrieved from teh log file
-          //kernel()->issues()->log(component);
+       // kernel()->issues()->log(component);
         return component;
 }
 

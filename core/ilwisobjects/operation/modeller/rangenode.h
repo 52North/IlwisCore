@@ -12,6 +12,7 @@ typedef std::shared_ptr<RangeTestNode> SPRangeTestNode;
 class KERNELSHARED_EXPORT RangeNode : public WorkFlowNode
 {
 public:
+    enum RangeParts{rpINITIALINPUT=0, rpINPUT=1, rpOUTPUT=2,rpFINALOUTPUT=3};
     RangeNode();
     Ilwis::WorkFlowNode::NodeTypes type() const;
     bool isValid(const Ilwis::Workflow *workflow, WorkFlowNode::ValidityCheck check) const;
@@ -26,6 +27,7 @@ public:
     QVariant currentValue() const;
 private:
     std::vector<SPWorkFlowNode> _operations;
+    std::vector<SPWorkFlowNode> _junctions;
     enum ContentCases{ccVECTOR, ccLIMITS, ccOBJECT, ccUNKNOWN};
     double _rangeStart = rUNDEF;
     double _rangeEnd = rUNDEF;

@@ -24,6 +24,7 @@ MouseArea {
     }
     onPressed: {
         selectThing()
+
     }
     onDoubleClicked: {
         openWorkflow()
@@ -36,6 +37,9 @@ MouseArea {
         oldx = -1
         oldy = -1
         cursorShape = Qt.ArrowCursor
+        if ( currentItem && currentItem.type === "rangeitem"){
+            currentItem.handleClick(mouseX, mouseY)
+        }
         if ( currentItem && currentItem.type === "operationitem"){
             if ( currentItem.condition)    {
                 currentItem.condition.resize()

@@ -79,7 +79,8 @@ HEADERS += \
     baseoperations/data/serviceobject.h \
     baseoperations/data/addrasterband.h \
     baseoperations/creators/createtable.h \
-    baseoperations/data/addcolumn.h
+    baseoperations/data/addcolumn.h \
+    baseoperations/data/copycolumn.h
     baseoperations/data/setattributetabel.h
 
 SOURCES += \
@@ -146,7 +147,8 @@ SOURCES += \
     baseoperations/data/serviceobject.cpp \
     baseoperations/data/addrasterband.cpp \
     baseoperations/creators/createtable.cpp \
-    baseoperations/data/addcolumn.cpp
+    baseoperations/data/addcolumn.cpp \
+    baseoperations/data/copycolumn.cpp
     baseoperations/data/setattributetabel.cpp
 
 

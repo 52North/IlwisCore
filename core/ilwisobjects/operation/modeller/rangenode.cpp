@@ -44,13 +44,23 @@ void RangeNode::addSubNode(const std::shared_ptr<WorkFlowNode> &node, const QStr
         }
         _operations.push_back(node);
     }
+    if (reason == "junctions"){
+        if ( node->id() == i64UNDEF){
+            kernel()->issues()->log(TR("Attempt to add invalid node to workflow; it has no id "));
+            return;
+        }
+        _junctions.push_back(node);
+    }
 }
 
 std::vector<std::shared_ptr<WorkFlowNode> > RangeNode::subnodes(const QString &reason) const
 {
     if ( reason == "operations")
         return _operations;
+    if ( reason == "junctions")
+        return _junctions;
     std::vector<SPWorkFlowNode > all(_operations.begin(), _operations.end());
+    std::copy(_junctions.begin(), _junctions.end(), std::back_inserter(all));
 
     return all;
 }

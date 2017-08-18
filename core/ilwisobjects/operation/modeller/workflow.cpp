@@ -60,11 +60,6 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
             // test have operations which have parameters that might be linked to the rest of the graph
             auto subnodes = item->subnodes("operations");
 
-            auto potentialRangeOutput = Workflow::outputNodes(subnodes, flow);
-            for(auto nid : potentialRangeOutput ){
-                rangeNodes.insert(nid->id());
-            }
-
             auto parm = item->input(0);
             if ( parm.inputLink()){
                 subnodes.push_back(item);
@@ -74,6 +69,12 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
                     if ( subnode->inputRef(i).inputLink()){
                         usedNodes.insert(subnode->inputRef(i).inputLink()->id());
                     }
+                }
+            }
+            subnodes = item->subnodes("operations");
+            for(auto subnode : subnodes){
+                if ( subnode->inputRef(RangeNode::rpFINALOUTPUT).inputLink()){
+                    usedNodes.insert(subnode->inputRef(RangeNode::rpFINALOUTPUT).inputLink()->id());
                 }
             }
 
@@ -86,24 +87,6 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
             continue;
         auto iter = usedNodes.find(node->id());
         if (iter == usedNodes.end()){
-            nodes.push_back(node);
-        }
-    }
-    for(auto nodeId : rangeNodes){
-        bool found = false;
-        for(auto outnode : nodes){
-            for(int i=0; i < outnode->inputCount(); ++i){
-                if ( outnode->inputRef(i).inputLink()){
-                   if ( outnode->inputRef(i).inputLink()->id() == nodeId ){
-                       found = true;
-                       break;
-                   }
-                }
-            }
-            if ( found) break;
-        }
-        if (!found){
-            auto node = flow->nodeById(nodeId);
             nodes.push_back(node);
         }
     }
@@ -386,7 +369,7 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
     //collect now all parameters which have not been invalidated; these are the output parameters that are free and must be entered from the outside
     for(auto item : outparams){
         for(auto parm : item.second) {
-            if ( parm)    {
+            if ( parm && parm->linkedInput() == -1)    {
                 result.push_back(parm);
             }
         }
@@ -536,12 +519,12 @@ quint64 Workflow::createMetadata(int offset){
         count = 0;
         operation.setOutParameterCount({outparams.size()});
         for(SPOperationParameter parm : outparams){
-        operation.addOutParameter(count++,parm->type(), parm->name(),parm->description());
-    }
-    resourceRef() = operation;
-    mastercatalog()->addItems({operation});
-    Operation::registerOperation(operation.id(),WorkflowImplementation::create);
-    return operation.id();
+            operation.addOutParameter(count++,parm->type(), parm->name(),parm->description());
+        }
+        resourceRef() = operation;
+        mastercatalog()->addItems({operation});
+        Operation::registerOperation(operation.id(),WorkflowImplementation::create);
+        return operation.id();
     }catch(const ErrorObject& err){
 
     }

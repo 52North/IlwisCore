@@ -11,6 +11,7 @@
 #include "operationnode.h"
 #include "conditionNode.h"
 #include "rangenode.h"
+#include "rangejunctionnode.h"
 #include "junctionNode.h"
 #include "workflow.h"
 #include "operationmetadata.h"
@@ -61,6 +62,8 @@ quint32 WorkflowModel::addNode(const QString &id, const QVariantMap& parameters)
                 nodePtr = new JunctionNode();
             else if ( nodeType == WorkFlowNode::ntRANGE)
                 nodePtr = new RangeNode();
+            else if ( nodeType == WorkFlowNode::ntRANGEJUNCTION)
+                nodePtr = new RangeJunctionNode();
             else if ( nodeType== WorkFlowNode::ntOPERATION)
                 nodePtr = new OperationNode(objid);
             if ( nodePtr){
@@ -414,7 +417,7 @@ QString WorkflowModel::nodetype2string(WorkFlowNode::NodeTypes ntype) const{
     case WorkFlowNode::ntRANGE:
         return "rangenode";
     case WorkFlowNode::ntRANGEJUNCTION:
-        return "loopjunctionnode";
+        return "rangejunctionnode";
     default:
         return sUNDEF;
     }
@@ -484,8 +487,7 @@ QVariantMap WorkflowModel::getNode(int nodeId){
             }
             data["parameters"] = parameters;
         }else if ( hasType(node->type(), WorkFlowNode::ntCONDITION)){
-            QVariantList test;
-            QVariantList operations;
+            QVariantList test, operations, junctions;
             std::shared_ptr<WorkFlowCondition> condition = std::static_pointer_cast<WorkFlowCondition>(node);
             for(int i=0; i < condition->testCount(); ++i){
                 WorkFlowCondition::Test tst = condition->test(i);
@@ -500,11 +502,15 @@ QVariantMap WorkflowModel::getNode(int nodeId){
                 operations.push_back(getNode(subnodes[i]->id()));
             }
             data["ownedoperations"] = operations;
+            subnodes = node->subnodes("junctions");
+            for(int i=0; i < subnodes.size(); ++i){
+                junctions.push_back(getNode(subnodes[i]->id()));
+            }
+            data["ownedoperations"] = junctions;
             data["tests"] = test;
         }if ( hasType(node->type(), WorkFlowNode::ntRANGE)){
-              QVariantList operations;
-              QVariantList parameters;
-            ;
+              QVariantList operations, junctions, parameters;
+
               std::shared_ptr<RangeNode> range = std::static_pointer_cast<RangeNode>(node);
               QString def =  range->rangeDefinition();
               data["rangedefinition"] = def;
@@ -514,7 +520,12 @@ QVariantMap WorkflowModel::getNode(int nodeId){
               for(int i=0; i < subnodes.size(); ++i){
                   operations.push_back(getNode(subnodes[i]->id()));
               }
+              subnodes = node->subnodes("junctions");
+              for(int i=0; i < subnodes.size(); ++i){
+                  junctions.push_back(getNode(subnodes[i]->id()));
+              }
               data["ownedoperations"] = operations;
+              data["ownedjunctions"] = junctions;
         }else if ( node->type() == WorkFlowNode::ntJUNCTION){
             std::shared_ptr<JunctionNode> junction = std::static_pointer_cast<JunctionNode>(node);
             SPWorkFlowNode testNode =  junction->inputRef(WorkFlowCondition::cpTEST).inputLink();

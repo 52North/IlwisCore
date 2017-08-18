@@ -43,6 +43,7 @@ public:
     OperationParameter::ParameterKind kind() const;
     QString term() const;
     QString domainName() const;
+    int linkedInput() const;
     bool needsQuotes() const;
     bool isOptional() const;
     void copyMetaToResourceOf(QScopedPointer<Ilwis::ConnectorInterface> &otherconnector, quint16 index) const;
@@ -50,7 +51,7 @@ public:
 
 
 private:
-    OperationParameter(ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString &description=sUNDEF,bool optional=false,bool needsQuotes=false);
+    OperationParameter(ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString &description=sUNDEF, bool optional=false, bool needsQuotes=false, int linkedinput = -1);
 
     QString _term;
     ParameterKind _kind;
@@ -58,6 +59,7 @@ private:
     QString _domainName;
     bool _optional;
     bool _needsQuotes = false;
+    int _linkedInput = -1;
 
     void optional(bool optional);
 };
@@ -72,7 +74,7 @@ public:
     ~OperationMetaData();
     IlwisTypes ilwisType() const;
 
-    SPOperationParameter newParameter(OperationParameter::ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString& description=sUNDEF, bool optional=false, bool needsQuotes=false);
+    SPOperationParameter newParameter(OperationParameter::ParameterKind kind, const QString &term, const QString& name, IlwisTypes type, const QString& domain=sUNDEF, const QString& description=sUNDEF, bool optional=false, bool needsQuotes=false, int linkedinput=-1);
     SPOperationParameter addParameter(SPOperationParameter parameter);
     std::vector<SPOperationParameter> getInputParameters() const;
     std::vector<SPOperationParameter> getOutputParameters() const;

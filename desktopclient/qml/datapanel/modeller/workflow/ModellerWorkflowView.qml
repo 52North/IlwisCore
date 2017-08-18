@@ -525,6 +525,18 @@ Modeller.ModellerWorkArea {
             item = checkContainer(x,y,range.operationsList, range)
             if ( item)
                 return item
+            for( j=0; j < range.junctionsList.length; ++j){
+                junction = condition.junctionsList[j]
+                var  p = wfCanvas.mapToItem(rangeItem, x, y)
+                startCoords = Qt.point(p.x, p.y)
+
+                endX = (startCoords.x + (junction.width * junction.scale));
+                endY = (startCoords.y + (junction.height * junction.scale));
+
+                if (p.x >= (startCoords.x) &&p.y >= (startCoords.y) && p.x <= endX && p.y <= endY){
+                    return junction
+                }
+            }
         }
         return null
     }

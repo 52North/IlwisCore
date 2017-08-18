@@ -51,21 +51,23 @@ void OperationMetaData::parmfromResource(int n, const QString& base)
         return;
     }
 
+    Resource res = resource();
     for(int i=0; i < n; ++i) {
         if ( i < allParameterNames.size()){
             //bool isOptional = required.size() < i+1;
             QString parmBase = base + QString("_%1_").arg(i+1);
 
             bool ok;
-            quint64 tp = resource()[parmBase + "type"].toLongLong(&ok);
+            quint64 tp = res[parmBase + "type"].toLongLong(&ok);
             if (!ok) {
                 tp = i64UNDEF;
             }
-            QString name = resource()[parmBase + "name"].toString();
-            QString domainName = resource()[parmBase + "domain"].toString();
-            QString description = resource()[parmBase + "desc"].toString();
-            bool optional = resource()[parmBase + "optional"].toBool();
-            bool needsQuotes = resource()[parmBase + "needsquotes"].toBool();
+            QString name = res[parmBase + "name"].toString();
+            QString domainName = res[parmBase + "domain"].toString();
+            QString description = res[parmBase + "desc"].toString();
+            bool optional = res[parmBase + "optional"].toBool();
+            bool needsQuotes = res[parmBase + "needsquotes"].toBool();
+            int linkedinput =  res.hasProperty("outputisinput") ? res["outputisinput"].toInt() : -1;
 
             QString term;
             OperationParameter::ParameterKind kind = OperationParameter::ptOUTPUT;
@@ -77,7 +79,7 @@ void OperationMetaData::parmfromResource(int n, const QString& base)
                 term = ""; // formal output term not part of syntax
             }
 
-            addParameter(newParameter(kind,term,name,tp,domainName,description,optional,needsQuotes));
+            addParameter(newParameter(kind,term,name,tp,domainName,description,optional,needsQuotes,linkedinput));
         }
     }
 }
@@ -203,9 +205,12 @@ void OperationMetaData::removeParameterProperties(const QString &base, quint16 s
     }
 }
 
-SPOperationParameter OperationMetaData::newParameter(OperationParameter::ParameterKind kind, const QString &term, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional, bool needsQuotes)
+SPOperationParameter OperationMetaData::newParameter(OperationParameter::ParameterKind kind, const QString &term, const QString &name,
+                                                     IlwisTypes type, const QString &domain,
+                                                     const QString &description, bool optional,
+                                                     bool needsQuotes, int linkedinput)
 {
-    return SPOperationParameter(new OperationParameter(kind, term, name, type, domain, description, optional,needsQuotes));
+    return SPOperationParameter(new OperationParameter(kind, term, name, type, domain, description, optional,needsQuotes, linkedinput));
 }
 
 SPOperationParameter OperationMetaData::addParameter(SPOperationParameter parameter)
@@ -274,6 +279,11 @@ QString OperationParameter::domainName() const
     return _domainName;
 }
 
+int OperationParameter::linkedInput() const
+{
+    return _linkedInput;
+}
+
 bool OperationParameter::needsQuotes() const
 {
     return _needsQuotes;
@@ -311,14 +321,15 @@ void OperationParameter::prepare(quint64 base)
     Identity::prepare(0);
 }
 
-OperationParameter::OperationParameter(OperationParameter::ParameterKind kind, const QString &term, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional,bool needsQuotes) :
+OperationParameter::OperationParameter(OperationParameter::ParameterKind kind, const QString &term, const QString &name, IlwisTypes type, const QString &domain, const QString &description, bool optional, bool needsQuotes, int linkedinput) :
     Identity(name),
     _kind(kind),
     _term(term),
     _type(type),
     _domainName(domain),
     _optional(optional),
-    _needsQuotes(needsQuotes)
+    _needsQuotes(needsQuotes),
+    _linkedInput(linkedinput)
 {
     setDescription(description);
 }

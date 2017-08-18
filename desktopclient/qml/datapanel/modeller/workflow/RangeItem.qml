@@ -1,9 +1,12 @@
-import QtQuick 2.0
+import QtQuick 2.2
+import QtQuick.Controls 1.0
+import "../../../Global.js" as Global
 
 ConditionItem {
     id : rangeItem
     property var selectedAttach
     property var attachementRectangles : []
+    property bool junctionState : false
 
     type : "rangeitem"
     radius : 10
@@ -12,6 +15,7 @@ ConditionItem {
     junctionColor: "#9fe0ca"
     icon : "../../../images/loop.png"
     testItem: "RangeTests.qml"
+
 
     AttachmentRectangle{
         id : att2
@@ -35,6 +39,61 @@ ConditionItem {
         z : 2
         visible: type == "rangeitem"
 
+    }
+
+    Rectangle {
+        id : bottombuttons2
+        anchors.bottom : rangeItem.bottom
+       anchors.bottomMargin: 2
+        width : parent.width - 8
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible : type == "rangeitem"
+        enabled:  visible
+        height : enabled ? 24 : 0
+        color : "#8FBC8F"
+        border.width: 1
+        border.color: "darkgrey"
+        Button {
+            width : 22
+            height : 22
+            anchors.verticalCenter: parent.verticalCenter
+            x : parent.width / 2 - 11
+            Image {
+                anchors.centerIn: parent
+                width : 20
+                height : 20
+                source : "../../../images/junction.png"
+
+            }
+            onClicked: {
+                junctionState = true;
+            }
+        }
+
+    }
+
+    function handleClick(mx,my){
+        if ( junctionState){
+            var  p = wfCanvas.mapToItem(rangeItem, mx, my)
+            console.debug(p.x, p.y)
+            createJunction(p)
+        }
+    }
+
+    function createJunction(point){
+        var px=point.x,py=point.y
+
+        var component = Qt.createComponent("RangeJunctionItem.qml");
+        if (component.status === Component.Ready){
+            var nodeid = workflow.addNode(0,{x : px, y:py,w:39, h:39,type:'rangejunctionnode'})
+           // workflow.addCondition2Junction(itemid, nodeid)
+            currentItem = component.createObject(rangeItem, {"x": px, "y": py, "width":39, "height":39, "itemid" : nodeid, "scale": wfCanvas.scale});
+            junctionsList.push(currentItem)
+            currentItem.condition = rangeItem
+
+            wfCanvas.canvasValid = false
+            junctionState = false
+        }
     }
 
     function attachFlow(target, attachRectTo){
@@ -99,6 +158,21 @@ ConditionItem {
 
     function storeRangeDefinition() {
         conditionTest.storeRangeDefinition()
+    }
+
+    function drawFlows(ctx){
+        for(var i=0; i < flowConnections.length; i++){
+            var item = flowConnections[i]
+            var index = item.attachtarget
+            var sp = item.attachsource.center()
+            var ep = item.target.attachementPoint(wfCanvas,index)
+
+            var pt1 = Qt.point(sp.x, sp.y)
+            var pt2 = Qt.point( ep.x, ep.y);
+
+            Global.drawArrow(wfCanvas, ctx, pt1, pt2, item.isSelected)
+
+        }
     }
 
     Component.onCompleted: {
