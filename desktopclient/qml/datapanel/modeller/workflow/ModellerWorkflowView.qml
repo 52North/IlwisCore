@@ -163,6 +163,10 @@ Modeller.ModellerWorkArea {
                 if ( range.operationsList[i].itemid === nodeId)
                     return range.operationsList[i]
             }
+            for(j=0; j < range.junctionsList.length; ++j){
+                if ( range.junctionsList[i].itemid === nodeId)
+                    return range.junctionsList[i]
+            }
         }
         return null
     }
@@ -523,11 +527,13 @@ Modeller.ModellerWorkArea {
         for(i=0; i < rangesList.length; ++i){
             var range = rangesList[i]
             item = checkContainer(x,y,range.operationsList, range)
+            console.debug("ss", item,  item.junctionsList.length)
             if ( item)
                 return item
-            for( j=0; j < range.junctionsList.length; ++j){
-                junction = condition.junctionsList[j]
+            for( j=0; j < item.junctionsList.length; ++j){
+                junction = item.junctionsList[j]
                 var  p = wfCanvas.mapToItem(rangeItem, x, y)
+                console.debug(p.x, p.y, "aaaaaaaaa")
                 startCoords = Qt.point(p.x, p.y)
 
                 endX = (startCoords.x + (junction.width * junction.scale));

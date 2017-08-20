@@ -437,7 +437,7 @@ WorkFlowNode::NodeTypes WorkflowModel::string2nodetype(const QString &ntype) con
     if (ntype == "rangenode"){
         return WorkFlowNode::ntRANGE;
     }
-    if (ntype == "loopjunctionnode"){
+    if (ntype == "rangejunctionnode"){
         return WorkFlowNode::ntRANGEJUNCTION;
     }
     return WorkFlowNode::ntUNDEFINED;
