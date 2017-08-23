@@ -159,6 +159,15 @@ void WorkflowModel::addCondition2Junction(int conditionId,int junctionId)
             }
 
         }
+        if ( node && node->type() == WorkFlowNode::ntRANGE){
+            std::shared_ptr<RangeNode> condition = std::static_pointer_cast<RangeNode>(node);
+            SPWorkFlowNode jnode = _workflow->nodeById(junctionId);
+            if ( jnode){
+                std::shared_ptr<RangeJunctionNode> junction = std::static_pointer_cast<RangeJunctionNode>(jnode);
+                emit validChanged();
+            }
+
+        }
     } catch(const ErrorObject&){}
 }
 
@@ -178,13 +187,15 @@ void WorkflowModel::setTestValues(int conditionId, int testIndex, int parameterI
 
 void WorkflowModel::setRangeTestValues(int rangeid, const QString &rangeDef)
 {
-    if ( _workflow.isValid()){
-        SPWorkFlowNode node = _workflow->nodeById(rangeid);
-        if ( node){
-            std::shared_ptr<RangeNode> range = std::static_pointer_cast<RangeNode>(node);
-            range->setRangeDefinition(rangeDef.trimmed());
+    try {
+        if ( _workflow.isValid()){
+            SPWorkFlowNode node = _workflow->nodeById(rangeid);
+            if ( node){
+                std::shared_ptr<RangeNode> range = std::static_pointer_cast<RangeNode>(node);
+                range->setRangeDefinition(rangeDef.trimmed());
+            }
         }
-    }
+    } catch(const ErrorObject&){}
 }
 
 QString WorkflowModel::testValueDataType(quint32 conditionId, quint32 testIndex, quint32 parameterIndex) const
@@ -506,7 +517,7 @@ QVariantMap WorkflowModel::getNode(int nodeId){
             for(int i=0; i < subnodes.size(); ++i){
                 junctions.push_back(getNode(subnodes[i]->id()));
             }
-            data["ownedoperations"] = junctions;
+            data["ownedjunctions"] = junctions;
             data["tests"] = test;
         }if ( hasType(node->type(), WorkFlowNode::ntRANGE)){
               QVariantList operations, junctions, parameters;
@@ -526,6 +537,13 @@ QVariantMap WorkflowModel::getNode(int nodeId){
               }
               data["ownedoperations"] = operations;
               data["ownedjunctions"] = junctions;
+        }else if ( node->type() == WorkFlowNode::ntRANGEJUNCTION){
+            QVariantList parameters;
+            for(int i=0; i <4; ++i){
+                parameters.push_back(getParameter(node, i));
+            }
+            data["parameters"] = parameters;
+
         }else if ( node->type() == WorkFlowNode::ntJUNCTION){
             std::shared_ptr<JunctionNode> junction = std::static_pointer_cast<JunctionNode>(node);
             SPWorkFlowNode testNode =  junction->inputRef(WorkFlowCondition::cpTEST).inputLink();
