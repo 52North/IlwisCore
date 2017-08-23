@@ -25,6 +25,7 @@ public:
     void value(const QString& v, IlwisTypes type, ParameterKind kind= pkDONTCARE);
     IlwisTypes valueType() const;
     ParameterKind state() const;
+    void state(ParameterKind st);
     QString syntax() const;
     void addSyntax(const QString& s);
     void attachement(int rectIndex, bool source);

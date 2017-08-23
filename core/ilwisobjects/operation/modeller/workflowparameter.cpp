@@ -101,6 +101,11 @@ WorkFlowParameter::ParameterKind WorkFlowParameter::state() const
     return _state;
 }
 
+void WorkFlowParameter::state(WorkFlowParameter::ParameterKind st)
+{
+    _state = st;
+}
+
 QString WorkFlowParameter::syntax() const
 {
     return _syntax;
