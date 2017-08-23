@@ -12,7 +12,7 @@ typedef std::shared_ptr<RangeTestNode> SPRangeTestNode;
 class KERNELSHARED_EXPORT RangeNode : public WorkFlowNode
 {
 public:
-    enum RangeParts{rpINITIALINPUT=0, rpINPUT=1, rpOUTPUT=2,rpFINALOUTPUT=3};
+    enum RangeParts{rpOUTPUT=0, rpINITIALINPUT=1, rpINPUT=2 ,rpFINALOUTPUT=3};
     RangeNode();
     Ilwis::WorkFlowNode::NodeTypes type() const;
     bool isValid(const Ilwis::Workflow *workflow, WorkFlowNode::ValidityCheck check) const;
