@@ -37,15 +37,19 @@ MouseArea {
         oldx = -1
         oldy = -1
         cursorShape = Qt.ArrowCursor
+
         if ( currentItem && currentItem.type === "rangeitem"){
             currentItem.handleClick(mouseX, mouseY)
         }
         if ( currentItem && currentItem.type === "operationitem"){
-            if ( currentItem.condition)    {
-                currentItem.condition.resize()
-            }
             if ( currentItem.range)    {
                 currentItem.range.resize()
+            }
+        }
+
+        if ( currentItem && currentItem.type === "rangejunctionitem"){
+            if ( currentItem.condition)    {
+                currentItem.condition.resize()
             }
         }
 
@@ -78,6 +82,9 @@ MouseArea {
             alllist = alllist.concat(rangesList)
             for(var k=0; k<conditionsList.length; ++k){
                 alllist = alllist.concat( conditionsList[k].junctionsList)
+            }
+            for(var k=0; k<rangesList.length; ++k){
+                alllist = alllist.concat( rangesList[k].junctionsList)
             }
 
             for(var i=0; i < alllist.length; ++i){
