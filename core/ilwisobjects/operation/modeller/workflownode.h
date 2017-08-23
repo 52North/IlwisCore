@@ -14,6 +14,7 @@ typedef quint64 NodeId;
 class OperationExpression;
 class Workflow;
 typedef IlwisData<Workflow> IWorkflow;
+typedef std::shared_ptr<WorkFlowNode> SPWorkFlowNode;
 
 class KERNELSHARED_EXPORT WorkFlowNode : public Identity
 {
@@ -26,6 +27,7 @@ public:
     WorkFlowParameter& inputRef(int index);
     WorkFlowParameter input(int index) const;
     void addInput(const WorkFlowParameter& param, int index=iUNDEF);
+    virtual void setFlow(const SPWorkFlowNode& fromNode, qint32 inParmIndex, qint32 outParmIndex, int attachRctIndxFrom, int attachRctIndxTo);
     void removedInput(int index);
     virtual void nodeId(quint64 id);
     void box(const BoundingBox& box);
@@ -62,7 +64,7 @@ struct IdTypePair {
     WorkFlowNode::NodeTypes _nodeType = WorkFlowNode::ntUNDEFINED;
 };
 
-typedef std::shared_ptr<WorkFlowNode> SPWorkFlowNode;
+
 
 KERNELSHARED_EXPORT bool operator==(const Ilwis::IdTypePair& node1, const Ilwis::IdTypePair& node2 );
 

@@ -12,6 +12,7 @@
 #include "mastercatalog.h"
 #include "operationhelper.h"
 #include "workflownode.h"
+#include "rangenode.h"
 #include "workflow.h"
 
 using namespace Ilwis;
@@ -70,6 +71,26 @@ void WorkFlowNode::addInput(const WorkFlowParameter &param, int index)
         if ( index >= _inputParameters1.size())
             _inputParameters1.resize(index+1);
         _inputParameters1[index] = param;
+    }
+}
+
+void WorkFlowNode::setFlow(const SPWorkFlowNode &fromNode, qint32 inParmIndex, qint32 outParmIndex, int attachRctIndxFrom, int attachRctIndxTo)
+{
+    if ( fromNode->type() == WorkFlowNode::ntRANGEJUNCTION) {
+        if (owner()->id() == fromNode->owner()->id() ){
+            inputRef(inParmIndex).inputLink(fromNode,RangeNode::rpOUTPUT);
+            inputRef(inParmIndex).attachement(attachRctIndxFrom, true);
+            inputRef(inParmIndex).attachement(attachRctIndxTo, false);
+        }
+        else if ( !owner() || (owner()->id() != fromNode->owner()->id()) ){
+            inputRef(inParmIndex).inputLink(fromNode,RangeNode::rpFINALOUTPUT);
+            inputRef(inParmIndex).attachement(attachRctIndxFrom, true);
+            inputRef(inParmIndex).attachement(attachRctIndxTo, false);
+        }
+    }else {
+        inputRef(inParmIndex).inputLink(fromNode,outParmIndex);
+        inputRef(inParmIndex).attachement(attachRctIndxFrom, true);
+        inputRef(inParmIndex).attachement(attachRctIndxTo, false);
     }
 }
 
