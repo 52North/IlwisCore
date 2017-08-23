@@ -71,10 +71,10 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
                     }
                 }
             }
-            subnodes = item->subnodes("operations");
+            subnodes = item->subnodes("junctions");
             for(auto subnode : subnodes){
-                if ( subnode->inputRef(RangeNode::rpFINALOUTPUT).inputLink()){
-                    usedNodes.insert(subnode->inputRef(RangeNode::rpFINALOUTPUT).inputLink()->id());
+                if ( subnode->inputRef(RangeNode::rpINITIALINPUT).inputLink()){
+                    usedNodes.insert(subnode->inputRef(RangeNode::rpINITIALINPUT).inputLink()->id());
                 }
             }
 
@@ -131,9 +131,7 @@ void Workflow::addFlow(NodeId fromNode, NodeId toNode, qint32 inParmIndex, qint3
     SPWorkFlowNode to = nodeById(toNode);
     if ( from && to){
         if ( inParmIndex < to->inputCount()){
-            to->inputRef(inParmIndex).inputLink(from,outParmIndex);
-            to->inputRef(inParmIndex).attachement(attachRctIndxFrom, true);
-            to->inputRef(inParmIndex).attachement(attachRctIndxTo, false);
+            to->setFlow(from, inParmIndex, outParmIndex, attachRctIndxFrom, attachRctIndxTo);
         }
         changed(true);
     }
@@ -407,7 +405,7 @@ NodeId Workflow::addNode(SPWorkFlowNode node, NodeId parent)
         if ( parent != i64UNDEF){
             SPWorkFlowNode parentNode = nodeById(parent);
             if ( parentNode){
-                parentNode->addSubNode(node, "operations");
+                parentNode->addSubNode(node, node->type() == WorkFlowNode::ntOPERATION ? "operations" : "junctions");
             }
         }else
            _graph.push_back(node);
