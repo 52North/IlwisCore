@@ -432,7 +432,6 @@ Rectangle {
     function setFlow(target, attachRectIndex, flowPoints, testIndex){
         addFlowConnection(target, operationItem, attachRectIndex, selectedAttach, flowPoints, -1, -1)
        if ( testIndex === -1){
-
             workflow.addFlow(
                         itemid,
                         target.itemid,
@@ -465,10 +464,13 @@ Rectangle {
     function usableLink(){
         // we only me draw links from items within the same condition
         // all links to the outside must use the junction
-        if ( currentItem && currentItem.type == "operationitem"){
+        if ( currentItem && (currentItem.type == "operationitem" || currentItem.type == "rangejunctionitem")){
             if ( currentItem.condition){
                 if ( condition){
                     if ( currentItem.condition.itemid !== condition.itemid)
+                        return false
+                }else if ( range){
+                    if ( currentItem.condition.itemid !== range.itemid)
                         return false
                 }else
                     return false
@@ -483,6 +485,7 @@ Rectangle {
     }
 
     function checkValidityFlow(nodeFrom, nodeTo){
+
         var type = nodeTo.parameterType(0,false)
         var outParameterNames = nodeFrom.parameterNames(type,true)
         return outParameterNames.length > 0
