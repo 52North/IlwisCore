@@ -19,6 +19,7 @@ public:
     void clearCalculatedValues();
 
     QVariant parameterValue(int parmIndex) const;
+    void parameterValue(int parmIndex, const QVariant& v) ;
     int parameterCount() const;
     static FlowContext contextSwitch(const SPWorkFlowNode &sourceNode, const SPWorkFlowNode &targetNode);
 
@@ -38,6 +39,7 @@ private:
     void clearCalculatedValues(std::vector<SPWorkFlowNode>& operations, WorkflowImplementation *workflowImpl);
     void clearScopedCalcutedValues();
 
+    bool executeLink(ExecutionContext *ctx, SymbolTable &symTable, Ilwis::WorkFlowParameter &paramete, WorkflowImplementation *workflowImpl, WorkflowIdMapping &mapping);
 };
 }
 
