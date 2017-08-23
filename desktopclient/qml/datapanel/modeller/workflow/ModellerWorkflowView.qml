@@ -183,6 +183,16 @@ Modeller.ModellerWorkArea {
         }
         return null
     }
+
+    function createRangeJunctionItem(nodeid, px, py,parentitem){
+        var component = Qt.createComponent("RangeJunctionItem.qml");
+        if (component.status === Component.Ready){
+            var item = component.createObject(parentitem, {"x": px, "y": py, "itemid" : nodeid, "scale": wfCanvas.scale});
+            return item
+        }
+        return null
+    }
+
     function recreateJunctionFlow(junctionItem, kvp){
         var node = workflow.getNode(junctionItem.itemid)
         if(!node)
@@ -267,6 +277,9 @@ Modeller.ModellerWorkArea {
         for(var k=0; k < rangeItem.operationsList.length; ++k){
             recreateFlows(rangeItem.operationsList[k], kvp)
         }
+        for( k=0; k < rangeItem.junctionsList.length; ++k){
+            recreateFlows(rangeItem.junctionsList[k], kvp)
+        }
     }
 
     function recreateWorkflow() {
@@ -314,7 +327,16 @@ Modeller.ModellerWorkArea {
                             currentItem.operationsList.push(item)
                         }
                     }
-
+                    var ownedjunctions = node.ownedjunctions;
+                    for(j = 0;  j < ownedjunctions.length; ++j){
+                        var junction = ownedjunctions[j]
+                        item = createRangeJunctionItem(junction.nodeid,junction.x, junction.y,currentItem)
+                        if ( item){
+                            kvp[item.itemid] = item
+                            item.condition = currentItem
+                            currentItem.junctionsList.push(item)
+                        }
+                    }
                 }
             }else if ( node.type === "operationnode"){
                 currentItem = createOperationItem(node.operationid,node.nodeid,node.x, node.y, wfCanvas)
@@ -463,29 +485,29 @@ Modeller.ModellerWorkArea {
         wfCanvas.canvasValid = false
     }
 
-    function checkContainer(x,y,operations, container){
-        for( var j=0; j < operationsList.length; ++j){
-            var operation = operationsList[j]
-            var inContainer = operation.condition !== null || operation.range !== null
-            if ( !inContainer && container !== null) // any operation that is contained can be ignored when running for the outer area
-                continue;
-            var startCoords = Qt.point(operation.x, operation.y)
+    function checkContainer(x,y,nodeList, container){
+        for( var j=0; j < nodeList.length; ++j){
+            var node = nodeList[j]
+          //  var inContainer = node.condition !== null || node.range !== null
+         //   if ( !inContainer && container !== null) // any node that is contained can be ignored when running for the outer area
+         //       continue;
+            var startCoords = Qt.point(node.x, node.y)
             if ( container){
                 var  p = wfCanvas.mapToItem(container, x, y)
-                var endX = (operation.x + (operation.width * operation.scale));
-                var endY = (operation.y + (operation.height * operation.scale));
+                var endX = (node.x + (node.width * node.scale));
+                var endY = (node.y + (node.height * node.scale));
 
-                if (p.x >= (operation.x) && p.y >= (operation.y) && p.x <= endX && p.y <= endY){
-                    return operation
+                if (p.x >= (node.x) && p.y >= (node.y) && p.x <= endX && p.y <= endY){
+                    return node
                 }
 
             }else {
 
-                endX = (startCoords.x + (operation.width * operation.scale));
-                endY = (startCoords.y + (operation.height * operation.scale));
+                endX = (startCoords.x + (node.width * node.scale));
+                endY = (startCoords.y + (node.height * node.scale));
 
                 if (x >= (startCoords.x) && y >= (startCoords.y) && x <= endX && y <= endY){
-                    return operation
+                    return node
                 }
             }
         }
@@ -512,36 +534,22 @@ Modeller.ModellerWorkArea {
             if ( item){
                 return item
             }
-            for( var j=0; j < condition.junctionsList.length; ++j){
-                var junction = condition.junctionsList[j]
-                startCoords = Qt.point(junction.x, junction.y)
-
-                var endX = (startCoords.x + (junction.width * junction.scale));
-                var endY = (startCoords.y + (junction.height * junction.scale));
-
-                if (x >= (startCoords.x) && y >= (startCoords.y) && x <= endX && y <= endY){
-                    return junction
-                }
+            item = checkContainer(x,y, condition.junctionsList.length, condition)
+            if ( item){
+                return item
             }
         }
         for(i=0; i < rangesList.length; ++i){
             var range = rangesList[i]
             item = checkContainer(x,y,range.operationsList, range)
-            console.debug("ss", item,  item.junctionsList.length)
-            if ( item)
-                return item
-            for( j=0; j < item.junctionsList.length; ++j){
-                junction = item.junctionsList[j]
-                var  p = wfCanvas.mapToItem(rangeItem, x, y)
-                console.debug(p.x, p.y, "aaaaaaaaa")
-                startCoords = Qt.point(p.x, p.y)
-
-                endX = (startCoords.x + (junction.width * junction.scale));
-                endY = (startCoords.y + (junction.height * junction.scale));
-
-                if (p.x >= (startCoords.x) &&p.y >= (startCoords.y) && p.x <= endX && p.y <= endY){
-                    return junction
+            if ( item){
+                if ( item.type === "operationitem")
+                    return item
+                var internalnode = checkContainer(x,y, range.junctionsList, range)
+                if ( internalnode){
+                    return internalnode
                 }
+                return item
             }
         }
         return null
@@ -589,6 +597,7 @@ Modeller.ModellerWorkArea {
                     removeLinkTo(currentItem.itemid)
                     item.removeContent()
                 }
+
 
                 if ( item){
                     item.destroy()
