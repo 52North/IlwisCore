@@ -85,8 +85,8 @@ ConditionItem {
 
         var component = Qt.createComponent("RangeJunctionItem.qml");
         if (component.status === Component.Ready){
-            var nodeid = workflow.addNode(0,{x : px, y:py,w:39, h:39,type:'rangejunctionnode'})
-           // workflow.addCondition2Junction(itemid, nodeid)
+            var nodeid = workflow.addNode(0,{x : px, y:py,w:39, h:39,type:'rangejunctionnode', owner : itemid})
+            workflow.addCondition2Junction(itemid, nodeid)
             currentItem = component.createObject(rangeItem, {"x": px, "y": py, "width":39, "height":39, "itemid" : nodeid, "scale": wfCanvas.scale});
             junctionsList.push(currentItem)
             currentItem.condition = rangeItem
@@ -172,6 +172,9 @@ ConditionItem {
 
             Global.drawArrow(wfCanvas, ctx, pt1, pt2, item.isSelected)
 
+        }
+        for( i=0; i < junctionsList.length; i++){
+            junctionsList[i].drawFlows(ctx)
         }
     }
 
