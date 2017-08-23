@@ -182,13 +182,14 @@ Rectangle {
     function removeFromOperationList(operationIndex) {
     }
 
-
     function resize() {
-        var newWidth = -1000000, newHeight = -1000000, operation, xChanged = false, yChanged = false, wChanged=false, hChanged=false;
+        var newWidth = -1000000, newHeight = -1000000, xChanged = false, yChanged = false, wChanged=false, hChanged=false;
 
         var newX = conditionItem.x, newY = conditionItem.y
+        var node = null
         for (var i in operationsList) {
-            operation = operationsList[i]
+            var operation = operationsList[i]
+            node = operation
 
             if ((operation.x + operation.width) > conditionItem.width) {
                 newWidth = operation.x + operation.width
@@ -211,17 +212,45 @@ Rectangle {
                newY = newY + operation.y - padding * 2
             }
         }
+        if ( type == "rangeitem"){
+            for (i in junctionsList) {
+                var junction = junctionsList[i]
+                node = junction
+
+                if ((junction.x + junction.width) > conditionItem.width) {
+                    newWidth = junction.x + junction.width
+                    wChanged = true
+                }
+
+                if ((junction.y  + junction.height) > conditionItem.height) {
+                   newHeight = junction.y  + junction.height
+                    hChanged = true
+                }
+
+                if (junction.x  < 0) {
+                   newWidth = Math.abs(junction.x) + conditionItem.width
+                   xChanged = wChanged = true
+                   newX = newX + junction.x - padding * 2
+                }
+                if (junction.y  < 0) {
+                   newHeight = Math.abs(junction.y) + conditionItem.height
+                   yChanged = hChanged = true
+                   newY = newY + junction.y - padding * 2
+                }
+            }
+        }
+
         if ( wChanged)
             conditionItem.width = newWidth + (padding * 2)
         if ( hChanged)
             conditionItem.height = newHeight + (padding * 2 + 10)
         if ( xChanged){
             conditionItem.x = newX
-            operation.x = padding *2
+            node.x = padding *2
         }
         if ( yChanged){
             conditionItem.y = newY
-            operation.y = padding * 2 + 35
+            node.y = padding * 2 + 35
         }
 
     }
