@@ -79,6 +79,7 @@ private:
     bool loadDataSingleThread(IlwisObject *obj, const IOOptions &options);
     static std::unique_ptr<MasterCatalogCache> _mcCache;
     std::mutex _load;
+    void updateWorkflowResources(std::vector<Resource> &items);
 };
 
 }

@@ -149,6 +149,24 @@ void CatalogConnector::unload()
     _binaryIsLoaded = false;
 }
 
+void CatalogConnector::updateWorkflowResources(std::vector<Resource>& items){
+    for(auto& item : items){
+
+        if(item.ilwisType() == itWORKFLOW ){
+            try{
+                IWorkflow wf;
+                if ( wf.prepare(item)){
+                    wf->createMetadata();
+                    Resource res = wf->resource();
+                    res.code(item.code());
+                    item = res;
+                }
+            }
+            catch(ErrorObject& err){}
+        }
+    }
+}
+
 bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &options){
     Catalog *cat = static_cast<Catalog *>(obj);
     kernel()->issues()->log(QString(TR("Scanning %1")).arg(sourceRef().url(true).toString()),IssueObject::itMessage);
@@ -163,6 +181,7 @@ bool CatalogConnector::loadDataSingleThread(IlwisObject *obj, const IOOptions &o
         std::vector<Resource> newitems = explorer->loadItems(iooptions);
         std::copy(newitems.begin(), newitems.end(), std::back_inserter(items));
     }
+    updateWorkflowResources(items);
     auto addedItems = mastercatalog()->addContainerContent(source().url().toString(), items); // addContainerContent first clears the container (deletes it and all its items from the mastercatalog) before adding the new items
     cat->addItemsPrivate(addedItems);
     mastercatalog()->addItems(addedItems);
