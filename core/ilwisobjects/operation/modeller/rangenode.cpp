@@ -118,6 +118,7 @@ void RangeNode::setRangeDefinition(const QString &val)
             }
         }
     }else {
+        _rangeValues = std::vector<QString>();
         QStringList parts = val.split(",");
         std::copy(parts.begin(), parts.end(), std::back_inserter(_rangeValues));
         _case = ccVECTOR;
@@ -133,9 +134,9 @@ QString RangeNode::rangeDefinition() const
 bool RangeNode::next()
 {
     if ( _case == ccVECTOR)    {
-        if ( _currentIndex != iUNDEF && _currentIndex >= _rangeValues.size())
+        if ( _currentIndex != iUNDEF && _currentIndex >= _rangeValues.size() - 1)
             return false;
-        if ( _currentIndex == iUNDEF || _currentIndex <= _rangeValues.size())
+        if ( _currentIndex == iUNDEF || _currentIndex < _rangeValues.size() - 1)
             _currentIndex = (_currentIndex == iUNDEF ? 0 : ++_currentIndex);
     }else if ( _case == ccLIMITS){
         if ( _currentValue != rUNDEF && _currentValue >= _rangeEnd)
