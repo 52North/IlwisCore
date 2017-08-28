@@ -77,13 +77,20 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
         _outputTable->newRecord();
 
     int record = 0;
+    int skipKeyColumn = _foreignTable->columnIndex(_foreignKeyColumn);
     for(auto recMapping: recordMapping){
         Record recBase = _baseTable->record(recMapping.first);
         for(int c=0; c < recBase.columnCount(); ++c)
             _outputTable->setCell(c,record,recBase.cell(c));
         Record recForeign = _foreignTable->record(recMapping.second);
-        for(int c=0; c < recForeign.columnCount(); ++c)
-            _outputTable->setCell(offset + c,record,recForeign.cell(c));
+        int shift = 0;
+        for(int c=0; c < recForeign.columnCount(); ++c){
+            if ( c == skipKeyColumn) { // the key column is already present as it is also in the base so we skip it
+                shift = -1;
+                continue;
+            }
+            _outputTable->setCell(offset + c + shift,record,recForeign.cell(c));
+        }
         ++record;
     }
 
@@ -180,9 +187,9 @@ quint64 ColumnJoin::createMetadata()
     operation.setDescription(TR("Join a base table or coverage with attributes from another table that share a common domain"));
     operation.setInParameterCount({4});
     operation.addInParameter(0,itTABLE|itCOVERAGE, TR("table/ coverage"),TR("Base table or coverage with attributes from which where join is to do be done"));
-    operation.addInParameter(1,itSTRING | itNUMBER , TR("input column name"),TR("column with a numerical domain or number"), OperationResource::ueCOMBO);
+    operation.addInParameter(1,itSTRING, TR("input column name"),TR("column with a numerical domain or number"), OperationResource::ueCOMBO);
     operation.addInParameter(2,itTABLE, TR("input-table"),TR("input table-column from which the input column will be chosen"));
-    operation.addInParameter(3,itSTRING | itNUMBER, TR("input column name or number"),TR("column with a numerical domain or number"), OperationResource::ueCOMBO);
+    operation.addInParameter(3,itSTRING, TR("input column name"),TR("column with a numerical domain or number"), OperationResource::ueCOMBO);
     operation.setOutParameterCount({1});
     operation.addValidation(0,1,"columns");
     operation.addValidation(2,3,"columns");
