@@ -26,6 +26,8 @@ private:
         ITable _outputTable;
         ICoverage _inputCoverage;
         ICoverage _outputCoverage;
+        std::vector<bool> _retainedBaseTableColumns;
+        std::vector<bool> _retainedForeignTableColumns;
 
         QString _primaryKeyColumn = sUNDEF;
         QString _foreignKeyColumn = sUNDEF;

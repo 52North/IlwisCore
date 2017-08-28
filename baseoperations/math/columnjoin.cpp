@@ -59,7 +59,11 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
     for(int i=0; i < _outputTable->columnCount(); ++i){
         columns[_outputTable->columndefinition(i).name()] = i;
     }
-    int offset = _baseTable->columnCount();
+    int offset = 0;
+    for(int i=0; i < _retainedBaseTableColumns.size(); ++i)
+        if ( _retainedBaseTableColumns[i])
+            ++offset;
+
     std::vector<QVariant> basevalues = _baseTable->column(_primaryKeyColumn);
     std::vector<QVariant> foreignvalues = _foreignTable->column(_foreignKeyColumn);
     boost::container::flat_map<QVariant, int> mapping;
@@ -77,19 +81,22 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
         _outputTable->newRecord();
 
     int record = 0;
-    int skipKeyColumn = _foreignTable->columnIndex(_foreignKeyColumn);
+
     for(auto recMapping: recordMapping){
         Record recBase = _baseTable->record(recMapping.first);
+        int newColumnIndex = 0;
         for(int c=0; c < recBase.columnCount(); ++c)
-            _outputTable->setCell(c,record,recBase.cell(c));
+            if ( _retainedBaseTableColumns[c])
+                _outputTable->setCell(newColumnIndex++,record,recBase.cell(c));
+
         Record recForeign = _foreignTable->record(recMapping.second);
-        int shift = 0;
+        newColumnIndex = 0;
         for(int c=0; c < recForeign.columnCount(); ++c){
-            if ( c == skipKeyColumn) { // the key column is already present as it is also in the base so we skip it
-                shift = -1;
-                continue;
+            if ( _retainedForeignTableColumns[c]){
+                _outputTable->setCell(offset +newColumnIndex,record,recForeign.cell(c));
+                ++newColumnIndex;
             }
-            _outputTable->setCell(offset + c + shift,record,recForeign.cell(c));
+
         }
         ++record;
     }
@@ -126,8 +133,27 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
         return sPREPAREFAILED;
     }
     _primaryKeyColumn = _expression.parm(1).value();
+    int primKeyIndex = _baseTable->columnIndex(_primaryKeyColumn);
+    if ( primKeyIndex == iUNDEF){
+        kernel()->issues()->log(QString(TR("%1 is not a valid column name").arg(_primaryKeyColumn)));
+        return sPREPAREFAILED;
+    }
+    QString columnList = _expression.parm(2).value();
+    if ( columnList[0] == '?'){
+        _retainedBaseTableColumns.resize(_baseTable->columnCount(), true);
 
-    QString inputTable = _expression.parm(2).value();
+    }else {
+        QStringList columns = _expression.parm(2).value().split(",");
+        _retainedBaseTableColumns.resize(_baseTable->columnCount(), false);
+        _retainedBaseTableColumns[primKeyIndex] = true;
+        for(int i=0; i < columns.size(); ++i){
+            int index = _baseTable->columnIndex(columns[i]);
+            if ( index != iUNDEF)
+                _retainedBaseTableColumns[index] = true;
+        }
+    }
+
+    QString inputTable = _expression.parm(3).value();
     QUrl url(inputTable);
     if (!_foreignTable.prepare(inputTable,{"mustexist", true})) {
         ERROR2(ERR_COULD_NOT_LOAD_2,inputTable,"");
@@ -139,12 +165,31 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
         kernel()->issues()->log(TR("Could not find column in input data:") + _primaryKeyColumn);
         return sPREPAREFAILED;
     }
-    _foreignKeyColumn = _expression.parm(3).value();
+    _foreignKeyColumn = _expression.parm(4).value();
+    primKeyIndex = _foreignTable->columnIndex(_primaryKeyColumn);
+    if ( primKeyIndex == iUNDEF){
+        kernel()->issues()->log(QString(TR("%1 is not a valid column name").arg(_foreignKeyColumn)));
+        return sPREPAREFAILED;
+    }
      ColumnDefinition def2 = _foreignTable->columndefinition(_foreignKeyColumn);
 
      if ( !def1.datadef().domain()->isCompatibleWith(def2.datadef().domain().ptr())){
         kernel()->issues()->log(TR("Column domains are not compatible:") + def1.datadef().domain()->name() + " and " + def2.datadef().domain()->name()) ;
         return sPREPAREFAILED;
+     }
+
+     columnList = _expression.parm(5).value();
+     if ( columnList[0] == '?'){
+         _retainedForeignTableColumns.resize(_foreignTable->columnCount() , true);
+        _retainedForeignTableColumns[primKeyIndex] = false;
+     }else {
+         QStringList columns = columnList.split(",");
+         _retainedForeignTableColumns.resize(_foreignTable->columnCount(), false);
+         for(int i=0; i < columns.size(); ++i){
+             int index = _foreignTable->columnIndex(columns[i]);
+             if ( index != iUNDEF && index != primKeyIndex)
+                 _retainedForeignTableColumns[index] = true;
+         }
      }
 
     QString outName = _expression.parm(0, false).value();
@@ -161,10 +206,12 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
         _outputTable = _baseTable;
     }
     for(int i=0; i < _baseTable->columnCount(); ++i){
-        _outputTable->addColumn(_baseTable->columndefinition(i));
+        if (_retainedBaseTableColumns[i])
+            _outputTable->addColumn(_baseTable->columndefinition(i));
     }
     for(int i=0; i < _foreignTable->columnCount(); ++i){
-        _outputTable->addColumn(_foreignTable->columndefinition(i));
+        if ( _retainedForeignTableColumns[i])
+            _outputTable->addColumn(_foreignTable->columndefinition(i));
     }
 
     if ( _inputCoverage.isValid()){
@@ -183,16 +230,20 @@ quint64 ColumnJoin::createMetadata()
 {
     OperationResource operation({"ilwis://operations/joinattributes"});
     operation.setLongName("Join Attributes");
-    operation.setSyntax("joinattributes(base-table,column-name,input-table, column-name)");
+    operation.setSyntax("joinattributes(base-table,column-name,ret-column, input-table, column-name, ret-columns)");
     operation.setDescription(TR("Join a base table or coverage with attributes from another table that share a common domain"));
-    operation.setInParameterCount({4});
+    operation.setInParameterCount({6});
     operation.addInParameter(0,itTABLE|itCOVERAGE, TR("table/ coverage"),TR("Base table or coverage with attributes from which where join is to do be done"));
     operation.addInParameter(1,itSTRING, TR("input column name"),TR("column with a numerical domain or number"), OperationResource::ueCOMBO);
-    operation.addInParameter(2,itTABLE, TR("input-table"),TR("input table-column from which the input column will be chosen"));
-    operation.addInParameter(3,itSTRING, TR("input column name"),TR("column with a numerical domain or number"), OperationResource::ueCOMBO);
+    operation.addInParameter(2,itSTRING, TR("retained columns"),TR("column with a numerical domain or number"));
+    operation.parameterNeedsQuotes(2);
+    operation.addInParameter(3,itTABLE, TR("foreign table"),TR("input table-column from which the input column will be chosen"));
+    operation.addInParameter(4,itSTRING, TR("foreign column name"),TR("column with a numerical domain or number"), OperationResource::ueCOMBO);
+    operation.addInParameter(5,itSTRING, TR("retained column"),TR("column with a numerical domain or number"));
+    operation.parameterNeedsQuotes(5);
     operation.setOutParameterCount({1});
     operation.addValidation(0,1,"columns");
-    operation.addValidation(2,3,"columns");
+    operation.addValidation(3,4,"columns");
     operation.addOutParameter(0,itTABLE|itCOVERAGE, TR("output table/ coverage"));
     operation.setKeywords("table,aggregate,column");
     mastercatalog()->addItems({operation});
