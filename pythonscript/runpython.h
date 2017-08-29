@@ -16,7 +16,7 @@ public:
     static quint64 createMetadata();
     OperationImplementation::State prepare(ExecutionContext *, const SymbolTable &);
 
-private:
+protected:
     QString _statements;
 };
 }

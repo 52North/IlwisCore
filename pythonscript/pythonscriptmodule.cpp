@@ -21,6 +21,7 @@
 #include "connectorfactory.h"
 #include "ilwiscontext.h"
 #include "runpython.h"
+#include "runpythonprogram.h"
 #include "pythonworkflowconnector.h"
 #include "pythonscriptconnector.h"
 #include "pythonscript/pythonscriptmodule.h"
@@ -81,6 +82,7 @@ void PythonScriptModule::prepare()
             return;
         }
         commandhandler()->addOperation(RunPython::createMetadata(), RunPython::create);
+        commandhandler()->addOperation(RunPythonProgram::createMetadata(), RunPythonProgram::create);
 
         PythonObjectFactory *objfactory = new PythonObjectFactory();
         objfactory->prepare();
