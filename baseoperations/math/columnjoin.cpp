@@ -81,8 +81,10 @@ bool ColumnJoin::execute(ExecutionContext *ctx, SymbolTable &symTable)
         _outputTable->newRecord();
 
     int record = 0;
+    initialize(recordMapping.size());
 
     for(auto recMapping: recordMapping){
+        updateTranquilizer(record, 1);
         Record recBase = _baseTable->record(recMapping.first);
         int newColumnIndex = 0;
         for(int c=0; c < recBase.columnCount(); ++c)
@@ -223,6 +225,7 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
             _outputCoverage = features;
         }
     }
+
     return sPREPARED;
 }
 
