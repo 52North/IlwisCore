@@ -59,7 +59,8 @@ HEADERS += \
     pythonscript/pythonscriptconnector.h \
     pythonscript/pythonscriptcatalogexplorer.h \
     pythonscript/callpythonoperation.h \
-    pythonscript/generatescriptnode.h
+    pythonscript/generatescriptnode.h \
+    pythonscript/runpythonprogram.h
 
 SOURCES += \
     pythonscript/pythonscriptmodule.cpp \
@@ -69,7 +70,8 @@ SOURCES += \
     pythonscript/pythonscriptconnector.cpp \
     pythonscript/pythonscriptcatalogexplorer.cpp \
     pythonscript/callpythonoperation.cpp \
-    pythonscript/generatescriptnode.cpp
+    pythonscript/generatescriptnode.cpp \
+    pythonscript/runpythonprogram.cpp
 
 
 
