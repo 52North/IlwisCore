@@ -149,3 +149,32 @@ bool WorkFlowCondition::Test::isValid() const
 {
     return _operation && _operation->isValid(0, WorkFlowNode::vcALLDEFINED);
 }
+
+void WorkFlowCondition::removeSubNode(NodeId dNodeId)
+{
+    auto KillNode2 = [](std::vector<SPWorkFlowNode>& nodes, NodeId deletedNodeId) ->void{
+        for(SPWorkFlowNode node : nodes){
+            for(int i=0; i < node->inputCount(); ++i){
+                WorkFlowParameter& param = node->inputRef(i);
+                if ( param.inputLink()){
+                    if ( param.inputLink()->id() == deletedNodeId){
+                        param.inputLink(SPWorkFlowNode());
+                    }
+                }
+            }
+        }
+    };
+    auto KillNode1 = [&](std::vector<SPWorkFlowNode>& nodes, NodeId dNodeId){
+        auto iter = nodes.begin();
+        for(; iter != nodes.end(); ++iter){
+            if ( (*iter)->id() == dNodeId)
+                break;
+        }
+        if ( iter != nodes.end()){
+            SPWorkFlowNode dNode = (*iter);
+            nodes.erase(iter);
+            KillNode2(nodes,dNodeId );
+        }
+    };
+    KillNode1(_operations, dNodeId);
+}
