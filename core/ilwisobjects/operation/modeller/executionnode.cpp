@@ -96,7 +96,7 @@ bool ExecutionNode::executeRangeTestNode(ExecutionContext *ctx, SymbolTable &sym
                 Symbol sym =  symTable2.getSymbol(outputName);
                 QVariant val = symTable2.getValue(outputName);
 
-                  rtest->setRangeDefinition(val.toString());
+                  rtest->setRangeDefinition(val.toString(), workflowImpl->workflow().ptr());
                 _parameterValues[0] = val;
             }else{
                 return false;
@@ -113,6 +113,15 @@ bool ExecutionNode::executeRange(ExecutionContext *ctx, SymbolTable &symTable, W
     std::vector<SPWorkFlowNode> operations = _node->owner()->subnodes("operations");
     std::vector<SPWorkFlowNode> outputNodes = Workflow::outputNodes(operations, workflowImpl->workflow().ptr());
     SPLRangeNode range = std::static_pointer_cast<RangeNode>(_node->owner());
+    if ( range->input(0).inputLink()){ // initializing the range if it has input from another node
+        ExecutionNode& exnode = workflowImpl->executionNode(range, mapping);
+        ExecutionContext ctxLocal;
+        SymbolTable symTableLocal;
+        if(!exnode.execute(&ctxLocal, symTableLocal, workflowImpl, mapping)){
+            return false;
+        }
+    }
+
     while(range->next()){
         ExecutionContext ctx2;
         SymbolTable symTable2;
