@@ -36,6 +36,7 @@ ToolBar{
             tooltip: qsTr("Saves the workflow in the current active catalog(if possible)")
 
             onClicked: {
+                workflowView.storeRangeDefinitions()
                 var url = mastercatalog.currentCatalog.url
                 if ( url.indexOf("file://") !== 0) {
                     url = workflow.rawUrl
@@ -51,6 +52,7 @@ ToolBar{
             iconSource: iconsource("saveasb.png")
             tooltip: qsTr("Copies the workflow in the current active catalog under a different name(if possible)")
             onClicked: {
+                workflowView.storeRangeDefinitions()
                 workarea.dropSaveBox(x)
             }
         }
