@@ -192,7 +192,7 @@ void WorkflowModel::setRangeTestValues(int rangeid, const QString &rangeDef)
             SPWorkFlowNode node = _workflow->nodeById(rangeid);
             if ( node){
                 std::shared_ptr<RangeNode> range = std::static_pointer_cast<RangeNode>(node);
-                range->setRangeDefinition(rangeDef.trimmed());
+                range->setRangeDefinition(rangeDef.trimmed(), _workflow.ptr());
             }
         }
     } catch(const ErrorObject&){}
@@ -539,8 +539,9 @@ QVariantMap WorkflowModel::getNode(int nodeId){
               data["ownedjunctions"] = junctions;
         }else if ( node->type() == WorkFlowNode::ntRANGEJUNCTION){
             QVariantList parameters;
+            std::shared_ptr<RangeJunctionNode> junction = std::static_pointer_cast<RangeJunctionNode>(node);
             for(int i=0; i <4; ++i){
-                parameters.push_back(getParameter(node, i));
+                parameters.push_back(getParameter(junction, i));
             }
             data["parameters"] = parameters;
 
