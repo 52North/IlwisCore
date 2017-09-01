@@ -161,7 +161,7 @@ quint64 CopyColumn::createMetadata()
     resource.addValidation(2,5,"columns");
     resource.setOutParameterCount({1});
     resource.addOutParameter(0, itTABLE, TR("table"), TR("The input table with an extra column"));
-    resource.setKeywords("table, column");
+    resource.setKeywords("table, column,internal");
 
     mastercatalog()->addItems({resource});
     return resource.id();
