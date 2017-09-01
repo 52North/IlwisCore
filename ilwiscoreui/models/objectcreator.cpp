@@ -310,7 +310,7 @@ QString ObjectCreator::createWorkflow(const QVariantMap &parms)
     IWorkflow wf;
     wf.prepare();
     QString name = parms["name"].toString();
-    wf->name(name);
+    wf->resourceRef().name(name,false,false);
     wf->resourceRef().setUrl(QUrl("ilwis://operations/" + name + ".ilwis"));
     wf->resourceRef().setUrl(parms["url"].toString(), true);
     wf->resourceRef().setDescription(parms["description"].toString());
@@ -492,7 +492,7 @@ QString ObjectCreator::createModel(const QVariantMap &parms){
     IModel model;
     model.prepare();
     QString name = parms["name"].toString();
-    model->name(name);
+    model->resourceRef().name(name,false,false);
     model->resourceRef().setUrl(parms["url"].toString());
     model->resourceRef().setUrl(parms["url"].toString(), true);
     model->resourceRef().setDescription(parms["description"].toString());
