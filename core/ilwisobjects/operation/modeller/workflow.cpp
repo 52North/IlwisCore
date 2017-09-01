@@ -76,6 +76,9 @@ std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNo
                 if ( subnode->inputRef(RangeNode::rpINITIALINPUT).inputLink()){
                     usedNodes.insert(subnode->inputRef(RangeNode::rpINITIALINPUT).inputLink()->id());
                 }
+                if ( subnode->inputRef(RangeNode::rpINPUT).inputLink()){
+                    usedNodes.insert(subnode->inputRef(RangeNode::rpINPUT).inputLink()->id());
+                }
             }
 
         }
@@ -346,6 +349,17 @@ std::vector<SPOperationParameter> Workflow::freeOutputParameters() const
                     CheckLinks(p, outparams);
                 }
             }
+            if ( item->input(0).inputLink()){
+                 CheckLinks(item->inputRef(0), outparams);
+            }
+            subnodes = item->subnodes("junctions");
+            for(auto subnode : subnodes){
+                WorkFlowParameter& pInitInp = subnode->inputRef(RangeNode::rpINITIALINPUT);
+                CheckLinks(pInitInp, outparams);
+                 WorkFlowParameter& pInp = subnode->inputRef(RangeNode::rpINPUT);
+                CheckLinks(pInp, outparams);
+            }
+
         }
 
         if ( item->type() == WorkFlowNode::ntJUNCTION){
@@ -481,6 +495,7 @@ void Workflow::removeNode(NodeId id)
             _graph.erase(iter);
             break;
         }
+        node->removeSubNode(id);
     }
 }
 
