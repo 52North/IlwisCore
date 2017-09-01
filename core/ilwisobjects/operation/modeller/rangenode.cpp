@@ -32,7 +32,7 @@ Ilwis::WorkFlowNode::NodeTypes Ilwis::RangeNode::type() const
 
 bool RangeNode::isValid(const Ilwis::Workflow *workflow, WorkFlowNode::ValidityCheck check) const
 {
-    return true;
+    return  true;
 }
 
 void RangeNode::addSubNode(const std::shared_ptr<WorkFlowNode> &node, const QString &reason)
@@ -51,6 +51,36 @@ void RangeNode::addSubNode(const std::shared_ptr<WorkFlowNode> &node, const QStr
         }
         _junctions.push_back(node);
     }
+}
+
+void RangeNode::removeSubNode(NodeId dNodeId)
+{
+    auto KillNode2 = [](std::vector<SPWorkFlowNode>& nodes, NodeId deletedNodeId) ->void{
+        for(SPWorkFlowNode node : nodes){
+            for(int i=0; i < node->inputCount(); ++i){
+                WorkFlowParameter& param = node->inputRef(i);
+                if ( param.inputLink()){
+                    if ( param.inputLink()->id() == deletedNodeId){
+                        param.inputLink(SPWorkFlowNode());
+                    }
+                }
+            }
+        }
+    };
+    auto KillNode1 = [&](std::vector<SPWorkFlowNode>& nodes, NodeId dNodeId){
+        auto iter = nodes.begin();
+        for(; iter != nodes.end(); ++iter){
+            if ( (*iter)->id() == dNodeId)
+                break;
+        }
+        if ( iter != nodes.end()){
+            SPWorkFlowNode dNode = (*iter);
+            nodes.erase(iter);
+            KillNode2(nodes,dNodeId );
+        }
+    };
+    KillNode1(_operations, dNodeId);
+    KillNode1(_junctions, dNodeId);
 }
 
 std::vector<std::shared_ptr<WorkFlowNode> > RangeNode::subnodes(const QString &reason) const
@@ -76,7 +106,7 @@ int RangeNode::inputCount() const
     return 1;
 }
 
-void RangeNode::setRangeDefinition(const QString &val)
+void RangeNode::setRangeDefinition(const QString &val, const Workflow* workflow)
 {
     _rangeDef = val;
     if ( val.indexOf("link=") == 0){ // we cant know anything about the range, it will be resolved when the link is executed
@@ -85,6 +115,19 @@ void RangeNode::setRangeDefinition(const QString &val)
         _rangeEnd= rUNDEF;
         _precision = 1;
         _rangeValues = std::vector<QString> ();
+        NodeId nid = i64UNDEF;
+        int outPIndex = iUNDEF;
+        if(!checkLinkDefintion(_rangeDef, nid, outPIndex)){
+            kernel()->issues()->log(TR("illegal link defintion in  rangedefinition:") +_rangeDef );
+            _rangeDef = "";
+            return;
+        }
+        SPWorkFlowNode node = workflow->nodeById(nid);
+        if ( !node){
+            kernel()->issues()->log(TR("illegal node in link defintion in  rangedefinition:") +_rangeDef );
+            _rangeDef = "";
+        }else
+            _inputParameters1[0].inputLink(node, outPIndex);
         return;
     }
     if ( _rangeDef.indexOf("..") > 0){
@@ -100,6 +143,7 @@ void RangeNode::setRangeDefinition(const QString &val)
                         double prec = parts2[1].toDouble(&ok);
                         if ( ok){
                             if ( prec == 0){
+                                _rangeDef = "";
                                 throw ErrorObject(TR("Illegal precission value; it can not be 0"));
                             }
                             _precision = prec;
@@ -114,6 +158,7 @@ void RangeNode::setRangeDefinition(const QString &val)
                         _case = ccLIMITS;
                         _currentValue = rUNDEF;
                     }
+                    _inputParameters1[0].value(_rangeDef, itVALUERANGE, WorkFlowParameter::pkFIXED);
                 }
             }
         }
@@ -123,6 +168,7 @@ void RangeNode::setRangeDefinition(const QString &val)
         std::copy(parts.begin(), parts.end(), std::back_inserter(_rangeValues));
         _case = ccVECTOR;
         _currentIndex = iUNDEF;
+        _inputParameters1[0].value(_rangeDef, itNUMERIC|itCOLLECTION, WorkFlowParameter::pkFIXED);
     }
 }
 
@@ -141,7 +187,7 @@ bool RangeNode::next()
     }else if ( _case == ccLIMITS){
         if ( _currentValue != rUNDEF && _currentValue >= _rangeEnd)
             return false;
-        if ( _currentValue == rUNDEF || _currentValue <= _rangeEnd)
+        if ( _currentValue == rUNDEF || _currentValue < _rangeEnd)
             _currentValue = (_currentValue == rUNDEF ? _rangeStart : _currentValue + _precision);
     } 
     return true;
@@ -152,10 +198,10 @@ QVariant RangeNode::currentValue() const
     if ( _case == ccVECTOR)    {
         if ( _currentIndex == iUNDEF || _currentIndex >= _rangeValues.size())
             return QVariant();
-        if ( _currentIndex !=iUNDEF && _currentIndex <= _rangeValues.size())
+        if ( _currentIndex !=iUNDEF && _currentIndex < _rangeValues.size())
             return _rangeValues[_currentIndex];
     }else if ( _case == ccLIMITS){
-        if ( _currentValue != rUNDEF && _currentValue >= _rangeEnd)
+        if ( _currentValue != rUNDEF && _currentValue > _rangeEnd)
             return QVariant();
         if ( _currentValue != rUNDEF && _currentValue <= _rangeEnd)
             return _currentValue;

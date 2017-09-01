@@ -18,10 +18,11 @@ public:
     bool isValid(const Ilwis::Workflow *workflow, WorkFlowNode::ValidityCheck check) const;
 
     void addSubNode(const std::shared_ptr<WorkFlowNode> &node, const QString &reason);
+    void removeSubNode(Ilwis::NodeId nodeid);
     std::vector<std::shared_ptr<WorkFlowNode>> subnodes(const QString& reason="") const;
     void nodeId(quint64 id);
     int inputCount() const;
-    void setRangeDefinition(const QString& val);
+    void setRangeDefinition(const QString& val, const Ilwis::Workflow *workflow);
     QString rangeDefinition() const;
     bool next();
     QVariant currentValue() const;
