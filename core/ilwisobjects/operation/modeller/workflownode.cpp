@@ -170,6 +170,32 @@ bool WorkFlowNode::isWorkflow() const
     return false;
 }
 
+void WorkFlowNode::removeSubNode(NodeId id)
+{
+}
+
+bool WorkFlowNode::checkLinkDefintion(const QString &linkDef, NodeId& nid, int& outParameterIndex) const
+{
+    QStringList parts = linkDef.split("=");
+    if ( parts.size() != 2){
+          return false;
+    }
+    parts = parts[1].split(":");
+    if ( parts.size() != 2){
+       return false;
+    }
+    bool ok;
+    nid = parts[0].toInt(&ok)        ;
+    if ( !ok){
+        return false;
+    }
+    outParameterIndex  = parts[1].toInt(&ok) ;
+    if ( !ok){
+       return false;
+    }
+    return true;
+}
+
 std::vector<SPWorkFlowNode> WorkFlowNode::subnodes(const QString &reason) const
 {
     return std::vector<SPWorkFlowNode>();

@@ -46,6 +46,7 @@ public:
     virtual Ilwis::WorkFlowNode::NodeTypes type() const = 0;
     virtual std::vector<std::shared_ptr<WorkFlowNode>> subnodes(const QString& reason="") const;
     virtual void addSubNode(const std::shared_ptr<WorkFlowNode>& node, const QString& reason);
+    virtual void removeSubNode(NodeId id);
     virtual bool isValid(const Workflow* workflow, WorkFlowNode::ValidityCheck) const = 0;
 
 protected:
@@ -55,6 +56,7 @@ protected:
     bool _collapsed = false;
     NodeId _conditionIdOfTest = i64UNDEF;
     std::shared_ptr<WorkFlowNode> _owner;
+    bool checkLinkDefintion(const QString& linkDef, NodeId &nid, int &outParameterIndex) const;
 };
 
 struct IdTypePair {
