@@ -47,11 +47,10 @@ HEADERS += \
 OTHER_FILES = smce/qmldir
 
 # BOOST=../external
-ILWISCORE = ../IlwisCore
-INCLUDEPATH += $$PWD/$$ILWISCORE/core
-DEPENDPATH += $$PWD/$$ILWISCORE/core
-INCLUDEPATH += $$PWD/../IlwisCore/ilwiscoreui
-DEPENDPATH += $$PWD/../IlwisCore/ilwiscoreui
+INCLUDEPATH += $$PWD/core
+DEPENDPATH += $$PWD/core
+INCLUDEPATH += $$PWD/ilwiscoreui
+DEPENDPATH += $$PWD/ilwiscoreui
 
 INCLUDEPATH +=  core/ilwisobjects/domain \
                 ilwiscoreui \
@@ -69,24 +68,23 @@ win32{
     PREFIXSHARED=
 }
 
-INCLUDEPATH +=  $$ILWISCORE/core/ilwisobjects \
-                $$ILWISCORE/core/ilwisobjects/geometry \
-                $$ILWISCORE/core/util \
-                $$ILWISCORE/core/geos/include \
-                $$ILWISCORE/core/ilwisobjects/operation/modeller \
-                $$ILWISCORE/core/ilwisobjects/geometry/geodeticdatum \
-                $$ILWISCORE/core/ilwisobjects/geometry/projection \
-                $$ILWISCORE/core/ilwisobjects/geometry/coordinatesystem \
-                $$ILWISCORE/core/ilwisobjects/geometry/georeference \
-                $$ILWISCORE/core/ilwisobjects/coverage \
-                $$ILWISCORE/core/ilwisobjects/table \
-                $$ILWISCORE/core/ilwisobjects/operation \
-                $$ILWISCORE/core/ilwisobjects/representation \
-                $$ILWISCORE/core/catalog \
-                $$ILWISCORE/core/ilwisobjects/domain \
-                $$ILWISCORE/ilwiscoreui/models \
-                $$ILWISCORE/ilwiscoreui/drawers \
-                $$ILWISCORE \
+INCLUDEPATH +=  core/ilwisobjects \
+               core/ilwisobjects/geometry \
+               core/util \
+               core/geos/include \
+               core/ilwisobjects/operation/modeller \
+               core/ilwisobjects/geometry/geodeticdatum \
+               core/ilwisobjects/geometry/projection \
+               core/ilwisobjects/geometry/coordinatesystem \
+               core/ilwisobjects/geometry/georeference \
+               core/ilwisobjects/coverage \
+               core/ilwisobjects/table \
+               core/ilwisobjects/operation \
+               core/ilwisobjects/representation \
+               core/catalog \
+               core/ilwisobjects/domain \
+               ilwiscoreui/models \
+               ilwiscoreui/drawers \
                 $$BOOST
 win32{
     DESTDIR = $$PWD/../libraries/$$PLATFORM$$CONF/extensions/ui/SMCE

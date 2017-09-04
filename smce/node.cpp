@@ -1,4 +1,4 @@
-#include "../../IlwisCore/core/ilwisobjects/coverage/rastercoverage.h"
+#include "core/ilwisobjects/coverage/rastercoverage.h"
 
 #include "node.h"
 #include <QUrl>

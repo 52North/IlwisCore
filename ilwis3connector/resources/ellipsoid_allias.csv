@@ -1,0 +1,41 @@
+Name,Code
+Airy 1830,Airy
+Modified Airy,mod_airy
+ATS77,ELLAT
+Australian National,aust_SA
+Bessel 1841,Bessel
+Bessel 1841 (Japan By Law),ELLBJ
+Bessel 1841 (Namibia),bess_nam
+BonneNL,ELLBO
+CGMS (MeteoSat),ELLCG
+Clarke 1866,clrk66
+Clarke 1880,clrk80
+Clarke 1880 (IGN),ELLCI
+D-PAF (Orbits),ELL
+Du Plessis Modified,ELLDM
+Du Plessis Reconstituted,ELLDR
+Everest (India 1830),evrst30
+Everest (India 1956),evrst56
+Everest (Malaysia 1969),evrst69
+Everest (E. Malaysia and Brunei),evrstSS
+Everest (Malay. and Singapore 1948),evrst48
+Everest (Pakistan),ELLEF
+Everest (Sabah Sarawak),evrstSS
+Fischer 1960,fschr60
+Fischer 1960 (Modified),fschr60m
+Fischer 1968,fschr68
+GRS 67,GRS67
+GRS 80,GRS80
+Helmert 1906,helmert
+Hough 1960,hough
+Indonesian 1974,ELLID
+International 1924,intl
+Krassovsky 1940,krass
+New International 1967,intl_new
+SGS 85,SGS85
+Sphere,sphere
+South American 1969,ELLSA
+WGS 60,WGS60
+WGS 66,WGS66
+WGS 72,WGS72
+WGS 84,WGS84

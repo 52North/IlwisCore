@@ -1,0 +1,21 @@
+ILWIS Python API
+
+This Python extension was built with SWIG (http://www.swig.org), QMAKE and gcc (MinGW)
+
+===============UPDATE==================
+--1-- ILWIS Python extension
+copy the new version of the ILWIS Python extension files (ilwisobjects.pyd and ilwisobjects.py) to your Python3.3(32bit)
+installation directory:
+
+<yourPathToPython33>\Lib\site-packages\
+
+--2-- ILWIS Binaries
+copy the new version of ILWIS (ilwiscore.dll) and associated plug-ins to your ILWIS installation directory:
+
+<yourPathToILWIS>\ <---contains ilwiscore.dll|log|extensions|resources
+
+The configuration of qt.conf the PATH environment and ilwisobjects.conf can remain as stated in the INSTALL
+instructions.
+
+--3-- test.py
+The test script contains new/changed API calls which might be interesting to you as well...

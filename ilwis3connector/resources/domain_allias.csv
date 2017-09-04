@@ -1,0 +1,11 @@
+Code,Alias
+value,value
+image,image
+min1to1,min1to1
+nilto1,nilto1
+count,count
+distance,distance
+NDVI,NDVI
+percentage,perc
+boolean,bool
+text,string

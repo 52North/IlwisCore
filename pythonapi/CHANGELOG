@@ -1,0 +1,77 @@
+==================CHANGELOG===================
+--alpha4--
+*added Catalog for multi layer coverages (and other containers)
+*added basic Domain and Range implementation
+
+--alpha3--
+*solved installer issue #44 regarding PATH environment manipulation
+
+--alpha2--
+*solved weak naming issue in nested raster calculations (caused by empty Symbol tables)
+
+--alpha1--
+*introduced Windows installer for ILWIS Objects and ILWIS Python API
+*minor fixes in ilwis3 connector
+
+--20140307--
+*fixed datetime integration for Table's .column(..) and .record(..) methods
+*fixed setConnection for connector mode cmINPUT
+*fixed some issues on iUNDEF values in (meta) data
+*added GDAL vrt driver (virtual format - xml based GDAL data description) for use of geodata in csv files
+*fixed crashes in GDALConnector when using attributTables
+
+--20140228--
+*added DateTime support
+*removed all occurences of PyVariant, so no explicit type conversion is necessary anymore
+*instead of TypeError is a faile value conversion now returns ValueError just as Python
+
+--20140214--
+*fixed issue on +datum=... param in proj definition
+*added the IlwisObject GeoReference to the Python API (inkluding new PixelD class for sub-pixel accuracy)
+
+--20140210--
+*first release build
+
+--20140207--
+*small changes of WKT representation of Geometries due to switch from boost to geos geometries
+*no more extra Coordinate2D of Voxel - everything is handled by Coordinate or Pixel
+*several bugfixes for import/export with ILWIS3 and GDAL connectors
+*many more supportedformats
+*added linear raster filter to the set of operations
+*you can now query the possible operations and their syntax
+*added most of the simple features methods to Geometry class
+
+--20140124--
+*enabled direct access to RasterGrid for NumPy arrays via PyBuffer interface
+*ILWIS is now also available with Qt5.2
+*bugfixes in loading of shapefiles via GDAL
+*added Table(AttributeTable) as a separate IlwisObject
+
+--20140110--
+*improved Coordinate/Coordinate2D(new!)/Voxel/Pixel and Envelope(new!)/Box
+*improved CoordinateSystem (added envelope() and __eq__()/__ne__())
+*changed IlwisObject.store() to raise OSError's on fail (no more bool return value) and renamed connectTo to setConnection
+*fixed ilwis3 georeference file naming (*.grf)
+*added Geometry.transform for reprojection
+
+--20131220--
+*test.py is now unittest and autmatically skips tests if catalog(directory) could not be found
+*added extra Python API Exceptions like ImportError and InvalidObjectException
+*improved geometry integrity
+*improved Size and Voxel functionality
+*added Const.xxUNDEFs for constants (UNDEFs)
+
+--20131213--
+*added PixelIterator and various geometry helper classes like Voxel, Box and Size
+*fixed WKT in/output for 3D geometries
+*avoid access to "feature_id" attribute of the FeatureCoverage/Feature
+*added conveniance functionality for attribute access of features (now with hidden PyVariant)
+*removed uncought ERROR output on failed script execution
+*replaced the single muteIssueLogger() by the complementary dis-/connectIssueLogger() functions
+*fixed some issues on storing ilwis3 format files
+*reorganised test.py to more modular testcases
+!unresolved bug if create FeatureCoverage.newFeature(Geometry) before the binary data is loaded - please avoid that!
+
+--20131205--
+*first release to demonstrate some functionality of ILWIS NG using its new Python API
+*contains classes like FeatureCoverage,RasterCoverage,PyVariant,FeatureIterator,Geometry,Feature,Engine, corrdinateSystem

@@ -1,0 +1,229 @@
+ILWIS_NAME,AREA,CODE
+AGREF (Austrian Geodetic Reference),,D
+Adindan,Burkina Faso,DADI-E
+Adindan,Cameroon,DADI-F
+Adindan,Ethiopia,DADI-A
+Adindan,Mali,DADI-C
+Adindan,Mean,DADI-M
+Adindan,Mean Solution,DADI-M
+Adindan,Senegal,DADI-D
+Adindan,Sudan,DADI-B
+Afgooye,,DAFG
+Ain el Abd 1970,Bahrain,DAIN-A
+Ain el Abd 1970,Saudi Arabia,DAIN-B
+American Samoa 1962,,DAMA
+Anna 1 Astro 1965,,DANO
+Antigua Island Astro 1943,,DAIA
+Arc 1950,Botswana,DARF-A
+Arc 1950,Burundi,DARF-H
+Arc 1950,Lesotho,DARF-B
+Arc 1950,Malawi,DARF-C
+Arc 1950,Mean,DARF-M
+Arc 1950,Swaziland,DARF-D
+Arc 1950,Zaire,DARF-E
+Arc 1950,Zambia,DARF-F
+Arc 1950,Zimbabwe,DARF-G
+Arc 1960,Kenya,DARS-A
+Arc 1960,Mean,DARS-M
+Arc 1960,Tanzania,DARS-B
+Ascension Island 1958,,DASC
+Astro Beacon E 1945,,DATF
+Astro DOS 71/4,,D
+Astro Tern Island (FRIG) 1961,,D
+Astronomical Station 1952,,DASQ
+Ayabelle Lighthouse,,D
+Bellevue (IGN),,DIBE
+Bermuda 1957,,DBER
+Bissau,,DBID
+Bogota Observatory,,DBOO
+Bukit Rimpah,,DBUR
+CGMS Datum (MeteoSat),,D
+CH1903,,D
+Camp Area Astro,,DCAZ
+Campo Inchauspe,,DCAI
+Canton Astro 1966,,DCAO
+Cape,,DCAP
+Carthage,,DCGE
+Chatham Island Astro 1971,,DCHI
+Chua Astro,,DCHU
+Corrego Alegre,,DCOA
+Croatia,,D
+D-PAF (Orbits),,D
+DOS 1968,,D
+Dabola,,DDAL
+Djakarta (Batavia),,D
+Easter Island 1967,,DEAS
+Estonia 1937,,DEST
+European 1950 (ED 50),Cyprus,DEUR-E
+European 1950 (ED 50),Egypt,DEUR-F
+European 1950 (ED 50),England,DEUR-K
+European 1950 (ED 50),England Channel,D
+European 1950 (ED 50),Finland Norway,DEUR-C
+European 1950 (ED 50),Greece,DEUR-B
+European 1950 (ED 50),Iran,DEUR-H
+European 1950 (ED 50),Italy Sardinia,DEUR-I
+European 1950 (ED 50),Italy Sicily,DEUR-J
+European 1950 (ED 50),Malta,DEUR-L
+European 1950 (ED 50),Mean Europe,DEUR-M
+European 1950 (ED 50),Middle East,DEUR-S
+European 1950 (ED 50),North West Europe,DEUR-A
+European 1950 (ED 50),Portugal Spain,DEUR-D
+European 1950 (ED 50),Tunisia,DEUR-T
+European 1979 (ED 79),Mean,DEUR-M
+European Terrestrial Reference System (ETRS 89),,DERTS
+GUX 1 Astro,,DDOB
+Gan 1970,,DGAA
+Geodetic Datum 1949,,DGEO
+Guam 1963,,DGUA
+Gunung Segara,,DGSE
+Herat North,,DHEN
+Hermannskogel,,DHER
+Hjorsey 1955,,DHJO
+Hong Kong 1963,,DHKD
+Hu-Tzu-Shan,,DHTN
+Hungarian Datum 1972 (HD72),,D
+ISTS 061 Astro 1968,,DISG
+ISTS 073 Astro 1969,,DIST
+Indian (Bangladesh),,DIND-B
+Indian (India Nepal),Nepal,DIND-I
+Indian (Pakistan),,DIND-P
+Indian 1954,,DINF-A
+Indian 1960,Vietnam Cons Son,DING-B
+Indian 1960,Vietnam Near 16N,DING-A
+Indian 1975,,DINH-A
+Indonesian 1974,,DIDN
+Ireland 1965,,DIDN
+Johnston Island 1961,,DIRL
+Kandawala,,DKAN
+Kerguelen Island 1949,,DKEG
+Kertau 1948,,DKEA
+Kusaie Astro 1951,,DKUS
+L. C. 5 Astro 1961,,DLCF
+Leigon,,DLEH
+Liberia 1964,,DLIB
+Lisboa Datum 1973 (Melrica),,D
+Luzon,Philippines,DLUZ-A
+Luzon,Philippines Mindanao,DLUZ-B
+MPoraloko,,DMPO
+MGI (Hermannskogel),,D
+Mahe 1971,,DMIK
+Massawa,,DMAS
+Merchich,,DMER
+Midway Astro 1961,,DMID
+Minna,Cameroon,DMIN-A
+Minna,Nigeria,DMIN-B
+Montserrat Island Astro 1958,,D
+NTF (Nouvelle Triangulation de France),,D
+Nahrwan,Oman,DNAH-A
+Nahrwan,Saudi Arabia,DNAH-C
+Nahrwan,United Arab Emirates,DNAH-B
+Naparima BWI,,D
+North American 1927 (NAD 27),Alaska,DNAS-A
+North American 1927 (NAD 27),Alaska Aleutian East,DNAS-V
+North American 1927 (NAD 27),Alaska Aleutian West,DNAS-W
+North American 1927 (NAD 27),Bahamas,DNAS-Q
+North American 1927 (NAD 27),San Salvador,DNAS-R
+North American 1927 (NAD 27),Canada,DNAS-E
+North American 1927 (NAD 27),Canada East,DNAS-G
+North American 1927 (NAD 27),Canada Middle,DNAS-H
+North American 1927 (NAD 27),Canada North,DNAS-I
+North American 1927 (NAD 27),Canada West,DNAS-F
+North American 1927 (NAD 27),Canada Yukon,DNAS-J
+North American 1927 (NAD 27),Canal Zone,DNAS-O
+North American 1927 (NAD 27),Caribean,DNAS-P
+North American 1927 (NAD 27),Central America,D
+North American 1927 (NAD 27),Conus,DNAS-C
+North American 1927 (NAD 27),,DNAS-C
+North American 1927 (NAD 27),Conus East,DNAS-A
+North American 1927 (NAD 27),Conus West,DNAS-B
+North American 1927 (NAD 27),Cuba,DNAS-T
+North American 1927 (NAD 27),Greenland,DNAS-U
+North American 1927 (NAD 27),Mexico,DDNAS-L
+North American 1983 (NAD 83),Alaska,DNAR-A
+North American 1983 (NAD 83),Alaska Aleutian,DNAR-E
+North American 1983 (NAD 83),Canada,DNAR-B
+North American 1983 (NAD 83),Central America,DNAR-D
+North American 1983 (NAD 83),Conus,DNAR-C
+North American 1983 (NAD 83),,DNAR-C
+North American 1983 (NAD 83),Hawaii,DNAR-H
+North American 1983 (NAD 83),Mexico,DNAR-D
+North Sahara 1959,,DNSD
+Observatorio Meteorologico 1939,,D
+Old Egyptian 1907,,DOEG
+Old Hawaiian,Hawaii,DOHA-A
+Old Hawaiian,Kauai,DOHA-B
+Old Hawaiian,Maui,DOHA-C
+Old Hawaiian,Mean,DOHA-M
+Old Hawaiian,Oahu,DOHA-D
+Oman,,D
+Ordnance Survey Great Britain 1936,England,DOGB-A
+Ordnance Survey Great Britain 1936,England Wales,D
+Ordnance Survey Great Britain 1936,Mean,DOGB-M
+Ordnance Survey Great Britain 1936,,DOGB-M
+Ordnance Survey Great Britain 1936,Scotland,DOGB-C
+Ordnance Survey Great Britain 1936,Wales,DOGB-D
+Pico de las Nieves,,DPLN
+Pitcairn Astro 1967,,DPIT
+Point 58,,DPTB
+Pointe Noire 1948,,DPTN
+Potsdam (Rauenburg),,D
+Provisional South American 1956,Bolivia,DPRP-A
+Provisional South American 1956,Chile North,DPRP-B
+Provisional South American 1956,Chile South,DPRP-C
+Provisional South American 1956,Colombia,DPRP-D
+Provisional South American 1956,Ecuador,DPRP-E
+Provisional South American 1956,Guyana,DPRP-F
+Provisional South American 1956,Mean,DPRP-M
+Provisional South American 1956,Peru,DPRP-G
+Provisional South American 1956,Venezuela,DPRP-H
+Provisional South Chilean 1963,,D
+Pulkovo 1942,,D
+Qatar National,,D
+Qornoq,,D
+RT90,,D
+Reunion,,D
+Rijks Driehoeksmeting,,DUTCHRD
+Rome 1940,,D
+S-42 (Pulkovo 1942),Albania,D
+S-42 (Pulkovo 1942),Czechoslovakia,D
+S-42 (Pulkovo 1942),Hungary,D
+S-42 (Pulkovo 1942),Kazachstan,D
+S-42 (Pulkovo 1942),Latvia,D
+S-42 (Pulkovo 1942),Poland,D
+S-42 (Pulkovo 1942),Romania,D
+S-JTSK,,D
+SGS 1985,,D
+Santo (DOS) 1965,,D
+Sapper Hill 1943,,D
+Schwarzeck,,D
+Selvagem Grande 1938,,D
+Sierra Leone 1960,,D
+South American 1969,Argentina,D
+South American 1969,Bolivia,D
+South American 1969,Brazil,D
+South American 1969,Chile,D
+South American 1969,Colombia,D
+South American 1969,Ecuador,D
+South American 1969,Ecuador Baltra,D
+South American 1969,Guyana,D
+South American 1969,Mean,D
+South American 1969,Paraguay,D
+South American 1969,Peru,D
+South American 1969,Trinidad and Tobago,D
+South American 1969,Venezuala,D
+South Asia,,D
+Tananarive Observatory 1925,,D
+Tokyo,Japan,D
+Tokyo,Mean,D
+Tokyo,Okinawa,D
+Tokyo,South Korea,D
+Tristan Astro 1968,,D
+Viti Levu 1916,,D
+Voirol 1874,,D
+Voirol 1960,,D
+WGS 1972,,D
+WGS 1984,,DWGS84
+Wake Island Astro 1952,,D
+Wake-Eniwetok 1960,,D
+Yacare,,D
+Zanderij,,D

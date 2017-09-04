@@ -1,0 +1,56 @@
+ILWIS_NAME,CODE
+Azimuthal Equidistant,aeqd
+Aitoff,aitoff
+Albers EqualArea Conic,aea
+Bonne,bonne
+Cassini,cass
+Central Cylindrical,cc
+DutchRD,PRJDR
+Eckert1,eck1
+Eckert2,eck2
+Eckert3,eck3
+EOV Hungary,PRJEH
+Equidistant Conic,egdc
+Gauss-Boaga Italy,PRJGBI
+Gauss Colombia,PRJGC
+Gauss-Krueger Germany,PRJGKE
+General Perspective,PRJGP
+GeoStationary Satellite,geos
+Gnomonic,gnom
+Goode,goode
+Goode Interrupted,PRJGI
+Hammer Aitoff,hammer
+Lambert Azimuthal EqualArea,laea
+Lambert Conformal Conic,PRJLCC
+Lambert Conform Conic Belgium 1972,PRJLCCB72
+Lambert Conform Conic Belgium 2008,PRJLCCB08
+Lambert Conform Conic France,PRJLCCF
+Lambert Cylind EqualArea,leac
+Mercator,merc
+Mercator Scaled,PRJMERS
+Miller,mill
+Mollweide,moll
+MSG Perspective,PRJMSGP
+New Zealand Map Grid,nzmg
+Oblique Mercator,omerc
+Orthographic,ortho
+Plate Carree,PRJPC
+Plate Rectangle,PRJPR
+PolyConic,PRJPOC
+Robinson,robin
+Sinusoidal,sinu
+Sinusoidal Interrupted,PRJSINI
+Sinusoidal 2 x Interrupted,PRJSINI2
+Sinusoidal 3 x Interrupted,PRJSINI3
+StereoGraphic,PRJSTG
+StereoPolar,PRJSTP
+Transverse Mercator,tmerc
+UPS,PRJUPS
+UTM,utm
+VanderGrinten,vandg
+VanHuut,PRJVH
+Vertical Perspective,PRJVP
+Wagner VII,wag7
+LatLon,longlat
+Winkel I,wink1
+Winkel Triple,wintri

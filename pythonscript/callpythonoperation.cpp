@@ -13,8 +13,8 @@
 #include "table.h"
 #include "tranquilizer.h"
 #include "callpythonoperation.h"
-#include "pythonapi_object.h"
-#include "pythonapi_ilwisobject.h"
+#include "pythonapi/pythonapi_object.h"
+#include "pythonapi/pythonapi_ilwisobject.h"
 
 using namespace Ilwis;
 using namespace PythonScript;

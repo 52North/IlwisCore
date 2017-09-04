@@ -1,0 +1,24 @@
+Doing
+- check how to store things
+-
+
+findings list
+- check if data is already loaded is not possible, as isDataLoaded is set by BaseTable before calling loadData
+- storing implies the whole dataset which might become a problem when one entity shall be added in big data sets
+  => for remote connectors (WFS, PG) this enforces a check via iterator unless mechanisms allow to directly
+     store new/changed feature transparantly to the actual backend (is this what we want as a user may want to
+     make sketchy changes?)
+- adding a catalog (database) to mastercatalog is not possible as user credentials will get lost (works via URL)
+  => make it possible to add catalog Resource? Will we move user credentials to IOOptions?
+
+TODOs
+- do some query optimizations (check double metadata loading issue beforehand)
+
+Questions
+- how to avoid doubled metadata loading?
+- explorers are created and then checked if they can use a given resource => make this static as constructor may create state based on a resource which is not intended to be used by the checked resource
+- how to add multiple geometries to one feature
+- when registering resources, its hash comes from name and type which would be ambiguous
+  => would the resource be overridden in an ambiguous case?
+- why is this not the same:
+

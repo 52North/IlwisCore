@@ -28,11 +28,11 @@ include(deployment.pri)
 folder_01.source = desktopclient/qml
 
 win32{
-    folder_01.target = ../../../output/$$PLATFORM$$CONF/bin
+    folder_01.target = ../output/$$PLATFORM$$CONF/bin
 }
 
 linux{
-    folder_01.target = ../../../output/$$PLATFORM$$CONF/bin
+    folder_01.target = ../output/$$PLATFORM$$CONF/bin
 }
 
 DEPLOYMENTFOLDERS = folder_01
@@ -73,31 +73,32 @@ linux{
 }
 
 
-INCLUDEPATH += $$PWD/../IlwisCore/core
-DEPENDPATH += $$PWD/../IlwisCore/core
+INCLUDEPATH += $$PWD/core
+DEPENDPATH += $$PWD/core
 # INCLUDEPATH += $$PWD/../external/geos
 # DEPENDPATH += $$PWD/../external/geos
-INCLUDEPATH += $$PWD/../IlwisCore/ilwiscoreui
-DEPENDPATH += $$PWD/../IlwisCore/ilwiscoreui
+INCLUDEPATH += $$PWD/ilwiscoreui
+DEPENDPATH += $$PWD/ilwiscoreui
 
-INCLUDEPATH +=  ../IlwisCore/core/ilwisobjects \
-                ../IlwisCore/core/ilwisobjects/geometry \
-                ../IlwisCore/core/util \
-                ../IlwisCore/core/ilwisobjects/geometry/geodeticdatum \
-                ../IlwisCore/core/ilwisobjects/geometry/projection \
-                ../IlwisCore/core/ilwisobjects/geometry/coordinatesystem \
-                ../IlwisCore/core/ilwisobjects/geometry/georeference \
-                ../IlwisCore/core/ilwisobjects/coverage \
-                ../IlwisCore/core/ilwisobjects/table \
-                ../IlwisCore/core/ilwisobjects/operation \
-                ../IlwisCore/core/ilwisobjects/operation/modeller \
-                ../IlwisCore/core/ilwisobjects/representation \
-                ../IlwisCore/core/catalog \
-                ../IlwisCore/core/geos/include \
-                ../IlwisCore/core/ilwisobjects/domain \
-                ../IlwisCore/ilwiscoreui \
-                ../IlwisCore/ilwiscoreui/models \
-                ../IlwisCore/ilwiscoreui/models/workflow \
+INCLUDEPATH += core/ilwisobjects \
+               core/ilwisobjects/geometry \
+               core/util \
+               core/ilwisobjects/geometry/geodeticdatum \
+               core/ilwisobjects/geometry/projection \
+               core/ilwisobjects/geometry/coordinatesystem \
+               core/ilwisobjects/geometry/georeference \
+               core/ilwisobjects/coverage \
+               core/ilwisobjects/table \
+               core/ilwisobjects/operation \
+               core/ilwisobjects/operation/modeller \
+               core/ilwisobjects/representation \
+               core/catalog \
+               core/geos/include \
+               core/ilwisobjects/domain \
+               ilwiscoreui \
+               ilwiscoreui/models \
+               ilwiscoreui/models/workflow \
+                core \
                 $$BOOST
 
 OTHER_FILES += \

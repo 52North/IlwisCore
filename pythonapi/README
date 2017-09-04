@@ -1,0 +1,97 @@
+ILWIS Python API
+
+This Python extension was built with SWIG (http://www.swig.org), QMAKE and gcc (MinGW)
+
+===============INSTALL==================
+TIP 1: Pay attention on forward (/) and backward (\) slashes during configuration!
+TIP 2: Sometimes if you describe a folder location it is important if the slash is present or missing.
+
+--1-- Python
+
+Download the 32bit version of Python 3.3.5 from this source:
+
+http://www.python.org/ftp/python/3.3.5/python-3.3.5.msi
+
+During install procedure you can choose to add the installation directory to the PATH environment
+which allows to execute the Python33.exe from every folder.
+
+The folder "extension" contains the python extension binary (_ilwisobjecs.pyd) and source (ilwisobjects.py).
+Both files need to be copied into:
+
+<yourPathToPython>/Lib/site-packages/
+
+--2--  Qt & ILWIS Dlls
+
+The ilwiscore.dll depends on Qt-libraries!
+
+The installation includes a folder with the minimum number of Qt-DLLs needed, which can simply be copied
+to <yourPathToQt>. But inside <yourPathToQt> you need to keep the structure with bin and plugins folder.
+There are issues if you try to have both this copy of Qt and a properly installed within you PATH environment.
+If you have already installed Qt5.2.0 (for minGW gcc 32bit) you can use it. The standard path to the binaries is:
+
+C:\Qt\Qt5.1.1\5.1.1\mingw48_32\bin
+
+If you want to use the extension in your python script, make sure that the PATH environment contains
+the following directories before running the Python3.3 executable.
+
+<yourPathToQt>\bin   <- QtCore(d).dll, QtSQL(d).dll icudt51.dll, icuin51.dll, icuuc51.dll
+<yourPathToILWIS>\   <- ilwiscore.dll, <subdir>\<other_plugins>.dll
+
+The files test.sh and test.bat contain sample scripts to execute python test.py with correct (ad-hoc) PATH environment.
+In order to use one of them you should adjust the addressed directories to your local filesystem (correct Drive and folder)
+within either prepare_PATH.bat or prepare_PATH.sh.
+The prepare_PATH scripts can be used in bash like this ". ./prepare_PATH.sh" or "source ./prepare_PATH.sh"
+or in cmd like this "prepare_PATH.bat" to only set the PATH environment separately for the session.
+For permanent setup you might add those pathes to the systems environment variables.
+
+The Qt library requires the qt.conf file to be found in the executable path, which in this case is the path to the Python33.exe. Within that config file the Prefix (folder) for Qt dynamic plugin loading is set to
+
+Prefix = <yourPathToQt>\
+
+Note that this prefix doesn't include the .\bin sub-directory!
+if the plugins sub-directory for qt plugint was customized, the qt.conf should also refer to the new sub-directory like:
+
+Plugins = <plugins sub-dir>
+
+--3--  ILWIS environment
+
+During runtime our ilwiscore.dll loads some configuration files from the ILWIS directory,
+which should be specified in the file "ilwislocation.config" like this:
+ilwisDir=<yourPathToIlwis>/
+
+The config file "ilwislocation.config" can be in the current directory
+or in the directory of the executable (<yourPathToPython.exe>/).
+
+The ILWIS directory will also contain a subdirectory log containing the log files of the last session.
+Note: This way different sessions pointing to the same ILWIS directory, will overwrite their logfiles!
+
+--4-- running the test.py
+
+>> test.bat
+==OR==
+>> prepare_PATH.bat
+>> python test.py
+
+FAIL 1: "ImportError: No module named 'ilwisobjects'" OR "ImportError: No module named '_ilwisobjects'"
+TODO: The ilwisobjects.py or the _ilwisobjects.pyd where not found by your python executable, both are needed
+
+FAIL 2: "ImportError: DLL load failed: the specific module could not be found."
+TODO: one or more of the statically linked DLLs (ilwiscore.dll, QtCore.dll) are not within a folder which
+is mentioned in the PATH environment or the DLL are of a wrong version (e.g. Qt5.1.1 instead of Qt5.2.0)
+
+FAIL 3: "QSqlDatabase: QSQLITE driver not loaded
+TODO: Qt dynamically loads plugins like the SQLite driver from the qt.conf file. You get tis error and followed up errors
+if either the file is missing, or it doesn't point to a folder containing the plugins. Read --2-- again!
+
+FAIL 4: "ImportError: ILWIS couldn't be initialized!"
+TODO: The <yourPathToIlwis>/ points to a directory which doesn't contain the ilwiscore.dll. Read --3-- again!
+
+FAIL 5: "_ilwisObjects.IlwisException: invalid container location: 'file:///C:/somedir/'"
+TODO: You managed to get the extension running! Now check if the script itself does things you want.
+The delivered test.py might contain pathes to nonexistent folders (like C:/somedir/).
+
+FAIL 6: "ImportError: None of the following configuration files exist: ..."
+TODO: Read --3-- again!
+
+FAIL 7: "ILWIS Error: ..." / "ILWIS Warning: ..."
+TODO: Your ILWIS extension is running! Maybe your script asks things, that ILWIS can not do yet or you found a bug.
