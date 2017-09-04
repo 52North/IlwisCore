@@ -8,6 +8,8 @@
 
 using namespace Ilwis;
 
+//a comment
+
 AbstractFactory::AbstractFactory(const QString& ty, const QString& sub="", const QString& desc) : _type(ty), _subtype(sub), _description(desc)
 {
 }
