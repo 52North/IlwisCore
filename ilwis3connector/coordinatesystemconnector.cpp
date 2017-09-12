@@ -200,8 +200,19 @@ GeodeticDatum *CoordinateSystemConnector::getDatum(IEllipsoid& ell) {
     QString code = name2Code(datum,"datum");
 
     if ( code == "?"){
-        kernel()->issues()->log(TR("No datum code for this alias %1").arg(datum));
-        return 0;
+        QString dx = _odf->value("Datum", "dx");
+        if ( dx == sUNDEF){
+            kernel()->issues()->log(TR("No datum code for this alias %1").arg(datum));
+            return 0;
+        }
+        QString dy = _odf->value("Datum", "dy");
+        QString dz = _odf->value("Datum", "dz");
+        GeodeticDatum *gdata = new GeodeticDatum();
+        gdata->setArea(sUNDEF);
+        gdata->code("User defined");
+        gdata->set3TransformationParameters(dx.toDouble(), dy.toDouble(), dz.toDouble(), ell);
+
+        return gdata;
     }
 
     InternalDatabaseConnection stmt;
