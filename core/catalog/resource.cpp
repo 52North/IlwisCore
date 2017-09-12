@@ -109,6 +109,7 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
                             QString filepath = OSHelper::neutralizeFileName(url.toLocalFile()) + "/" + resourceName;
                             if (QFileInfo(filepath).exists()){
                                 urltxt = QUrl::fromLocalFile(filepath);
+                                name(resourceName, false, false);
                             }else
                                 name(resourceName);
                         }
@@ -128,8 +129,11 @@ Resource::Resource(const QString& resourceName, quint64 tp, bool isNew) :
         QString path = OSHelper::neutralizeFileName(context()->persistentInternalCatalog().toString());
         _rawContainer = QUrl(path);
         _rawUrl = QUrl(path + "/" + name());
-    }else if ( !_rawUrl.isValid())
+    }else if ( !_rawUrl.isValid()){
+          QString c = _normalizedUrl.adjusted(QUrl::RemoveFilename).toString();
+        _rawContainer = c.left(c.size() - 1);
         _rawUrl = _normalizedUrl;// for the moment, can always overrule it
+    }
     changed(false);
 
 }
