@@ -293,6 +293,9 @@ Coordinate ProjectionImplementationProj4::latlon2coord(const LatLon &ll) const
 LatLon ProjectionImplementationProj4::coord2latlon(const Coordinate &crd) const
 {
 
+    if ( !crd.isValid())
+        return LatLon();
+
     if ( _pjBase == 0 || _pjLatlon == 0){
         int *err = pj_get_errno_ref();
         if (err != 0){
