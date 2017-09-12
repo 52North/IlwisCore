@@ -159,12 +159,12 @@ Controls.DropableItem{
                     onClicked: {
 
                         var inputparms = []
-                        for(i=0; i < inputparameterList.count; ++i){
+                        for(var i=0; i < inputparameterList.count; ++i){
                             var parm = inputparameterList.get(i)
                             inputparms.push({"name" : parm.name, "valuetype" : parm.valuetype,"description" : parm.description })
                         }
                         var outputparms = []
-                        for(i=0; i < outputparameterList.count; ++i){
+                        for(var i=0; i < outputparameterList.count; ++i){
                             parm = outputparameterList.get(i)
                             outputparms.push({"name" : parm.name, "valuetype" : parm.valuetype,"description" : parm.description })
                         }
