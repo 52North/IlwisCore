@@ -149,7 +149,7 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
         _retainedBaseTableColumns.resize(_baseTable->columnCount(), false);
         _retainedBaseTableColumns[primKeyIndex] = true;
         for(int i=0; i < columns.size(); ++i){
-            int index = _baseTable->columnIndex(columns[i]);
+            int index = _baseTable->columnIndex(columns[i].trimmed());
             if ( index != iUNDEF)
                 _retainedBaseTableColumns[index] = true;
         }
@@ -188,7 +188,7 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
          QStringList columns = columnList.split(",");
          _retainedForeignTableColumns.resize(_foreignTable->columnCount(), false);
          for(int i=0; i < columns.size(); ++i){
-             int index = _foreignTable->columnIndex(columns[i]);
+             int index = _foreignTable->columnIndex(columns[i].trimmed());
              if ( index != iUNDEF && index != primKeyIndex)
                  _retainedForeignTableColumns[index] = true;
          }
