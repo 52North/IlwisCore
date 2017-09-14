@@ -18,6 +18,8 @@
 #include "rangenode.h"
 #include "rangejunctionnode.h"
 #include "workflowserializerv1.h"
+#include "ilwisobjectconnector.h"
+#include "streamconnector.h"
 #include "workflow.h"
 
 using namespace Ilwis;
@@ -316,7 +318,7 @@ void WorkflowSerializerV1::loadNode(SPWorkFlowNode& node,Workflow *workflow, con
     }
     if (!node){
         _stream.device()->close();
-        throw ErrorObject(TR("Stored workflow definition is invalid"));
+        throw ErrorObject(TR("Stored workflow definition is invalid:") +  _streamconnector->source().name());
     }
     node->collapsed(collapsed > 0);
     node->label(lbl);
