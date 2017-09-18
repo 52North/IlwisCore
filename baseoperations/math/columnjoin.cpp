@@ -168,7 +168,7 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
         return sPREPAREFAILED;
     }
     _foreignKeyColumn = _expression.parm(4).value();
-    primKeyIndex = _foreignTable->columnIndex(_primaryKeyColumn);
+    primKeyIndex = _foreignTable->columnIndex(_foreignKeyColumn);
     if ( primKeyIndex == iUNDEF){
         kernel()->issues()->log(QString(TR("%1 is not a valid column name").arg(_foreignKeyColumn)));
         return sPREPAREFAILED;
