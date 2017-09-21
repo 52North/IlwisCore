@@ -541,7 +541,7 @@ double CalculatorOperation::calc() {
     };
 
     auto CalcBinary = [](MathAction act, double v1, double v2) ->double{
-        if (isNumericalUndef(v1)  || isNumericalUndef(2))
+        if (isNumericalUndef(v1)  || isNumericalUndef(v2))
             return rUNDEF;
         switch(act){
         case maADD:
