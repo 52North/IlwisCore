@@ -34,10 +34,9 @@ namespace WorkflowConnector {
         QJsonObject createJSONWorkflow(const Resource & res);
         QJsonObject createJSONWorkflowMetaData(const Resource& res);
         QJsonObject createJSONOperationMetadata(const SPWorkFlowNode& node, const std::vector<SPWorkFlowNode>& outNodes);
-//        QJsonObject createJSONOperationList(const Resource &res);
         QJsonArray createJSONOperationInputList(const SPWorkFlowNode& node);
         QJsonArray createJSONOperationOutputList(const Ilwis::SPWorkFlowNode &node);
-        QJsonArray createJSONOperationConnectionList(Ilwis::Workflow *workflow);
+        QJsonArray createJSONOperationConnectionList(Ilwis::Workflow *workflow, std::map<quint64, int> nodeMapping);
         bool openTarget();
 
         std::unique_ptr<QIODevice> _datasource;
@@ -45,19 +44,10 @@ namespace WorkflowConnector {
         JsonConfig _config;
 
         QByteArray _data;
-//        QMap<OVertex, QStringList> _nodeExecutionContext;   // contains a list of completed operations
-//        QMap<OVertex, QStringList> _inputArgs;
-//        OperationExpression _expression;
-//        QStringList _outputNames;
         QMap<QString, QString> _layer2LocalLUT;
         QSet<int> _leafOperations;
 
-//        void setInputParm(const QString baseName, const Ilwis::SPOperationParameter parm, QJsonObject &input, int nameType);
-
-//        void parseOutputNames(OperationExpression expression);
-//        void parseInputNodeArguments(Ilwis::Workflow *workflow, const QList<OVertex> &inputNodes);
-//        void addGeneratedNames(const OVertex &v, QStringList& names, const Ilwis::IOperationMetaData &meta);
-        void writeWMSLocalLUT(QString filename);
+//        void writeWMSLocalLUT(QString filename);
     };
 
 }
