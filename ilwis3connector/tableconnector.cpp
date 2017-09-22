@@ -325,6 +325,11 @@ bool TableConnector::storeColumns(const Table *tbl, const IOOptions &options) {
         if ( !isOldSystem) {
             if (domName.indexOf("/domains/") > -1)
                 domName = def.name() + ".dom";
+            if (domName.indexOf(ANONYMOUS_PREFIX) != -1) {
+                // rename using columnname + domainID
+                QString num = QString::number(dmColumn->id());
+                domName =def.name() + "_" + num;
+            }
             QString fileUrl = "file:///" + _odf->path()+ "/" + domName;
             if ( fileUrl.indexOf(".dom") == -1){
                 fileUrl += ".dom";
