@@ -343,8 +343,7 @@ QJsonArray WorkflowJSONConnector::createJSONOperationOutputList(const SPWorkFlow
             output["local"] = baseName;
             output["url"] = baseName;
             output["value"] = baseName;
-            output["name"] = opParam->term();  // weird naming!!
-            output["type"] = opParam->name();  // weird naming!!
+            output["name"] = opParam->name();
             output["id"] = index;
             output["optional"] = opParam->isOptional();
             output["description"] = opParam->description();
