@@ -212,7 +212,7 @@ Rectangle {
                newY = newY + operation.y - padding * 2
             }
         }
-        if ( type == "rangeitem"){
+        if ( currentItem.type === "rangeitem"){
             for (i in junctionsList) {
                 var junction = junctionsList[i]
                 node = junction
