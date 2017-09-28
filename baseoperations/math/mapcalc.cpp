@@ -128,7 +128,7 @@ OperationImplementation::State MapCalc::prepare(ExecutionContext *ctx,const Symb
     OperationImplementation::prepare(ctx,st);
     QString expr = _expression.input<QString>(0);
 
-
+    RasterStackDefinition stackdef;
     for(int parmIndex = 1 ; parmIndex < _expression.parameterCount(); ++parmIndex){
         Parameter parm = _expression.parm(parmIndex);
         if ( hasType(parm.valuetype(), itRASTER)){
@@ -137,6 +137,13 @@ OperationImplementation::State MapCalc::prepare(ExecutionContext *ctx,const Symb
             if(!raster.prepare(url)){
                 return sPREPAREFAILED;
             }
+            if ( stackdef.isValid()){
+                if(!stackdef.checkStackDefintion(raster->stackDefinition())){
+                    kernel()->issues()->log(TR("Incompatible stack definition for ") +raster->name() ) ;
+                    return sPREPAREFAILED;
+                }
+            }else if ( raster->stackDefinition().domain()->code().indexOf("count") == -1)
+                stackdef = raster->stackDefinition();
             _inputRasters[parmIndex] = PixelIterator(raster);
         }else if ( hasType(parm.valuetype(), itNUMBER)){
             bool ok;
@@ -149,7 +156,9 @@ OperationImplementation::State MapCalc::prepare(ExecutionContext *ctx,const Symb
     }
     OperationHelperRaster helper;
     helper.initialize((*_inputRasters.begin()).second.raster(), _outputRaster, itRASTERSIZE | itENVELOPE | itCOORDSYSTEM | itGEOREF);
-
+    if ( stackdef.isValid()){
+        _outputRaster->stackDefinitionRef() = stackdef;
+    }
     IDomain outputDomain;
     try {
         outputDomain = linearize(shuntingYard(expr));
