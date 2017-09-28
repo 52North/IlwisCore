@@ -189,7 +189,7 @@ public:
 
     PixelIterator band(const QString &variantIndex, const BoundingBox& box=BoundingBox()) ;
     PixelIterator band(double bandIndex, const Ilwis::BoundingBox &box=BoundingBox()) ;
-    bool band(const QString& bandIndex, PixelIterator inputData);
+    bool band(QString bandIndex, PixelIterator inputData);
     bool band(double bandIndex,  PixelIterator inputIter);
     void setBandDefinition(QString bandIndex, const DataDefinition& def);
     void setBandDefinition(double bandIndex, const DataDefinition &def);

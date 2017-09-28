@@ -270,16 +270,26 @@ PixelIterator RasterCoverage::bandPrivate(quint32 bandIndex, const Ilwis::Boundi
 }
 
 
-bool RasterCoverage::band(const QString &bandIndex,  PixelIterator inputIter)
+bool RasterCoverage::band(QString bandIndex,  PixelIterator inputIter)
 {
-    if ( !_bandDefinition.domain()->contains(bandIndex))
+    bool isAnonAdd = bandIndex == sUNDEF;
+    if ( bandIndex != sUNDEF && !_bandDefinition.domain()->contains(bandIndex))
         return false;
+    if ( bandIndex == sUNDEF){
+        bandIndex = _bandDefinition.insert(sUNDEF);
+    }
+    if ( bandIndex == sUNDEF)
+        throw InternalError(TR("Couldnt add band; indexe isnt usuable: ") + bandIndex);
+
     int bndIndex = _bandDefinition.index(bandIndex);
     if ( bndIndex >= size().zsize()){
-        _size.zsize(bndIndex + 1);
-        _grid->setBandProperties(this, 1);
+        _size.zsize(isAnonAdd ? bndIndex : bndIndex + 1);
+        _grid->setBandProperties(this, _grid->size().zsize() < bndIndex ? 1 : 0);
+         if ( _size.zsize() > _datadefBands.size())
+            _datadefBands.resize(_size.zsize());
+
     }
-    return bandPrivate(bndIndex, inputIter);
+    return bandPrivate(isAnonAdd ? bndIndex - 1 : bndIndex, inputIter);
 }
 
 bool RasterCoverage::band(double bandIndex,  PixelIterator inputIter)
