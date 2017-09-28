@@ -215,8 +215,11 @@ void SubFeatureDefinition::setSubDefinition(const IDomain &dom, const std::vecto
     }
 
     _subFeatureDomain = dom;
+    _subFeature2Index.clear();
+    int count = 0;
     for(auto item : _index2subFeature){
-        _subFeature2Index[item] = _subFeature2Index.size() - 1;
+        _subFeature2Index[item] = count;
+        ++count;
     }
 }
 
@@ -235,8 +238,11 @@ void SubFeatureDefinition::setSubDefinition(const IDomain &dom, const std::vecto
             _index2subFeature.push_back(QString::number(item));
         }
     }
+    int count = 0;
+     _subFeature2Index.clear();
     for(auto item : _index2subFeature){
-        _subFeature2Index[item] = _subFeature2Index.size() - 1;
+        _subFeature2Index[item] = count;
+        ++count;
     }
 }
 
@@ -282,19 +288,28 @@ QString SubFeatureDefinition::index(quint32 idx) const
     return sUNDEF;
 }
 
-void SubFeatureDefinition::insert(const QString& domainItem)
+QString SubFeatureDefinition::insert(const QString& di)
 {
+    QString domainItem = di;
     if (!_subFeatureDomain.isValid()) {
         kernel()->issues()->log(TR("No valid stack domain; Please set the stack domain before adding bands!"),IssueObject::itWarning);
-        return;
+        return sUNDEF;
+    }
+    if ( domainItem == sUNDEF) {
+        int index = _index2subFeature.size();
+        IItemDomain idom = _subFeatureDomain.as<ItemDomain<DomainItem>>();
+        if ( idom.isValid()){
+            domainItem = idom->item(index)->name();
+        }
     }
     if (!_subFeatureDomain->contains(domainItem))
-        return;
+        return sUNDEF;
     auto iter = _subFeature2Index.find(domainItem) ;
     if ( iter == _subFeature2Index.end()) { // insert one item
         _index2subFeature.push_back(domainItem);
         _subFeature2Index[domainItem] = _subFeature2Index.size() - 1;
     }
+    return domainItem;
 }
 
 double SubFeatureDefinition::insert(double domainItem)
@@ -351,6 +366,40 @@ void SubFeatureDefinition::clearSubFeatureDefinitions()
 {
     _index2subFeature.clear();
     _subFeature2Index.clear();
+}
+
+bool SubFeatureDefinition::isValid() const
+{
+    return _subFeatureDomain.isValid();
+}
+
+bool SubFeatureDefinition::checkStackDefintion(const SubFeatureDefinition &def)
+{
+    if ( !def.domain().isValid())
+        return false;
+    if ( !_subFeatureDomain.isValid())
+        return false;
+    // domain count is compatible with everything in this context as it is the fallback for unknown stack domains
+    if ( def.domain()->code().indexOf("count") != -1)
+        return true;
+    if ( _subFeatureDomain->code().indexOf("count") != -1)
+        return true;
+    if ( !def.domain()->isCompatibleWith(_subFeatureDomain.ptr())){
+        return false;
+    }
+    for(const QString& item1 : _index2subFeature ){
+        bool found = false;
+        for(const QString& item2 : def._index2subFeature ){
+            if ( item1 == item2)    {
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+            return false;
+    }
+    return true;
+
 }
 
 //------------------------------------------------------------------------------

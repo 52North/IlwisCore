@@ -49,10 +49,12 @@ public:
     std::vector<QString> indexes() const;
     quint32 count() const;
     IDomain domain() const;
-    void insert(const QString& domainItem);
+    QString insert(const QString& domainItem);
     double insert(double domainItem);
     void clearSubFeatureDefinitions();
     void store(QDataStream& stream);
+    bool isValid() const;
+    bool checkStackDefintion(const SubFeatureDefinition& def);
 protected:
     IDomain _subFeatureDomain;
     std::vector<QString> _index2subFeature;
