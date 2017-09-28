@@ -43,7 +43,8 @@ bool ResampleRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
             Coordinate coord = _outputRaster->georeference()->pixel2Coord(Pixeld(position.x,(position.y)));
             if ( !equalCsy)
                 coord = _inputRaster->coordinateSystem()->coord2coord(_outputRaster->coordinateSystem(),coord);
-            *iterOut = interpolator.coord2value(coord, iterOut.position().z);
+            double vnew = interpolator.coord2value(coord, iterOut.position().z);
+            *iterOut = vnew;
             ++iterOut;
             updateTranquilizer(iterOut.linearPosition(), 1000);
         }
