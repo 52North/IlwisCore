@@ -402,7 +402,7 @@ QString IlwisObjectModel::shortRangeDefinition() {
                 IItemDomain idom = _ilwisobject.as<ItemDomain<DomainItem>>();
                 for(auto item : idom){
                     if ( rangeString != "")
-                        rangeString += "|";
+                        rangeString += ",";
                     rangeString += item->name();
                 }
             }
