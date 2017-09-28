@@ -25,7 +25,10 @@ bool AddRasterBand::execute(ExecutionContext *ctx, SymbolTable& symTable)
             return false;
 
     PixelIterator bandIter(_band);
-    _inputRaster->band(rUNDEF, bandIter);
+    if ( hasType(_inputRaster->stackDefinition().domain()->ilwisType(), itITEMDOMAIN|itTEXTDOMAIN))
+         _inputRaster->band(sUNDEF, bandIter);
+     else
+        _inputRaster->band(rUNDEF, bandIter);
 
     ctx->_additionalInfo["outputisinput"] = true;
     setOutput(_inputRaster, ctx, symTable);
