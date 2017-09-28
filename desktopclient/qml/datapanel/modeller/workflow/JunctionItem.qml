@@ -159,6 +159,10 @@ Rectangle {
 
     function parameterNames(typefilter, isOutput){
         var dummy = []
+        // junction always has one output from whatever type
+        dummy.push("dummy")
+        if ( !isOutput)
+            dummy.push("dummy2")
         return dummy
     }
 
