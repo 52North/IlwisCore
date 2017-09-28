@@ -176,7 +176,9 @@ Ilwis::OperationImplementation::State SelectionRaster::prepare(ExecutionContext 
         QStringList names = attributeNames();
         //outputRaster->datadefRef().domain(_inputAttributeTable->columndefinition(names[0]).datadef().domain());
         outputRaster->setDataDefintions(_inputAttributeTable->columndefinition(names[0]).datadef().domain(), selectionBands, inputRaster->stackDefinition().domain());
-     }
+     }else
+         outputRaster->setDataDefintions(inputRaster->datadef().domain(), selectionBands, inputRaster->stackDefinition().domain());
+
 
 
      if ( (copylist & itGEOREF) == 0) {
@@ -282,7 +284,7 @@ quint64 RasterBand::createMetadata()
     operation.setDescription(TR("selects one band of a multi band raster"));
     operation.setInParameterCount({2});
     operation.addInParameter(0,itRASTER, TR("input raster"),TR("input rastercoverage with multiple bands"));
-    operation.addInParameter(1,itSTRING,  TR("stack index"),TR("index or band name in the stack"));
+    operation.addInParameter(1,itSTRING,  TR("band(s)"),TR("index or band name(s) in the stack"));
     operation.setOutParameterCount({1});
     operation.addOutParameter(0, itRASTER, TR("output band"));
     operation.setKeywords("raster,selection");
