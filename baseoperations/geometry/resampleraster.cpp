@@ -111,6 +111,7 @@ Ilwis::OperationImplementation::State ResampleRaster::prepare(ExecutionContext *
         ERROR3(ERR_ILLEGAL_PARM_3,"method",method,"resample");
         return sPREPAREFAILED;
     }
+     _outputRaster->stackDefinitionRef() = _inputRaster->stackDefinition();
     for(quint32 i = 0; i < _outputRaster->size().zsize(); ++i){
         QString index = _outputRaster->stackDefinition().index(i);
         _outputRaster->setBandDefinition(index,DataDefinition(_outputRaster->datadef().domain()));
