@@ -184,7 +184,7 @@ MouseArea {
     function getCursorShape(xrelative, yrelative) {
         var cshape = Qt.SizeAllCursor
 
-        if ( currentItem.type === "conditionitem"){
+        if ( currentItem.type === "conditionitem" || currentItem.type === "rangeitem"){
             if ( xrelative < 10){
                 if ( yrelative > currentItem.height * wfCanvas.zoomScale - 10)
                     cshape = Qt.SizeBDiagCursor
