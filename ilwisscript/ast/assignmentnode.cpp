@@ -150,6 +150,7 @@ void createCatalog(const IRasterCoverage& raster){
     mastercatalog()->addItems({resCatalog});
     std::vector<Resource> bands;
     RasterStackDefinition defs = raster->stackDefinition();
+    bool namedLayers = !hasType(raster->stackDefinition().domain()->ilwisType(), itNUMBER);
     for(quint32 band=0; band < raster->size().zsize(); ++band){
         Resource resBand = raster->resource();
         resBand.newId();
@@ -157,6 +158,9 @@ void createCatalog(const IRasterCoverage& raster){
         resBand.modifiedTime(Time::now());
         QUrl newUrl = resBand.url().toString();
         QString newName = resBand.name() + "_" + defs.index(band);
+        if ( namedLayers)
+            newName = defs.index(band);
+        newName.remove(".ilwis");
         resBand.setUrl(newUrl.toString() + "/" + newName);
         resBand.code("band="+QString::number(band));
         bands.push_back(resBand);

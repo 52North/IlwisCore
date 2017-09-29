@@ -41,7 +41,7 @@ StreamCatalogExplorer::StreamCatalogExplorer(const Ilwis::Resource &resource, co
 
 }
 
-void createCatalog(const IRasterCoverage& raster){
+void createCatalog(const IRasterCoverage& raster,std::vector<Resource>& items){
     Resource resCatalog = raster->resource();
     resCatalog.newId();
     resCatalog.name(raster->name());
@@ -49,9 +49,9 @@ void createCatalog(const IRasterCoverage& raster){
     resCatalog.modifiedTime(Time::now());
     resCatalog.setIlwisType(itCATALOG);
     resCatalog.setExtendedType(resCatalog.extendedType() | itRASTER);
-    mastercatalog()->addItems({resCatalog});
-    std::vector<Resource> bands;
+    items.push_back(resCatalog);
     RasterStackDefinition defs = raster->stackDefinition();
+    bool namedLayers = !hasType(raster->stackDefinition().domain()->ilwisType(), itNUMBER);
     for(quint32 band=0; band < raster->size().zsize(); ++band){
         Resource resBand = raster->resource();
         resBand.newId();
@@ -59,11 +59,13 @@ void createCatalog(const IRasterCoverage& raster){
         resBand.modifiedTime(Time::now());
         QUrl newUrl = resBand.url().toString();
         QString newName = resBand.name() + "_" + defs.index(band);
+        if ( namedLayers)
+            newName = defs.index(band);
+        newName.remove(".ilwis");
         resBand.setUrl(newUrl.toString() + "/" + newName);
         resBand.code("band="+QString::number(band));
-        bands.push_back(resBand);
+        items.push_back(resBand);
     }
-    mastercatalog()->addItems(bands);
 }
 
 std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
@@ -121,7 +123,7 @@ std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
                         if ( obj->ilwisType() == itRASTER){
                             IRasterCoverage raster = obj.as<RasterCoverage>();
                             if ( raster->size().zsize() > 1){
-                                createCatalog(raster);
+                                createCatalog(raster,items);
                             }
                         }
                         items.push_back(res);
