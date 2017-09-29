@@ -143,7 +143,7 @@ Ilwis::OperationImplementation::State DensifyRaster::prepare(ExecutionContext *c
         kernel()->issues()->log(TR("Could not construct georeference based on the given parameters"));
         return sPREPAREFAILED;
     }
-
+    _outputRaster->stackDefinitionRef() = _inputRaster->stackDefinition();
     _outputRaster->georeference(georef);    
     _outputRaster->georeference()->compute();
 
