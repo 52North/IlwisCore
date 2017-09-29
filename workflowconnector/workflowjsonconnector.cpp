@@ -119,22 +119,39 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
     // can have any positive value, and do not necessarily start at zero.
     // We keep a record of the actual operation ID's and the assigned Json ID's
     std::map<quint64, int> nodeMapping;
-    int jsonID = 0;
+    int jsonOperID = 0;
+    int jsonOtherID = std::count_if(nodes.begin(), nodes.end(), [](SPWorkFlowNode node) { return node->type() == WorkFlowNode::ntOPERATION;});
     for (auto node : nodes) {
+        QJsonObject operation;
         if (node->type() == WorkFlowNode::ntOPERATION) {
-            QJsonObject operation;
+            operation["id"] = jsonOperID;
+            nodeMapping[node->id()] = jsonOperID++;  // keep track of the Json ID as function of the internal operation ID
 
-            operation["id"] = jsonID;
-            nodeMapping[node->id()] = jsonID++;  // keep track of the Json ID as function of the internal operation ID
             operation["metadata"] = createJSONOperationMetadata(node, outNodes);
             operation["inputs"] = createJSONOperationInputList(node);
             operation["outputs"] = createJSONOperationOutputList(node);
-            operations.append(operation);
         }
-        else if (node->type() == WorkFlowNode::ntRANGE) {
+        else {
+            operation["id"] = jsonOtherID;
+            nodeMapping[node->id()] = jsonOtherID++;
 
         }
+//        else if (node->type() == WorkFlowNode::ntJUNCTION) {
+//            operation["id"] = jsonOperID;
+//            nodeMappingOper[node->id()] = jsonOperID++;
 
+//        }
+//        else if (node->type() == WorkFlowNode::ntRANGE) {
+//            operation["id"] = jsonOperID;
+//            nodeMappingOper[node->id()] = jsonOperID++;
+
+//        }
+//        else if (node->type() == WorkFlowNode::ntRANGEJUNCTION) {
+//            operation["id"] = jsonOperID;
+//            nodeMappingOper[node->id()] = jsonOperID++;
+
+//        }
+        operations.append(operation);
     }
 
     // get all the connections; keep a list of output operations;
@@ -372,22 +389,23 @@ QJsonArray WorkflowJSONConnector::createJSONOperationConnectionList(Workflow *wo
     for (auto node : nodes) {
         QJsonObject connection;
 
-        if (node->type() == WorkFlowNode::ntOPERATION) {
-            for (int i = 0; i < node->inputCount(); ++i) {
-                if (node->inputRef(i).inputLink()) {
-                    WorkFlowParameter wfp = node->inputRef(i);
-                    int toParamID = wfp.order();
-                    int toOperID = nodeMapping[wfp.nodeId()];
-                    int fromParamID = wfp.outputParameterIndex();
-                    int fromOperID = nodeMapping[wfp.inputLink()->id()];
+//        if (node->type() == WorkFlowNode::ntOPERATION) {
+        int nrInputs = node->inputCount();
+        if (node->type() == WorkFlowNode::ntRANGEJUNCTION) nrInputs = 4;    // cludge, size() always returns 1 instead of 4
+        for (int i = 0; i < nrInputs; ++i) {
+            if (node->inputRef(i).inputLink()) {
+                WorkFlowParameter wfp = node->inputRef(i);
+                int toParamID = wfp.order();
+                int toOperID = nodeMapping[wfp.nodeId()];
+                int fromParamID = wfp.outputParameterIndex();
+                int fromOperID = nodeMapping[wfp.inputLink()->id()];
 
-                    connection["fromOperationID"] = fromOperID;
-                    connection["fromParameterID"] = fromParamID;
-                    connection["toOperationID"] = toOperID;
-                    connection["toParameterID"] = toParamID;
+                connection["fromOperationID"] = fromOperID;
+                connection["fromParameterID"] = fromParamID;
+                connection["toOperationID"] = toOperID;
+                connection["toParameterID"] = toParamID;
 
-                    connections.append(connection);
-                }
+                connections.append(connection);
             }
         }
 
