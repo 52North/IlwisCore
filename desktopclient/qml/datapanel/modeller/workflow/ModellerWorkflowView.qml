@@ -74,10 +74,10 @@ Modeller.ModellerWorkArea {
 
         function addConnect(objectid,dx,dy,ownerid, parentItem){
             var connectid = operations.operationId("ilwis://operations/connect")
-            addOperation(connectid,dx,dy,ownerid, parentItem)
+            var operation = addOperation(connectid,dx,dy,ownerid, parentItem)
             var object = mastercatalog.id2Resource(objectid, 0)
-            if ( object){
-                workflow.setFixedValues(currentItem.itemid, object.url)
+            if ( object && operation){
+                workflow.setFixedValues(operation.itemid, object.url)
                 workflow.createMetadata()
                 updateInputNamesList()
                 object.suicide()
@@ -502,13 +502,22 @@ Modeller.ModellerWorkArea {
                 }
 
             }else {
-
-                endX = (startCoords.x + (node.width * node.scale));
-                endY = (startCoords.y + (node.height * node.scale));
-
-                if (x >= (startCoords.x) && y >= (startCoords.y) && x <= endX && y <= endY){
-                    return node
+                if ( node.type === "operationitem"){
+                    if ( node.condition === null && node.range === null ){
+                        endX = (startCoords.x + (node.width * node.scale));
+                        endY = (startCoords.y + (node.height * node.scale));
+                        if (x >= (startCoords.x) && y >= (startCoords.y) && x <= endX && y <= endY){
+                            return node
+                        }
+                    }
+                }else   if ( node.type === "junctionitem"){
+                    endX = (startCoords.x + (node.width * node.scale));
+                    endY = (startCoords.y + (node.height * node.scale));
+                    if (x >= (startCoords.x) && y >= (startCoords.y) && x <= endX && y <= endY){
+                        return node
+                    }
                 }
+
             }
         }
         if ( container){
@@ -525,6 +534,7 @@ Modeller.ModellerWorkArea {
 
     function itemAt(x,y){
         var item = checkContainer(x,y,operationsList, null)
+
         if (item){
             return item;
         }
@@ -534,7 +544,7 @@ Modeller.ModellerWorkArea {
             if ( item){
                 return item
             }
-            item = checkContainer(x,y, condition.junctionsList.length, condition)
+            item = checkContainer(x,y, condition.junctionsList, null)
             if ( item){
                 return item
             }
