@@ -46,24 +46,29 @@ Column {
         Controls.ColorPicker2{
             id : palettecolorPicker
             anchors.left : colorlabel.right
+
+        }
+
+        Button{
+            anchors.right: parent.right
+            anchors.rightMargin: 2
+            anchors.top : palettecolorPicker.bottom
+            anchors.topMargin: 4
+            width : 80
+            height : 22
+            text : "Add Item"
+            onClicked: {
+                newItem.enabled = false
+                var items = []
+                var v = palettecolorPicker.selectedColor.toString() // else javascript pass all by reference
+                items.push({paletteColor: v})
+                addDomainItems(items, false)
+            }
+
         }
     }
 
-    Button{
-        anchors.right: parent.right
-        anchors.rightMargin: 2
-        width : 80
-        height : 22
-        text : "Add Item"
-        onClicked: {
-            newItem.enabled = false
-            var items = []
-            var v = palettecolorPicker.selectedColor.toString() // else javascript pass all by reference
-            items.push({paletteColor: v})
-            addDomainItems(items, false)
-        }
 
-    }
 }
 
 
