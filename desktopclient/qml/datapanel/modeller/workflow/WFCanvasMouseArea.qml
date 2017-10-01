@@ -87,11 +87,13 @@ MouseArea {
                 alllist = alllist.concat( rangesList[k].junctionsList)
             }
 
+            currentItem = itemAt(mouseX, mouseY)
+
             for(var i=0; i < alllist.length; ++i){
 
                 var item = alllist[i]
                 item.isSelected = false
-                currentItem = itemAt(mouseX, mouseY)
+
 
                 for(var j=0; j < item.flowConnections.length; j++)
                 {
