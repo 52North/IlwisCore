@@ -9,7 +9,7 @@ Rectangle {
     id:comboBox
     property alias selectedColor : colorPicker.lastSelectedColor
     width : 235
-    height : Global.rowHeight
+    height : Global.rowHeight + dropDown.height
     z: 100;
     smooth:true;
     color : "transparent"
@@ -18,7 +18,7 @@ Rectangle {
         id:chosenItem
         radius:2;
         width:parent.width;
-        height:comboBox.height;
+        height:Global.rowHeight
         color: Global.alternatecolor3
         border.width: 1
         border.color: "#9494B8"
@@ -73,7 +73,6 @@ Rectangle {
         color: uicontext.workbenchBGColor
         border.width: 1
         border.color: "#B0B0B0"
-
 
         Rectangle {
 
