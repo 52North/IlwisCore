@@ -28,7 +28,7 @@ Controls.DropableItem{
 
     Rectangle {
         id : container
-        height: 560
+        height: 630
         width : parent.width
         border.width : 1
         border.color : Global.edgecolor
@@ -57,9 +57,10 @@ Controls.DropableItem{
 
                 for(var i = 0; i < commonpart.domitems.item.model.count; ++i){
                     if (itemstring !== "")
-                        itemstring += "|"
+                        itemstring += ","
                     itemstring += commonpart.domitems.item.model.get(i).paletteColor;
                 }
+                itemstring = "'" + itemstring + "'"
                  var url = applyBut.currentCatalogCorrectUrl() + "/"+ commonpart.name
                 var createInfo = {parentdomain : commonpart.parentdomain, type : "itemdomain", valuetype : "palette", name : url, items : itemstring, description : commonpart.description,strict : commonpart.strict}
                 var ilwisid = objectcreator.createObject(createInfo)
@@ -70,7 +71,7 @@ Controls.DropableItem{
 
          ApplyCreateButtons {
             width : parent.width
-            height : 60
+            height : 30
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 8
             id : applyBut
