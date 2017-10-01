@@ -11,6 +11,7 @@
 #include "operationmetadata.h"
 #include "workflownode.h"
 #include "workflow.h"
+#include "boundsonlycoordinatesystem.h"
 #include "commandhandler.h"
 #include "uicontextmodel.h"
 #include "mastercatalogmodel.h"
@@ -42,7 +43,7 @@ ObjectCreator::ObjectCreator(QObject *parent) : QObject(parent)
     _creators["timedomain" ] = new IlwisObjectCreatorModel("timedomain",TR("Time Domain"),itTIME | itDOMAIN,"UnderDevelopment.qml", 200, this);
     _creators["timeintervaldomain" ] = new IlwisObjectCreatorModel("timeintervaldomain", TR("Time Interval Domain"),itTIMEITEM | itITEMDOMAIN,"UnderDevelopment.qml", 200, this);
 //    _creators[ ] = new IlwisObjectCreatorModel(TR("Color Domain",itCOLORDOMAIN,"CreateNumDom.qml", 200, this);
-    _creators["colorpalette" ] = new IlwisObjectCreatorModel("colorpalette", TR("Color Palette Domain"),itPALETTECOLOR | itITEMDOMAIN,"UnderDevelopment.qml", 560, this);
+    _creators["colorpalette" ] = new IlwisObjectCreatorModel("colorpalette", TR("Color Palette Domain"),itPALETTECOLOR | itITEMDOMAIN,"CreatePaletteDomain.qml", 630, this);
     _creators["cornersgeoreferences" ] = new IlwisObjectCreatorModel("cornersgeoreferences", TR("Corners Georeference"),itGEOREF,"CreateGeorefCorners.qml", 330, this);
     _creators["tiepointgeoreference" ] = new IlwisObjectCreatorModel("tiepointgeoreference",TR("Tiepoints Georeference"),itGEOREF | itLOCATION,"CreateGeorefTiepoints.qml", 280, this);
     _creators["projectedcoordinatesystem" ] = new IlwisObjectCreatorModel("projectedcoordinatesystem", TR("Projected Coordinate System"),itCONVENTIONALCOORDSYSTEM,"CreateProjectedCoordinateSystem.qml", 530, this);
@@ -187,6 +188,25 @@ QString ObjectCreator::createNumericDomain(const QVariantMap &parms)
     if(Ilwis::commandhandler()->execute(expression,&ctx,syms) ) {
         IDomain obj = syms.getSymbol(ctx._results[0])._var.value<IDomain>();
         return QString::number(obj->id());
+    }
+    return sUNDEF;
+}
+
+QString ObjectCreator::createBoundsOnlyCoordinateSystem(const QVariantMap &parms){
+    QString expression;
+    expression = QString("script %1{format(stream,\"coordinatesystem\")}=createboundsonlycsy(%2,%3,%4,%5,\"%6\")").arg(parms["name"].toString())
+            .arg(parms["minx"].toDouble())
+            .arg(parms["miny"].toDouble())
+            .arg(parms["maxx"].toDouble())
+            .arg(parms["maxy"].toDouble())
+            .arg(parms["description"].toString());
+    Ilwis::ExecutionContext ctx;
+    Ilwis::SymbolTable syms;
+    if(Ilwis::commandhandler()->execute(expression,&ctx,syms) ) {
+        if ( ctx._results.size() > 0){
+            IBoundsOnlyCoordinateSystem obj = syms.getSymbol(ctx._results[0])._var.value<IBoundsOnlyCoordinateSystem>();
+            return QString::number(obj->id());
+        }
     }
     return sUNDEF;
 }
@@ -526,6 +546,8 @@ QString ObjectCreator::createObject(const QVariantMap &parms)
     } else if ( type == "coordinatesystem"){
         if ( parms["subtype"].toString() == "conventional")
             return createProjectedCoordinateSystem(parms);
+        if ( parms["subtype"].toString() == "boundsonly")
+            return createBoundsOnlyCoordinateSystem(parms);
     } else if ( type == "rastercoverage"){
         return createRasterCoverage(parms);
     }else if ( type == "script"){
