@@ -75,7 +75,7 @@ Ilwis::OperationImplementation::State CreatePaletteDomain::prepare(ExecutionCont
     }
     QString items = _expression.input<QString>(0);
     items.remove("\"");
-    _items = items.split("|");
+    _items = items.split(",");
      if ( _parentdomain.isValid()){
         for(int i =0; i < _items.size(); ++i){
             if(!_parentdomain->contains({_items[i]})){
@@ -96,7 +96,8 @@ quint64 CreatePaletteDomain::createMetadata()
     resource.setLongName("Create Identifier Domain");
     resource.setSyntax("createpalettedomain(itemdefintion, strict,description[,parentdomain])");
     resource.setInParameterCount({3,4});
-    resource.addInParameter(0, itSTRING,TR("Item defintion"), TR("A '|' seperate list of item definition for the items of the domain"));
+    resource.addInParameter(0, itSTRING,TR("Item defintion"), TR("A ',' seperate list of item definition for the items of the domain"));
+    resource.parameterNeedsQuotes(0);
     resource.addInParameter(1, itBOOL,TR("Strictness"), TR("Indicates how strict the realtion between domain and parent is; true for all domains without parents"));
     resource.addInParameter(2, itSTRING,TR("Description"), TR("Extra information about the new domain"));
     resource.addOptionalInParameter(3, itDOMAIN, TR("Parent domain"), TR("optional indication of a parent domain"));
