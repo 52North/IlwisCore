@@ -17,6 +17,9 @@ public:
     IlwisTypes ilwisType() const;
     QString toWKT(quint32 spaces=0) const;
 };
+typedef IlwisData<Ilwis::BoundsOnlyCoordinateSystem> IBoundsOnlyCoordinateSystem;
 }
+
+Q_DECLARE_METATYPE(Ilwis::IBoundsOnlyCoordinateSystem);
 
 #endif // BOUNDSONLYCOORDINATESYSTEM_H
