@@ -80,7 +80,9 @@ HEADERS += \
     baseoperations/data/addrasterband.h \
     baseoperations/creators/createtable.h \
     baseoperations/data/addcolumn.h \
-    baseoperations/data/copycolumn.h
+    baseoperations/data/copycolumn.h \
+    baseoperations/creators/createboundsonlycsy.h \
+    baseoperations/creators/createfeaturecoverage.h
     baseoperations/data/setattributetabel.h
 
 SOURCES += \
@@ -148,7 +150,9 @@ SOURCES += \
     baseoperations/data/addrasterband.cpp \
     baseoperations/creators/createtable.cpp \
     baseoperations/data/addcolumn.cpp \
-    baseoperations/data/copycolumn.cpp
+    baseoperations/data/copycolumn.cpp \
+    baseoperations/creators/createboundsonlycsy.cpp \
+    baseoperations/creators/createfeaturecoverage.cpp
     baseoperations/data/setattributetabel.cpp
 
 
