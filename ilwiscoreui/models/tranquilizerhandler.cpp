@@ -158,12 +158,14 @@ void TranquilizerModel::startValue(double d)
 {
     Locker<> lock(_mutex);
     _beginValue = d;
+    emit startValueChanged();
 }
 
 void TranquilizerModel::endValue(double d)
 {
     Locker<> lock(_mutex);
     _endValue = d;
+    emit endValueChanged();
 }
 
 quint64 TranquilizerModel::id() const

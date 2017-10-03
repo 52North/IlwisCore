@@ -17,8 +17,8 @@ class ILWISCOREUISHARED_EXPORT TranquilizerModel : public QObject{
     Q_PROPERTY(quint64 id READ id CONSTANT)
     Q_PROPERTY(QString title READ title CONSTANT)
     Q_PROPERTY(QString description READ description CONSTANT)
-    Q_PROPERTY(double endValue READ endValue CONSTANT)
-    Q_PROPERTY(double startValue READ startValue CONSTANT)
+    Q_PROPERTY(double endValue READ endValue NOTIFY endValueChanged)
+    Q_PROPERTY(double startValue READ startValue NOTIFY startValueChanged)
     Q_PROPERTY(double currentValue READ currentValue NOTIFY currentValueChanged)
     Q_PROPERTY(double currentValueP READ currentValueP NOTIFY currentValueChanged)
 
@@ -49,6 +49,8 @@ private:
 
 signals:
     void currentValueChanged();
+    void endValueChanged();
+    void startValueChanged();
 };
 
 typedef QQmlListProperty<TranquilizerModel> TranquilizerList;
