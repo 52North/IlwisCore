@@ -112,8 +112,8 @@ OTHER_FILES += \
     pythonapi/UPDATE \
     pythonapi/CHANGELOG
 
-LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore \
-        -L$$PWD/../libraries/$$PLATFORM$$CONF/ -llibgeos
+LIBS += -L$$PWD/../libraries/$$PLATFORM$$CONF/ -lilwiscore
+
 INCLUDEPATH += $$PWD/core \
                $$PWD/../external/geos
 
