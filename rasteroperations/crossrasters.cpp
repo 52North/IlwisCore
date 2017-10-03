@@ -176,10 +176,15 @@ bool CrossRastersBase::crossNoRaster( const BoundingBox& box){
 
         updateTranquilizer(count++,1000);
     }
+    if ( combos.size() > 5000){
+        kernel()->issues()->log(TR("Number of unique combinations exceeds the maximum 5000 ( = ") + QString::number(combos.size() ) + " )");
+        return false;
+
+    }
     quint32 record = 0;
     NamedIdentifierRange *idrange = new NamedIdentifierRange();
     count = 0;
-  //  trq()->prepare(_metadata->name(),TR("Updating table"), combos.size());
+    trq()->prepare(_metadata->name(),TR("Updating table"), combos.size());
     for(auto element : combos) {
         ComboValues combo = element.first;
         double v2 = combo._v2;
@@ -195,7 +200,7 @@ bool CrossRastersBase::crossNoRaster( const BoundingBox& box){
             _outputTable->setCell(4,record,QVariant(totalArea))  ;
             ++record;
         }
-      //  updateTranquilizer(count++,10);
+        updateTranquilizer(count++,10);
     }
     _crossDomain->range(idrange);
 
