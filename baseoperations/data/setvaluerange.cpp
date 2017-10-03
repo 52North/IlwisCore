@@ -123,7 +123,7 @@ quint64 SetValueRange::createMetadata()
     operation.addInParameter(0,itRASTER , TR("input object"),TR("input object. If the syntax uses the [] notation it points to a column of a table"));
     operation.addInParameter(1,itNUMBER, TR("minimum"), TR("Color in which the grid lines are drawn, a question mark if this parameter is not used"));
     operation.addInParameter(2,itNUMBER , TR("maximum"), TR("maximum of the new value range. If the value is undefined it will be ignored"));
-    operation.addInParameter(3,itNUMBER , TR("resolution"), TR("The distance between the gridlines or (for the secondary grid) the number of cells in a primary cell. -1 if this parameter is not used"));
+    operation.addInParameter(3,itNUMBER , TR("resolution"), TR("the minimum distance between to elements of the value range"));
     operation.setOutParameterCount({1});
     operation.addValidation(0,0,"domain=numericdomain");
     operation.addOutParameter(0,itRASTER, TR("raster coverage"));
