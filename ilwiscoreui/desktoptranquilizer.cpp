@@ -34,8 +34,9 @@ bool DesktopTranquilizer::update(double step) {
         //std::this_thread::sleep_for(std::chrono::milliseconds(3000));
         _end = rUNDEF;
         emit(removeTranquilizer(_id));
-    }else
+    }else{
         emit(updateTranquilizer(_id, _current));
+    }
 
     return true;
 
@@ -57,7 +58,7 @@ void DesktopTranquilizer::prepare(const QString &title, const QString &descripti
     kernel()->connect(this, &BaseTranquilizer::updateTranquilizer, kernel(), &Kernel::changeTranquilizer);
     kernel()->connect(this, &BaseTranquilizer::removeTranquilizer, kernel(), &Kernel::deleteTranquilizer);
     kernel()->newTranquilizer(_id, title, description, _start, _end);
-
+    emit(updateTranquilizer(_id, _current));
 }
 
 Tranquilizer *DesktopTranquilizer::create(const IOOptions &opt)
