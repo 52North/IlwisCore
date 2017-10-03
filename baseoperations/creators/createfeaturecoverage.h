@@ -22,8 +22,10 @@ private:
     IDomain _stackDomain;
     ICoordinateSystem _csy;
     std::map<QString, IFeatureCoverage> _features;
+    std::map<int, std::vector<ColumnDefinition>> _attributeDefinitions;
 
 
+    void registerColumnDefinitions(const IFeatureCoverage &fc, int stackIndex);
 };
 }
 }

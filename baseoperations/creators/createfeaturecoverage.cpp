@@ -47,6 +47,13 @@ bool Ilwis::BaseOperations::CreateFeatureCoverage::execute(ExecutionContext *ctx
     return true;
 }
 
+void  CreateFeatureCoverage::registerColumnDefinitions(const IFeatureCoverage& fc, int stackIndex){
+    const FeatureAttributeDefinition& attribs =  fc->attributeDefinitionsRef(stackIndex);
+    for(int col=0; col < attribs.columnCount(); ++col){
+
+    }
+}
+
 Ilwis::OperationImplementation::State CreateFeatureCoverage::prepare(ExecutionContext *ctx, const SymbolTable &st)
 {
     QString csy = _expression.input<QString>(0);
@@ -56,11 +63,25 @@ Ilwis::OperationImplementation::State CreateFeatureCoverage::prepare(ExecutionCo
     }
 
     QString coverages = _expression.input<QString>(1);
+    QString stackDomain = _expression.input<QString>(2);
+    if (!_stackDomain.prepare(stackDomain)){
+        kernel()->issues()->log(TR("can't open domain:") + stackDomain);
+        return sPREPAREFAILED;
+    }
+    if ( !hasType(_stackDomain->ilwisType(), itITEMDOMAIN | itNUMBER)){
+        kernel()->issues()->log(TR("not a suitable domain for stack:") + stackDomain);
+        return sPREPAREFAILED;
+    }
     QStringList parts = coverages.split("),");
+    int stackIndex = 0;
     for(const QString& part : parts){
         int index = part.indexOf("(");
         if (  index != -1){
             QString domElement = part.left(index);
+            if ( !_stackDomain->contains(domElement)){
+                kernel()->issues()->log(TR("the stack domain doesn't contain the element:") + domElement);
+                return sPREPAREFAILED;
+            }
             QStringList fcs = part.mid(index + 1).split(",");
             for(const QString& fc : fcs){
                 IFeatureCoverage featureCov;
@@ -69,6 +90,7 @@ Ilwis::OperationImplementation::State CreateFeatureCoverage::prepare(ExecutionCo
                     return sPREPAREFAILED;
                 }
                 _features[domElement] = featureCov;
+                registerColumnDefinitions(featureCov, stackIndex);
             }
         }
     }
