@@ -65,12 +65,12 @@ Ilwis::OperationImplementation::State TableValueByPrimaryKey::prepare(ExecutionC
     {ERR_COULD_NOT_LOAD_2,_expression.input<QString>(0), "" } );
 
     OperationHelper::check([&] ()->bool {  _primaryColumnName =_expression.input<QString>(1); return _inputTable->columnIndex(_primaryColumnName) != iUNDEF; },
-    {ERR_NOT_FOUND2,_primaryColumnName, _expression.input<QString>(0) } );
+    {ERR_NOT_FOUND2,_primaryColumnName, _expression.input<QString>(1) } );
 
     _primaryKeyValue = _expression.input<QString>(2);
 
     OperationHelper::check([&] ()->bool {  _valueColumn =_expression.input<QString>(3); return _inputTable->columnIndex(_valueColumn) != iUNDEF; },
-    {ERR_NOT_FOUND2,_valueColumn, _expression.input<QString>(0) } );
+    {ERR_NOT_FOUND2,_valueColumn, _expression.input<QString>(3) } );
 
 
     return sPREPARED;
