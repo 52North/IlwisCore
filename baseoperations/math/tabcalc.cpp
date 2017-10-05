@@ -49,8 +49,8 @@ bool TabCalc::execute(ExecutionContext *ctx, SymbolTable &symTable)
 
    std::vector<QVariant> values(_inputTable->recordCount());
    preFetchColumnValues();
-
    for(QVariant& v : values){
+
        v = calc();
        updateTranquilizer(_record, 5);
        ++_record;
@@ -86,6 +86,7 @@ OperationImplementation::State TabCalc::prepare(ExecutionContext *ctx, const Sym
             QString columnName = parm.value();
             int index = _inputTable->columnIndex(columnName);
             if(index == iUNDEF){
+                kernel()->issues()->log(TR("Column ") + columnName + " " + TR(" does not exist in ") + _inputTable->name());
                 return sPREPAREFAILED;
             }
             _inputColumns[parmIndex - 2] =columnName; // index starts at three but the variables are a 1 based index system ( e.g @1+@2)
@@ -95,7 +96,7 @@ OperationImplementation::State TabCalc::prepare(ExecutionContext *ctx, const Sym
             if (!ok){
                 return sPREPAREFAILED;
             }
-            _inputNumbers[parmIndex] = v;
+            _inputNumbers[parmIndex-2] = v;
         }
     }
     _outputTable = _createNewTable ? _inputTable->copyTable() : _inputTable ;
