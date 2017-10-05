@@ -39,19 +39,19 @@ Rectangle {
         width: parent.width
         anchors.top: label.bottom
         anchors.topMargin: 4
-        height : (workflowView.currentItem && workflowView.currentItem.type) === "operationitem" ? 100 : 0
+        height : (workflowView.currentItem && workflowView.currentItem.type) === "operationitem" ? 130 : 0
         enabled: height > 0
         visible: height > 0
         Text { id : plabel; text : qsTr("Input Parameter labels"); height : 22; width : 200; font.bold: true; visible : (workflowView.currentItem && workflowView.currentItem.type) === "operationitem"}
         ScrollView {
-            width: parent.width
-            height : 160
+            width: commonWidth
+            height : 100
 
             ListView{
                 anchors.fill: parent
                 model : (workflowView.currentItem && workflowView.currentItem.type === "operationitem")? workflowView.currentItem.getInputNames() : null
                 delegate: Item {
-                    width: commonWidth
+                    width: commonWidth -17
                     height : 20
                     Controls.TextEditLabelPair{
                         x : 3
@@ -76,14 +76,14 @@ Rectangle {
     Item {
         anchors.top: parameterLabels.bottom
         anchors.topMargin: 4
-        width : 600
+        width : commonWidth
         height :370
         x : 5
         y : 5
         ScrollView {
             anchors.fill: parent
             Controls.TextAreaLabelPair{
-                width : commonWidth
+                width : commonWidth - 13
                 height : (lineCount + 1) * 20
 
                 id : txt
