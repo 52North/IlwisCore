@@ -141,7 +141,7 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
         return sPREPAREFAILED;
     }
     QString columnList = _expression.parm(2).value();
-    if ( columnList[0] == '?'){
+    if ( columnList[0] == '?' || columnList == ""){
         _retainedBaseTableColumns.resize(_baseTable->columnCount(), true);
 
     }else {
@@ -181,7 +181,7 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
      }
 
      columnList = _expression.parm(5).value();
-     if ( columnList[0] == '?'){
+     if ( columnList[0] == '?' || columnList == ""){
          _retainedForeignTableColumns.resize(_foreignTable->columnCount() , true);
         _retainedForeignTableColumns[primKeyIndex] = false;
      }else {
