@@ -234,7 +234,7 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
         return sPREPAREFAILED;
     }
     QString maps = _expression.input<QString>(2);
-    if ( maps.indexOf("?") != -1 || maps.indexOf("*") != -1){
+    if ( maps != sUNDEF && (maps.indexOf("?") != -1 || maps.indexOf("*") != -1)){
         maps = expandWildCards(maps);
     }
     if (maps != ""){
