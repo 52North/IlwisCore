@@ -152,15 +152,11 @@ ToolBar{
             }
         }
 
-
-
-
         ExclusiveGroup {
             id: toolgroup
         }
 
     }
-
 
     Row{
         x : 3
@@ -170,7 +166,26 @@ ToolBar{
         width: childrenRect.width
         spacing : 2
 
-
+        PanButton{
+            height : buttonSize
+            width : buttonSize
+            direction : "up"
+        }
+        PanButton{
+            height : buttonSize
+            width : buttonSize
+            direction : "left"
+        }
+        PanButton{
+            height : buttonSize
+            width : buttonSize
+            direction : "right"
+        }
+        PanButton{
+            height : buttonSize
+            width : buttonSize
+            direction : "down"
+        }
 
         Button {
             height : buttonSize
