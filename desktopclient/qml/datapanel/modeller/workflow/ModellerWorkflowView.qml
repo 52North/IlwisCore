@@ -457,6 +457,21 @@ Modeller.ModellerWorkArea {
         item.scale  = wfCanvas.zoomScale
     }
 
+    function pan2(amount, direction){
+        if ( direction === "up"){
+            pan(0, amount)
+        }
+        if ( direction === "down"){
+            pan(0, -amount)
+        }
+        if ( direction === "right"){
+            pan(-amount, 0)
+        }
+        if ( direction === "left"){
+            pan(amount, 0)
+        }
+    }
+
     function pan(px, py){
         for(var i=0; i < operationsList.length; ++i){
             var operation = operationsList[i]
