@@ -472,6 +472,12 @@ void RasterCoverageConnector::calcStatistics(const IlwisObject *obj, NumericStat
     }
 }
 
+QString RasterCoverageConnector::createBandName(const IRasterCoverage& raster, quint32 i){
+    QString base = sourceRef().name();
+    QString band = raster->stackDefinition().index(i);
+    return base + "_band_" + band;
+}
+
 bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
     bool ok = Ilwis3Connector::storeMetaData(obj, itRASTER | itCOLLECTION);
     if ( !ok)
@@ -490,8 +496,9 @@ bool RasterCoverageConnector::storeMetaDataMapList(IlwisObject *obj) {
     _odf->setKeyValue("MapList","Maps",IniFile::FormatElement(sz.zsize()));
 
     QString mpl_name = obj->name();
-    for(int i = 0; i < sz.zsize(); ++i) {
-        QString mapName = QString("%1_band_%2").arg(obj->name()).arg(i);
+    for(quint32 i = 0; i < sz.zsize(); ++i) {
+        QString mapName = createBandName(raster, i);
+        //QString mapName = QString("%1_band_%2").arg(obj->name()).arg(i);
         mapName = mapName.replace(QRegExp("[/ .'\"]"),"_");
         _odf->setKeyValue("MapList",QString("Map%1").arg(i),mapName + ".mpr");
 

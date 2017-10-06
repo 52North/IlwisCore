@@ -69,6 +69,7 @@ private:
     int _storesize;
     IlwisTypes _storetype;
     IlwisTypes _dataType;
+    QString createBandName(const Ilwis::IRasterCoverage &raster, quint32 i);
 };
 }
 }
