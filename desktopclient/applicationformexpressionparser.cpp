@@ -122,6 +122,11 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
         if ( c == ',' && !part.isEmpty()){
             part = part.trimmed();
             QString defvalue =  part[0]=='!' ? "true" : "";
+            if ( defvalue == ""){
+                if ( part.indexOf("|") == -1 && part.indexOf("!") == -1 && part.indexOf("=") != -1){
+                    defvalue = part.split("=")[1];
+                }
+            }
             setParameter(resource, inChoiceList, parameters, part, choices, parmCount, isOptional, optionGroup, workflowContext,defvalue);
         } else if ( c == '['){
             if ( !part.isEmpty() ) {
@@ -464,7 +469,7 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
                         arg(imagewidth).
                         arg(xshift).
                         arg(input ? dropKeys(parameters[i]._dataType) : "\"?\"").
-                        arg(constantValue).
+                        arg(constantValue == "" ? parameters[i]._defValue : constantValue).
                         arg(checkEffects);
                 else {
                     textFieldPart = textArea.arg(i).
@@ -473,7 +478,7 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
                         arg(imagewidth).
                         arg(xshift).
                         arg(input ? dropKeys(parameters[i]._dataType) : "\"?\"").
-                        arg(constantValue).
+                        arg(constantValue == "" ? parameters[i]._defValue : constantValue).
                         arg(checkEffects).
                         arg(wrapMode);
                 }
