@@ -19,6 +19,7 @@ Modeller.ModellerWorkArea {
     property var rangesList: []
 
     property var currentItem
+    property bool selectState : false
     property bool canvasActive : true;
     property bool dropCondition : false
     property bool dropLoop : false

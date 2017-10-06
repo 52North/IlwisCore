@@ -72,9 +72,11 @@ MouseArea {
             workarea.dropLoop = false
         }
         wfCanvas.canvasValid = false
+        workarea.selectState = false
     }
 
     function selectThing(){
+        workarea.selectState = true
         if (canvasActive) {
             var operationSelected = -1, highestZ = -1, smallestDistance = 100000, selectedFlow=null
             var alllist = operationsList
@@ -160,8 +162,7 @@ MouseArea {
         }else {
             workarea.showSelectedOperation(null)
         }
-
-         wfCanvas.canvasValid = false
+        wfCanvas.canvasValid = false
     }
 
     function openWorkflow() {

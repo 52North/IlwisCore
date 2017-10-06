@@ -63,9 +63,11 @@ Rectangle {
 
                         onContentChanged: {
                             workflowView.workflow.updateOperationParameters(workflowView.currentItem.itemid, index, content)
-                            workflowView.currentItem.resetInputNames()
-                            dataforms.updateSelectedForm()
-                            dataforms.updateRunForm()
+                            if ( (workflowView.selectState && index == count) || !workflowView.selectState){
+                                workflowView.currentItem.resetInputNames()
+                                dataforms.updateSelectedForm()
+                                dataforms.updateRunForm()
+                            }
                         }
                     }
                 }
