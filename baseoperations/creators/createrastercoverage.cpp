@@ -237,7 +237,7 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
     if ( maps != sUNDEF && (maps.indexOf("?") != -1 || maps.indexOf("*") != -1)){
         maps = expandWildCards(maps);
     }
-    if (maps != ""){
+    if (maps != "" || maps == sUNDEF){
         QStringList bands = maps.split(",");
         for(QString band : bands){
             IRasterCoverage raster(band);
@@ -328,22 +328,22 @@ QString CreateRasterCoverage::expandWildCards(const QString& wildmaps){
 
 quint64 CreateRasterCoverage::createMetadata()
 {
-    OperationResource resource({"ilwis://operations/createrastercoverage"});
-    resource.setLongName("Create Raster Coverage");
-    resource.setSyntax("createrastercoverage(georeference, domain,bands[, stack-defintion][,stackdomain][,auto-resample])");
-    resource.setInParameterCount({3,4,5,6});
-    resource.addInParameter(0, itGEOREF,TR("Georeference"), TR("Geometry of the new rastercoverage"));
-    resource.addInParameter(1, itDOMAIN|itSTRING,TR("Domain"), TR("Domain used by the raster coverage"));
-    resource.addInParameter(2, itSTRING, TR("Bands"), TR("parameter defining a the bands that will be copied to the new raster coverage, Note that the bands maybe empty in which case an empty raster will be created"));
-    resource.addOptionalInParameter(3, itDOMAIN,TR("Stack domain"), TR("Option Domain of the z direction (stack), default is 'count'"));
-    resource.addOptionalInParameter(4, itSTRING|itINTEGER,TR("Stack defintion"), TR("Content of the stack, numbers, elements of item domain or sets of numbers"));
-    resource.addOptionalInParameter(5, itBOOL,TR("Auto resample"), TR("Checking this option will automatically resample all bands to the input georeference"));
-    resource.setOutParameterCount({1});
-    resource.addOutParameter(0, itRASTER, TR("raster coverage"), TR("The newly created raster"));
-    resource.setKeywords("raster,create,workflow");
+     OperationResource resource({"ilwis://operations/createrastercoverage"});
+     resource.setLongName("Create Raster Coverage");
+     resource.setSyntax("createrastercoverage(georeference, domain,bands[, stack-defintion][,stackdomain][,auto-resample])");
+     resource.setInParameterCount({3,4,5,6});
+     resource.addInParameter(0, itGEOREF,TR("Georeference"), TR("Geometry of the new rastercoverage"));
+     resource.addInParameter(1, itDOMAIN|itSTRING,TR("Domain"), TR("Domain used by the raster coverage"));
+     resource.addInParameter(2, itSTRING, TR("Bands"), TR("parameter defining a the bands that will be copied to the new raster coverage, Note that the bands maybe empty in which case an empty raster will be created"));
+     resource.addOptionalInParameter(3, itDOMAIN,TR("Stack domain"), TR("Option Domain of the z direction (stack), default is 'count'"));
+     resource.addOptionalInParameter(4, itSTRING|itINTEGER,TR("Stack defintion"), TR("Content of the stack, numbers, elements of item domain or sets of numbers"));
+     resource.addOptionalInParameter(5, itBOOL,TR("Auto resample"), TR("Checking this option will automatically resample all bands to the input georeference"));
+     resource.setOutParameterCount({1});
+     resource.addOutParameter(0, itRASTER, TR("raster coverage"), TR("The newly created raster"));
+     resource.setKeywords("raster,create,workflow");
 
-    mastercatalog()->addItems({resource});
-    return resource.id();
+     mastercatalog()->addItems({resource});
+     return resource.id();
 }
 //-----------------------------------------------------------------------------------------------------
 REGISTER_OPERATION(CreateSimpelRasterCoverage)
