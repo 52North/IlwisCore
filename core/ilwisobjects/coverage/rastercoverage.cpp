@@ -283,13 +283,13 @@ bool RasterCoverage::band(QString bandIndex,  PixelIterator inputIter)
 
     int bndIndex = _bandDefinition.index(bandIndex);
     if ( bndIndex >= size().zsize()){
-        _size.zsize(isAnonAdd ? bndIndex : bndIndex + 1);
-        _grid->setBandProperties(this, _grid->size().zsize() < bndIndex ? 1 : 0);
+        _size.zsize(bndIndex + 1);
+        _grid->setBandProperties(this, size().zsize() - _grid->size().zsize());
          if ( _size.zsize() > _datadefBands.size())
             _datadefBands.resize(_size.zsize());
 
     }
-    return bandPrivate(isAnonAdd ? bndIndex - 1 : bndIndex, inputIter);
+    return bandPrivate(isAnonAdd ? _size.zsize() - 1 : bndIndex, inputIter);
 }
 
 bool RasterCoverage::band(double bandIndex,  PixelIterator inputIter)
