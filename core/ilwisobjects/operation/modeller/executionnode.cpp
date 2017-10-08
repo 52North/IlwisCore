@@ -205,7 +205,8 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
                     QString outputName = ctx2._results[parameter.outputParameterIndex()];
                     Symbol sym =  symTable2.getSymbol(outputName);
                     QVariant val = symTable2.getValue(outputName);
-                    parameter.value("", sym._type);
+                    //parameter.value("", sym._type);
+                    parameter.valueType( sym._type);
                     _parameterValues[i] = val;
                     if ( parameter.inputLink()->type() == WorkFlowNode::ntRANGEJUNCTION){
                         ExecutionNode& ex = workflowImpl->executionNode(parameter.inputLink(), mapping);
@@ -248,7 +249,18 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
                     parms += QString::number(v);
             }
             if (  !ok && hasType(inParam.valueType(),itSTRING)){
-                parms += "\"" + mapping.getValue(inParam,*this).toString() + "\"";
+                QString v = mapping.getValue(inParam,*this).toString().trimmed();
+                bool needsquotes = false;
+                if ( v[0] != '\"'){ // don't place quotes were they are already present
+                    needsquotes = v.indexOf(QRegExp("[ ,)(\"\']")) != -1;
+                    if (!needsquotes){
+                        QString key = "pin_" + QString::number(i) + "_needsquotes";
+                        needsquotes = metadata->resource().hasProperty(key) && metadata->resource()[key].toBool();
+                    }
+                }
+                if ( needsquotes)
+                    v = "\"" +  v + "\"";
+                parms += v;
                 ok = true;
             }
             if (!ok)
@@ -400,8 +412,8 @@ bool ExecutionNode::executeRangeJunction(ExecutionContext *ctx, SymbolTable &sym
             return false;
         _node->inputRef(0).state(WorkFlowParameter::pkCALCULATED);
     }else {
-        parameter = _node->inputRef(RangeNode::rpINPUT);
-        if(! executeLink(ctx, symTable, parameter, workflowImpl, mapping))
+        WorkFlowParameter& parameter2 = _node->inputRef(RangeNode::rpINPUT);
+        if(! executeLink(ctx, symTable, parameter2, workflowImpl, mapping))
             return false;
     }
     return true;
