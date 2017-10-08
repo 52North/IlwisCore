@@ -97,7 +97,15 @@ IIlwisObject OperationHelper::variant2ilwisobject(const QVariant& variant, Ilwis
     case itTABLE:
         return variant.value<ITable>();
     case itFLATTABLE:
-        return variant.value<IFlatTable>();
+        {
+            IIlwisObject obj = variant.value<IFlatTable>();
+            if (!obj.isValid()){
+                // a bit a hack but the rules for these kind of cast from qvariant are very strict and it sometimnes difficult to predict which exact kind of table is hiding in there
+                // the tp and pointer are correct but due to some copying the qvariant is not completely convinced
+                obj = variant.value<ITable>();
+            }
+            return obj;
+        }
     case itCOORDSYSTEM:
         return variant.value<ICoordinateSystem>();
     case itCONVENTIONALCOORDSYSTEM:
