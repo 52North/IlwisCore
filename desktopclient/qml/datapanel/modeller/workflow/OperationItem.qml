@@ -123,7 +123,7 @@ Rectangle {
                             text : modelData
                             width : parent.width - 30
                             height : 11
-                            font.bold: workflow.hasValueDefined(itemid, index) ? false : true
+                            font.bold: (workflow && workflow.hasValueDefined(itemid, index)) ? false : true
                             color : textColor(itemid, index)
                             elide: Text.ElideMiddle
                         }
@@ -339,6 +339,9 @@ Rectangle {
     }
 
     function textColor(nodeid, parmIndex){
+        if (!workflow)
+            return "white"
+
         var node = workflow.getNode(nodeid)
         if (node){
             var parms = node.parameters
