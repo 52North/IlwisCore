@@ -44,10 +44,11 @@ bool TableValueByPrimaryKey::execute(ExecutionContext *ctx, SymbolTable& symTabl
     QVariant v = _inputTable->cell(_valueColumn, record);
     IDomain coldom = _inputTable->columndefinition(_valueColumn).datadef().domain();
     if ( hasType(coldom->ilwisType(), itITEMDOMAIN|itTEXTDOMAIN)){
-        QString value = coldom->impliedValue(v).toString();
+        QString value = v.isValid() ? coldom->impliedValue(v).toString() : sUNDEF;
         ctx->setOutput(symTable, QVariant(value), sUNDEF, itSTRING, Resource());
     }else{
-        ctx->setOutput(symTable, QVariant(v.toDouble()), sUNDEF, itDOUBLE, Resource());
+        double value = v.isValid() ? v.toDouble() : rUNDEF;
+        ctx->setOutput(symTable, QVariant(value), sUNDEF, itDOUBLE, Resource());
     }
     logOperation(_expression);
     return true;
