@@ -79,7 +79,7 @@ Rectangle {
         anchors.top: testRectangle.bottom
         border.width: 1
         border.color: "grey"
-        color : workflow.isValidNode(itemid,"operations") ? "lightblue" : Global.errorColor
+        color :( workflow && workflow.isValidNode(itemid,"operations")) ? "lightblue" : Global.errorColor
         opacity : 0.1
         height: parent.height - testRectangle.height - 10 - bottombuttons.height
         width : parent.width - 8
@@ -173,10 +173,13 @@ Rectangle {
     }
 
     function getBorderColor() {
-        if ( workflow.lastOperationNode == itemid){
-            return "blue"
+        if (workflow){
+            if ( workflow.lastOperationNode == itemid){
+                return "blue"
+            }
+            return workflow.isValidNode(itemid,"") ? "grey" : Global.errorColor
         }
-        return workflow.isValidNode(itemid,"") ? "grey" : Global.errorColor
+        return "white"
     }
 
     function removeFromOperationList(operationIndex) {
