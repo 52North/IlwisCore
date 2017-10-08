@@ -91,6 +91,11 @@ void WorkFlowParameter::value(const QString &v, IlwisTypes type,ParameterKind ki
 
 }
 
+void WorkFlowParameter::valueType(IlwisTypes type)
+{
+    _valueType = type;
+}
+
 IlwisTypes WorkFlowParameter::valueType() const
 {
     return _valueType;

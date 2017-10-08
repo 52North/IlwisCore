@@ -24,6 +24,7 @@ public:
     QString value() const;
     void value(const QString& v, IlwisTypes type, ParameterKind kind= pkDONTCARE);
     IlwisTypes valueType() const;
+    void valueType(IlwisTypes type);
     ParameterKind state() const;
     void state(ParameterKind st);
     QString syntax() const;
@@ -38,6 +39,7 @@ public:
     void line(const std::vector<XY>& l);
     bool needsQuotes() const;
     void needsQuotes(bool yesno);
+
 
 private:
     QString _value = sUNDEF; // value(possible url) of the link or fixed value
