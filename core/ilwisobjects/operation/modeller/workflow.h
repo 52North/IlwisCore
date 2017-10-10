@@ -69,7 +69,7 @@ public:
     const std::vector<SPWorkFlowNode> nodes(int filter=WorkFlowNode::ntALL) const;
     bool isValid() const;
     static std::vector<SPWorkFlowNode> outputNodes(const std::vector<Ilwis::SPWorkFlowNode> graph, Workflow *flow);
-
+     std::vector<SPWorkFlowNode> leafNodes(NodeId containerId);
 private:
     std::vector<SPWorkFlowNode> _graph;
     std::map<quint64,int> _parmid2order; // some workflow parameters are bound to parameters in  the workflow expression; this describes that relation. It is filled in the createMetadata

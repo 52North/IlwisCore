@@ -27,6 +27,24 @@ Workflow::Workflow(const Resource &resource) : OperationMetaData(resource)
 {
 }
 
+std::vector<SPWorkFlowNode> Workflow::leafNodes(NodeId containerId){
+    std::set<SPWorkFlowNode> leaves;
+
+    SPWorkFlowNode cnode = nodeById(containerId);
+    if (cnode){
+        for(auto item : _graph)    {
+            for(int i=0; i < item->inputCount(); ++i){
+                WorkFlowParameter& p = item->inputRef(i);
+                if ( p.inputLink() && p.inputLink()->owner() &&  p.inputLink()->owner()->id() == containerId)
+                    leaves.insert(p.inputLink());
+            }
+        }
+    }
+    std::vector<SPWorkFlowNode> result;
+    std::copy(leaves.begin(), leaves.end(), std::back_inserter(result));
+    return result;
+}
+
 std::vector<SPWorkFlowNode> Workflow::outputNodes(const std::vector<SPWorkFlowNode> graph,Workflow *flow)
 {
     std::set<NodeId> usedNodes;
