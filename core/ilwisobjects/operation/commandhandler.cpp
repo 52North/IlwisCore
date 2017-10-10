@@ -59,7 +59,9 @@ void ExecutionContext::addOutput(SymbolTable &tbl, const QVariant &var, const QS
 {
     QString name =  nme == sUNDEF ? SymbolTable::newAnonym() : nme;
     tbl.addSymbol(name,_scope, tp, var);
-    _results.push_back(name);
+    auto iter = std::find(_results.begin(), _results.end(), name);
+    if ( iter == _results.end())
+        _results.push_back(name);
     if ( addInfo != sUNDEF)
         _additionalInfo[name] = addInfo;
     if ( name.indexOf(ANONYMOUS_PREFIX) == -1 && resource.isValid()) {
