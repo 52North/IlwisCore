@@ -17,9 +17,12 @@ TabModel::TabModel(const QString &url, const QString &componentUrl,const QString
 
     IlwisTypes objtype = Ilwis::TypeHelper::name2type(type);
     if ( objtype != itUNKNOWN){
+        if ( objtype == itMODEL && url.indexOf("ilwis://operations") != -1) // exception. workflows are opened in the modelpna but are workflows
+            objtype = itWORKFLOW;
+
         Ilwis::Resource res = Ilwis::mastercatalog()->name2Resource(url, objtype);
         if ( res.isValid()){
-            _displayName = res.name();
+            _displayName = res.hasProperty("longname") ? res["longname"].toString() : res.name();
         }
     }
     if ( _displayName == ""){

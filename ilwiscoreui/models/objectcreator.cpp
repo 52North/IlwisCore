@@ -335,6 +335,7 @@ QString ObjectCreator::createWorkflow(const QVariantMap &parms)
     wf->resourceRef().setUrl(parms["url"].toString(), true);
     wf->resourceRef().setDescription(parms["description"].toString());
     wf->resourceRef().addProperty("keyword", parms["keywords"].toString());
+    wf->resourceRef().addProperty("longname", parms["longname"].toString());
     wf->connectTo(parms["url"].toString(),"workflow","stream",IlwisObject::cmOUTPUT);
     wf->store();
     mastercatalog()->addItems({wf->resource()});

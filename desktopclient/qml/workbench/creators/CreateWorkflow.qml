@@ -52,6 +52,12 @@ Controls.DropableItem{
                     isNew = true
                 }
             }
+            Controls.TextEditLabelPair{
+                id : displayname
+                labelText: qsTr("Display Name")
+                labelWidth: 100
+                width : parent.width
+            }
             Controls.TextAreaLabelPair{
                 id : descedit
                 labelText: qsTr("Description")
@@ -189,12 +195,14 @@ Controls.DropableItem{
                         }
 
                         var name = nameedit.content
+                        var displayName = displayname.content == "" ? name : displayname.content
                         var url = topItem.currentCatalogCorrectUrl() + '/' + name + '.ilwis'
                         var createInfo = {
                             type : "workflow",
                             name : name,
                             keywords : keywords,
                             description : descedit.content,
+                            longname : displayName,
                             url : url
                         }
                         var ilwisid = objectcreator.createObject(createInfo)
