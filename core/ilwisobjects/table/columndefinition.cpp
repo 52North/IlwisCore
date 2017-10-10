@@ -87,6 +87,15 @@ bool ColumnDefinition::isReadOnly() const
     return _readOnly;
 }
 
+bool ColumnDefinition::equals(const ColumnDefinition &def) const
+{
+    if ( def.name() != name())
+        return false;
+    if ( datadef().domain() != def.datadef().domain())
+        return false;
+    return true;
+}
+
 
 //---------------------------------------------------------
 

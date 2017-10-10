@@ -118,6 +118,7 @@ public:
      * @return if this column was defined to be read only
      */
     bool isReadOnly() const;
+    bool equals(const ColumnDefinition& def) const;
 
 private:
     DataDefinition _datadef;
