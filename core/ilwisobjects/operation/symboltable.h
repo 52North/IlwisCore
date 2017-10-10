@@ -36,6 +36,7 @@ public:
         QVariant var = getValue(name)    ;
         return var.value<T>();
     }
+    const QHash<QString, Symbol> symbols() const;
 
     void unloadData();
     IlwisTypes ilwisType(const QVariant &value, const QString &symname) const;

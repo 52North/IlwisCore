@@ -99,6 +99,11 @@ Symbol SymbolTable::getSymbol(const QString &name, int scope) const
     return Symbol();
 }
 
+const QHash<QString, Symbol> SymbolTable::symbols() const
+{
+    return _symbols;
+}
+
 void SymbolTable::unloadData()
 {
     for(Symbol& sym: _symbols) {
