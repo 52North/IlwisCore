@@ -21,11 +21,13 @@ public:
     QVariant parameterValue(int parmIndex) const;
     void parameterValue(int parmIndex, const QVariant& v) ;
     int parameterCount() const;
+    Ilwis::SymbolTable &symbolTableRef();
     static FlowContext contextSwitch(const SPWorkFlowNode &sourceNode, const SPWorkFlowNode &targetNode);
 
 private:
     std::vector<QVariant> _parameterValues;
     SPWorkFlowNode _node;
+    SymbolTable _symTable;
 
     bool executeOperation(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation *workflowImpl, Ilwis::WorkflowIdMapping &mapping);
     bool executeTest(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping &mapping);

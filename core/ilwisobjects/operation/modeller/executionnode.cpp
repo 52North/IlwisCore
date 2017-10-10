@@ -111,7 +111,6 @@ bool ExecutionNode::executeRangeTestNode(ExecutionContext *ctx, SymbolTable &sym
 bool ExecutionNode::executeRange(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping)
 {
     std::vector<SPWorkFlowNode> operations = _node->owner()->subnodes("operations");
-    std::vector<SPWorkFlowNode> outputNodes = Workflow::outputNodes(operations, workflowImpl->workflow().ptr());
     SPLRangeNode range = std::static_pointer_cast<RangeNode>(_node->owner());
     if ( range->input(0).inputLink()){ // initializing the range if it has input from another node
         ExecutionNode& exnode = workflowImpl->executionNode(range, mapping);
@@ -122,36 +121,47 @@ bool ExecutionNode::executeRange(ExecutionContext *ctx, SymbolTable &symTable, W
         }
     }
 
-    while(range->next()){
-        ExecutionContext ctx2;
-        SymbolTable symTable2;
-        clearCalculatedValues(operations, workflowImpl);
-        for(SPWorkFlowNode node : outputNodes ) {
-            ExecutionNode& exnode = workflowImpl->executionNode(node, mapping);
-            if(!exnode.execute(&ctx2, symTable2, workflowImpl, mapping)){
-                return false;
+    ExecutionNode *exNodeExisting = workflowImpl->executionNode(_node);
+    // as the output nodes always need to generate output the symbol table should be have some symbols
+    // if not, this is the first run of the range. If it has values we can pick up the values and continue
+    if (exNodeExisting->symbolTableRef().symbols().size() == 0){
+        // get all the nodes whose outputs are not used in the list of operations of the range; this means they go outside
+        // and thus are outputs of the range
+        std::vector<SPWorkFlowNode> outputNodes = workflowImpl->workflow()->leafNodes(_node->owner()->id());
+        while(range->next()){
+            ExecutionContext ctx2;
+            // clear all outputs of all objects that are internal to the range. In each run we want to use a clear scope
+            clearCalculatedValues(operations, workflowImpl);
+            for(SPWorkFlowNode node : outputNodes ) {
+                ExecutionNode& exnode = workflowImpl->executionNode(node, mapping);
+                if(!exnode.execute(&ctx2, exnode.symbolTableRef(), workflowImpl, mapping)){
+                    return false;
+                }
             }
         }
-        for(int i=0; i < ctx2._results.size(); ++i){
+    }
 
-            Symbol sym = symTable2.getSymbol(ctx2._results[i]);
-            QVariant value = sym._var;
-            if ( hasType(sym._type, itTABLE)){
-                ITable obj = value.value<ITable>();
-                ctx->addOutput(symTable,value,obj->name(), obj->ilwisType(), obj->resource() );
-            }else  if ( hasType(sym._type, itRASTER)){
-                IRasterCoverage obj = value.value<IRasterCoverage>();
-                ctx->addOutput(symTable,value,obj->name(), obj->ilwisType(), obj->resource() );
-            }else if ( hasType(sym._type, itFEATURE)){
-                IFeatureCoverage obj = value.value<IFeatureCoverage>();
-                ctx->addOutput(symTable,value,obj->name(), obj->ilwisType(), obj->resource() );
-            }else if ( hasType(sym._type, itNUMBER)){
-                 ctx->addOutput(symTable, QVariant(value), sUNDEF, itDOUBLE, Resource());
-            }else if ( hasType(sym._type, itSTRING)){
-                ctx->addOutput(symTable, QVariant(value), sUNDEF, itSTRING, Resource());
-           }
+    // the symbol table contains all outputs of the range for this output node
+    const QHash<QString, Symbol> symbols = exNodeExisting->symbolTableRef().symbols();
+    // add them to the output of this execution node.
+    for(const Symbol& sym : symbols){
+        QVariant value = sym._var;
+        if ( hasType(sym._type, itTABLE)){
+            ITable obj = value.value<ITable>();
+            ctx->addOutput(symTable,value,obj->name(), obj->ilwisType(), obj->resource() );
+        }else  if ( hasType(sym._type, itRASTER)){
+            IRasterCoverage obj = value.value<IRasterCoverage>();
+            ctx->addOutput(symTable,value,obj->name(), obj->ilwisType(), obj->resource() );
+        }else if ( hasType(sym._type, itFEATURE)){
+            IFeatureCoverage obj = value.value<IFeatureCoverage>();
+            ctx->addOutput(symTable,value,obj->name(), obj->ilwisType(), obj->resource() );
+        }else if ( hasType(sym._type, itNUMBER)){
+            ctx->addOutput(symTable, QVariant(value), sUNDEF, itDOUBLE, Resource());
+        }else if ( hasType(sym._type, itSTRING)){
+            ctx->addOutput(symTable, QVariant(value), sUNDEF, itSTRING, Resource());
         }
     }
+
 
     return true;
 }
@@ -202,15 +212,17 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
                 fc.setValue(fcTemp);
                 ctx2._additionalInfo["rangeswitch"] = fc;
                 if ( exNode.execute(&ctx2, symTable2, workflowImpl, mapping)) {
-                    QString outputName = ctx2._results[parameter.outputParameterIndex()];
-                    Symbol sym =  symTable2.getSymbol(outputName);
-                    QVariant val = symTable2.getValue(outputName);
-                    //parameter.value("", sym._type);
-                    parameter.valueType( sym._type);
-                    _parameterValues[i] = val;
-                    if ( parameter.inputLink()->type() == WorkFlowNode::ntRANGEJUNCTION){
-                        ExecutionNode& ex = workflowImpl->executionNode(parameter.inputLink(), mapping);
-                        ex.parameterValue(0,val);
+                    if ( ctx2._results.size() > 0 && parameter.outputParameterIndex() < ctx2._results.size()){
+                        QString outputName = ctx2._results[parameter.outputParameterIndex()];
+                        Symbol sym =  symTable2.getSymbol(outputName);
+                        QVariant val = symTable2.getValue(outputName);
+                        //parameter.value("", sym._type);
+                        parameter.valueType( sym._type);
+                        _parameterValues[i] = val;
+                        if ( parameter.inputLink()->type() == WorkFlowNode::ntRANGEJUNCTION){
+                            ExecutionNode& ex = workflowImpl->executionNode(parameter.inputLink(), mapping);
+                            ex.parameterValue(0,val);
+                        }
                     }
                 }else{
                     return false;
@@ -271,13 +283,16 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
 
     workflowImpl->wait(_node);
 
-    bool ok = commandhandler()->execute(expr,ctx,symTable2);
+    ExecutionContext ctx2;
+    bool ok = commandhandler()->execute(expr,&ctx2,symTable2);
     unloadInputs(unloadableObject);
 
-    workflowImpl->sendData(_node->id(), ctx, symTable2);
+    workflowImpl->sendData(_node->id(), &ctx2, symTable2);
     workflowImpl->wakeup();
 
-    symTable.copyFrom(ctx, symTable2);
+    for(auto res : ctx2._results)
+        ctx->_results.push_back(res);
+    symTable.copyFrom(&ctx2, symTable2);
 
     return ok;
 }
@@ -370,6 +385,11 @@ void ExecutionNode::parameterValue(int parmIndex, const QVariant &v)
 int ExecutionNode::parameterCount() const
 {
     return _parameterValues.size();
+}
+
+SymbolTable& ExecutionNode::symbolTableRef()
+{
+    return _symTable;
 }
 
 bool ExecutionNode::executeLink(ExecutionContext *ctx, SymbolTable &symTable, WorkFlowParameter& parameter,WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping){
