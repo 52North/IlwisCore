@@ -50,7 +50,13 @@ bool Ilwis::BaseOperations::CreateFeatureCoverage::execute(ExecutionContext *ctx
 void  CreateFeatureCoverage::registerColumnDefinitions(const IFeatureCoverage& fc, int stackIndex){
     const FeatureAttributeDefinition& attribs =  fc->attributeDefinitionsRef(stackIndex);
     for(int col=0; col < attribs.columnCount(); ++col){
-
+        bool found = false;
+        for(auto coldef : _attributeDefinitions[stackIndex]){
+            if ( coldef.equals(attribs.columndefinition(col))){
+                found = true;
+                break;
+            }
+        }
     }
 }
 
