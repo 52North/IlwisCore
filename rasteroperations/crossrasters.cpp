@@ -176,8 +176,8 @@ bool CrossRastersBase::crossNoRaster( const BoundingBox& box){
 
         updateTranquilizer(count++,1000);
     }
-    if ( combos.size() > 5000){
-        kernel()->issues()->log(TR("Number of unique combinations exceeds the maximum 5000 ( = ") + QString::number(combos.size() ) + " )");
+    if ( combos.size() > 50000){
+        kernel()->issues()->log(TR("Number of unique combinations exceeds the maximum 50000 ( = ") + QString::number(combos.size() ) + " )");
         return false;
 
     }
