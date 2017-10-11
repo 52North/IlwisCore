@@ -209,11 +209,11 @@ OperationImplementation::State ColumnJoin::prepare(ExecutionContext *ctx, const 
     }
     for(int i=0; i < _baseTable->columnCount(); ++i){
         if (_retainedBaseTableColumns[i])
-            _outputTable->addColumn(_baseTable->columndefinition(i));
+            _retainedForeignTableColumns[i] = _outputTable->addColumn(_baseTable->columndefinition(i));
     }
     for(int i=0; i < _foreignTable->columnCount(); ++i){
         if ( _retainedForeignTableColumns[i])
-            _outputTable->addColumn(_foreignTable->columndefinition(i));
+             _retainedForeignTableColumns[i] = _outputTable->addColumn(_foreignTable->columndefinition(i));
     }
 
     if ( _inputCoverage.isValid()){
