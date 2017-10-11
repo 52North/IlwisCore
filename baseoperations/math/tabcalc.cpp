@@ -99,7 +99,7 @@ OperationImplementation::State TabCalc::prepare(ExecutionContext *ctx, const Sym
             _inputNumbers[parmIndex-2] = v;
         }
     }
-    _outputTable = _createNewTable ? _inputTable->copyTable() : _inputTable ;
+    _outputTable = _createNewTable ? _inputTable->copyTable(ANONYMOUS_PREFIX) : _inputTable ;
 
     IDomain outputDomain;
     try{
