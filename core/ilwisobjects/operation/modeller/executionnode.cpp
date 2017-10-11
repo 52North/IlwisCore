@@ -108,6 +108,22 @@ bool ExecutionNode::executeRangeTestNode(ExecutionContext *ctx, SymbolTable &sym
     return true;
 }
 
+void ExecutionNode::setInputJunction(ExecutionContext *ctx, SymbolTable &symTable,const SPWorkFlowNode& operation, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping){
+    if ( ctx->_results.size() == 0)
+        return;
+
+    std::vector<SPWorkFlowNode> junctions =_node->owner()->subnodes("junctions");
+    QString outputName = ctx->_results[0];
+    QVariant val = symTable.getValue(outputName);
+    for(SPWorkFlowNode node : junctions){
+        SPWorkFlowNode linkedOutput = node->inputRef(RangeNode::rpINPUT).inputLink();
+        if ( linkedOutput && linkedOutput->id() == operation->id()){
+            ExecutionNode& ex = workflowImpl->executionNode(node, mapping);
+            ex.parameterValue(0,val);
+        }
+    }
+}
+
 bool ExecutionNode::executeRange(ExecutionContext *ctx, SymbolTable &symTable, WorkflowImplementation* workflowImpl, WorkflowIdMapping& mapping)
 {
     std::vector<SPWorkFlowNode> operations = _node->owner()->subnodes("operations");
@@ -137,6 +153,7 @@ bool ExecutionNode::executeRange(ExecutionContext *ctx, SymbolTable &symTable, W
                 if(!exnode.execute(&ctx2, exnode.symbolTableRef(), workflowImpl, mapping)){
                     return false;
                 }
+                setInputJunction(&ctx2, exnode.symbolTableRef(), node,workflowImpl, mapping);
             }
         }
     }

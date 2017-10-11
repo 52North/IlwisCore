@@ -42,6 +42,7 @@ private:
     void clearScopedCalcutedValues();
 
     bool executeLink(ExecutionContext *ctx, SymbolTable &symTable, Ilwis::WorkFlowParameter &paramete, WorkflowImplementation *workflowImpl, WorkflowIdMapping &mapping);
+    void setInputJunction(ExecutionContext *ctx, SymbolTable &symTable, const SPWorkFlowNode &operation, WorkflowImplementation *workflowImpl, WorkflowIdMapping &mapping);
 };
 }
 
