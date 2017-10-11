@@ -33,10 +33,12 @@ public:
 
     static Ilwis::OperationImplementation *create(quint64 metaid,const Ilwis::OperationExpression& expr);
     Ilwis::OperationImplementation::State prepare(ExecutionContext *ctx, const SymbolTable&);
+    bool execute(ExecutionContext *ctx, SymbolTable &symTable);
 
     static quint64 createMetadata();
 
     NEW_OPERATION(AttributeRaster)    ;
+
 
 
 };

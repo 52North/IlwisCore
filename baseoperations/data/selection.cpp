@@ -233,6 +233,14 @@ Ilwis::OperationImplementation::State AttributeRaster::prepare(ExecutionContext 
     return SelectionRaster::prepare(ctx, tbl);
 }
 
+bool AttributeRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
+{
+    if (_prepState == sNOTPREPARED)
+        if((_prepState = prepare(ctx, symTable)) != sPREPARED)
+            return false;
+    return SelectionRaster::execute(ctx, symTable);
+}
+
 quint64 AttributeRaster::createMetadata()
 {
     OperationResource operation({"ilwis://operations/attributeraster"});
