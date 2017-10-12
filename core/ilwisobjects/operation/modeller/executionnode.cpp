@@ -145,15 +145,18 @@ bool ExecutionNode::executeRange(ExecutionContext *ctx, SymbolTable &symTable, W
         // and thus are outputs of the range
         std::vector<SPWorkFlowNode> outputNodes = workflowImpl->workflow()->leafNodes(_node->owner()->id());
         while(range->next()){
-            ExecutionContext ctx2;
+
             // clear all outputs of all objects that are internal to the range. In each run we want to use a clear scope
             clearCalculatedValues(operations, workflowImpl);
             for(SPWorkFlowNode node : outputNodes ) {
+                ExecutionContext ctx2;
                 ExecutionNode& exnode = workflowImpl->executionNode(node, mapping);
                 if(!exnode.execute(&ctx2, exnode.symbolTableRef(), workflowImpl, mapping)){
                     return false;
                 }
                 setInputJunction(&ctx2, exnode.symbolTableRef(), node,workflowImpl, mapping);
+                //remove results of a previous run of the loop.
+                exnode.symbolTableRef().removeAllBut(ctx2._results);
             }
         }
     }
