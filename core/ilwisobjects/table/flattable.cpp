@@ -333,7 +333,7 @@ ITable FlatTable::copyTable(const QString &nm)
         url = INTERNAL_CATALOG + "/" + Identity::newAnonymousName();
     }else if ( nm.indexOf("://") != -1){
         url = nm;
-    }else if ( nm != "")
+    }else if ( nm != "" && nm != sUNDEF)
         url = INTERNAL_CATALOG + "/" + (nm != sUNDEF ? name() : nm);
 
     IFlatTable tbl;
