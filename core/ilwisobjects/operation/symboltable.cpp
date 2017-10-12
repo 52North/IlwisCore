@@ -99,6 +99,21 @@ Symbol SymbolTable::getSymbol(const QString &name, int scope) const
     return Symbol();
 }
 
+void SymbolTable::removeAllBut(std::vector<QString> &exceptions)
+{
+    std::map<QString, bool> remove;
+    for(auto symIter= _symbols.begin(); symIter != _symbols.end(); ++symIter)    {
+        auto iter = std::find(exceptions.begin(), exceptions.end(), symIter.key());
+        remove[symIter.key()] = iter == exceptions.end();
+    }
+    for(auto removePair : remove){
+        if ( removePair.second){
+            auto iter = _symbols.find(removePair.first);
+            _symbols.erase(iter);
+        }
+    }
+}
+
 const QHash<QString, Symbol> SymbolTable::symbols() const
 {
     return _symbols;

@@ -36,6 +36,7 @@ public:
         QVariant var = getValue(name)    ;
         return var.value<T>();
     }
+    void removeAllBut(std::vector<QString>& exceptions);
     const QHash<QString, Symbol> symbols() const;
 
     void unloadData();
