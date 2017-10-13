@@ -19,6 +19,13 @@ OperationImplementation::   OperationImplementation(quint64 metaid, const Ilwis:
    }
 }
 
+OperationImplementation::~OperationImplementation()
+{
+    if ( _tranquilizer){
+        _tranquilizer->stop();
+    }
+}
+
 
 const IOperationMetaData &OperationImplementation::metadata() const
 {
