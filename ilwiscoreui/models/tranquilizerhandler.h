@@ -36,6 +36,7 @@ public:
     void description(const QString& d);
     void startValue(double d);
     void endValue(double d);
+    bool isStopped() const;
 
     quint64 id() const;
 private:

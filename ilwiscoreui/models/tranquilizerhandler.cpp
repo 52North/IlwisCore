@@ -91,10 +91,17 @@ int TranquilizerHandler::aggregateValue() const
     if ( _tranquilizers.size() == 0)
         return 0;
     int avp = 0;
+    int count = 0;
     for(auto trq  = _tranquilizers.begin(); trq != _tranquilizers.end(); ++trq){
-        avp +=  (int)(100 * (*trq)->currentValueP());
+        if (! (*trq)->isStopped()){
+            avp +=  (int)(100 * (*trq)->currentValueP());
+            ++count;
+        }
     }
-    return avp / _tranquilizers.size();
+    if ( count == 0)
+        return 0;
+
+    return avp / count;
 }
 
 
@@ -166,6 +173,11 @@ void TranquilizerModel::endValue(double d)
     Locker<> lock(_mutex);
     _endValue = d;
     emit endValueChanged();
+}
+
+bool TranquilizerModel::isStopped() const
+{
+    return _currentValue >= _endValue;
 }
 
 quint64 TranquilizerModel::id() const
