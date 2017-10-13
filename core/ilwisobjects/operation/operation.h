@@ -14,7 +14,7 @@ public:
     enum State{sNOTPREPARED,sPREPARED, sPREPAREFAILED};
     OperationImplementation() : _prepState(sNOTPREPARED) {}
     OperationImplementation(quint64 metaid, const Ilwis::OperationExpression &e);
-    virtual ~OperationImplementation() {}
+    virtual ~OperationImplementation() ;
     const IOperationMetaData& metadata() const;
     UPTranquilizer& trq();
     virtual bool execute(ExecutionContext *ctx, SymbolTable& symTable)=0;

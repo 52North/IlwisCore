@@ -4,6 +4,8 @@
 #include "table.h"
 #include "pixeliterator.h"
 #include "itemrange.h"
+#include "tranquilizer.h"
+#include "ilwiscontext.h"
 #include "itemiterator.h"
 
 using namespace Ilwis;
@@ -362,11 +364,17 @@ bool RasterCoverage::bandPrivate(quint32 bandIndex,  PixelIterator inputIter)
     datadefRef(bandIndex) = inputIter.raster()->datadef();
 //    grid()->setBandProperties(this,bandIndex);
 
+    UPTranquilizer trq(Tranquilizer::create(context()->runMode()));
+    trq->prepare("Copying input data","Initializing raster band",size().xsize() * size().ysize());
+    quint64 count = 0;
     PixelIterator iter = bandPrivate(bandIndex);
     while(iter != iter.end()){
         *iter = *inputIter;
         ++iter;
         ++inputIter;
+        if ( (++count % 1000) == 0){
+            trq->update(1000);
+        }
     }
     return true;
 
