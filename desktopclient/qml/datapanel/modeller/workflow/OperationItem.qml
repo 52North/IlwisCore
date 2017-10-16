@@ -405,11 +405,10 @@ Rectangle {
 
             if ( flow.flowPoints){
                 var label = ""
-                var node = workflow.getNode(flow.target.itemid)
-                if ( node.type === "operationnode"){
-                    var lst = node["parameters"]
-                    label = node["parameters"][flow.flowPoints.toParameterIndex].flowlabel
-                }else if ( node.type === "junctionnode"){
+                var nodetype = workflow.getNodeType(flow.target.itemid)
+                if ( nodetype === "operationnode"){
+                    label = workflow.getFlowLabel(flow.target.itemid, flow.flowPoints.toParameterIndex)
+                }else if ( nodetype === "junctionnode"){
                     label = flow.flowPoints.toParameterIndex.toString()
                 }
                 drawInfoBox(ctx, pt1,pt2, label)
