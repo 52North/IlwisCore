@@ -73,12 +73,12 @@ WorkflowModel *WorkflowCatalogModel::newWorkflow(const QString &name)
 
 bool WorkflowCatalogModel::deleteWorkflow(quint32 index)
 {
-    // TODO add delete method via mastercatalog
+    return false;
 }
 
 WorkflowModel *WorkflowCatalogModel::saveWorkflow(quint32 index)
 {
-    // TODO save workflow via mastercatalog
+    return 0;
 }
 
 QString WorkflowCatalogModel::executeworkflow(quint64 workflowid, const QString &parameters)
