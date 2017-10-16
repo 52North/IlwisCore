@@ -74,6 +74,8 @@ public:
     Q_INVOKABLE QVariantList getNodes();
     Q_INVOKABLE QVariantMap getNode(int nodeId);
     Q_INVOKABLE QVariantList getTests(int conditionId) const;
+    Q_INVOKABLE QString getFlowLabel(int nodeId, int parameterIndex) const;
+    Q_INVOKABLE QString getNodeType(int nodeId) const;
     Q_INVOKABLE void createMetadata();
     Q_INVOKABLE QVariantList propertyList();
     Q_INVOKABLE QString generateScript(const QString &type, const QString &parameters);
@@ -92,9 +94,6 @@ public:
     Q_INVOKABLE void stopExecution();
 
     QString modelType() const;
-
-
-
 
 signals:
     void sendMessage(const QString& type, const QString& subtype, const QVariantMap& parameters);

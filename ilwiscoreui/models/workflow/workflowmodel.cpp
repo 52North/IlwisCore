@@ -471,8 +471,29 @@ qint32 WorkflowModel::runid() const
     return _runid;
 }
 
+//for efficiency reasons; info is also contained in getNode but this function is called manytimes in bigger flows
+QString WorkflowModel::getFlowLabel(int nodeId, int parameterIndex) const{
+    SPWorkFlowNode node = _workflow->nodeById(nodeId)    ;
+    if (node){
+        if ( parameterIndex <  node->inputCount() ){
+            WorkFlowParameter& p = node->inputRef(parameterIndex);
+            return p.flowLabel();
+        }
+    }
+    return "";
+}
+
+QString WorkflowModel::getNodeType(int nodeId) const
+{
+    SPWorkFlowNode node = _workflow->nodeById(nodeId)    ;
+    if (!node)
+        return sUNDEF;
+    return nodetype2string(node->type());
+}
+
 QVariantMap WorkflowModel::getNode(int nodeId){
     QVariantMap data;
+    try {
     if (_workflow.isValid()){
         SPWorkFlowNode node = _workflow->nodeById(nodeId)    ;
         if (!node)
@@ -553,6 +574,7 @@ QVariantMap WorkflowModel::getNode(int nodeId){
             data["linkedfalseoperation"] = getParameter(junction,WorkFlowCondition::cpFALSECASE);
         }
     }
+    } catch(ErrorObject&){}
     return data;
 }
 
