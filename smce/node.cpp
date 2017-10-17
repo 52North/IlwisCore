@@ -118,6 +118,8 @@ QString Node::uniqueName(QString name)
 
 bool Node::nameAllowed(QString name)
 {
+    if (name.length() == 0)
+        return false;
     if (parent()) {
         QList <Node*> siblings = parent()->subNodes();
         for (Node* node : siblings) {
