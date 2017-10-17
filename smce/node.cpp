@@ -573,6 +573,13 @@ bool Node::done(int mode, int col, bool recursive) const
         bool ok = true;
         if (col > 0) {
             ok = _fileName != ""; // now check
+            if (ok) {
+                try {
+                    Ilwis::IRasterCoverage rc(_fileName, itRASTER); // "probe"
+                } catch (const ErrorObject& err){
+                    ok = false; // _fileName does not exist or is not a valid RasterCoverage
+                }
+            }
         } else { // col == 0
             if (mode == Mode::EditTree) {
                 if (recursive) { // means we're doing a final check to see if we can change the mode
@@ -1858,9 +1865,13 @@ void Standardization::load(QDataStream &stream, Node * node)
             case BoolConstraint:
                 standardization = new StandardizationBoolConstraint(node);
                 break;
+            default:
+                break;
             }
-            standardization->load(stream);
-            delete standardization;
+            if (standardization) {
+                standardization->load(stream);
+                delete standardization;
+            }
         }
     }
 }
