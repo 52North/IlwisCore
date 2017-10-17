@@ -38,7 +38,7 @@ Column {
 
     Button {
         text : qsTr("Apply")
-        enabled: selectedNode.modelData.nameAllowed(nameField.text)
+        enabled: selectedNode != null && selectedNode.modelData.nameAllowed(nameField.text)
         onClicked: {
             selectedNode.name = nameField.text
             selectedNode.unit = unitField.content
