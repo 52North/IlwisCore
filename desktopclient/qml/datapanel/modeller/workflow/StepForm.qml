@@ -52,7 +52,7 @@ Column {
     }
     TableView {
         width : parent.width
-        height :parent.height
+        height :parent.height - 30
         model : modellerDataPane.workflowModel() ? modellerDataPane.workflowModel().outputCurrentOperation : null
         TableViewColumn{
             role : "node"
@@ -69,9 +69,9 @@ Column {
             }
         }
         TableViewColumn{
-            role : "name"
-            title : qsTr("Origin")
-            width : 80
+            role : "expression"
+            title : qsTr("Expression")
+            width : 150
             delegate: Component{
                 Text {
                     text: styleData.value
@@ -84,12 +84,25 @@ Column {
         TableViewColumn{
             role : "type"
             title : qsTr("Type")
-            width : 100
+            width : 90
             delegate: Component{
                 Text {
                     text: uicontext.type2typeName(styleData.value)
                     verticalAlignment:Text.AlignVCenter
-                    font.pixelSize: 0
+                    font.pixelSize: 10
+                    elide: Text.ElideMiddle
+                }
+            }
+        }
+        TableViewColumn{
+            role : "resultname"
+            title : qsTr("Result")
+            width : 90
+            delegate: Component{
+                Text {
+                    text: styleData.value
+                    verticalAlignment:Text.AlignVCenter
+                    font.pixelSize: 9
                     elide: Text.ElideMiddle
                 }
             }
