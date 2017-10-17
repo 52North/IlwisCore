@@ -166,6 +166,10 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
             if ( nodeLabel != ""){
                 parm._label = nodeLabel;
             }
+            if ( props["state"].toString() == "calculated" && props.contains("outputIndex") && props.contains("")){
+                parm._placeHolderValue = "link= " + props["outputIndex"].toString() + ":" + props["index"].toString();
+            }else
+                parm._placeHolderValue = "";
         }
     }
     return parameters;
@@ -351,7 +355,7 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
 
     QString textField = "DropArea{ x : %2; height : 20; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
                onDropped : { pin_%1.text = drag.source.message; addValidation(pin_%1,%1, drag.source.ilwisobjectid) }\
-            TextField{ id : pin_%1; objectName : \"pin_%1_\" + " + metaid + "; property string itemType : \"textfield\"; text: \"%7\";Controls.ToolTip{target : pin_%1; text:operation ? operation.inputparameterDescription(%1) : \"\"} anchors.fill : parent optionalOutputMarker %8}}";
+            TextField{ id : pin_%1; objectName : \"pin_%1_\" + " + metaid + "; property string itemType : \"textfield\"; text: \"%7\";placeholderText:\"%9\";Controls.ToolTip{target : pin_%1; text:operation ? operation.inputparameterDescription(%1) : \"\"} anchors.fill : parent optionalOutputMarker %8}}";
     QString textArea = "DropArea{ x : %2; height : 65; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
            onDropped : {pin_%1.text = pin_%1.text === \"\" ? drag.source.message : ( pin_%1.text + \"\\n\" + drag.source.message) }\
         TextArea{ id : pin_%1; property string itemType : \"textarea\";text: \"%7\"; wrapMode:%9;anchors.fill : parent optionalOutputMarker %8}}";
@@ -470,7 +474,8 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
                         arg(xshift).
                         arg(input ? dropKeys(parameters[i]._dataType) : "\"?\"").
                         arg(constantValue == "" ? parameters[i]._defValue : constantValue).
-                        arg(checkEffects);
+                        arg(checkEffects).
+                        arg(parameters[i]._placeHolderValue);
                 else {
                     textFieldPart = textArea.arg(i).
                         arg(width).
