@@ -233,7 +233,7 @@ void WorkflowImplementation::acceptMessage(const QString &type, const QString &s
     }
 }
 
-void WorkflowImplementation::sendData(NodeId nodeId,ExecutionContext *ctx, SymbolTable &symTable)
+void WorkflowImplementation::sendData(NodeId nodeId,ExecutionContext *ctx, SymbolTable &symTable, const QString& expr)
 {
     if ( _stepMode){
         QVariantList data;
@@ -250,6 +250,7 @@ void WorkflowImplementation::sendData(NodeId nodeId,ExecutionContext *ctx, Symbo
             opdata["node"] = nodeId;
             IOperationMetaData meta = _workflow->nodeById(nodeId)->operation();
             QString name =  meta.isValid() ? QString("%2=%1(%3)").arg(meta->name()).arg(nodeId).arg(i) : "";
+            opdata["expression"] = expr;
             opdata["name"] = name;
             IIlwisObject obj = OperationHelper::variant2ilwisobject(var, tp);
             opdata["id"] = obj.isValid() ? obj->id() : i64UNDEF;
