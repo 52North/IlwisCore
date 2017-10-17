@@ -288,8 +288,8 @@ Ilwis::OperationImplementation::State CrossRastersBase::prepare(ExecutionContext
     newTable->addColumn("cross_combinations", _crossDomain);
     newTable->addColumn("first_raster", _inputRaster1->datadef().domain<>());
     newTable->addColumn("second_raster", _inputRaster2->datadef().domain<>());
-    newTable->addColumn("npix", IlwisObject::create<IDomain>("count"));
-    newTable->addColumn("area", IlwisObject::create<IDomain>("value"));
+    newTable->addColumn("pixel_count", IlwisObject::create<IDomain>("count"));
+    newTable->addColumn("pixel_area", IlwisObject::create<IDomain>("value"));
     _outputTable = newTable;
 
 
