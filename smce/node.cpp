@@ -3,6 +3,8 @@
 #include "node.h"
 #include <QUrl>
 
+using namespace Ilwis;
+
 Node::Node()
 {
 
@@ -1723,37 +1725,41 @@ Standardization * Standardization::create(Node * node)
     if(node) {
         QString fileName = node->fileName();
         if (fileName != "") {
-            Ilwis::IRasterCoverage rc(fileName, itRASTER);
-            Ilwis::IDomain dom = rc->datadefRef().domain<>();
-            if (hasType(dom->valueType(), itNUMBER)) {
-                Ilwis::NumericRange * range = rc->datadefRef().range()->as<Ilwis::NumericRange>();
-                double min = range->min();
-                double max = range->max();
-                if (node->type() == Node::NodeType::Factor) {
-                    StandardizationValue * stdValue = new StandardizationValue(node, min, max);
-                    stdValue->setMethod(StandardizationValue::Maximum, true);
-                    return stdValue;
-                }
-                else if (node->type() == Node::NodeType::Constraint)
-                    return new StandardizationValueConstraint(node, min, max);
-                else
+            try {
+                Ilwis::IRasterCoverage rc(fileName, itRASTER);
+                Ilwis::IDomain dom = rc->datadefRef().domain<>();
+                if (hasType(dom->valueType(), itNUMBER)) {
+                    Ilwis::NumericRange * range = rc->datadefRef().range()->as<Ilwis::NumericRange>();
+                    double min = range->min();
+                    double max = range->max();
+                    if (node->type() == Node::NodeType::Factor) {
+                        StandardizationValue * stdValue = new StandardizationValue(node, min, max);
+                        stdValue->setMethod(StandardizationValue::Maximum, true);
+                        return stdValue;
+                    }
+                    else if (node->type() == Node::NodeType::Constraint)
+                        return new StandardizationValueConstraint(node, min, max);
+                    else
+                        return 0;
+                } else if (hasType(dom->valueType(), itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM)) {
+                    if (node->type() == Node::NodeType::Factor)
+                        return new StandardizationClass(node, false);
+                    else if (node->type() == Node::NodeType::Constraint)
+                        return new StandardizationClass(node, true);
+                    else
+                        return 0;
+                } else if (hasType(dom->valueType(), itBOOL)) {
+                    if (node->type() == Node::NodeType::Factor)
+                        return new StandardizationBool(node);
+                    else if (node->type() == Node::NodeType::Constraint)
+                        return new StandardizationBoolConstraint(node);
+                    else
+                        return 0;
+                } else
                     return 0;
-            } else if (hasType(dom->valueType(), itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM)) {
-                if (node->type() == Node::NodeType::Factor)
-                    return new StandardizationClass(node, false);
-                else if (node->type() == Node::NodeType::Constraint)
-                    return new StandardizationClass(node, true);
-                else
-                    return 0;
-            } else if (hasType(dom->valueType(), itBOOL)) {
-                if (node->type() == Node::NodeType::Factor)
-                    return new StandardizationBool(node);
-                else if (node->type() == Node::NodeType::Constraint)
-                    return new StandardizationBoolConstraint(node);
-                else
-                    return 0;
-            } else
-                return 0;
+            } catch (const ErrorObject& err){
+                kernel()->issues()->log(QString(TR("SMCE: Error opening file '%1'. Cause: '%2'")).arg(fileName).arg(err.message()), IssueObject::itError);
+            }
         }
     }
     return 0;
@@ -1824,8 +1830,38 @@ void Standardization::load(QDataStream &stream, Node * node)
     stream >> type;
     if (type != 0) {
         Standardization * standardization = create(node);
-        standardization->load(stream);
-        standardization->apply();
+        if (standardization) { // corresponding rastermap exists and is valid
+            standardization->load(stream);
+            standardization->apply();
+        } else { // rastermap does not exist, or became invalid since last time; "consume" the standardization data ("load") but discard it (skip "apply")
+            StandardizationType stdType = static_cast<StandardizationType>(type);
+            switch(stdType) {
+            case Value:
+                {
+                    StandardizationValue * stdValue = new StandardizationValue(node, 0, 1);
+                    stdValue->setMethod(StandardizationValue::Maximum, true);
+                    standardization = stdValue;
+                }
+                break;
+            case ValueConstraint:
+                standardization = new StandardizationValueConstraint(node, 0, 1);
+                break;
+            case Class:
+                standardization = new StandardizationClass(node, false);
+                break;
+            case ClassConstraint:
+                standardization = new StandardizationClass(node, true);
+                break;
+            case Bool:
+                standardization = new StandardizationBool(node);
+                break;
+            case BoolConstraint:
+                standardization = new StandardizationBoolConstraint(node);
+                break;
+            }
+            standardization->load(stream);
+            delete standardization;
+        }
     }
 }
 
