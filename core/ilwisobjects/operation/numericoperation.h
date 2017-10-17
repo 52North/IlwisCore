@@ -5,7 +5,7 @@ namespace Ilwis {
 class KERNELSHARED_EXPORT NumericOperation : public OperationImplementation
 {
 public:
-    enum OperatorType{ otPLUS, otMINUS, otMULT, otDIV, otPOW, otUNKNOWN};
+    enum OperatorType{ otPLUS, otMINUS, otMULT, otDIV, otPOW, otMIN, otMAX, otUNKNOWN};
 
     NumericOperation();
 
@@ -22,8 +22,10 @@ protected:
             switch(_operator) {
             case otPLUS:
                 return v1 + v2;
+                break;
             case otMINUS:
                 return v1 - v2;
+                break;
             case otDIV:
                 if ( v2 != 0)
                     return v1 / v2;
@@ -31,9 +33,17 @@ protected:
                     return rUNDEF;
                 break;
             case otMULT:
-                return v1 * v2;break;
+                return v1 * v2;
+                break;
             case otPOW:
                 return std::pow(v1,v2);
+                break;
+            case otMIN:
+                return std::min(v1,v2);
+                break;
+            case otMAX:
+                return std::max(v1,v2);
+                break;
             default:
                 return rUNDEF;
             }
