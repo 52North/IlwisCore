@@ -80,6 +80,7 @@ public:
     Q_INVOKABLE QVariantList propertyList();
     Q_INVOKABLE QString generateScript(const QString &type, const QString &parameters);
     Q_INVOKABLE void toggleStepMode();
+    Q_INVOKABLE void resetStepMode();
     Q_INVOKABLE void nextStep();
     Q_INVOKABLE void store(const QString &container, const QString &name);
     Q_INVOKABLE void setFixedValues(qint32 nodeid, const QString& formValues);
