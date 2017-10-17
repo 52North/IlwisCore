@@ -327,7 +327,7 @@ bool ExecutionNode::executeOperation(ExecutionContext *ctx, SymbolTable &symTabl
     bool ok = commandhandler()->execute(expr,&ctx2,symTable2);
     unloadInputs(unloadableObject);
 
-    workflowImpl->sendData(_node->id(), &ctx2, symTable2);
+    workflowImpl->sendData(_node->id(), &ctx2, symTable2, expr);
     workflowImpl->wakeup();
 
     for(auto res : ctx2._results)
