@@ -7,7 +7,7 @@ import "../../controls" as Controls
 Item {
     id : tools
     height : 35
-    width :  64
+    width :  workflowOnly ? 0 : 64
     Row {
         id : row
         width : childrenRect.width

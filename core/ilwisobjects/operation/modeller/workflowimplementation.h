@@ -35,7 +35,7 @@ public:
 
     void wait(const Ilwis::SPWorkFlowNode &node);
     void wakeup();
-    void sendData(NodeId nodeId, ExecutionContext *ctx, SymbolTable &symTable);
+    void sendData(NodeId nodeId, ExecutionContext *ctx, SymbolTable &symTable, const QString &expr);
     bool stopExecution() const;
     void clearCalculatedValues(qint32 nodeid);
     IWorkflow workflow();

@@ -21,12 +21,10 @@ ToolBar{
         id : editingtools
 
         Loader {
+            id : butLoader
             source : workflowOnly ? "" : "../GenericTools.qml"
             height : buttonSize
             width : workflowOnly ? 0 : 60
-            onLoaded: {
-                width =  workflowOnly ? 0 : item.width
-            }
         }
 
         Controls.ToolButton{
@@ -90,6 +88,7 @@ ToolBar{
                 var wasInStepMode = workarea.workflow.stepMode
                 workarea.workflow.stepMode = true
                 if ( !wasInStepMode){ // start the workflow; after this
+                    workflow.resetStepMode()
                     var ret = workflowManager.executeRunForm({"id" :  workflow.id, "runid" : workflow.runid, "stepmode" :true})
                     if ( ret === "?"){
                        workarea.workflow.stepMode = false

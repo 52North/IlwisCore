@@ -368,7 +368,8 @@ bool RasterCoverage::bandPrivate(quint32 bandIndex,  PixelIterator inputIter)
     trq->prepare("Copying input data","Initializing raster band",size().xsize() * size().ysize());
     quint64 count = 0;
     PixelIterator iter = bandPrivate(bandIndex);
-    while(iter != iter.end()){
+    auto endPos = iter.end();
+    while(iter != endPos){
         *iter = *inputIter;
         ++iter;
         ++inputIter;

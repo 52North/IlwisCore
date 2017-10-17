@@ -752,6 +752,13 @@ void WorkflowModel::toggleStepMode()
 
 }
 
+void WorkflowModel::resetStepMode()
+{
+    _outputsCurrentOperation = QVariantMap();
+    QVariantList _outputs = QVariantList();
+    emit outputCurrentOperationChanged();
+}
+
 void WorkflowModel::nextStep()
 {
     bool ok;

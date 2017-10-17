@@ -153,6 +153,10 @@ QString TypeHelper::type2HumanReadable(IlwisTypes t)
         return TR("Column");
     case  itCOMBINATIONMATRIX:
         return TR("Combination matrix");
+    case itFLATTABLE:
+        return "Table"        ;
+    case itATTRIBUTETABLE:
+        return "Attribute Table";
     }
     return TR("?");
 
