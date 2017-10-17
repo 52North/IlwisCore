@@ -128,7 +128,7 @@ std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
                                 }
                             }
                         } catch (const ErrorObject& err){
-                            kernel()->issues()->log(QString(TR("Error scanning object '%1'. Cause: '%2'")).arg(res.url().toString()).arg(err.message()), IssueObject::itError);
+                            kernel()->issues()->log(QString(TR("StreamCatalogExplorer: Error scanning object '%1'. Cause: '%2'")).arg(res.url().toString()).arg(err.message()), IssueObject::itError);
                         }
                         items.push_back(res);
                     }
