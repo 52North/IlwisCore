@@ -20,6 +20,13 @@ Column {
 
     Text {
         text: selectedNode ? selectedNode.name : ""
+        width: parent.width
+        wrapMode: Text.Wrap
+    }
+
+    Item {
+        width: parent.width
+        height: 5
     }
 
     Column {
