@@ -1083,7 +1083,7 @@ double GoalFunction::getFx(double x) const
 
 QString GoalFunction::getPython(QString rasterCoverage, QString outputName)
 {
-    QString result = QString("%1=%2\n").arg(outputName).arg(getMapcalc(rasterCoverage));
+    QString result = QString("%1=ilwis.RasterCoverage.min(1,ilwis.RasterCoverage.max(0,%2))\n").arg(outputName).arg(getMapcalc(rasterCoverage));
     return result;
 }
 
@@ -1223,7 +1223,7 @@ QString ConvexFunction::getPython(QString rasterCoverage, QString outputName)
         sRet = QString("%1+%2*ilwis.Engine.do('exp',%3*%4)").arg(a).arg(b).arg(c).arg(rasterCoverage);
     else
         sRet = QString("%1-(%2+%3*ilwis.Engine.do('exp',%4*%5))").arg(_maxY).arg(a).arg(b).arg(c).arg(rasterCoverage);
-    QString result = QString("%1=%2\n").arg(outputName).arg(sRet);
+    QString result = QString("%1=ilwis.RasterCoverage.min(1,ilwis.RasterCoverage.max(0,%2))\n").arg(outputName).arg(sRet);
     return result;
 }
 
@@ -1352,7 +1352,7 @@ QString ConcaveFunction::getPython(QString rasterCoverage, QString outputName)
         sRet = QString("%1+%2*ilwis.Engine.do('exp',%3*%4)").arg(a).arg(b).arg(c).arg(rasterCoverage);
     else
         sRet = QString("%1-(%2+%3*ilwis.Engine.do('exp',%4*%5))").arg(_maxY).arg(a).arg(b).arg(c).arg(rasterCoverage);
-    QString result = QString("%1=%2\n").arg(outputName).arg(sRet);
+    QString result = QString("%1=ilwis.RasterCoverage.min(1,ilwis.RasterCoverage.max(0,%2))\n").arg(outputName).arg(sRet);
     return result;
 }
 
@@ -1438,7 +1438,7 @@ double QuadraticFunction::getFx(double x) const
 
 QString QuadraticFunction::getPython(QString rasterCoverage, QString outputName)
 {
-    QString result = QString("%1=%2\n").arg(outputName).arg(getMapcalc(rasterCoverage));
+    QString result = QString("%1=ilwis.RasterCoverage.min(1,ilwis.RasterCoverage.max(0,%2))\n").arg(outputName).arg(getMapcalc(rasterCoverage));
     return result;
 }
 
@@ -1534,7 +1534,7 @@ QString GaussianFunction::getPython(QString rasterCoverage, QString outputName)
         sRet = QString("%1*ilwis.Engine.do('exp',%2*ilwis.Engine.do('binarymathraster',%3-%4,2,'power'))").arg(a).arg(b).arg(rasterCoverage).arg(c);
     else
         sRet = QString("%1-%2*ilwis.Engine.do('exp',%3*ilwis.Engine.do('binarymathraster',%4-%5,2,'power'))").arg(_maxY).arg(a).arg(b).arg(rasterCoverage).arg(c);
-    QString result = QString("%1=%2\n").arg(outputName).arg(sRet);
+    QString result = QString("%1=ilwis.RasterCoverage.min(1,ilwis.RasterCoverage.max(0,%2))\n").arg(outputName).arg(sRet);
     return result;
 }
 
