@@ -115,7 +115,7 @@ Item {
                             workflowView.workflow = model.addWorkflow(filter);
                             workflowOnly = true
                         }
-                        model.currentWorkflow = workflowView.workflow
+                         model.currentWorkflow = workflowView.workflow
                         if (resource) {
                             workflowView.recreateWorkflow()
                         }
