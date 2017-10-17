@@ -119,12 +119,16 @@ std::vector<Resource> StreamCatalogExplorer::loadItems(const IOOptions &)
 //                            items.push_back(res2);
 //                        }
                     }else if (hasType(tp, itILWISOBJECT)){
-                        IIlwisObject obj(res);
-                        if ( obj->ilwisType() == itRASTER){
-                            IRasterCoverage raster = obj.as<RasterCoverage>();
-                            if ( raster->size().zsize() > 1){
-                                createCatalog(raster,items);
+                        try {
+                            IIlwisObject obj(res);
+                            if (obj.isValid() && obj->ilwisType() == itRASTER){
+                                IRasterCoverage raster = obj.as<RasterCoverage>();
+                                if ( raster->size().zsize() > 1){
+                                    createCatalog(raster,items);
+                                }
                             }
+                        } catch (const ErrorObject& err){
+                            kernel()->issues()->log(QString(TR("Error scanning object '%1'. Cause: '%2'")).arg(res.url().toString()).arg(err.message()), IssueObject::itError);
                         }
                         items.push_back(res);
                     }
