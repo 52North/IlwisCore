@@ -50,7 +50,7 @@ ApplicationFormExpressionParser::FormParameter ApplicationFormExpressionParser::
     }
     else if ( parm._dataType == itBOOL){
         parm._fieldType = ftRADIOBUTTON;
-        QStringList lst = {"!yes", "no"};
+        QStringList lst = {"yes", "no"};
         parm._choiceList = lst;
 
     }
@@ -508,11 +508,13 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
                 for(auto choiceString : parameters[i]._choiceList){
                     QString choice = choiceString, state="false";
                     if (choice[0] == '!') {
+                        // simply remove the "!"; this cannot be used to mark the active button
+                        // because it only signifies the "default" setting when creating the radiobutton.
+                        // as a consequence upon creation no button is set, but this is better than
+                        // having multiple button in the same group turned on during the lifetime of the workflow.
                         choice = choice.mid(1);
-                        //if (!validConstant && buttons.isEmpty()) state = "true";
-                        state = "true";
                     }
-                    if (validConstant && constantValue == choice) {
+                    if (validConstant && (constantValue == choice)) {
                         state = "true";
                     }
                     buttons += QString(rowChoiceOption).arg(QString::number(i) + choice).arg(choice).arg(state).arg(i).arg(choice);
