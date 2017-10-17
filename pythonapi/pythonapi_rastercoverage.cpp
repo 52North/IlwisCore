@@ -401,6 +401,66 @@ RasterCoverage* RasterCoverage::__ne__(RasterCoverage &rc){
             );
 }
 
+RasterCoverage* RasterCoverage::min(RasterCoverage &rc1, RasterCoverage &rc2){
+    return (RasterCoverage*)Engine::_do(
+        QString("min_%1_%2").arg((*rc1.ptr())->id()).arg((*rc2.ptr())->id()).toStdString(),
+        "binarymathraster",
+        rc1.__str__(),
+        rc2.__str__(),
+        "min"
+    );
+}
+
+RasterCoverage* RasterCoverage::min(RasterCoverage &rc1, double value){
+    return (RasterCoverage*)Engine::_do(
+        toId(QString("min_%1_%2").arg((*rc1.ptr())->id()).arg(value)).toStdString(),
+        "binarymathraster",
+        rc1.__str__(),
+        QString("%1").arg(value).toStdString(),
+        "min"
+    );
+}
+
+RasterCoverage* RasterCoverage::min(double value, RasterCoverage &rc2){
+    return (RasterCoverage*)Engine::_do(
+        toId(QString("min_%1_%2").arg(value).arg((*rc2.ptr())->id())).toStdString(),
+        "binarymathraster",
+        QString("%1").arg(value).toStdString(),
+        rc2.__str__(),
+        "min"
+    );
+}
+
+RasterCoverage* RasterCoverage::max(RasterCoverage &rc1, RasterCoverage &rc2){
+    return (RasterCoverage*)Engine::_do(
+        QString("max_%1_%2").arg((*rc1.ptr())->id()).arg((*rc2.ptr())->id()).toStdString(),
+        "binarymathraster",
+        rc1.__str__(),
+        rc2.__str__(),
+        "max"
+    );
+}
+
+RasterCoverage* RasterCoverage::max(RasterCoverage &rc1, double value){
+    return (RasterCoverage*)Engine::_do(
+        toId(QString("max_%1_%2").arg((*rc1.ptr())->id()).arg(value)).toStdString(),
+        "binarymathraster",
+        rc1.__str__(),
+        QString("%1").arg(value).toStdString(),
+        "max"
+    );
+}
+
+RasterCoverage* RasterCoverage::max(double value, RasterCoverage &rc2){
+    return (RasterCoverage*)Engine::_do(
+        toId(QString("max_%1_%2").arg(value).arg((*rc2.ptr())->id())).toStdString(),
+        "binarymathraster",
+        QString("%1").arg(value).toStdString(),
+        rc2.__str__(),
+        "max"
+    );
+}
+
 double RasterCoverage::coord2value(const Coordinate& c){
     return this->ptr()->as<Ilwis::RasterCoverage>()->coord2value(c.data()).value<QVariantMap>()[PIXELVALUE].toDouble();
 }

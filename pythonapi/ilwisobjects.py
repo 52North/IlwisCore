@@ -2815,6 +2815,30 @@ class RasterCoverage(Coverage):
         return _ilwisobjects.RasterCoverage___ne__(self, *args)
 
 
+    def min(*args):
+        """
+        min(RasterCoverage rc1, RasterCoverage rc2) -> RasterCoverage
+        min(RasterCoverage rc1, double value) -> RasterCoverage
+        min(double value, RasterCoverage rc2) -> RasterCoverage
+        """
+        return _ilwisobjects.RasterCoverage_min(*args)
+
+    if _newclass:
+        min = staticmethod(min)
+    __swig_getmethods__["min"] = lambda x: min
+
+    def max(*args):
+        """
+        max(RasterCoverage rc1, RasterCoverage rc2) -> RasterCoverage
+        max(RasterCoverage rc1, double value) -> RasterCoverage
+        max(double value, RasterCoverage rc2) -> RasterCoverage
+        """
+        return _ilwisobjects.RasterCoverage_max(*args)
+
+    if _newclass:
+        max = staticmethod(max)
+    __swig_getmethods__["max"] = lambda x: max
+
     def __iter__(self):
         """__iter__(RasterCoverage self) -> PixelIterator"""
         return _ilwisobjects.RasterCoverage___iter__(self)
@@ -2981,6 +3005,22 @@ class RasterCoverage(Coverage):
 
 RasterCoverage_swigregister = _ilwisobjects.RasterCoverage_swigregister
 RasterCoverage_swigregister(RasterCoverage)
+
+def RasterCoverage_min(*args):
+    """
+    min(RasterCoverage rc1, RasterCoverage rc2) -> RasterCoverage
+    min(RasterCoverage rc1, double value) -> RasterCoverage
+    RasterCoverage_min(double value, RasterCoverage rc2) -> RasterCoverage
+    """
+    return _ilwisobjects.RasterCoverage_min(*args)
+
+def RasterCoverage_max(*args):
+    """
+    max(RasterCoverage rc1, RasterCoverage rc2) -> RasterCoverage
+    max(RasterCoverage rc1, double value) -> RasterCoverage
+    RasterCoverage_max(double value, RasterCoverage rc2) -> RasterCoverage
+    """
+    return _ilwisobjects.RasterCoverage_max(*args)
 
 def RasterCoverage_toRasterCoverage(obj):
     """RasterCoverage_toRasterCoverage(Object obj) -> RasterCoverage"""

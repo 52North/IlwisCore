@@ -24,7 +24,7 @@ namespace pythonapi {
          RasterCoverage(const Ilwis::IRasterCoverage& coverage);
          QVariant resolveIndex(PyObject* pyTrackIndex);
          std::string dateToString(int datepart);
-         QString toId(QString val);
+         static QString toId(QString val);
     protected:
          virtual const QString getStoreFormat() const;
     public:
@@ -64,6 +64,12 @@ namespace pythonapi {
         RasterCoverage* __ne__(double value); // !=
         RasterCoverage* __eq__(RasterCoverage &rc); // ==
         RasterCoverage* __ne__(RasterCoverage &rc); // !=
+        static RasterCoverage* min(RasterCoverage &rc1, RasterCoverage &rc2);
+        static RasterCoverage* min(RasterCoverage &rc1, double value);
+        static RasterCoverage* min(double value, RasterCoverage &rc2);
+        static RasterCoverage* max(RasterCoverage &rc1, RasterCoverage &rc2);
+        static RasterCoverage* max(RasterCoverage &rc1, double value);
+        static RasterCoverage* max(double value, RasterCoverage &rc2);
         PixelIterator __iter__();
         double coord2value(const Coordinate& c);
         double pix2value(const Pixel& pix);
