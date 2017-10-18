@@ -513,19 +513,26 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
 //                if (showEmptyOptionInList) {
 //                    buttons += QString(rowChoiceOption).arg(QString::number(i) + "empty_value").arg("- (empty)").arg(validConstant ? "false" : "true").arg(i).arg(" ");
 //                }
+
+                bool noChoice = true;   // no radiobutton is selected
+                // first determine if one of the radiobuttons is selected
+                // If none is selected use the default radiobutton
                 for(auto choiceString : parameters[i]._choiceList){
-                    QString choice = choiceString, state="false";
+                    QString choice = choiceString;
+                    if (validConstant && (constantValue == choice)) {
+                        noChoice = false;
+                    }
+                }
+                for(auto choiceString : parameters[i]._choiceList){
+                    QString choice = choiceString, state = "false";
                     if (choice[0] == '!') {
-                        // simply remove the "!"; this cannot be used to mark the active button
-                        // because it only signifies the "default" setting when creating the radiobutton.
-                        // as a consequence upon creation no button is set, but this is better than
-                        // having multiple button in the same group turned on during the lifetime of the workflow.
                         choice = choice.mid(1);
+                        if (noChoice) state = "true";
                     }
                     if (validConstant && (constantValue == choice)) {
                         state = "true";
                     }
-                    buttons += QString(rowChoiceOption).arg(QString::number(i) + choice).arg(choice).arg(state).arg(i).arg(choice);
+                    buttons += QString(rowChoiceOption).arg(QString::number(i) + choice, choice, state, QString::number(i), choice);
                 }
                 formRows += QString(rowBodyChoiceHeader).arg(parameters[i]._label).arg(width).arg(i).arg(buttons);
                 if ( results != "")
