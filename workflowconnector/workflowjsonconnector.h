@@ -34,6 +34,7 @@ namespace WorkflowConnector {
         QJsonObject createJSONWorkflow(const Resource & res);
         QJsonObject createJSONWorkflowMetaData(const Resource& res);
         QJsonObject createJSONOperationMetadata(const SPWorkFlowNode& node, const std::vector<SPWorkFlowNode>& outNodes);
+        QJsonObject createJSONRangeMetadata(const SPWorkFlowNode& node);
         QJsonArray createJSONOperationInputList(const SPWorkFlowNode& node);
         QJsonArray createJSONOperationOutputList(const Ilwis::SPWorkFlowNode &node);
         QJsonArray createJSONOperationConnectionList(Ilwis::Workflow *workflow, std::map<quint64, int> nodeMapping);
