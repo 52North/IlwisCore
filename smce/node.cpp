@@ -1838,42 +1838,81 @@ void Standardization::load(QDataStream &stream, Node * node)
     quint8 type;
     stream >> type;
     if (type != 0) {
-        Standardization * standardization = create(node);
-        if (standardization) { // corresponding rastermap exists and is valid
-            standardization->load(stream);
-            standardization->apply();
-        } else { // rastermap does not exist, or became invalid since last time; "consume" the standardization data ("load") but discard it (skip "apply")
-            StandardizationType stdType = static_cast<StandardizationType>(type);
-            switch(stdType) {
-            case Value:
-                {
-                    StandardizationValue * stdValue = new StandardizationValue(node, 0, 1);
-                    stdValue->setMethod(StandardizationValue::Maximum, true);
-                    standardization = stdValue;
-                }
-                break;
-            case ValueConstraint:
-                standardization = new StandardizationValueConstraint(node, 0, 1);
-                break;
-            case Class:
+        Ilwis::IRasterCoverage rc; // "probe" if the rastermap still exists and has the same type as the last time we used it; "consume" the standardization data ("load") but discard it (skip "apply") if not.
+        QString fileName = node->fileName();
+        if (fileName != "") {
+            try {
+                Ilwis::IRasterCoverage rc2(fileName, itRASTER);
+                if (rc2.isValid())
+                    rc = rc2;
+            } catch (const ErrorObject& err){
+                kernel()->issues()->log(QString(TR("SMCE: Error opening file '%1'. Cause: '%2'")).arg(fileName).arg(err.message()), IssueObject::itError);
+            }
+        }
+        Standardization * standardization = 0;
+        StandardizationType stdType = static_cast<StandardizationType>(type);
+        bool valid = false; // set to "true" only if the standardization on-disk matches the node-type and file-type, then the standardization can be safely applied to the node
+        switch(stdType) {
+        case Value:
+            {
+                StandardizationValue * stdValue;
+                if (rc.isValid() && node->type() == Node::NodeType::Factor && hasType(rc->datadefRef().domain<>()->valueType(), itNUMBER)) {
+                    Ilwis::NumericRange * range = rc->datadefRef().range()->as<Ilwis::NumericRange>();
+                    double min = range->min();
+                    double max = range->max();
+                    stdValue = new StandardizationValue(node, min, max);
+                    valid = true;
+                } else
+                    stdValue = new StandardizationValue(node, 0, 1);
+                stdValue->setMethod(StandardizationValue::Maximum, true);
+                standardization = stdValue;
+            }
+            break;
+        case ValueConstraint:
+            {
+                if (rc.isValid() && node->type() == Node::NodeType::Constraint && hasType(rc->datadefRef().domain<>()->valueType(), itNUMBER)) {
+                    Ilwis::NumericRange * range = rc->datadefRef().range()->as<Ilwis::NumericRange>();
+                    double min = range->min();
+                    double max = range->max();
+                    standardization = new StandardizationValueConstraint(node, min, max);
+                    valid = true;
+                } else
+                    standardization = new StandardizationValueConstraint(node, 0, 1);
+            }
+            break;
+        case Class:
+            {
                 standardization = new StandardizationClass(node, false);
-                break;
-            case ClassConstraint:
+                valid = rc.isValid() && node->type() == Node::NodeType::Factor && hasType(rc->datadefRef().domain<>()->valueType(), itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM);
+            }
+            break;
+        case ClassConstraint:
+            {
                 standardization = new StandardizationClass(node, true);
-                break;
-            case Bool:
+                valid = rc.isValid() && node->type() == Node::NodeType::Constraint && hasType(rc->datadefRef().domain<>()->valueType(), itTHEMATICITEM | itNAMEDITEM | itINDEXEDITEM | itNUMERICITEM);
+            }
+            break;
+        case Bool:
+            {
+                valid = rc.isValid() && node->type() == Node::NodeType::Factor && hasType(rc->datadefRef().domain<>()->valueType(), itBOOL);
                 standardization = new StandardizationBool(node);
-                break;
-            case BoolConstraint:
+            }
+            break;
+        case BoolConstraint:
+            {
+                valid = rc.isValid() && node->type() == Node::NodeType::Constraint && hasType(rc->datadefRef().domain<>()->valueType(), itBOOL);
                 standardization = new StandardizationBoolConstraint(node);
-                break;
-            default:
-                break;
             }
-            if (standardization) {
-                standardization->load(stream);
+            break;
+        default:
+            break;
+        }
+        if (standardization) {
+            standardization->load(stream);
+            if (valid)
+                standardization->apply();
+            else
                 delete standardization;
-            }
         }
     }
 }
