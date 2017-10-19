@@ -34,6 +34,7 @@ bool SMCE::execute(const QVariantMap &inputParameters, QVariantMap &outputParame
 {
     QString script("import ilwis\n");
     script += _tree->getPython("standardized", true);
+    // script += QString("standardized.setDataDef(ilwis.DataDefinition(standardized.datadef().domain(),ilwis.NumericRange(0,1,0.01)))\n"); // commented out; this does not work yet: the ilwis3 connector does not use the new DataDefinition.
     if (_tree->fileName().endsWith(".mpr"))
         script += QString("standardized.store('" + _tree->fileName() + "', 'map', 'ilwis3')\n");
     else if (_tree->fileName().endsWith(".tif"))
