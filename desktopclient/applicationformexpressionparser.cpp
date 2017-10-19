@@ -166,8 +166,8 @@ std::vector<ApplicationFormExpressionParser::FormParameter> ApplicationFormExpre
             if ( nodeLabel != ""){
                 parm._label = nodeLabel;
             }
-            if ( props["state"].toString() == "calculated" && props.contains("outputIndex") && props.contains("")){
-                parm._placeHolderValue = "link= " + props["outputIndex"].toString() + ":" + props["index"].toString();
+            if ( props["state"].toString() == "calculated" && props.contains("outputIndex") && props.contains("index")){
+                parm._placeHolderValue = "link=" + props["outputNodeId"].toString() + ":"  + props["outputIndex"].toString() ;
             }else
                 parm._placeHolderValue = "";
         }
@@ -356,7 +356,7 @@ QString ApplicationFormExpressionParser::makeFormPart(const QString& metaid, int
     QString textField = "DropArea{ x : %2; height : 20; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
                onDropped : { pin_%1.text = drag.source.message; addValidation(pin_%1,%1, drag.source.ilwisobjectid) }\
             TextField{ id : pin_%1; objectName : \"pin_%1_\" + " + metaid + "; \
-            property string itemType : \"textfield\"; text: \"%7\";placeholderText:\"%9\";\
+            property string itemType : \"textfield\"; text: \"%7\";placeholderText:\"%9\";style: TextFieldStyle {placeholderTextColor: \"grey\"}\
             Controls.ToolTip{target : pin_%1; text:operation ? operation.inputparameterDescription(%1) : \"\"}\
             anchors.fill : parent optionalOutputMarker %8}}";
     QString textArea = "DropArea{ x : %2; height : 65; width : parent.width - label_pin_%1.width - 5 - %3 - %4 - %5; keys: [%6];\
@@ -598,7 +598,7 @@ QString ApplicationFormExpressionParser::index2FormInternal(quint64 metaid,
         validation += "if ( r){for(var k=0; k<r.length;k++){var p=r[k];var ue = \"pin_\" + p.parameterIndex + \"" + QString("_") + mid + "\"" ;
         validation += "; var item = uicontext.getItem(ue,0); if ( item !== null) { if ( p.uielement==\"list\"){item.model=p.result}if(p.uielement==\"textfield\"){item.text=p.result}}}}}";
         QString propertyMetaid = "property var metaid :" + mid + ";property var operation : operations.operation(" + mid + ");";
-        QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import UIContextModel 1.0;import MasterCatalogModel 1.0;import \"../controls\" as Controls;";
+        QString columnStart = "import QtQuick 2.2; import QtQuick.Controls 1.1;import QtQuick.Layouts 1.1;import QtQuick.Controls.Styles 1.0;import UIContextModel 1.0;import MasterCatalogModel 1.0;import \"../controls\" as Controls;";
         columnStart += "Column { " + validation + " " + propertyMetaid + "%1 x:5; width : parent.width - 5; height : parent.height;spacing :10;";
         QString exclusiveGroup = "ExclusiveGroup { id : sourceFilterGroup; onCurrentChanged: {}}";
         columnStart += exclusiveGroup;
