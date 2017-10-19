@@ -377,6 +377,7 @@ QVariantMap WorkflowModel::getParameter(const SPWorkFlowNode& node, int index)
     parm["sourceRect"] = p.attachement(true);
     parm["targetRect"] = p.attachement(false);
     parm["value"] = p.value();
+    parm["nodeid"] = node->id();
 
     return parm;
 }
