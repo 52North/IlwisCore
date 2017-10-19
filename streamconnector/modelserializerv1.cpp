@@ -102,7 +102,8 @@ bool ModelSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
             if ( pattern){
                 pattern->loadMetadata(_stream);
                 model->addAnalysisPattern(pattern);
-            }
+            } else
+                return false;
         }
     }
 
@@ -116,7 +117,8 @@ bool ModelSerializerV1::loadMetaData(IlwisObject *obj, const IOOptions &options)
             if ( app){
                 app->loadMetadata(_stream);
                 model->addApplication(app);
-            }
+            } else
+                return false;
         }
     }
 
