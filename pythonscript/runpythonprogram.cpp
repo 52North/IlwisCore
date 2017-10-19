@@ -33,7 +33,7 @@ OperationImplementation *RunPythonProgram::create(quint64 metaid, const Ilwis::O
 quint64 RunPythonProgram::createMetadata()
 {
     OperationResource operation({"ilwis://operations/runpython"});
-    operation.setSyntax("runpython(expression");
+    operation.setSyntax("runpython(expression)");
     operation.setLongName("Run a python expression");
     operation.setDescription(TR("runs one or more python statements and returns a string referencing their output"));
     operation.setInParameterCount({1});

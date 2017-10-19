@@ -90,7 +90,8 @@ bool RunPython::execute(ExecutionContext *ctx, SymbolTable &symTable)
                 if ( index == sz - 2){
                     result = result.left(sz - 2) ;
                 }
-                ctx->setOutput(symTable,result,"python_output", itSTRING, Resource());
+                QVariantList lst({result});
+                ctx->setOutput(symTable,lst,"python_output", itSTRING, Resource());
                 inputFile.close();
             }
         }
@@ -110,7 +111,7 @@ OperationImplementation *RunPython::create(quint64 metaid, const Ilwis::Operatio
 quint64 RunPython::createMetadata()
 {
     OperationResource operation({"ilwis://operations/runpython"});
-    operation.setSyntax("runpython(expression");
+    operation.setSyntax("runpython(expression)");
     operation.setLongName("Run a python expression");
     operation.setDescription(TR("runs one or more python statements and returns a string referencing their output"));
     operation.setInParameterCount({1});
