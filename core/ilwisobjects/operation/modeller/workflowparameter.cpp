@@ -81,7 +81,7 @@ void WorkFlowParameter::value(const QString &v, IlwisTypes type,ParameterKind ki
     _value = v;
     _valueType = type;
     if ( kind == pkDONTCARE){
-        if ( _state !=  pkCALCULATED)
+        if ( _value != sUNDEF && _state !=  pkCALCULATED)
             _state = pkFIXED;
     }else
         _state = kind;
