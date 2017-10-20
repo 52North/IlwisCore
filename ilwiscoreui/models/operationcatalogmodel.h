@@ -71,12 +71,14 @@ private:
 
 public slots:
     void workSpaceChanged();
+    void workerFinished();
 
 signals:
     void updateCatalog(const QUrl& url);
     void operationsChanged();
     void error(const QString& err);
     void operationsByKeyChanged();
+    void operationFinished();
 
 };
 

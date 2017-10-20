@@ -466,6 +466,7 @@ QString OperationCatalogModel::executeoperation(quint64 operationid, const QStri
                 thread->connect(worker, &OperationWorker::finished, thread, &QThread::quit);
                 thread->connect(worker, &OperationWorker::finished, worker, &OperationWorker::deleteLater);
                 thread->connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+                thread->connect(worker, &OperationWorker::finished, this, &OperationCatalogModel::workerFinished);
                 thread->start();
 
                 return "TODO";
@@ -506,4 +507,9 @@ QString OperationCatalogModel::nameFilter() const
 QString OperationCatalogModel::keyFilter() const
 {
     return _keyFilter;
+}
+
+void OperationCatalogModel::workerFinished()
+{
+    emit operationFinished();
 }
