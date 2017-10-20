@@ -37,27 +37,33 @@ ToolBar{
             height : 30
             width : 30
             //text: "Generate"
-            enabled: tree.stdWeighDone
+            property bool working: false
+            enabled: !working && tree.stdWeighDone
+
             Image {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-
                 source : iconsource("run20.png")
-                opacity: tree.stdWeighDone ? 1.0 : 0.2
+                opacity: parent.enabled ? 1.0 : 0.2
             }
-            onClicked: {
-                var analysis = modellerDataPane.model.analysisPattern(0)
-                var input = {
-                    inputFilename1 : "dummy"
-                }
-                var output = {
-                    outputFilename1 : "dummy"
-                }
 
-                analysis.execute(input, output)
+            onClicked: {
+                working = true
+                var analysis = modellerDataPane.model.analysisPattern(0)
+                var input = {}
+                var output = analysis.execute(input)
+                var operationid = operations.operationId("ilwis://operations/runpython")
+                var smcemapcalc = output["command"];
+                operations.operationFinished.connect(operationFinished)
+                operations.executeoperation(operationid, smcemapcalc, false)
+            }
+
+            function operationFinished() {
                 mastercatalog.currentCatalog.scanContainer(false,true)
                 var fileName = tree.fileName
                 openMap(fileName)
+                operations.operationFinished.disconnect(operationFinished)
+                working = false
             }
         }
     }

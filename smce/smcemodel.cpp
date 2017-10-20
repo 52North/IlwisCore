@@ -33,12 +33,13 @@ AnalysisModel *SMCEModel::create(Ilwis::AnalysisPattern *pattern)
     return new SMCEModel(pattern);
 }
 
-bool SMCEModel::execute(const QVariantMap inputParameters, QVariantMap outputParameters)
+QVariantMap SMCEModel::execute(const QVariantMap parameters)
 {
+    QVariantMap output;
     if ( _analysis){
-        return _analysis->execute(inputParameters, outputParameters);
+        _analysis->execute(parameters, output);
     }
-    return false;
+    return output;
 }
 
 Node* SMCEModel::tree() const

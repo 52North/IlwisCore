@@ -45,11 +45,10 @@ bool SMCE::execute(const QVariantMap &inputParameters, QVariantMap &outputParame
         _tree->setFileName(_tree->fileName() + ".mpr");
         script += QString("standardized.store('" + _tree->fileName() + "', 'map', 'ilwis3')\n");
     }
-    QString expr = QString("runpython(\"%1\")").arg(script);
+    QString expr = QString("runpython(\"%1\");").arg(script);
+    outputParameters["command"] = expr;
     qDebug() << expr;
-    Ilwis::ExecutionContext ctx;
-    Ilwis::SymbolTable syms;
-    return Ilwis::commandhandler()->execute(expr, &ctx, syms);
+    return true;
 }
 
 IWorkflow SMCE::workflow(const IOOptions &opt)

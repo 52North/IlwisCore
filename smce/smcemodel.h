@@ -13,7 +13,7 @@ public:
     SMCEModel();
     SMCEModel(Ilwis::AnalysisPattern *p);
     static AnalysisModel *create(Ilwis::AnalysisPattern *pattern);
-    Q_INVOKABLE bool execute(const QVariantMap inputParameters, QVariantMap outputParameters);
+    Q_INVOKABLE QVariantMap execute(const QVariantMap parameters);
     Q_INVOKABLE Node* tree() const;
 
 private:
