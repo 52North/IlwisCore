@@ -281,6 +281,13 @@ void Node::setFileName(QString fileName)
         _fileName = url.fileName();
     }
 
+    if ((_type == NodeType::Factor || _type == NodeType::Constraint) && _standardization != 0) {
+        Standardization * stdDelete = _standardization;
+        setStandardization(0);
+        if (stdDelete != 0)
+            stdDelete->deleteLater();
+    }
+
     emit fileNameChanged();
     emit doneChanged();
     if (parent())
@@ -1914,7 +1921,7 @@ void Standardization::load(QDataStream &stream, Node * node)
             if (valid)
                 standardization->apply();
             else
-                delete standardization;
+                standardization->deleteLater();
         }
     }
 }
