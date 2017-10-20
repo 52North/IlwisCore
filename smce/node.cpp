@@ -1669,7 +1669,9 @@ QString PiecewiseLinear8Function::getLine(double a, QString x, double b)
     if (a != 0)
         result = QString("%1*%2").arg(a).arg(x);
     if (b != 0)
-        result += ((b > 0) ? "+":"") + QString("%1").arg(b);
+        result += ((b > 0 && a != 0) ? "+":"") + QString("%1").arg(b);
+    else if (a == 0) // b == 0 && a == 0
+        result = "0";
     return result;
 }
 
