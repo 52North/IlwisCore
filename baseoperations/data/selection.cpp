@@ -6,6 +6,13 @@
 #include "ilwisoperation.h"
 #include "pixeliterator.h"
 #include "table.h"
+#include "domain.h"
+#include "domainitem.h"
+#include "identifieritem.h"
+#include "identifierrange.h"
+#include "itemdomain.h"
+#include "identifieritem.h"
+#include "thematicitem.h"
 #include "selectionbase.h"
 #include "selection.h"
 
@@ -36,8 +43,17 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
     IRasterCoverage outputRaster = _outputObj.as<RasterCoverage>();
     IRasterCoverage inputRaster = _inputObj.as<RasterCoverage>();
 
-
+    std::map<Raw, quint32> raw2record;
     int keyColumn = _inputAttributeTable.isValid() ? _inputAttributeTable->columnIndex(inputRaster->primaryKey()) : iUNDEF;
+    if (keyColumn != iUNDEF){
+        std::vector<QVariant> values = _inputAttributeTable->column(keyColumn);
+        for(quint32 rec=0; rec < values.size(); ++rec){
+            Raw r = values[rec].toDouble();
+            if ( !isNumericalUndef(r)){
+                raw2record[r] = rec;
+            }
+        }
+    }
 
     std::vector<int> extraAtrrib = organizeAttributes();
 
@@ -56,9 +72,7 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
             bool ok = true;
             double pixValue = *iterIn;
             double matchValue = pixValue;
-            if (keyColumn != iUNDEF){
 
-            }
             for(const auto& epart : _expressionparts){
                 bool partOk = epart.match(iterIn.position(), matchValue,this);
                 if ( epart._andor != loNONE)
@@ -72,8 +86,16 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
                     }
                     // pixValue == ID; ID zero means undef, so subtract 1 to get correct record index.
                     if (pixValue > 0) {
-                        const Record& rec = _inputAttributeTable->record(pixValue - 1);
-                        pixValue = rec.cell(extraAtrrib[0]).toDouble();
+                        if (keyColumn != iUNDEF){
+                            auto iter = raw2record.find(pixValue);
+                            if ( iter != raw2record.end()){
+                                quint32 rec = iter->second;
+                                const Record& record = _inputAttributeTable->record(rec);
+                                pixValue = record.cell(extraAtrrib[0]).toDouble();
+                            }else
+                                pixValue = rUNDEF;
+                        }
+
                     }
                     else
                         pixValue = rUNDEF;

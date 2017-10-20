@@ -28,6 +28,7 @@ private:
         quint32 _isOptional;
         int _optionGroup;
         QString _defValue;
+        QString _placeHolderValue;
     };
 
 

@@ -14,7 +14,12 @@
 #include "operationExpression.h"
 #include "operation.h"
 #include "jsonconfig.h"
-#include "modeller/workflownode.h"
+#include "workflownode.h"
+#include "junctionNode.h"
+#include "operationnode.h"
+#include "conditionNode.h"
+#include "rangenode.h"
+#include "rangejunctionnode.h"
 #include "modeller/workflow.h"
 #include "WorkflowJSONConnector.h"
 
@@ -53,30 +58,6 @@ bool WorkflowJSONConnector::openTarget() {
     }
     return false;
 }
-
-//void WorkflowJSONConnector::writeWMSLocalLUT(QString filename) {
-//    QFile *file = new QFile(filename);
-
-//    if (file->open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate)) {
-//        _datasource.reset(file);
-//    }
-//    else return;
-
-//    QJsonDocument document;
-//    QJsonObject links;
-
-//    QMapIterator<QString, QString> lut(_layer2LocalLUT);
-//    while (lut.hasNext()) {
-//        lut.next();
-//        links[lut.key()] = lut.value();
-//    }
-
-//    document.setObject(links);
-//    QTextStream stream(_datasource.get());
-//    stream << document.toJson();
-//    stream.device()->close();
-
-//}
 
 bool WorkflowJSONConnector::loadMetaData(IlwisObject *object, const IOOptions &)
 {
@@ -117,6 +98,7 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
     std::vector<SPWorkFlowNode> nodes = workflow->nodes();
     // Json operation ID's are expected to start from zero, however workflow operations ID's
     // can have any positive value, and do not necessarily start at zero.
+    // A Json ID is assigned to each workflow operation.
     // We keep a record of the actual operation ID's and the assigned Json ID's
     std::map<quint64, int> nodeMapping;
     int jsonOperID = 0;
@@ -131,26 +113,26 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
             operation["inputs"] = createJSONOperationInputList(node);
             operation["outputs"] = createJSONOperationOutputList(node);
         }
-        else {
+        else if (node->type() == WorkFlowNode::ntRANGE) {
+            operation["id"] = jsonOtherID;
+            nodeMapping[node->id()] = jsonOtherID++;
+            operation["metadata"] = createJSONRangeMetadata(node);
+        }
+        else if (node->type() == WorkFlowNode::ntJUNCTION) {
             operation["id"] = jsonOtherID;
             nodeMapping[node->id()] = jsonOtherID++;
 
         }
-//        else if (node->type() == WorkFlowNode::ntJUNCTION) {
-//            operation["id"] = jsonOperID;
-//            nodeMappingOper[node->id()] = jsonOperID++;
+        else if (node->type() == WorkFlowNode::ntRANGEJUNCTION) {
+            operation["id"] = jsonOtherID;
+            nodeMapping[node->id()] = jsonOtherID++;
 
-//        }
-//        else if (node->type() == WorkFlowNode::ntRANGE) {
-//            operation["id"] = jsonOperID;
-//            nodeMappingOper[node->id()] = jsonOperID++;
-
-//        }
-//        else if (node->type() == WorkFlowNode::ntRANGEJUNCTION) {
-//            operation["id"] = jsonOperID;
-//            nodeMappingOper[node->id()] = jsonOperID++;
-
-//        }
+        }
+        else {
+            operation["id"] = jsonOtherID;
+            nodeMapping[node->id()] = jsonOtherID++;
+            operation["metadata"] = createJSONOperationMetadata(node, outNodes);
+        }
         operations.append(operation);
     }
 
@@ -173,34 +155,8 @@ bool WorkflowJSONConnector::store(IlwisObject *object, const IOOptions &options)
     stream << document.toJson();
     stream.device()->close();
 
-//    // write the LUT (WMS layername <-> local name)
-//    QFileInfo filename(QDir(workflowPath), "wms2local.json");
-//    writeWMSLocalLUT(filename.absoluteFilePath());
-
     return true;
 }
-
-//void WorkflowJSONConnector::parseOutputNames(OperationExpression expression)
-//{
-//    QString expr = expression.input<QString>(0); // we dont want the script command, just its tail
-//    int assignIndex = expr.indexOf("=");
-//    QString rightTerm = expr.mid(assignIndex + 1);
-//    QString leftTerm = expr.left(assignIndex);
-//    QStringList outs = leftTerm.split("},");
-//    for(auto output : outs){
-//        QString res ;
-//        int index = output.lastIndexOf("/");
-//        if ( index != -1){
-//            res = output.mid(index + 2);
-//        }else
-//            res = output;
-//        if (!res.endsWith("}")) // due to the nature how split works the last '}' will have been dropped
-//            res += "}";
-//        _outputNames.append(res);
-//    }
-//    _expression = rightTerm;
-//}
-
 
 QString WorkflowJSONConnector::type() const
 {
@@ -254,6 +210,24 @@ QJsonObject WorkflowJSONConnector::createJSONWorkflowMetaData(const Resource& re
     return meta;
 }
 
+QJsonObject WorkflowJSONConnector::createJSONRangeMetadata(const SPWorkFlowNode& node) {
+    QJsonObject jsonMeta;
+    jsonMeta["longname"] = node->name();
+    jsonMeta["label"] = node->label();
+    jsonMeta["description"] = node->description();
+
+    jsonMeta["final"] = false;
+
+    jsonMeta["inputparametercount"] = node->inputCount();
+
+    std::shared_ptr<RangeNode> range = std::static_pointer_cast<RangeNode>(node);
+    QString rangedef =  range->rangeDefinition( );
+
+    jsonMeta["range"] = rangedef;
+
+    return jsonMeta;
+}
+
 QJsonObject WorkflowJSONConnector::createJSONOperationMetadata(const SPWorkFlowNode& node, const std::vector<SPWorkFlowNode>& outNodes) {
     QJsonObject jsonMeta;
     jsonMeta["longname"] = node->name();
@@ -278,10 +252,12 @@ QJsonObject WorkflowJSONConnector::createJSONOperationMetadata(const SPWorkFlowN
         jsonMeta["syntax"] = op->resource()["syntax"].toString();
         QString keywords = op->resource()["keyword"].toString();
         jsonMeta["keywords"] = keywords;
+
+        jsonMeta["outputparametercount"] = (int) op->outputParameterCount();
+
     }
 
     jsonMeta["inputparametercount"] = node->inputCount();
-    jsonMeta["outputparametercount"] = (int) op->outputParameterCount();
 
     return jsonMeta;
 }
@@ -391,7 +367,14 @@ QJsonArray WorkflowJSONConnector::createJSONOperationConnectionList(Workflow *wo
 
 //        if (node->type() == WorkFlowNode::ntOPERATION) {
         int nrInputs = node->inputCount();
-        if (node->type() == WorkFlowNode::ntRANGEJUNCTION) nrInputs = 4;    // cludge, size() always returns 1 instead of 4
+
+        // junctions have 3 or 4 parameters; but inputcount returns only 1 as the link to the condition is the only explicit parameter;
+        // links to operations are implicit. Needed for saving though so we overrule here; see also WorkflowSerializerV1::storeNodeLinks()
+        if (node->type() == WorkFlowNode::ntJUNCTION)
+            nrInputs = 3;
+        if (node->type() == WorkFlowNode::ntRANGEJUNCTION)
+            nrInputs = 4;
+
         for (int i = 0; i < nrInputs; ++i) {
             if (node->inputRef(i).inputLink()) {
                 WorkFlowParameter wfp = node->inputRef(i);

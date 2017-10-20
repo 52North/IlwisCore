@@ -376,7 +376,6 @@ Rectangle {
             if ( itemid == lastitem)
                 return iconsource("operationitemStep.png")
             if ( workflow.currentNode == itemid){
-                console.debug("aaa", itemid)
                 return iconsource("operationitemSelectedStep.png")
             }
             return iconsource("operationitem.png")
