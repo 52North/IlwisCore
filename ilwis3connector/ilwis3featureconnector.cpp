@@ -948,7 +948,10 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     DataDefinition datadef;
 
     ITable attTable = fcov->attributeTable();
-    int index = attTable->columnIndex(COVERAGEKEYCOLUMN);
+    QString primkey = attTable->primaryKey();
+    if (primkey == sUNDEF)
+        primkey = COVERAGEKEYCOLUMN;
+    int index = attTable->columnIndex(primkey);
     if ( index != iUNDEF ) {
         const ColumnDefinition& coldef = attTable->columndefinitionRef(index);
         if ( coldef.datadef().domain<>()->ilwisType() == itITEMDOMAIN)

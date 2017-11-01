@@ -374,10 +374,13 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &optio
     }
     if ( raster->attributeTable().isValid()) {
         ITable tbl = raster->attributeTable();
+        QString primkey = tbl->primaryKey();
+        if (primkey == sUNDEF)
+            primkey = COVERAGEKEYCOLUMN; // fallback, should not happen?
         for(quint32 i=0; i < tbl->recordCount() ; ++i) {
-            tbl->setCell(COVERAGEKEYCOLUMN,i, QVariant(i));
+            tbl->setCell(primkey,i, QVariant(i));
         }
-        raster->primaryKey(COVERAGEKEYCOLUMN);
+        raster->primaryKey(primkey);
     }
     _binaryIsLoaded = true;
     return true;

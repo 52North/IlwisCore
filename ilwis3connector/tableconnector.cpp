@@ -61,13 +61,13 @@ bool TableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
     quint32 ncolumns = _odf->value("Table","Columns").toInt();
     quint32 rows = _odf->value("Table","Records").toInt();
     _attributeDomain = _odf->value("Table","Domain");
-    QVector<ColumnDefinition>  columns;
+//    QVector<ColumnDefinition>  columns;
     ColumnDefinition key  = getKeyColumn();
     if ( key.isValid()) {
-        columns.push_back(key);
+//        columns.push_back(key);
         if ( !options.contains("attributetable")) {
             _primaryKey = key.name();
-        }else if (!options["attributetable"].toBool() == true){
+        }else if (options["attributetable"].toBool()){
              _primaryKey = key.name();
         }
 
@@ -83,6 +83,7 @@ bool TableConnector::loadMetaData(IlwisObject *data, const IOOptions &options)
     }
     if ( _primaryKey != sUNDEF){
         tbl->addColumn(key);
+        addProperty("primaryKey", _primaryKey);
     }
     tbl->recordCount(rows);
     return true;
@@ -328,7 +329,7 @@ bool TableConnector::storeColumns(const Table *tbl, const IOOptions &options) {
             if (domName.indexOf(ANONYMOUS_PREFIX) != -1) {
                 // rename using columnname + domainID
                 QString num = QString::number(dmColumn->id());
-                domName =def.name() + "_" + num;
+                domName = def.name() + "_" + num;
             }
             QString fileUrl = "file:///" + _odf->path()+ "/" + domName;
             if ( fileUrl.indexOf(".dom") == -1){
