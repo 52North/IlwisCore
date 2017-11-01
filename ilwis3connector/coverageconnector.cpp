@@ -86,12 +86,15 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
     if ( !attTable.isValid())
         attTable.prepare();
 
+    QString primaryKey = attTable->constConnector(IlwisObject::cmINPUT)->getProperty("primaryKey").toString();
+    if (primaryKey == sUNDEF)
+        primaryKey = COVERAGEKEYCOLUMN;
     bool isNumeric = _odf->value("BaseMap","Range") != sUNDEF;
     if ( isNumeric){
         IDomain featuredom("value");
         attTable->addColumn(FEATUREVALUECOLUMN,featuredom);
     }
-    else if ( attTable->columnIndex(COVERAGEKEYCOLUMN) == iUNDEF) { // external tables might already have these
+    else if ( attTable->columnIndex(primaryKey) == iUNDEF) { // external tables might already have these
         DataDefinition def = determineDataDefintion(_odf, options);
         if ( !def.isValid())
             return ITable();
