@@ -80,7 +80,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& opt
             QUrl url (QUrl::fromLocalFile(_resource.container(true).toLocalFile() + "/" + odf->value("MapStore","Data")));
             _dataFiles.push_back(url);
 
-            DataDefinition def = determineDataDefintion(odf, options);
+            DataDefinition def = determineDataDefinition(odf, options);
             if ( !def.isValid()) {
                 return false;
             }
@@ -182,7 +182,7 @@ bool RasterCoverageConnector::setDataType(IlwisObject *data, const IOOptions &op
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
-    DataDefinition def = determineDataDefintion(_odf, options);
+    DataDefinition def = determineDataDefinition(_odf, options);
     if ( !def.isValid()) {
         return false;
     }
