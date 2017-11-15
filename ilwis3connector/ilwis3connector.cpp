@@ -388,27 +388,32 @@ QString Ilwis3Connector::writeCsy(IlwisObject *obj, const ICoordinateSystem & cs
     if ( csy->code() != "unknown"){
         if ( csy->code() != "epsg:4326"){
             csyName = Resource::toLocalFile(csy->resource().url(true),true, "csy");
+            int index = csyName.lastIndexOf("/");
+            if (index >= 0)
+                csyName = csyName.mid(index + 1);
             if ( csy->isInternalObject()){
-                QString csyFile = Resource::toLocalFile(sourceRef().url(),false, "csy");
                 QString name = csy->name().trimmed();
                 if (name.size() > 3 && !csy->isAnonymous()) { // threshold of min 4 chars for a credible csy name
                     name = name.replace(QRegExp("[/ .'\"]"),"_");
-                    csyName =  QFileInfo(csyFile).absolutePath() + "/" + name + ".csy";
-                } else
+                    csyName = name + ".csy";
+                } else {
+                    QString csyFile = Resource::toLocalFile(sourceRef().url(),false, "csy");
+                    int index = csyFile.lastIndexOf("/");
+                    if (index >= 0)
+                        csyFile = csyFile.mid(index + 1);
                     csyName = csyFile;
+                }
             }
             else if ( csyName == sUNDEF || csyName == "") {
-                QString path = context()->workingCatalog()->filesystemLocation().toLocalFile() + "/";
-                QString name = csy->name();
+                csyName = csy->name();
                 if ( !csy->isAnonymous()) {
-                    name = name.replace(QRegExp("[/ .'\"]"),"_");
+                    csyName = csyName.replace(QRegExp("[/ .'\"]"),"_");
                 }
-                csyName = path + name;
                 if ( !csyName.endsWith(".csy"))
                     csyName += ".csy";
                 //return ERROR2(ERR_NO_INITIALIZED_2, "CoordinateSystem", coverage->name());
             }
-            int index = _odf->url().lastIndexOf("/");
+            index = _odf->url().lastIndexOf("/");
             QString csyurl = _odf->url().left(index) + "/" + csyName;
             QFileInfo csyinf(QUrl(csyurl).toLocalFile());
             if ( !csyinf.exists()) { // if filepath doesnt exist we create if from scratch
