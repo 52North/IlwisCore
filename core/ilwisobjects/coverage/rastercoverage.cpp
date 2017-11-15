@@ -480,6 +480,10 @@ void RasterCoverage::setAttributes(const ITable& tbl, const QString& joinColumn)
     _attributeTable = tbl;
     _recordLookup.clear();
     if ( _attributeTable.isValid()){
+        QString primkey = tbl->primaryKey();
+        if (primkey != sUNDEF)
+            _primaryKey = primkey;
+
         std::vector<QVariant> values = tbl->column(primaryKey());
         if ( values.size() > 0){
             int count = 0;

@@ -76,13 +76,6 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
         }
     }
 
-    if ( basemaptype != "Map" ) {
-        QString name = _resource.name();
-        int index = -1;
-        if ( (index = name.indexOf(".")) != -1){
-            name = name.left(index);
-        }
-    }
     if ( !attTable.isValid())
         attTable.prepare();
 
@@ -91,11 +84,24 @@ ITable CoverageConnector::prepareAttributeTable(const QString& file, const QStri
         IDomain featuredom("value");
         attTable->addColumn(FEATUREVALUECOLUMN,featuredom);
     }
-    else if ( attTable->columnIndex(COVERAGEKEYCOLUMN) == iUNDEF) { // external tables might already have these
-        DataDefinition def = determineDataDefintion(_odf, options);
-        if ( !def.isValid())
-            return ITable();
-        attTable->addColumn(ColumnDefinition(COVERAGEKEYCOLUMN,def, attTable->columnCount()));
+    else {
+        // prevent coverage_key and/or primary key columns from being added multiple times
+        QString primaryKey = attTable->constConnector(IlwisObject::cmINPUT)->getProperty("primaryKey").toString();
+        if (primaryKey != sUNDEF) {
+            if ( attTable->columnIndex(primaryKey) == iUNDEF) { // external tables might already have these
+                DataDefinition def = determineDataDefinition(_odf, options);
+                if ( !def.isValid())
+                    return ITable();
+                attTable->addColumn(ColumnDefinition(primaryKey, def, attTable->columnCount()));
+            }
+        }
+
+        if ( attTable->columnIndex(COVERAGEKEYCOLUMN) == iUNDEF) { // external tables might already have these
+            DataDefinition def = determineDataDefinition(_odf, options);
+            if ( !def.isValid())
+                return ITable();
+            attTable->addColumn(ColumnDefinition(COVERAGEKEYCOLUMN,def, attTable->columnCount()));
+        }
     }
     return attTable;
 
@@ -394,7 +400,7 @@ TableConnector *CoverageConnector::createTableStoreConnector(ITable& attTable, C
     return 0;
 }
 
-DataDefinition CoverageConnector::determineDataDefintion(const ODF& odf,  const IOOptions &options) const{
+DataDefinition CoverageConnector::determineDataDefinition(const ODF& odf,  const IOOptions &options) const{
     IDomain dom;
     QString filename;
     QString domname = odf->value("BaseMap","Domain");

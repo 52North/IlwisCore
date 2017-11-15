@@ -43,6 +43,14 @@ public:
     virtual quint32 columnCount() const=0;
 
     /*!
+     * returns the primary key column name of the table.<br>
+     * If not specified, returns sUNDEF.
+     *
+     * \return columns in the table
+     */
+    virtual QString primaryKey() const = 0;
+
+    /*!
      * sets the number of rows in a table. If the number of rows is bigger than the current number of rows is the extra records will be filled with
      * appropriate defaults depending on the domain.<br>
      * if the number is smaller the excess records will be deleted. <br>

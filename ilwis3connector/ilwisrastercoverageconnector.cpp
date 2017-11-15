@@ -80,7 +80,7 @@ bool RasterCoverageConnector::loadMapList(IlwisObject *data,const IOOptions& opt
             QUrl url (QUrl::fromLocalFile(_resource.container(true).toLocalFile() + "/" + odf->value("MapStore","Data")));
             _dataFiles.push_back(url);
 
-            DataDefinition def = determineDataDefintion(odf, options);
+            DataDefinition def = determineDataDefinition(odf, options);
             if ( !def.isValid()) {
                 return false;
             }
@@ -182,7 +182,7 @@ bool RasterCoverageConnector::setDataType(IlwisObject *data, const IOOptions &op
 
     RasterCoverage *raster = static_cast<RasterCoverage *>(data);
 
-    DataDefinition def = determineDataDefintion(_odf, options);
+    DataDefinition def = determineDataDefinition(_odf, options);
     if ( !def.isValid()) {
         return false;
     }
@@ -374,10 +374,13 @@ bool RasterCoverageConnector::loadData(IlwisObject* data, const IOOptions &optio
     }
     if ( raster->attributeTable().isValid()) {
         ITable tbl = raster->attributeTable();
+        QString primkey = tbl->primaryKey();
+        if (primkey == sUNDEF)
+            primkey = COVERAGEKEYCOLUMN; // fallback, should not happen?
         for(quint32 i=0; i < tbl->recordCount() ; ++i) {
-            tbl->setCell(COVERAGEKEYCOLUMN,i, QVariant(i));
+            tbl->setCell(primkey,i, QVariant(i));
         }
-        raster->primaryKey(COVERAGEKEYCOLUMN);
+        raster->primaryKey(primkey);
     }
     _binaryIsLoaded = true;
     return true;

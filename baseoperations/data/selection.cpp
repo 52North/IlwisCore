@@ -84,8 +84,8 @@ bool SelectionRaster::execute(ExecutionContext *ctx, SymbolTable& symTable)
                         ok = false;
                         continue;
                     }
-                    // pixValue == ID; ID zero means undef, so subtract 1 to get correct record index.
-                    if (pixValue > 0) {
+                    // pixValue == ID; ID < zero means undef, ID's start at zero.
+                    if (pixValue >= 0) {
                         if (keyColumn != iUNDEF){
                             auto iter = raw2record.find(pixValue);
                             if ( iter != raw2record.end()){

@@ -43,6 +43,9 @@ public:
     virtual void recordCount(quint32 r);
 
     //@override
+    virtual QString primaryKey() const;
+
+    //@override
     virtual bool createTable() ;
 
     //@override

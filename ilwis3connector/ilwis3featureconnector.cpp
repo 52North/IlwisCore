@@ -526,9 +526,10 @@ void FeatureConnector::writePolygon(const geos::geom::Polygon* polygon, std::ofs
 
     const std::vector<geos::geom::Coordinate>* coords = polygon->getExteriorRing()->getCoordinates()->toVector();
     writeCoords(output_file, coords);
-    output_file.write((char *)&raw,8);
+//    quint32 iraw = raw;
+    output_file.write((char *)&raw, sizeof raw);
     quint32 holeCount = polygon->getNumInteriorRing();
-    output_file.write((char *)&holeCount,4);
+    output_file.write((char *)&holeCount, sizeof holeCount);
     for(int i=0; i < holeCount; ++i ) {
         const std::vector<geos::geom::Coordinate>* coords = polygon->getInteriorRingN(i)->getCoordinates()->toVector();
         writeCoords(output_file, coords);
@@ -948,7 +949,10 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
     DataDefinition datadef;
 
     ITable attTable = fcov->attributeTable();
-    int index = attTable->columnIndex(COVERAGEKEYCOLUMN);
+    QString primkey = attTable->primaryKey();
+    if (primkey == sUNDEF)
+        primkey = COVERAGEKEYCOLUMN;
+    int index = attTable->columnIndex(primkey);
     if ( index != iUNDEF ) {
         const ColumnDefinition& coldef = attTable->columndefinitionRef(index);
         if ( coldef.datadef().domain<>()->ilwisType() == itITEMDOMAIN)
@@ -996,9 +1000,9 @@ bool FeatureConnector::storeMetaData(FeatureCoverage *fcov, IlwisTypes type) {
 
     _odf->setKeyValue("BaseMap","CoordBounds",QString("%1 %2 %3 %4").
                       arg(bounds.min_corner().x,0,'f',10).
-                      arg(-bounds.max_corner().y,0,'f',10).
+                      arg(bounds.max_corner().y,0,'f',10).
                       arg(bounds.max_corner().x,0,'f',10).
-                      arg(-bounds.min_corner().y,0,'f',10));
+                      arg(bounds.min_corner().y,0,'f',10));
 
     QString ext = "mpa";
     if ( hasType(type, itPOLYGON)){

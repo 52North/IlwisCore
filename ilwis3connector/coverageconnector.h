@@ -19,7 +19,7 @@ protected:
     TableConnector *createTableStoreConnector(ITable &attTable, Coverage *coverage, IlwisTypes tp, const QString &baseName);
 
     RawConverter _converter;
-    DataDefinition determineDataDefintion(const Ilwis::ODF &odf, const IOOptions &) const;
+    DataDefinition determineDataDefinition(const Ilwis::ODF &odf, const IOOptions &) const;
 protected:
     QString _domainName;
     QString _domainInfo;

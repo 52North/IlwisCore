@@ -236,17 +236,19 @@ Ilwis::OperationImplementation::State DistanceRaster::prepare(ExecutionContext *
         ERROR2(ERR_COULD_NOT_LOAD_2,inputRasterName,"");
         return sPREPAREFAILED;
     }
-
+    _hasWeightRaster = false;
     if (_expression.parameterCount() == 2) {
-        _hasWeightRaster = true;
         QString inputWeightRaster = _expression.input<QString>(1);
-        if(!_inputOptWeightRaster.prepare(inputWeightRaster, itRASTER)) {
-            ERROR2(ERR_COULD_NOT_LOAD_2,inputWeightRaster,"");
-            return sPREPAREFAILED;
+        if ( inputWeightRaster != "default") {
+
+            if(!_inputOptWeightRaster.prepare(inputWeightRaster, itRASTER)) {
+                ERROR2(ERR_COULD_NOT_LOAD_2,inputWeightRaster,"");
+                return sPREPAREFAILED;
+            }
+            _hasWeightRaster = true;
         }
-    } else {
-        _hasWeightRaster = false;
     }
+
 
     /*if (0 != inputThiessenRaster.length() && !_inputThiessenRaster.prepare(inputThiessenRaster, itRASTER)) {
         ERROR2(ERR_COULD_NOT_LOAD_2,inputThiessenRaster,"");

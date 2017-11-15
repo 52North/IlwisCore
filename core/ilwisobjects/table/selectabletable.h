@@ -17,6 +17,9 @@ public:
     ~SelectableTable();
 
     std::vector<quint32> select(const QString& conditions) const;
+
+    //@override
+    virtual QString primaryKey() const;
 };
 
 }

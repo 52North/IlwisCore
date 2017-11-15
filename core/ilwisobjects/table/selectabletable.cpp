@@ -29,3 +29,9 @@ std::vector<quint32> SelectableTable::select(const QString &conditions) const
 {
     return TableSelector::select(this, conditions);
 }
+
+QString SelectableTable::primaryKey() const {
+    return "?";
+}
+
+

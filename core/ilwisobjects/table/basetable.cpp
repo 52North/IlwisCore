@@ -46,6 +46,13 @@ void BaseTable::recordCount(quint32 r)
     _rows = r;
 }
 
+QString BaseTable::primaryKey() const {
+    if (constConnector(IlwisObject::cmINPUT)->hasProperty("primaryKey"))
+        return constConnector(IlwisObject::cmINPUT)->getProperty("primaryKey").toString();
+
+    return "?";
+}
+
 bool BaseTable::createTable()
 {
     if (!isValid()) {
