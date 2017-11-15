@@ -287,5 +287,6 @@ Q_DECLARE_METATYPE(Ilwis::ITable)
 #define FEATURETYPECOLUMN "feature_type"
 #define TRACKINDEXCOLUMN "track_index"
 #define TRACKVALUECOLUMN "track_value"
+#define FEATUREIDDCOLUMN "ilwis_featureid"
 
 #endif // TABLE_H

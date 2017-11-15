@@ -98,6 +98,7 @@ QVariant FeatureCoverage::coord2value(const Coordinate &crd, const QString &attr
                     QString attr = feature->attributedefinition(i).name();
                     vmap[attr] = feature(attr);
                 }
+                vmap[FEATUREIDDCOLUMN] = feature->featureid();
                 var = vmap;
             }
             break;

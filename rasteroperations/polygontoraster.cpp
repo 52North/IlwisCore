@@ -45,10 +45,12 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
     Ilwis::Bresenham algo(_outputraster->georeference());
     PixelIterator pixiter(_outputraster);
     initialize(_inputfeatures->featureCount(itPOLYGON));
+    std::map<quint64, quint64> recordMapping;
     quint64 count = 0;
+    ITable tbl = _outputraster->attributeTable();
+    int primKeyIndex = tbl->columnIndex(COVERAGEKEYCOLUMN);
     for(auto feature :  _inputfeatures){
-        if ( feature->geometryType() != itPOLYGON){
-
+        if ( feature->geometryType() != itPOLYGON) {
            continue;
         }        
         VertexIterator vertices(feature->geometry());
@@ -61,6 +63,8 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
             pixiter = Pixel(pix.x, pix.y, pixiter.z());
             *pixiter = -1;
         }
+        recordMapping[feature->featureid()] = count;
+        tbl->setCell(primKeyIndex,count,count);
         updateTranquilizer(++count,10);
     }
     Pixel pix;
@@ -68,7 +72,6 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
     long ysize =_inputgrf->size().ysize();
     initialize(ysize);
     double mmax = -1e308, mmin = 1e308;
-    QString valueColumn = _inputfeatures->attributeDefinitions().columnIndex(FEATUREVALUECOLUMN) != iUNDEF ? FEATUREVALUECOLUMN : COVERAGEKEYCOLUMN;
 
     for (long y = 0; y < ysize; ++y) {
          pix.y = y;
@@ -92,8 +95,8 @@ bool PolygonToRaster::execute(ExecutionContext *ctx, SymbolTable &symTable)
              QVariant d = _inputfeatures->coord2value(crd);
              if (d.isValid()){
                 QVariantMap vmap = d.value<QVariantMap>();
-                QVariant attribute =  vmap[valueColumn];
-                value = attribute.toInt();
+                quint64 fid = vmap[FEATUREIDDCOLUMN].toULongLong();
+                value = recordMapping[fid];
              }else{
                 value = rUNDEF;
              }
@@ -142,11 +145,10 @@ Ilwis::OperationImplementation::State PolygonToRaster::prepare(ExecutionContext 
     }
     _needCoordinateTransformation = _inputgrf->coordinateSystem() != _inputfeatures->coordinateSystem();
     _getsAttributeTable =  _inputfeatures->attributeDefinitions().columnCount() > 1;
-    IDomain dom;
-     dom = _inputfeatures->attributeDefinitions().columndefinition(FEATUREVALUECOLUMN).datadef().domain();
-     if ( !dom.isValid()){
-         dom = _inputfeatures->attributeDefinitions().columndefinition(COVERAGEKEYCOLUMN).datadef().domain();
-     }
+    ITable attTable = _inputfeatures->attributeTable().as<AttributeTable>()->copyTable();
+    IDomain primDom("count");
+    attTable->addColumn(COVERAGEKEYCOLUMN, primDom);
+
 
     _outputraster.prepare();
     if (outputName != sUNDEF)
@@ -157,7 +159,8 @@ Ilwis::OperationImplementation::State PolygonToRaster::prepare(ExecutionContext 
     _outputraster->envelope(env);
     _outputraster->georeference(_inputgrf);
     std::vector<double> indexes = {0};
-    _outputraster->setDataDefintions(dom,indexes);
+    _outputraster->setDataDefintions(primDom,indexes);
+    _outputraster->setAttributes(attTable);
     return sPREPARED;
 }
 
