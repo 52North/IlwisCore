@@ -91,40 +91,36 @@ Parameter::PathType Parameter::pathType() const
 }
 
 IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &symtab) {
-    if ( (value.startsWith("\"") || value.startsWith("'")) &&
-         (value.endsWith("'") || value.endsWith("\"")))
-        return itSTRING;
     bool ok;
     value.toDouble(&ok);
     if ( ok)
         return itNUMBER;
 
-    IlwisTypes tp = IlwisObject::findType(value);
+    QString unquotedValue = OperationHelper::unquote(value);
+    IlwisTypes tp = IlwisObject::findType(unquotedValue);
     if ( value == "\"?\"" || value == "?")
         tp = itANY;
 
     if ( tp != itUNKNOWN)
         return tp;
 
-    Symbol sym = symtab.getSymbol(value);
+    Symbol sym = symtab.getSymbol(unquotedValue);
     if ( sym.isValid() && sym._type != itUNKNOWN)
         return sym._type;
 
-    QString s = context()->workingCatalog()->resolve(value);
+    QString s = context()->workingCatalog()->resolve(unquotedValue);
     IlwisTypes type = IlwisObject::findType(s) ;
     if ( type != itUNKNOWN)
         return type;
 
-    quint64 id = IlwisObject::internalname2id(value);
+    quint64 id = IlwisObject::internalname2id(unquotedValue);
     if ( id != i64UNDEF){
         ESPIlwisObject obj =  mastercatalog()->get(id);
         if ( obj.get() != 0)
             return obj->ilwisType();
     }
-    tp = Domain::ilwType(value);
-
+    tp = Domain::ilwType(unquotedValue);
     return tp == itUNKNOWN ? itSTRING : tp;
-
 }
 
 
@@ -281,16 +277,17 @@ void OperationExpression::parseFunctionExpression(const QString &txt, const Symb
     QString start = e.left(index2);
     int blockCount = 0;
     int quoteCount = 0;
+    char quote = '\0';
     int count = 0;
     int cur = 0;
     std::vector<int> outputParams;
     if ( index2 != -1) {
         foreach(const QChar& cu, start) {
             char c = cu.toLatin1();
-            if ( c == '{' && quoteCount == 0){
+            if ( c == '{'){
                 blockCount++;
             }
-            if ( c == '}' && quoteCount == 0){
+            if ( c == '}'){
                 blockCount--;
             }
             if ( c == ',' || blockCount == 1)
@@ -322,10 +319,14 @@ void OperationExpression::parseFunctionExpression(const QString &txt, const Symb
                 blockCount++;
             if ( c == ')' && quoteCount == 0)
                 blockCount--;
-            if ( (c == '"' || c == '\'') && quoteCount == 0)
+            if ( (c == '"' || c == '\'') && quoteCount == 0) {
                 quoteCount++;
-            else if (  (c == '"' || c == '\'') && quoteCount != 0)
+                quote = c;
+            }
+            else if (  (c == quote) && quoteCount != 0) {
                 quoteCount--;
+                quote = '\0';
+            }
 
             ++count;
             if ( blockCount == 0 && quoteCount == 0) {
