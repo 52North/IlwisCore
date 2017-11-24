@@ -241,6 +241,8 @@ class Engine(_object):
 
     def _do2(*args):
         """
+        _do2(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8, std::string c9, std::string c10, std::string c11) -> qint64
+        _do2(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8, std::string c9, std::string c10) -> qint64
         _do2(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8, std::string c9) -> qint64
         _do2(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8) -> qint64
         _do2(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7) -> qint64
@@ -258,6 +260,8 @@ class Engine(_object):
 
     def _do(*args):
         """
+        _do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8, std::string c9, std::string c10, std::string c11) -> Object
+        _do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8, std::string c9, std::string c10) -> Object
         _do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8, std::string c9) -> Object
         _do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8) -> Object
         _do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7) -> Object
@@ -317,19 +321,55 @@ class Engine(_object):
     __swig_getmethods__["_catalogItems"] = lambda x: _catalogItems
 
     @staticmethod
-    def do(operation,arg1="",arg2="",arg3="",arg4="",arg5="",arg6="",arg7="",out=""):
+    def do(operation,arg1="",arg2="",arg3="",arg4="",arg5="",arg6="",arg7="",arg8="",arg9="",out=""):
         if str(operation) != "":
-            obj = Engine__do(str(out),str(operation),str(arg1),str(arg2),str(arg3),str(arg4),str(arg5),str(arg6),str(arg7))
+            if (type(arg1)==str and len(arg1) > 0):
+                arg1 = "'" + arg1 + "'"
+            if (type(arg2)==str and len(arg2) > 0):
+                arg2 = "'" + arg2 + "'"
+            if (type(arg3)==str and len(arg3) > 0):
+                arg3 = "'" + arg3 + "'"
+            if (type(arg4)==str and len(arg4) > 0):
+                arg4 = "'" + arg4 + "'"
+            if (type(arg5)==str and len(arg5) > 0):
+                arg5 = "'" + arg5 + "'"
+            if (type(arg6)==str and len(arg6) > 0):
+                arg6 = "'" + arg6 + "'"
+            if (type(arg7)==str and len(arg7) > 0):
+                arg7 = "'" + arg7 + "'"
+            if (type(arg8)==str and len(arg8) > 0):
+                arg8 = "'" + arg8 + "'"
+            if (type(arg9)==str and len(arg9) > 0):
+                arg9 = "'" + arg9 + "'"
+            obj = Engine__do(str(out),str(operation),str(arg1),str(arg2),str(arg3),str(arg4),str(arg5),str(arg6),str(arg7),str(arg8),str(arg9))
         else:
             raise IlwisException("no operation given!")
         return object_cast(obj)
 
     @staticmethod
-    def do2(operation,arg1="",arg2="",arg3="",arg4="",arg5="",arg6="",arg7="",out=""):
+    def do2(operation,arg1="",arg2="",arg3="",arg4="",arg5="",arg6="",arg7="",arg8="",arg9="",out=""):
         if str(operation) != "":
-          obj = Engine__do2(str(out),str(operation),str(arg1),str(arg2),str(arg3),str(arg4),str(arg5),str(arg6),str(arg7))
+            if (type(arg1)==str and len(arg1) > 0):
+                arg1 = "'" + arg1 + "'"
+            if (type(arg2)==str and len(arg2) > 0):
+                arg2 = "'" + arg2 + "'"
+            if (type(arg3)==str and len(arg3) > 0):
+                arg3 = "'" + arg3 + "'"
+            if (type(arg4)==str and len(arg4) > 0):
+                arg4 = "'" + arg4 + "'"
+            if (type(arg5)==str and len(arg5) > 0):
+                arg5 = "'" + arg5 + "'"
+            if (type(arg6)==str and len(arg6) > 0):
+                arg6 = "'" + arg6 + "'"
+            if (type(arg7)==str and len(arg7) > 0):
+                arg7 = "'" + arg7 + "'"
+            if (type(arg8)==str and len(arg8) > 0):
+                arg8 = "'" + arg8 + "'"
+            if (type(arg9)==str and len(arg9) > 0):
+                arg9 = "'" + arg9 + "'"
+            obj = Engine__do2(str(out),str(operation),str(arg1),str(arg2),str(arg3),str(arg4),str(arg5),str(arg6),str(arg7),str(arg8),str(arg9))
         else:
-          raise IlwisException("no operation given!")
+            raise IlwisException("no operation given!")
         return obj
 
     @staticmethod
@@ -343,6 +383,8 @@ Engine_swigregister(Engine)
 
 def Engine__do2(*args):
     """
+    _do2(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8, std::string c9, std::string c10, std::string c11) -> qint64
+    _do2(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8, std::string c9, std::string c10) -> qint64
     _do2(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8, std::string c9) -> qint64
     _do2(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8) -> qint64
     _do2(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7) -> qint64
@@ -356,6 +398,8 @@ def Engine__do2(*args):
 
 def Engine__do(*args):
     """
+    _do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8, std::string c9, std::string c10, std::string c11) -> Object
+    _do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8, std::string c9, std::string c10) -> Object
     _do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8, std::string c9) -> Object
     _do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7, std::string c8) -> Object
     _do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5, std::string c6, std::string c7) -> Object

@@ -10,8 +10,8 @@ namespace pythonapi {
     class Engine{
     public:
         Engine();
-        static qint64 _do2(std::string output_name, std::string operation,std::string c3 = "",std::string c4 = "",std::string c5 = "",std::string c6 = "",std::string c7="", std::string c8="", std::string c9="");
-        static Object* _do(std::string output_name, std::string operation,std::string c3 = "",std::string c4 = "",std::string c5 = "",std::string c6 = "",std::string c7="", std::string c8="", std::string c9="");
+        static qint64 _do2(std::string output_name, std::string operation,std::string c3 = "",std::string c4 = "",std::string c5 = "",std::string c6 = "",std::string c7="", std::string c8="", std::string c9="", std::string c10="", std::string c11="");
+        static Object* _do(std::string output_name, std::string operation,std::string c3 = "",std::string c4 = "",std::string c5 = "",std::string c6 = "",std::string c7="", std::string c8="", std::string c9="", std::string c10="", std::string c11="");
         static void setWorkingCatalog(const std::string& location);
         static std::string getLocation();
         static PyObject* operations();

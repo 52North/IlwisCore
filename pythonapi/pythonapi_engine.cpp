@@ -45,7 +45,7 @@ using namespace pythonapi;
 Engine::Engine(){
 }
 
-qint64 Engine::_do2(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5,std::string c6, std::string c7, std::string c8, std::string c9){
+qint64 Engine::_do2(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5,std::string c6, std::string c7, std::string c8, std::string c9, std::string c10, std::string c11){
     Ilwis::SymbolTable symtbl;
     Ilwis::ExecutionContext ctx;
     ctx.clear();
@@ -64,7 +64,15 @@ qint64 Engine::_do2(std::string output_name, std::string operation, std::string 
                     if(!c7.empty()){
                         if(!c8.empty()){
                             if(!c9.empty()){
-                                command = QString("script %1=%2(%3,%4,%5,%6,%7,%8,%9)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str(),c8.c_str(),c9.c_str());
+                                if (!c10.empty()){
+                                    if (!c11.empty()){
+                                        command = QString("script %1=%2(%3,%4,%5,%6,%7,%8,%9,").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str(),c8.c_str(),c9.c_str()) + QString("%1,%2)").arg(c10.c_str(),c11.c_str());
+                                    }else{
+                                        command = QString("script %1=%2(%3,%4,%5,%6,%7,%8,%9,").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str(),c8.c_str(),c9.c_str()) + QString("%1)").arg(c10.c_str());
+                                    }
+                                }else{
+                                    command = QString("script %1=%2(%3,%4,%5,%6,%7,%8,%9)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str(),c8.c_str(),c9.c_str());
+                                }
                             }else{
                                 command = QString("script %1=%2(%3,%4,%5,%6,%7,%8)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str(),c8.c_str());
                             }
@@ -148,7 +156,7 @@ qint64 Engine::_do2(std::string output_name, std::string operation, std::string 
     }
 }
 
-Object* Engine::_do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5,std::string c6, std::string c7, std::string c8, std::string c9){
+Object* Engine::_do(std::string output_name, std::string operation, std::string c3, std::string c4, std::string c5,std::string c6, std::string c7, std::string c8, std::string c9, std::string c10, std::string c11){
     Ilwis::SymbolTable symtbl;
     Ilwis::ExecutionContext ctx;
     ctx.clear();
@@ -167,7 +175,15 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
                     if(!c7.empty()){
                         if(!c8.empty()){
                             if(!c9.empty()){
-                                command = QString("script %1=%2(%3,%4,%5,%6,%7,%8,%9)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str(),c8.c_str(),c9.c_str());
+                                if (!c10.empty()){
+                                    if (!c11.empty()){
+                                        command = QString("script %1=%2(%3,%4,%5,%6,%7,%8,%9,").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str(),c8.c_str(),c9.c_str()) + QString("%1,%2)").arg(c10.c_str(),c11.c_str());
+                                    }else{
+                                        command = QString("script %1=%2(%3,%4,%5,%6,%7,%8,%9,").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str(),c8.c_str(),c9.c_str()) + QString("%1)").arg(c10.c_str());
+                                    }
+                                }else{
+                                    command = QString("script %1=%2(%3,%4,%5,%6,%7,%8,%9)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str(),c8.c_str(),c9.c_str());
+                                }
                             }else{
                                 command = QString("script %1=%2(%3,%4,%5,%6,%7,%8)").arg(output_name.c_str(),operation.c_str(),c3.c_str(),c4.c_str(),c5.c_str(),c6.c_str(),c7.c_str(),c8.c_str());
                             }
