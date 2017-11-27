@@ -9,8 +9,8 @@ class CalculatorOperation : public NumericOperation
 {
 public:
     enum ParmType {NUMERIC, ITERATOR,LINK, STRING, DOMAINITEM,COLUMN};
-    enum MathAction{maIFF, maSIN, maCOS, maTAN, maASIN, maACOS,maATAN, maLOG10, maLN,
-                    maABS,maCEIL, maFLOOR,maSQRT,maMAX,maMIN,maPOW,maADD,maMINUS,maDIVIDE,maMULT,
+    enum MathAction{maIFF, maSIN, maCOS, maTAN, maASIN, maACOS,maATAN, maLOG10, maLN, maEXP,
+                    maABS,maCEIL, maFLOOR,maSQ,maSQRT,maMAX,maMIN,maPOW,maADD,maMINUS,maDIVIDE,maMULT,
                     maEQ, maNEQ,maLESSEQ,maGREATEREQ,maLESS,maGREATER,maOR, maAND,
                     maUNKNOWN};
     const int LEFT_ASSOC = 0;

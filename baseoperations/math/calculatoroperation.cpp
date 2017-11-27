@@ -26,7 +26,7 @@ CalculatorOperation::CalculatorOperation()
 CalculatorOperation::CalculatorOperation(quint64 metaid,const Ilwis::OperationExpression &expr) : NumericOperation(metaid, expr)
 {
     _functions ={{"iff",3},{"sin",1},{"cos",1},{"tan",1},{"asin",1},{"acos",1},{"atan",1},
-                 {"log10",1},{"ln",1},{"abs",1},{"ciel",1},{"floor",1},{"sqrt",1},{"max",2},
+                 {"log10",1},{"ln",1},{"exp",1},{"abs",1},{"ceil",1},{"floor",1},{"sq",1},{"sqrt",1},{"max",2},
                  {"min",2},{"pow",2}};
     _operators["+"] = { 2, LEFT_ASSOC };
     _operators["-"] = { 2, LEFT_ASSOC };
@@ -50,13 +50,15 @@ OperationImplementation::State  CalculatorOperation::prepare(ExecutionContext *c
 QStringList CalculatorOperation::tokenizer(const QString &expr)
 {
     QStringList tokens;
-    std::vector<QString> seperators1 = {"*", "+","-","/","(",")","<",">",","};
-    std::vector<QString> seperators2 = {"==","!=",">=","<=","and","or"};
+    std::vector<QString> separators1 = {"*","+","-","/","(",")","<",">",","};
+    std::vector<QString> separators2 = {"==","!=",">=","<=","or"};
+    std::vector<QString> separators3 = {"and"};
     QString token;
     bool inQuotes = false;
     for(int i=0; i < expr.size(); ++i){
         QChar c = expr[i];
-        QChar lookAhead =  i < expr.size() - 1 ? expr[i+1] : ' ';
+        QChar lookAhead1 =  i < expr.size() - 1 ? expr[i+1] : ' ';
+        QChar lookAhead2 =  i < expr.size() - 2 ? expr[i+2] : ' ';
         if ( c == ' ')
             continue;
         if ( c == '\''){
@@ -67,25 +69,40 @@ QStringList CalculatorOperation::tokenizer(const QString &expr)
             inQuotes = !inQuotes;
             continue;
         }
-        QString sep2 = QString(c) + QString(lookAhead).trimmed();
-        auto iter2 = std::find(seperators2.begin(), seperators2.end(), sep2);
-        if (iter2 != seperators2.end()){
+        QString sep3 = QString(c) + QString(lookAhead1).trimmed() + QString(lookAhead2).trimmed();
+        auto iter3 = std::find(separators3.begin(), separators3.end(), sep3);
+        if (iter3 != separators3.end()){
             if (token != ""){
                 tokens.push_back(token);
                 token = "";
             }
-            tokens.push_back(sep2);
-            i+=1;
-        }else{
-            QString sep1 = QString(c);
-            auto iter1 = std::find(seperators1.begin(), seperators1.end(), sep1);
-            if (iter1 != seperators1.end()){
-                if (token != "")
+            tokens.push_back(sep3);
+            i+=2;
+        } else {
+            QString sep2 = QString(c) + QString(lookAhead1).trimmed();
+            auto iter2 = std::find(separators2.begin(), separators2.end(), sep2);
+            if (iter2 != separators2.end()){
+                if (token != ""){
                     tokens.push_back(token);
-                tokens.push_back(sep1);
-                token = "";
-            }else{
-                token += c;
+                    token = "";
+                }
+                tokens.push_back(sep2);
+                i+=1;
+            } else { // separators1
+                QString sep1 = QString(c);
+                auto iter1 = std::find(separators1.begin(), separators1.end(), sep1);
+                if (iter1 != separators1.end()){
+                    if ((sep1 == "-") && (token.size() == 0) && (tokens.size() == 0 || (tokens.back() != ")" && (std::find(separators1.begin(), separators1.end(), tokens.back()) != separators1.end() || std::find(separators2.begin(), separators2.end(), tokens.back()) != separators2.end() || std::find(separators3.begin(), separators3.end(), tokens.back()) != separators3.end()))))
+                        token += c; // exception for unary "-"; don't use it as a separator, simply build a new token
+                    else {
+                        if (token != "")
+                            tokens.push_back(token);
+                        tokens.push_back(sep1);
+                        token = "";
+                    }
+                }else{
+                    token += c;
+                }
             }
         }
     }
@@ -167,12 +184,14 @@ CalculatorOperation::MathAction CalculatorOperation::string2action(const QString
     if ( action == "atan") return maATAN;
     if ( action == "pow") return maPOW;
     if ( action == "ln") return maLN;
+    if ( action == "exp") return maEXP;
     if ( action == "log10") return maLOG10;
     if ( action == "max") return maMAX;
     if ( action == "min") return maMIN;
     if ( action == "ceil") return maCEIL;
     if ( action == "floor") return maFLOOR;
     if ( action == "abs") return maABS;
+    if ( action == "sq") return maSQ;
     if ( action == "sqrt") return maSQRT;
     if ( action == "==") return maEQ;
     if ( action == "!=") return maNEQ;
@@ -239,8 +258,6 @@ int  CalculatorOperation::checkItem(int domainCount, QString& item, QString& cop
         return nextLink;
     }
 }
-
-
 
 IDomain CalculatorOperation::collectDomainInfo(std::vector<std::vector<QString>>& rpn){
     int domainCount = 0;
@@ -632,10 +649,22 @@ double CalculatorOperation::calc() {
             calcResult =  ( v <= 0 && isNumericalUndef(v)) ? rUNDEF : std::log(v);
             break;
         }
+        case maEXP:
+        {
+            double v = GetValue(action._values[0],result);
+            calcResult =  (isNumericalUndef(v)) ? rUNDEF : std::exp(v);
+            break;
+        }
         case maABS:
         {
             double v = GetValue(action._values[0],result);
             calcResult =  (isNumericalUndef(v)) ? rUNDEF : std::abs(v);
+            break;
+        }
+        case maSQ:
+        {
+            double v = GetValue(action._values[0],result);
+            calcResult =  (isNumericalUndef(v)) ? rUNDEF : v * v;
             break;
         }
         case maSQRT:
@@ -718,11 +747,10 @@ double CalculatorOperation::calc() {
         {
             // if the action is a iterator we can directly get its value from the iterator else if it is a
             // comparisson it will be calculated previously and its result will be in calcresult
-            if ( action._values[0]._type == CalculatorOperation::ITERATOR)
-                calcResult = GetValue(action._values[0],result);
+            double test = GetValue(action._values[0],result);
             double v2 = GetValue(action._values[1],result);
             double v3 = GetValue(action._values[2],result);
-            calcResult = calcResult == rUNDEF ? rUNDEF : ((bool)calcResult ? v2 : v3);
+            calcResult = test == rUNDEF ? rUNDEF : ((bool)test ? v2 : v3);
             break;
         }
 
