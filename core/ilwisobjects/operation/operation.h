@@ -60,16 +60,39 @@ protected:
         }
     }
 
-    template<typename T, typename S> bool compare2(LogicalOperator oper, const T& v1, const S& v2){
+    double compare2(LogicalOperator oper, const double& v1, const double& v2, bool isNumeric){
         switch(oper) {
         case loAND:
-            return ((bool)v1) && ((bool)v2);
+            if (!(bool)v1 || !(bool)v2) // FALSE AND UNDEF ==> FALSE
+                return false;
+            else if (v1 == rUNDEF || v2 == rUNDEF) // TRUE AND UNDEF ==> UNDEF
+                return rUNDEF;
+            else
+                return true; // Remaining case: TRUE AND TRUE
         case loOR:
-            return ((bool)v1) || ((bool)v2);
+            if (v1 == rUNDEF) {
+                if (v2 == rUNDEF) // UNDEF OR UNDEF ==> UNDEF
+                    return rUNDEF;
+                else // UNDEF OR TRUE ==> TRUE
+                    return (bool)v2 ? true : rUNDEF;
+            } else if (v2 == rUNDEF) // TRUE OR UNDEF ==> TRUE
+                return (bool)v1 ? true : rUNDEF;
+            else // Normal case: OR
+                return (bool)v1 || (bool)v2;
         case loXOR:
-            return ((bool)v1) ^ ((bool)v2);
+            if (v1 == rUNDEF || v2 == rUNDEF) // A XOR UNDEF ==> UNDEF
+                return rUNDEF;
+            else
+                return ((bool)v1) ^ ((bool)v2); // Normal case: XOR
+        case loEQ:
+            return (isNumeric || (v1 != rUNDEF && v2 != rUNDEF)) ? (v1 == v2) : rUNDEF; // Allow comparison of (raster,value) with rUNDEF, for ifundef
+        case loNEQ:
+            return (isNumeric || (v1 != rUNDEF && v2 != rUNDEF)) ? (v1 != v2) : rUNDEF; // Allow comparison of (raster,value) with rUNDEF, for ifnotundef
         default:
-            return  compare1(oper, v1, v2);
+            if (v1 == rUNDEF || v2 == rUNDEF)
+                return rUNDEF;
+            else
+                return compare1(oper, v1, v2);
         }
     }
 };

@@ -42,13 +42,7 @@ bool BinaryLogical::executeCoverageNumber(ExecutionContext *ctx, SymbolTable& sy
 
         std::for_each(iterOut, iterOut.end(), [&](double& v){
             double v_in1 = *iterIn;
-            if ( _number == rUNDEF){
-                 v = compare2(_operator, v_in1, _number);
-            }
-            else if ( v_in1 != rUNDEF) {
-                v = compare2(_operator, v_in1, _number);
-            } else
-                v = rUNDEF;
+            v = compare2(_operator, v_in1, _number, true);
             ++iterIn;
         });
         return true;
@@ -72,10 +66,7 @@ bool BinaryLogical::executeCoverageCoverage(ExecutionContext *ctx, SymbolTable& 
         std::for_each(iterOut, iterOut.end(), [&](double& v){
             v_in1 = *iterIn1;
             v_in2 = *iterIn2;
-            if ( v_in1 != rUNDEF && v_in2 != rUNDEF) {
-                v = compare2(_operator, v_in1, v_in2);
-            } else
-                v = rUNDEF;
+            v = compare2(_operator, v_in1, v_in2, false);
             ++iterIn1;
             ++iterIn2;
         });

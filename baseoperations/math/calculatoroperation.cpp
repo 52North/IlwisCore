@@ -733,14 +733,27 @@ double CalculatorOperation::calc() {
         {
             double v1 = GetValue(action._values[0],result);
             double v2 = GetValue(action._values[1],result);
-            calcResult = isNumericalUndef(v1) || isNumericalUndef(v2) ? rUNDEF : ( (bool)v1 && (bool)v2);
+            if (!(bool)v1 || !(bool)v2)
+                calcResult = false;
+            else if (isNumericalUndef(v1) || isNumericalUndef(v2))
+                calcResult = rUNDEF;
+            else
+                calcResult = true;
             break;
         }
         case maOR:
         {
             double v1 = GetValue(action._values[0],result);
             double v2 = GetValue(action._values[1],result);
-            calcResult =  isNumericalUndef(v1) || isNumericalUndef(v2) ? rUNDEF : ( (bool)v1 || (bool)v2);
+            if (isNumericalUndef(v1)) {
+                if (isNumericalUndef(v2))
+                    calcResult = rUNDEF;
+                else
+                    calcResult = (bool)v2 ? true : rUNDEF;
+            } else if (isNumericalUndef(v2))
+                calcResult = (bool)v1 ? true : rUNDEF;
+            else
+                calcResult = (bool)v1 || (bool)v2;
             break;
         }
         case maIFF:
