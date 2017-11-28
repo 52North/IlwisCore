@@ -237,7 +237,7 @@ Ilwis::OperationImplementation::State CreateRasterCoverage::prepare(ExecutionCon
     if ( maps != sUNDEF && (maps.indexOf("?") != -1 || maps.indexOf("*") != -1)){
         maps = expandWildCards(maps);
     }
-    if (maps != "" && maps != sUNDEF){
+    if (maps != "" && maps != sUNDEF && maps != "default"){
         QStringList bands = maps.split(",");
         for(QString band : bands){
             IRasterCoverage raster(band);

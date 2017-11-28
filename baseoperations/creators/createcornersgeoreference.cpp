@@ -132,6 +132,7 @@ quint64 CreateCornersGeoreference::createMetadata()
     resource.addInParameter(3, itDOUBLE,TR("Max y"), TR("Minimum T coordinate of the corner of the boundign box"));
     resource.addInParameter(4, itDOUBLE,TR("Pixel size"), TR("Average size of the pixel"));
     resource.addInParameter(5, itCOORDSYSTEM,TR("Coordinate system"), TR("Coordinate system for which the world coordinates of the georeference are valid"));
+    resource.parameterNeedsQuotes(5);
     resource.addInParameter(6, itBOOL,TR("Center of Pixels"), TR("Intepretation of how the world coordinate of a pixel should be treated"));
     resource.addInParameter(7, itSTRING,TR("Description"), TR("Extra information about the new georeference"));
     resource.setOutParameterCount({1});
