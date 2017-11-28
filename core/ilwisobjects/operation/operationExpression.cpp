@@ -96,30 +96,41 @@ IlwisTypes Parameter::determineType(const QString& value, const SymbolTable &sym
     if ( ok)
         return itNUMBER;
 
+    kernel()->issues()->silent(true);  // suppress error messages during probe of value
+
     QString unquotedValue = OperationHelper::unquote(value);
     IlwisTypes tp = IlwisObject::findType(unquotedValue);
     if ( value == "\"?\"" || value == "?")
         tp = itANY;
 
-    if ( tp != itUNKNOWN)
+    if ( tp != itUNKNOWN) {
+        kernel()->issues()->silent(false);
         return tp;
+    }
 
     Symbol sym = symtab.getSymbol(unquotedValue);
-    if ( sym.isValid() && sym._type != itUNKNOWN)
+    if ( sym.isValid() && sym._type != itUNKNOWN) {
+        kernel()->issues()->silent(false);
         return sym._type;
+    }
 
     QString s = context()->workingCatalog()->resolve(unquotedValue);
     IlwisTypes type = IlwisObject::findType(s) ;
-    if ( type != itUNKNOWN)
+    if ( type != itUNKNOWN) {
+        kernel()->issues()->silent(false);
         return type;
+    }
 
     quint64 id = IlwisObject::internalname2id(unquotedValue);
     if ( id != i64UNDEF){
         ESPIlwisObject obj =  mastercatalog()->get(id);
-        if ( obj.get() != 0)
+        if ( obj.get() != 0) {
+            kernel()->issues()->silent(false);
             return obj->ilwisType();
+        }
     }
     tp = Domain::ilwType(unquotedValue);
+    kernel()->issues()->silent(false);
     return tp == itUNKNOWN ? itSTRING : tp;
 }
 
