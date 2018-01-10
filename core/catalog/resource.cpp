@@ -291,6 +291,10 @@ void Resource::name(const QString &nm, bool adaptNormalizedUrl,bool updateDataba
         url = url.left(index+1) + n;
     }
     _normalizedUrl = QUrl(url);
+    if (updateDatabase) {
+        mastercatalog()->changeResource(id(), "resource",_normalizedUrl);
+        mastercatalog()->changeResource(id(), "rawresource",_rawUrl);
+    }
 }
 
 QString Resource::rawName() const
