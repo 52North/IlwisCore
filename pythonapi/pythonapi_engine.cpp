@@ -164,7 +164,7 @@ Object* Engine::_do(std::string output_name, std::string operation, std::string 
     //but the id is to be added afterwards
     bool rename = false;
     if (output_name.empty()){
-        output_name = operation;
+        output_name = operation + "_object_" + QString::number(Ilwis::Identity::newAnonymousId()).toStdString();
         rename = true;
     }
     QString command;
