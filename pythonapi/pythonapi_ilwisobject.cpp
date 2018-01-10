@@ -76,7 +76,7 @@ bool IlwisObject::__bool__() const{
 
 std::string IlwisObject::__str__(){
     if (this->__bool__())
-        return QString("%1%2").arg(NAME_ALIAS).arg((*this->ptr())->id()).toStdString();
+        return (*this->ptr())->name().toStdString();
     else
         return  std::string("invalid IlwisObject!");
 }
