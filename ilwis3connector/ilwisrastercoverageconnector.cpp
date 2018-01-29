@@ -426,7 +426,10 @@ bool RasterCoverageConnector::storeBinaryData(IlwisObject *obj)
         if ( !output_file.is_open())
             return ERROR1(ERR_COULD_NOT_OPEN_WRITING_1,filename);
 
-        if ( conv.storeType() == itUINT8) {
+        qint32 delta = stats[NumericStatistics::pDELTA];
+        if ( delta >= 0 && delta < 256 && resolution == 1 && stats[NumericStatistics::pMIN] >= 0){
+            ok = save<quint8>(output_file,conv.scale() == 1 ? RawConverter() : conv, raster,sz);
+        } else if ( conv.storeType() == itUINT8) {
             ok = save<quint8>(output_file,conv.scale() == 1 ? RawConverter() : conv, raster,sz);
         } else if ( conv.storeType() == itINT16) {
             ok = save<qint16>(output_file,conv, raster,sz);
